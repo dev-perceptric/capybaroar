@@ -17,7 +17,9 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
   const [busy, start] = useTransition();
   const router = useRouter();
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ block: "end" }), [messages.length, pending]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ block: "end" });
+  }, [messages.length, pending]);
 
   const submit = () => {
     const t = text.trim();
