@@ -23,16 +23,22 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           <p className="mt-6 border border-frame bg-yolk-soft p-3 text-[13px]">Check your email for a link to finish signing up.</p>
         ) : (
           <>
-            <form action={signInWithGoogle} className="mt-6">
-              <Button type="submit" variant="ghost" className="w-full justify-center">
-                Continue with Google
-              </Button>
-            </form>
-            <div className="my-3 flex items-center gap-2 text-[11px] text-faint">
-              <span className="h-px flex-1 bg-line" />
-              or
-              <span className="h-px flex-1 bg-line" />
-            </div>
+            {process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" ? (
+              <>
+                <form action={signInWithGoogle} className="mt-6">
+                  <Button type="submit" variant="ghost" className="w-full justify-center">
+                    Continue with Google
+                  </Button>
+                </form>
+                <div className="my-3 flex items-center gap-2 text-[11px] text-faint">
+                  <span className="h-px flex-1 bg-line" />
+                  or
+                  <span className="h-px flex-1 bg-line" />
+                </div>
+              </>
+            ) : (
+              <div className="mt-6" />
+            )}
             <form action={action} className="flex flex-col gap-3">
               {mode === "signup" ? (
                 <>
