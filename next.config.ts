@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  // A self-contained server for the Docker image on Fly.
+  output: "standalone",
+};
 
 export default nextConfig;

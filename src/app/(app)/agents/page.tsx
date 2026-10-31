@@ -1,60 +1,31 @@
-"use client";
+import { Bot } from "lucide-react";
+import { Page } from "@/components/ui";
+import { AgentChat, type Shown } from "@/components/AgentChat";
+import { getCtx } from "@/lib/session";
+import { adminClient } from "@/lib/supabase/server";
 
-import { useState } from "react";
-import { ArrowUp, Bot, ImagePlus, Plus } from "lucide-react";
-import { Button, IconButton, Page } from "@/components/ui";
+type Block = { type: string; text?: string; name?: string; input?: { posts?: unknown[] } };
 
-export default function AgentsPage() {
-  const [text, setText] = useState("");
+export default async function AgentsPage({ searchParams }: { searchParams: Promise<{ chat?: string }> }) {
+  const ctx = await getCtx();
+  const { chat } = await searchParams;
+  const db = adminClient();
+  const { data: chats } = await db.from("agent_chats").select("id, title").eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).order("created_at", { ascending: false }).limit(50);
+  let shown: Shown[] = [];
+  if (chat && chats?.some((c) => c.id === chat)) {
+    const { data: rows } = await db.from("agent_messages").select("id, role, content").eq("chat_id", chat).order("id");
+    shown = (rows ?? []).flatMap((r) => {
+      const blocks = (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[];
+      return blocks.flatMap((b, i): Shown[] => {
+        if (b.type === "text" && b.text?.trim()) return [{ key: `${r.id}-${i}`, role: r.role as "user" | "assistant", text: b.text }];
+        if (b.type === "tool_use" && b.name === "save_posts") return [{ key: `${r.id}-${i}`, role: "tool", text: `Saved ${b.input?.posts?.length ?? 0} post${b.input?.posts?.length === 1 ? "" : "s"}` }];
+        return [];
+      });
+    });
+  }
   return (
-    <Page
-      icon={<Bot />}
-      title="Agents"
-      flush
-      actions={
-        <Button variant="ghost">
-          <Plus size={14} /> New chat
-        </Button>
-      }
-    >
-      <div className="flex h-full min-h-0">
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" width={88} height={88} className="size-22 border border-frame" />
-            <h2 className="mt-6 text-[24px] font-semibold tracking-[-0.035em] text-balance">
-              Plan a week of posts. <span className="text-faint">The agent writes and schedules them.</span>
-            </h2>
-          </div>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="mx-auto mb-6 w-full max-w-[720px] border border-frame bg-panel px-3 pt-2 pb-2"
-          >
-            <textarea
-              rows={3}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Write 5 LinkedIn posts about our launch, one each weekday at 9 AM"
-              className="w-full resize-none bg-transparent text-[13px] outline-none placeholder:text-faint"
-            />
-            <div className="flex items-center gap-1">
-              <IconButton label="Add media">
-                <ImagePlus size={16} />
-              </IconButton>
-              <span className="flex-1" />
-              <IconButton label="Send" variant="primary" disabled={!text.trim()}>
-                <ArrowUp size={16} />
-              </IconButton>
-            </div>
-          </form>
-        </div>
-        <aside className="hidden w-64 shrink-0 border-l border-line p-2 lg:block">
-          <p className="label-mono flex h-6 items-center px-2">
-            <span className="bracket">Chats</span>
-          </p>
-          <p className="px-2 py-1 text-[12px] text-faint">No chats yet</p>
-        </aside>
-      </div>
+    <Page icon={<Bot />} title="Agents" flush>
+      <AgentChat chats={(chats ?? []) as { id: string; title: string }[]} chatId={chat ?? null} messages={shown} />
     </Page>
   );
 }

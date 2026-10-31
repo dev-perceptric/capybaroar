@@ -1,25 +1,22 @@
 import { Plug } from "lucide-react";
-import { Button, Page } from "@/components/ui";
-import { NetworkLogo } from "@/components/NetworkLogo";
+import { Page } from "@/components/ui";
+import { ChannelsView } from "@/components/ChannelsView";
+import { listChannels } from "@/lib/channels";
+import { getCtx } from "@/lib/session";
+import { PROVIDERS } from "@/lib/providers";
 import { NETWORKS } from "@/lib/networks";
 
-export default function ChannelsPage() {
+export default async function ChannelsPage({ searchParams }: { searchParams: Promise<{ error?: string; connected?: string }> }) {
+  const ctx = await getCtx();
+  const channels = await listChannels(ctx.workspaceId);
+  const q = await searchParams;
+  const ready = NETWORKS.filter((n) => {
+    const p = PROVIDERS[n.id];
+    return p && (!p.oauth || p.oauth.configured());
+  }).map((n) => n.id);
   return (
-    <Page icon={<Plug />} title="Channels">
-      <div className="mx-auto w-full max-w-[960px]">
-        <h2 className="text-[20px] font-semibold tracking-[-0.025em] text-balance">
-          Connect a channel. <span className="text-faint">Post to it from the calendar.</span>
-        </h2>
-        <div className="mt-6 grid grid-cols-1 border-t border-l border-frame sm:grid-cols-2 lg:grid-cols-3">
-          {NETWORKS.map((n) => (
-            <div key={n.id} className="flex h-16 items-center gap-3 border-r border-b border-frame px-4">
-              <NetworkLogo id={n.id} size={22} />
-              <span className="flex-1 text-[13px] font-medium">{n.name}</span>
-              <Button variant="ghost">Connect</Button>
-            </div>
-          ))}
-        </div>
-      </div>
+    <Page icon={<Plug />} title="Channels" count={channels.length || undefined}>
+      <ChannelsView channels={channels} ready={ready} error={q.error ?? null} />
     </Page>
   );
 }

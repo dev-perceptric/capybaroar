@@ -1,11 +1,15 @@
 import { Image as ImageIcon } from "lucide-react";
-import { Button, Page } from "@/components/ui";
-import { ToolIntro } from "@/components/ToolIntro";
+import { Page } from "@/components/ui";
+import { MediaView } from "@/components/MediaView";
+import { listMedia } from "@/lib/media";
+import { getCtx } from "@/lib/session";
 
-export default function MediaPage() {
+export default async function MediaPage() {
+  const ctx = await getCtx();
+  const files = await listMedia(ctx.workspaceId);
   return (
-    <Page icon={<ImageIcon />} title="Media">
-      <ToolIntro drawing="files" title="Add your first file" lead="Pictures and videos you upload here are ready for any post." action={<Button>Upload</Button>} />
+    <Page icon={<ImageIcon />} title="Media" count={files.length || undefined}>
+      <MediaView files={files} />
     </Page>
   );
 }
