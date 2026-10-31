@@ -1,0 +1,47 @@
+"use client";
+
+// The four-square loader (docs/brand.md) and the burst for big moments.
+export function Loader({ size = 6, className = "text-brand" }: { size?: number; className?: string }) {
+  return (
+    <span className={`loader ${className}`} style={{ "--l": `${size}px` } as React.CSSProperties} aria-hidden="true">
+      <i />
+      <i />
+      <i />
+      <i />
+    </span>
+  );
+}
+
+/** Big moments only: small blue squares burst out from a point (a list launched, a person added to a campaign). */
+export function burst(x: number, y: number) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const colors = ["var(--accent-9)", "var(--accent-5)", "var(--text-tertiary)", "var(--text-primary)"];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement("i");
+    const s = 4 + Math.random() * 4;
+    p.className = "burst-bit";
+    p.style.cssText = `left:${x}px;top:${y}px;width:${s}px;height:${s}px;background:${colors[i % colors.length]}`;
+    document.body.appendChild(p);
+    const a = Math.random() * Math.PI * 2;
+    const v = 50 + Math.random() * 110;
+    const dx = Math.cos(a) * v;
+    const dy = Math.sin(a) * v - 50;
+    p.animate(
+      [
+        { transform: "translate(-50%, -50%) rotate(0deg)", opacity: 1 },
+        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${Math.random() * 360}deg)`, opacity: 1, offset: 0.55 },
+        { transform: `translate(calc(-50% + ${dx * 1.15}px), calc(-50% + ${dy + 90}px)) rotate(${Math.random() * 540}deg)`, opacity: 0 },
+      ],
+      { duration: 900 + Math.random() * 300, easing: "cubic-bezier(.2,.8,.2,1)" },
+    ).onfinish = () => p.remove();
+  }
+}
+
+/** Burst from the middle of an element, like the button that was just pressed. */
+export function burstFrom(el: Element | null) {
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2);
+}
+
+/** Marks something Otto wrote or found, in place of an "AI" tag. */

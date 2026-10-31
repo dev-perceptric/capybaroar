@@ -1,0 +1,588 @@
+@import "tailwindcss";
+
+/*
+ * Capybaroar's look (Omniscient's, with Ocelot yellow) (docs/brand.md): black and white with plain grays, square and framed, after folk. Inter at a 13px
+ * base, a 4px grid, square corners, black frames around panels, cards and menus, gray hairlines inside them, no shadows. Black is the action: the next step, links, selection and focus. Emerald is the signal, shared with
+ * Claritia: the logo's point, fit marks, live and won. Other hues only mean status or object type. The app is white edge to
+ * edge; a black rule splits the sidebar from the page.
+ * The raw tokens keep Twenty's names; the Tailwind names (ink, panel, line, brand...) map onto them so every screen
+ * reads the same tokens. Dark mode: data-theme="dark" on <html> swaps the tokens, not the components.
+ */
+
+:root,
+[data-theme="light"] {
+  /* Accent: black */
+  --accent-3: #f5f5f5; --accent-5: #d4d4d4; --accent-9: #0a0a0a; --accent-10: #262626; --accent-11: #0a0a0a;
+  --accent-flash: #ececec;
+  /* Capybaroar: Ocelot yellow for the one primary action, the current item and highlights. Ink text on it, never white. */
+  --yolk-9: #ffe100; --yolk-10: #e6ca00; --yolk-3: #fff8c2; --on-yolk: #0a0a0a;
+  /* Signal: emerald, about 5% of a screen */
+  --signal-3: #e8f5ef; --signal-6: #b8e2cf; --signal-9: #0c8c5e; --signal-11: #0a7a52;
+  /* Surfaces: white panels on a gray shell, gray fills for hover and pressed */
+  --bg-primary: #ffffff; --bg-secondary: #ffffff; --bg-tertiary: #f5f5f5; --bg-quaternary: #ebebeb; --bg-shell: #ffffff;
+  --bg-inverted: #0a0a0a; --bg-danger: #fdecea; --overlay: rgba(0, 0, 0, 0.36);
+  /* Text: black, then plain grays */
+  --text-primary: #0a0a0a; --text-secondary: #737373; --text-tertiary: #a3a3a3; --text-light: #c4c4c4;
+  --text-extra-light: #dcdcdc; --text-inverted: #ffffff; --text-on-accent: #ffffff; --text-danger: #c2412d;
+  /* Borders: black frames outside, gray hairlines inside */
+  --border-frame: #0a0a0a; --border-strong: #d4d4d4; --border-medium: #e5e5e5; --border-light: #f0f0f0; --border-blue: #d4d4d4; --border-danger: #f6c9c1;
+  /* Status */
+  --status-success: #0a7a52; --status-error: #c2412d; --status-warning: #b7791f; --status-info: #0a0a0a;
+  --status-success-bg: #0c8c5e14; --status-error-bg: #c2412d14; --status-warning-bg: #b7791f1f; --status-info-bg: #0a0a0a0d;
+  /* Tag palette: step 3 fill, step 9 solid, step 11 text */
+  --red-3: #fdecea; --red-9: #d9472f; --red-11: #b23a26;
+  --orange-3: #fff1e2; --orange-9: #ea7a1a; --orange-11: #b25a09;
+  --yellow-3: #fff6d6; --yellow-9: #f2b600; --yellow-11: #8a6200;
+  --green-3: #e8f5ef; --green-9: #0c8c5e; --green-11: #0a7a52;
+  --turquoise-3: #e0f6f4; --turquoise-9: #15a39a; --turquoise-11: #0b7a73;
+  --sky-3: #e3f2fe; --sky-9: #2f9bf0; --sky-11: #0b62b0;
+  --blue-3: #e8effc; --blue-9: #2563eb; --blue-11: #1d4ed8;
+  --purple-3: #f1ecfe; --purple-9: #6d45e6; --purple-11: #5230c2;
+  --pink-3: #fde8f0; --pink-9: #e0457f; --pink-11: #a61e55;
+  --gray-3: #f5f5f5; --gray-9: #a3a3a3; --gray-11: #525252;
+  /* Shadows: black, for windows and things that float */
+  --shadow-light: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --shadow-strong: 0px 12px 32px -8px rgba(0, 0, 0, 0.18), 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --shadow-super-heavy: 0px 16px 40px -12px rgba(0, 0, 0, 0.45), 0px 2px 6px 0px rgba(0, 0, 0, 0.05);
+  --shadow-bottom-panel: 0px 0px 20px 0px rgba(0, 0, 0, 0.06);
+  --shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] {
+  --accent-3: #1c1c1c; --accent-5: #333333; --accent-9: #3a3a3a; --accent-10: #4a4a4a; --accent-11: #fafafa;
+  --accent-flash: #262626;
+  --yolk-9: #ffe100; --yolk-10: #e6ca00; --yolk-3: #3a3300; --on-yolk: #0a0a0a;
+  --signal-3: #0f2a20; --signal-6: #1d4a38; --signal-9: #18e299; --signal-11: #3fe6a8;
+  --bg-primary: #121212; --bg-secondary: #0a0a0a; --bg-tertiary: #1c1c1c; --bg-quaternary: #262626; --bg-shell: #121212;
+  --bg-inverted: #fafafa; --bg-danger: #3d1a14; --overlay: rgba(0, 0, 0, 0.6);
+  --text-primary: #fafafa; --text-secondary: #a3a3a3; --text-tertiary: #737373; --text-light: #525252;
+  --text-extra-light: #3a3a3a; --text-inverted: #0a0a0a;
+  --border-frame: #fafafa; --border-strong: #3a3a3a; --border-medium: #262626; --border-light: #1c1c1c; --border-blue: #3a3a3a; --border-danger: #5c2419;
+  --status-info: #fafafa; --status-success-bg: #3dd68c24;
+  --red-3: #3d1a14; --red-11: #ff9d80; --orange-3: #3a2410; --orange-11: #ffb070;
+  --yellow-3: #3a2c05; --yellow-11: #ffd166; --green-3: #0c3328; --green-11: #6fe0b8;
+  --turquoise-3: #0c302d; --turquoise-11: #5fdcd1; --sky-3: #0f2c4d; --sky-11: #7cc3ff;
+  --blue-3: #142a57; --blue-9: #3d7bf2; --blue-11: #8fb4ff; --purple-3: #241a4d; --purple-11: #b9a3ff;
+  --pink-3: #3d1426; --pink-11: #ff94bb; --gray-3: #1c1c1c; --gray-9: #737373; --gray-11: #a3a3a3;
+  --shadow-light: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0px 12px 32px 0px rgba(0, 0, 0, 0.4);
+  --shadow-super-heavy: 0px 24px 60px 0px rgba(0, 0, 0, 0.5);
+  --shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);
+}
+
+:root {
+  --space-0_5: 2px; --space-1: 4px; --space-1_5: 6px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --icon-sm: 14px; --icon-md: 16px; --icon-lg: 20px; --icon-xl: 24px;
+  --duration-instant: 120ms; --duration-fast: 200ms; --duration-normal: 320ms; --duration-slow: 1.5s;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1); --ease-spring: cubic-bezier(0.3, 1.5, 0.6, 1);
+  --sidebar-width: 220px; --side-panel-width: 500px; --header-height: 48px; --row-height: 32px;
+}
+
+/* Tailwind names on the tokens. `inline` keeps the var() so dark mode swaps at runtime. */
+@theme inline {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* 4px grid in pixels, whatever the root size. The root is Twenty's 13px, so Tailwind's rem-based widths and type
+     sizes are pinned to pixels here to keep their usual size. */
+  --spacing: 4px;
+  --container-3xs: 256px; --container-2xs: 288px; --container-xs: 320px; --container-sm: 384px; --container-md: 448px;
+  --container-lg: 512px; --container-xl: 576px; --container-2xl: 672px; --container-3xl: 768px; --container-4xl: 896px;
+  --container-5xl: 1024px; --container-6xl: 1152px; --container-7xl: 1280px;
+  --text-xs: 11px; --text-xs--line-height: 1.5;
+  --text-sm: 12px; --text-sm--line-height: 1.5;
+  --text-base: 13px; --text-base--line-height: 1.5;
+  --text-lg: 16px; --text-lg--line-height: 1.4;
+  --text-xl: 20px; --text-xl--line-height: 1.3;
+  --text-2xl: 24px; --text-2xl--line-height: 1.2;
+  --text-3xl: 30px; --text-3xl--line-height: 1.15;
+  --text-4xl: 36px; --text-4xl--line-height: 1.1;
+  --text-5xl: 48px; --text-5xl--line-height: 1.05;
+  --text-6xl: 60px; --text-6xl--line-height: 1.05;
+  --text-7xl: 72px; --text-7xl--line-height: 1;
+  --text-8xl: 96px; --text-8xl--line-height: 1;
+  --text-9xl: 128px; --text-9xl--line-height: 1;
+
+  /* Text */
+  --color-ink: var(--text-primary);
+  --color-body: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-faint: var(--text-tertiary);
+  --color-light: var(--text-light);
+  --color-inverted: var(--text-inverted);
+
+  /* Surfaces and borders */
+  --color-panel: var(--bg-primary);
+  --color-canvas: var(--bg-secondary);
+  --color-side: var(--bg-shell);
+  --color-shell: var(--bg-shell);
+  --color-hover: var(--bg-tertiary);
+  --color-pressed: var(--bg-quaternary);
+  --color-solid: var(--bg-inverted);
+  --color-line: var(--border-medium);
+  --color-line-light: var(--border-light);
+  --color-line-strong: var(--border-strong);
+  --color-frame: var(--border-frame);
+  --color-scrim: var(--overlay);
+
+  /* Black for the next action, links, selection and focus */
+  --color-brand: var(--accent-9);
+  --color-brand-hover: var(--accent-10);
+  --color-brand-ink: var(--accent-11);
+  --color-brand-soft: var(--accent-3);
+  --color-brand-pale: var(--accent-3);
+  --color-brand-halo: var(--accent-5);
+  --color-brand-line: var(--border-blue);
+  --color-brand-flash: var(--accent-flash);
+  --color-yolk: var(--yolk-9);
+  --color-yolk-hover: var(--yolk-10);
+  --color-yolk-soft: var(--yolk-3);
+  --color-on-yolk: var(--on-yolk);
+  --color-fire: var(--orange-9);
+
+  /* Emerald for the signal: the logo's point, fit marks, live and won */
+  --color-signal: var(--signal-9);
+  --color-signal-ink: var(--signal-11);
+  --color-signal-soft: var(--signal-3);
+  --color-signal-line: var(--signal-6);
+
+  /* Status: step 11 text on its step 3 fill */
+  --color-success: var(--green-11);
+  --color-success-soft: var(--green-3);
+  --color-warning: var(--orange-11);
+  --color-warning-soft: var(--orange-3);
+  --color-danger: var(--red-11);
+  --color-danger-soft: var(--red-3);
+  --color-danger-line: var(--border-danger);
+  --color-violet: var(--purple-11);
+  --color-violet-soft: var(--purple-3);
+  --color-turquoise: var(--turquoise-11);
+  --color-turquoise-soft: var(--turquoise-3);
+  --color-sky: var(--sky-11);
+  --color-sky-soft: var(--sky-3);
+  --color-pink: var(--pink-11);
+  --color-pink-soft: var(--pink-3);
+  --color-yellow: var(--yellow-11);
+  --color-yellow-soft: var(--yellow-3);
+  --color-gray-soft: var(--gray-3);
+
+  /* Corners: square, everywhere. The scale is kept so every rounded-* class reads 0. Circles (rounded-full) stay
+     for faces and radio buttons only. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+
+  /* No shadows: things that float get a black frame (border-frame) instead. */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-card: none;
+  --shadow-pop: none;
+  --shadow-modal: none;
+}
+
+html {
+  font-size: 13px;
+}
+html,
+body {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-feature-settings: "ss07" 1, "ss08" 1, "liga" 0;
+  }
+  b,
+  strong {
+    font-weight: 600;
+  }
+  a {
+    transition: background 0.1s ease;
+  }
+  :focus-visible {
+    outline: 2px solid var(--border-blue);
+    outline-offset: 1px;
+  }
+  ::placeholder {
+    color: var(--text-tertiary);
+  }
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+::selection {
+  background: var(--yolk-9);
+  color: var(--on-yolk);
+}
+
+/* Section labels: mono at caption size, medium weight, secondary gray, sentence case. `.bracket` wraps one in [ ]. */
+@layer components {
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .bracket::before {
+    content: "[ ";
+  }
+  .bracket::after {
+    content: " ]";
+  }
+  /* Small metadata captions */
+  .fig {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-tertiary);
+  }
+  /* A card's header row: 40px, a medium-weight label, a hairline under it */
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: 0 var(--space-3);
+    border-bottom: 1px solid var(--border-medium);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  /* A section header inside a page */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  /* Framed blocks are cards now: the old corner marks are gone. */
+  .frame {
+    position: relative;
+  }
+}
+
+/* Numbers in tables and meters */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Page background behind content: white, like Twenty's content panel. */
+.paper {
+  background-color: var(--bg-primary);
+}
+/* The dotted canvas, for maps and workflow diagrams only */
+.canvas-dots,
+.dot-grid {
+  background-color: var(--bg-secondary);
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* A plain hairline */
+.ticks {
+  height: 1px;
+  background: var(--border-medium);
+}
+
+/* Thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent-9);
+}
+
+/* A Twenty toggle, for checkboxes that switch something on or off: add class "toggle". */
+input[type="checkbox"].toggle {
+  appearance: none;
+  position: relative;
+  width: 28px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  border-radius: 0;
+  background: var(--border-strong);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease;
+}
+input[type="checkbox"].toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  background: #ffffff;
+  transition: transform var(--duration-fast) ease;
+}
+input[type="checkbox"].toggle:checked {
+  background: var(--yolk-9);
+}
+input[type="checkbox"].toggle:checked::after {
+  transform: translateX(12px);
+}
+
+/* Motion (docs/brand.md): three speeds (120, 200, 320ms), two curves (ease-out, spring), transform and opacity only.
+   Motion answers what people do; the only ambient motion is work in progress (loaders, Otto at work). */
+
+/* The loader: the mark's four squares blinking in turn. */
+.loader {
+  display: inline-grid;
+  grid-template-columns: repeat(2, var(--l, 6px));
+  gap: calc(var(--l, 6px) / 3);
+  flex-shrink: 0;
+}
+.loader > i {
+  width: var(--l, 6px);
+  height: var(--l, 6px);
+  border-radius: 0;
+  background: currentColor;
+  animation: loader-blink 1.2s infinite;
+}
+.loader > i:nth-child(2) { animation-delay: 0.15s; }
+.loader > i:nth-child(4) { animation-delay: 0.3s; }
+.loader > i:nth-child(3) { animation-delay: 0.45s; }
+@keyframes loader-blink { 50% { opacity: 0.2; } }
+
+/* Skeleton bars while a list loads: a light blue shimmer. */
+.bone {
+  border-radius: var(--radius-xs);
+  background: linear-gradient(90deg, var(--border-light) 30%, var(--accent-3) 50%, var(--border-light) 70%);
+  background-size: 200% 100%;
+  animation: bone 1.1s linear infinite;
+}
+@keyframes bone { to { background-position: -200% 0; } }
+
+/* Things arriving: rows, panels, menus. */
+.rise { animation: rise var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+.slide-in { animation: slide-in var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
+@keyframes slide-in { from { opacity: 0; transform: translateX(14px); } }
+/* A row that just arrived flashes blue and fades to normal. */
+.row-new { animation: rise var(--duration-normal) var(--ease-out) both, row-flash 1.6s ease-out; }
+@keyframes row-flash { from { background: var(--accent-flash); } }
+
+/* Answers to a press: a pop, a ring, a check that draws itself, a word that flips. */
+.pop-once { animation: pop-once var(--duration-normal) var(--ease-spring); }
+@keyframes pop-once { 40% { transform: scale(1.3); } }
+.ring-once { animation: ring-once 500ms var(--ease-out); }
+@keyframes ring-once { from { box-shadow: 0 0 0 0 var(--accent-5); } to { box-shadow: 0 0 0 10px transparent; } }
+.draw-check path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw 360ms var(--ease-out) 100ms forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.flip-word { animation: flip-word 380ms var(--ease-out); }
+@keyframes flip-word {
+  45% { transform: translateY(-40%); opacity: 0; }
+  55% { transform: translateY(40%); opacity: 0; }
+}
+/* Criteria words in a sentence underline themselves on load. */
+.under-draw { position: relative; }
+.under-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(2px, 0.07em);
+  background: var(--accent-5);
+  transform-origin: left;
+  animation: under-draw 520ms var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+  transition: background var(--duration-instant);
+}
+.under-draw:hover::after,
+.under-draw[aria-expanded="true"]::after { background: var(--accent-9); }
+@keyframes under-draw { from { transform: scaleX(0); } }
+/* Fit drawn with the mark: the filled quarters pop in one after another. */
+.quarters .on { transform-box: fill-box; transform-origin: center; animation: quarter 360ms var(--ease-spring) both; }
+.quarters .on:nth-child(2) { animation-delay: 60ms; }
+.quarters .on:nth-child(3) { animation-delay: 120ms; }
+.quarters .on:nth-child(4) { animation-delay: 180ms; }
+@keyframes quarter { from { opacity: 0; transform: scale(0.4); } }
+
+/* Otto, the owl: blinks, eyes follow the pointer, bobs while working, tilts while thinking, hops when done. */
+.otto .lid { transform-box: fill-box; transform-origin: center; animation: otto-blink 5s infinite; }
+.otto .look { transition: transform 160ms var(--ease-out); }
+.otto .hopper { transform-box: view-box; transform-origin: 32px 60px; }
+.otto.working .hopper { animation: otto-bob 1.2s ease-in-out infinite; }
+.otto.thinking .hopper { animation: otto-tilt 1.8s ease-in-out infinite; }
+.otto.done .hopper { animation: otto-hop 420ms var(--ease-spring); }
+@keyframes otto-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.08); } }
+@keyframes otto-bob { 50% { transform: translateY(-2px); } }
+@keyframes otto-tilt { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg); } }
+@keyframes otto-hop { 40% { transform: translateY(-7px); } }
+
+/* The open row in a list turns solid black with white text (Scout). Its fit marks turn mint. */
+tr.row-sel > td {
+  background: var(--yolk-9);
+  color: var(--on-yolk);
+  border-color: var(--frame, #0a0a0a);
+  --q-on: #18e299;
+  --q-off: rgba(255, 255, 255, 0.25);
+}
+tr.row-sel > td :is(.text-muted, .text-faint, .text-ink, .text-light, a) { color: rgba(255, 255, 255, 0.82); }
+tr.row-sel > td .loader { color: #ffffff; }
+
+/* Big moments only (a list launched, a person added to a campaign): small blue squares burst out. */
+.burst-bit { position: fixed; z-index: 120; border-radius: 1.5px; pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+  .loader > i, .bone, .rise, .slide-in, .row-new, .pop-once, .ring-once, .flip-word, .under-draw::after, .quarters .on,
+  .otto .lid, .otto .hopper {
+    animation: none !important;
+  }
+  .draw-check path { animation: none; stroke-dashoffset: 0; }
+}
+
+/* Legal pages */
+.legal h2 {
+  margin: 2.25rem 0 0.75rem;
+  font-size: 16px;
+  font-weight: 600;
+}
+.legal p,
+.legal li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.legal p {
+  margin: 0 0 0.9rem;
+}
+.legal ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.legal li {
+  margin-bottom: 0.4rem;
+}
+.legal a {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+.legal code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-tertiary);
+  padding: 0 4px;
+  border-radius: var(--radius-xs);
+}
+.legal table {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.legal th,
+.legal td {
+  border: 1px solid var(--border-light);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.legal th {
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-bottom-color: var(--border-medium);
+}
+
+/* Marketing site */
+.mk-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.mk-fade {
+  animation: mk-fade 0.7s ease-out both;
+}
+@keyframes mk-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.mk-pulse {
+  animation: mk-pulse 2s ease-in-out infinite;
+}
+@keyframes mk-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+/* Side panels slide in from the right. */
+.drawer-in {
+  animation: drawer-in var(--duration-normal) var(--ease-out) both;
+}
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mk-fade,
+  .mk-pulse,
+  .drawer-in {
+    animation: none;
+  }
+}
+
+/* Studio pages (055): block styles people pick in Studio. Widths, space and size apply to the block's inner
+   wrapper; card styles and column counts to the cards and grids inside it. */
+.blk-w-narrow > div { max-width: 760px !important; }
+.blk-w-full > div { max-width: none !important; }
+.blk-s-tight > div { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+.blk-s-roomy > div { padding-top: 7rem !important; padding-bottom: 7rem !important; }
+.blk-z-sm { zoom: 0.9; }
+.blk-z-lg { zoom: 1.12; }
+.blk-c-plain [data-card] { border-color: transparent !important; background: transparent !important; }
+.blk-c-filled [data-card] { border-color: transparent !important; background: var(--b-tint) !important; color: var(--b-ink) !important; }
+.blk-c-plain [data-grid].gap-px, .blk-c-filled [data-grid].gap-px { gap: 1.25rem !important; background: transparent !important; border-color: transparent !important; }
+@container (min-width: 42rem) {
+  .blk-cols-1 [data-grid] { grid-template-columns: minmax(0, 1fr) !important; }
+  .blk-cols-2 [data-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .blk-cols-3 [data-grid] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .blk-cols-4 [data-grid] { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+[data-buttons="outline"] .b-btn-primary { background: transparent !important; color: var(--b-primary) !important; box-shadow: inset 0 0 0 1.5px var(--b-primary); }
+[data-spacing="tight"] [data-block]:not([data-type="header"]):not([class*="blk-s-tight"]):not([class*="blk-s-roomy"]) > div { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+[data-spacing="roomy"] [data-block]:not([data-type="header"]):not([class*="blk-s-tight"]):not([class*="blk-s-roomy"]) > div { padding-top: 6.5rem !important; padding-bottom: 6.5rem !important; }
+[data-pictures="rounded"] [data-block] img:not([data-logo]):not([width]), [data-pictures="rounded"] [data-block] video, [data-pictures="rounded"] [data-block] iframe { border-radius: 14px; }
