@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, ChevronLeft, ChevronRight, Layers, Plus } from "lucide-react";
 import { Button, IconButton, Page, Segmented } from "@/components/ui";
 import { Composer } from "@/components/Composer";
+import { NetworkLogo } from "@/components/NetworkLogo";
+import { useChannels } from "@/lib/channels";
 
 type Mode = "week" | "month";
 
@@ -21,6 +24,8 @@ export default function CalendarPage() {
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [compose, setCompose] = useState<{ at?: Date } | null>(null);
+  const channels = useChannels();
+  const [channel, setChannel] = useState<string>("all");
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60000);
@@ -73,9 +78,41 @@ export default function CalendarPage() {
         </>
       }
     >
-      {mode === "week" ? <Week anchor={anchor} now={now} onPick={(at) => setCompose({ at })} /> : <Month anchor={anchor} now={now} onPick={(at) => setCompose({ at })} />}
+      <div className="flex min-h-full">
+        <aside className="sticky top-0 hidden w-56 shrink-0 self-start border-r border-line p-2 md:block">
+          <p className="label-mono flex h-6 items-center px-2">
+            <span className="bracket">Channels</span>
+          </p>
+          <ChannelItem on={channel === "all"} onClick={() => setChannel("all")} icon={<Layers size={16} />} label="All channels" />
+          {channels.map((c) => (
+            <ChannelItem key={c.id} on={channel === c.id} onClick={() => setChannel(c.id)} icon={<NetworkLogo id={c.network} size={16} />} label={c.name} />
+          ))}
+          {!channels.length ? (
+            <Link href="/channels" className="mt-1 flex h-8 items-center gap-2 border border-dashed border-line-strong px-2 text-[13px] text-muted transition-colors hover:border-frame hover:text-ink">
+              <Plus size={14} /> Connect a channel
+            </Link>
+          ) : null}
+        </aside>
+        <div className="min-w-0 flex-1">
+          {mode === "week" ? <Week anchor={anchor} now={now} onPick={(at) => setCompose({ at })} /> : <Month anchor={anchor} now={now} onPick={(at) => setCompose({ at })} />}
+        </div>
+      </div>
       {compose ? <Composer at={compose.at} onClose={() => setCompose(null)} /> : null}
     </Page>
+  );
+}
+
+function ChannelItem({ on, onClick, icon, label }: { on: boolean; onClick: () => void; icon: React.ReactNode; label: string }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`flex h-8 w-full items-center gap-2 border px-2 text-left text-[13px] transition-colors ${on ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-transparent text-ink/85 hover:bg-pressed"}`}
+    >
+      {icon}
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+    </button>
   );
 }
 

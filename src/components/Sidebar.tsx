@@ -2,27 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarDays, Image as ImageIcon, LogOut, PanelsTopLeft, Plug, Settings } from "lucide-react";
+import { BarChart3, Bot, CalendarDays, Image as ImageIcon, LogOut, Plug, Settings } from "lucide-react";
 import { Avatar } from "./ui";
 
 const SECTIONS = [
   {
-    label: "Plan",
+    label: "Workspace",
     items: [
       { href: "/calendar", label: "Calendar", icon: <CalendarDays /> },
-      { href: "/posts", label: "Posts", icon: <PanelsTopLeft /> },
-    ],
-  },
-  {
-    label: "Library",
-    items: [
       { href: "/channels", label: "Channels", icon: <Plug /> },
+      { href: "/agents", label: "Agents", icon: <Bot /> },
+      { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
       { href: "/media", label: "Media", icon: <ImageIcon /> },
     ],
-  },
-  {
-    label: "Results",
-    items: [{ href: "/analytics", label: "Analytics", icon: <BarChart3 /> }],
   },
 ];
 
