@@ -22,3 +22,4 @@ leads-*.csv
 
 # Python caches from skill scripts
 __pycache__/
+!.env.example
