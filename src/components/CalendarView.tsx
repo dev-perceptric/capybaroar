@@ -237,24 +237,32 @@ function ChannelFace({ c, size, badge }: { c: Channel; size: number; badge: numb
   );
 }
 
-/** Faces of the channels a post goes to, overlapping. */
-function Faces({ post, byId, size = 16 }: { post: PostRow; byId: Map<string, Channel>; size?: number }) {
+/** The channels a post goes to, as overlapping round discs: the channel's picture, or its network's logo. */
+function Faces({ post, byId, size = 18 }: { post: PostRow; byId: Map<string, Channel>; size?: number }) {
   const list = post.post_targets.map((t) => byId.get(t.channel_id)).filter((c): c is Channel => Boolean(c));
+  const step = Math.round(size * 0.4);
   return (
     <span className="flex shrink-0 items-center">
       {list.slice(0, 3).map((c, i) => (
-        <span key={c.id} className={i ? "-ml-1.5" : ""} title={c.name}>
+        <span
+          key={c.id}
+          title={c.name}
+          style={{ width: size, height: size, marginLeft: i ? -step : 0, zIndex: 3 - i }}
+          className="relative flex items-center justify-center overflow-hidden rounded-full border border-line bg-panel ring-2 ring-panel"
+        >
           {c.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={c.avatar} alt="" style={{ width: size, height: size }} className="rounded-full object-cover ring-2 ring-panel" />
+            <img src={c.avatar} alt="" className="size-full object-cover" />
           ) : (
-            <span className="block rounded-full ring-2 ring-panel">
-              <NetworkLogo id={c.network} size={size} />
-            </span>
+            <NetworkLogo id={c.network} size={Math.round(size * 0.6)} />
           )}
         </span>
       ))}
-      {list.length > 3 ? <span className="ml-1 text-[10px] text-muted tabular-nums">+{list.length - 3}</span> : null}
+      {list.length > 3 ? (
+        <span style={{ width: size, height: size, marginLeft: -step }} className="relative flex items-center justify-center rounded-full border border-line bg-hover text-[9px] font-medium text-muted ring-2 ring-panel tabular-nums">
+          +{list.length - 3}
+        </span>
+      ) : null}
     </span>
   );
 }
