@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 
 const noop = () => () => {};
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Avatar, Badge, Button, Page, Segmented } from "@/components/ui";
 import { Composer } from "@/components/Composer";
@@ -32,9 +33,10 @@ const MOVABLE: PostRow["status"][] = ["draft", "scheduled", "failed"];
 const postText = (p: PostRow) => p.text || p.post_targets.find((t) => t.text)?.text || "No text";
 
 export function CalendarView({ channels }: { channels: Channel[] }) {
+  const startNew = useSearchParams().has("new");
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
-  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(null);
+  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
   const [channel, setChannel] = useState<string>("all");
   const [posts, setPosts] = useState<PostRow[]>([]);
   const range = useMemo(() => {
