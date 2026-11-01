@@ -671,7 +671,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                 ]}
               />
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-6">
+            <FitBox width={device === "mobile" ? 340 : 560}>
               {shown ? (
                 device === "mobile" ? (
                   <Phone channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} />
@@ -679,9 +679,9 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                   <Desktop channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} />
                 )
               ) : (
-                <div className="flex h-full items-center justify-center text-[13px] text-faint">Pick a channel to see the preview</div>
+                <div className="text-[13px] text-faint">Pick a channel to see the preview</div>
               )}
-            </div>
+            </FitBox>
           </aside>
         </div>
 
@@ -822,5 +822,38 @@ function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
         <img src={m.thumb ?? ""} alt={m.alt ?? ""} className="size-full object-cover" />
       )}
     </span>
+  );
+}
+
+/** Shrinks the preview to fit its panel, so the whole phone or window shows without scrolling. */
+function FitBox({ width, children }: { width: number; children: React.ReactNode }) {
+  const outer = useRef<HTMLDivElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const o = outer.current;
+    const i = inner.current;
+    if (!o || !i) return;
+    const fit = () => {
+      const pad = 32;
+      const w = i.scrollWidth;
+      const h = i.scrollHeight;
+      if (!w || !h) return;
+      setScale(Math.min(1, (o.clientWidth - pad) / w, (o.clientHeight - pad) / h));
+    };
+    const ro = new ResizeObserver(fit);
+    ro.observe(o);
+    ro.observe(i);
+    fit();
+    return () => ro.disconnect();
+  }, [width]);
+  return (
+    <div ref={outer} className="relative min-h-0 flex-1 overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div ref={inner} className="shrink-0" style={{ width, transform: `scale(${scale})`, transformOrigin: "center" }}>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 }
