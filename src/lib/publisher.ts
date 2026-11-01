@@ -4,7 +4,7 @@
 //   never published again.
 // - AuthError marks the channel "reconnect"; AuthError and PostError fail the target at once; other errors retry
 //   with backoff until max_attempts.
-import { AuthError, PostError, type MediaFile, type Provider, type Published, type Secret } from "./providers/types";
+import { AuthError, PostError, type MediaFile, type PostStats, type Provider, type Published, type Secret } from "./providers/types";
 
 export type Job = { id: number; kind: string; payload: Record<string, string>; attempts: number; max_attempts: number };
 
@@ -39,7 +39,13 @@ export interface Store {
   secret(channelId: string, provider: Provider): Promise<Secret>;
   media(workspaceId: string, ids: string[]): Promise<MediaFile[]>;
   alert(kind: "post_failed" | "reconnect", t: TargetCtx, error: string): Promise<void>;
+  /** Queue result checks for a post that just went out (STATS_AFTER). */
+  statsLater(t: TargetCtx): Promise<void>;
+  saveStats(t: TargetCtx, stats: PostStats): Promise<void>;
 }
+
+/** When to read a post's results after it goes out: 1 hour, 1 day, 7 days, 30 days. */
+export const STATS_AFTER_MIN = [60, 1440, 10080, 43200];
 
 export const BACKOFF_MIN = [1, 5, 15, 60, 240];
 
@@ -52,6 +58,7 @@ export async function runDue(store: Store, providers: (network: string) => Provi
 export async function runJob(store: Store, providers: (network: string) => Provider | null, job: Job) {
   try {
     if (job.kind === "publish") await publishTarget(store, providers, job.payload.targetId);
+    else if (job.kind === "stats") await collectStats(store, providers, job.payload.targetId);
     await store.jobDone(job.id, null);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -99,6 +106,20 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
   // The post is live. Saving that is the one step that must not fail, or a retry would post again: try hard.
   await saveHard(() => store.published(t, out));
   await store.settle(t.postId);
+  try {
+    await store.statsLater(t);
+  } catch {
+    // results are a nice-to-have: never fail a published post over them
+  }
+}
+
+async function collectStats(store: Store, providers: (network: string) => Provider | null, targetId: string) {
+  const t = await store.target(targetId);
+  if (!t?.remoteId || t.status !== "published") return;
+  const p = providers(t.network);
+  if (!p?.postStats) return;
+  const secret = await store.secret(t.channelId, p);
+  await store.saveStats(t, await p.postStats(secret, t.accountId, t.remoteId));
 }
 
 async function saveHard(fn: () => Promise<void>, tries = 5) {

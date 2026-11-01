@@ -51,6 +51,9 @@ async function uploadVideo(tok: string, video: MediaFile) {
   throw new Error("Pinterest video is still processing; will retry");
 }
 
+/** A 404 from call() comes back as a plain Error; the post was deleted. */
+const gone = (e: unknown) => e instanceof Error && !(e instanceof AuthError) && !(e instanceof PostError) && /\b404\b|not found/i.test(e.message);
+
 export const pinterest: Provider = {
   network: "pinterest",
   oauth: {
@@ -130,4 +133,26 @@ export const pinterest: Provider = {
     return { id: r.id, url: `https://www.pinterest.com/pin/${r.id}/` };
   },
   followers: async (s) => (await call<User>(`${API}/user_account`, { headers: auth(s.accessToken) }, { what: "Pinterest followers" })).follower_count ?? null,
+  postStats: async (s, _accountId, remoteId) => {
+    const day = (d: Date) => d.toISOString().slice(0, 10);
+    const end = new Date();
+    // Pinterest allows up to 90 days back.
+    const start = new Date(end.getTime() - 89 * 86400000);
+    // Verify: metric names and the summary_metrics shape against the v5 pin analytics docs.
+    type Analytics = { all?: { summary_metrics?: Record<string, number> } };
+    const r = await call<Analytics>(
+      `${API}/pins/${encodeURIComponent(remoteId)}/analytics?${qs({ start_date: day(start), end_date: day(end), metric_types: "IMPRESSION,SAVE,PIN_CLICK,OUTBOUND_CLICK,VIDEO_MRC_VIEW" })}`,
+      { headers: auth(s.accessToken) },
+      { what: "Pinterest post stats" },
+    ).catch((e) => {
+      // Gone, or analytics not available for this pin or account.
+      if (gone(e) || e instanceof PostError) return null;
+      throw e;
+    });
+    const m = r?.all?.summary_metrics;
+    if (!m) return {};
+    const n = (v: unknown) => (typeof v === "number" ? v : null);
+    const clicks = n(m.PIN_CLICK) == null && n(m.OUTBOUND_CLICK) == null ? null : (n(m.PIN_CLICK) ?? 0) + (n(m.OUTBOUND_CLICK) ?? 0);
+    return { impressions: n(m.IMPRESSION), saves: n(m.SAVE), clicks, views: n(m.VIDEO_MRC_VIEW) };
+  },
 };

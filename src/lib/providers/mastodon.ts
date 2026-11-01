@@ -41,6 +41,9 @@ async function upload(base: string, tok: string, m: MediaFile) {
   return att.id;
 }
 
+/** A 404 from call() comes back as a plain Error; the post was deleted. */
+const gone = (e: unknown) => e instanceof Error && !(e instanceof AuthError) && !(e instanceof PostError) && /\b404\b|not found/i.test(e.message);
+
 export const mastodon: Provider = {
   network: "mastodon",
   oauth: {
@@ -109,5 +112,14 @@ export const mastodon: Provider = {
   followers: async (s) => {
     const me = await call<Me>(`https://${instanceOf(s)}/api/v1/accounts/verify_credentials`, { headers: bearer(s.accessToken) }, { what: "Mastodon followers" });
     return me.followers_count ?? null;
+  },
+  postStats: async (s, _accountId, remoteId) => {
+    type Status = { favourites_count?: number; reblogs_count?: number; replies_count?: number };
+    const r = await call<Status>(`https://${instanceOf(s)}/api/v1/statuses/${encodeURIComponent(remoteId)}`, { headers: bearer(s.accessToken) }, { what: "Mastodon post stats" }).catch((e) => {
+      if (gone(e)) return null;
+      throw e;
+    });
+    if (!r) return {};
+    return { likes: r.favourites_count ?? null, shares: r.reblogs_count ?? null, comments: r.replies_count ?? null };
   },
 };

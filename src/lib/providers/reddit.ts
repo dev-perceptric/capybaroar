@@ -92,4 +92,12 @@ export const reddit: Provider = {
     return { id: d.name, url: d.url ?? null };
   },
   followers: async (s) => (await call<Me>(`${API}/api/v1/me`, { headers: auth(s.accessToken) }, { what: "Reddit followers" })).subreddit?.subscribers ?? null,
+  postStats: async (s, _accountId, remoteId) => {
+    type Info = { data?: { children?: { data?: { score?: number; num_comments?: number } }[] } };
+    const r = await call<Info>(`${API}/api/info?${qs({ id: remoteId })}`, { headers: auth(s.accessToken) }, { what: "Reddit post stats" });
+    const d = r.data?.children?.[0]?.data;
+    if (!d) return {};
+    // score is upvotes minus downvotes (fuzzed by Reddit), not a raw like count.
+    return { likes: d.score ?? null, comments: d.num_comments ?? null };
+  },
 };

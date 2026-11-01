@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type Provider, type Publishable, type Published, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // LinkedIn: Sign In with LinkedIn (OpenID) + Share on LinkedIn for people; Community Management API for Pages.
 // Pages use their own app (LinkedIn wants that product alone on its app).
@@ -110,6 +110,40 @@ async function post(tok: string, author: string, p: Publishable): Promise<Publis
   return out;
 }
 
+const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
+const clean = (o: PostStats): PostStats => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as PostStats;
+const gone = (e: unknown) => !(e instanceof AuthError) && (e instanceof PostError || (e instanceof Error && /not found|404/i.test(e.message)));
+
+async function stats(tok: string, urn: string, org?: string): Promise<PostStats> {
+  try {
+    const sa = await call<{ likesSummary?: { totalLikes?: number }; commentsSummary?: { aggregatedTotalComments?: number; count?: number } }>(
+      `https://api.linkedin.com/rest/socialActions/${encodeURIComponent(urn)}`,
+      { headers: rest(tok) },
+      { what: "LinkedIn post stats" },
+    );
+    const out: PostStats = { likes: num(sa.likesSummary?.totalLikes), comments: num(sa.commentsSummary?.aggregatedTotalComments ?? sa.commentsSummary?.count) };
+    if (org) {
+      try {
+        const key = urn.startsWith("urn:li:ugcPost:") ? "ugcPosts" : "shares";
+        // Rest.li 2.0 list syntax; the URNs inside List() are encoded, the parentheses are not.
+        const r = await call<{ elements?: { totalShareStatistics?: { impressionCount?: number; uniqueImpressionsCount?: number; clickCount?: number; shareCount?: number } }[] }>(
+          `https://api.linkedin.com/rest/organizationalEntityShareStatistics?q=organizationalEntity&organizationalEntity=${encodeURIComponent(org)}&${key}=List(${encodeURIComponent(urn)})`,
+          { headers: rest(tok) },
+          { what: "LinkedIn Page post stats" },
+        );
+        const t = r.elements?.[0]?.totalShareStatistics;
+        Object.assign(out, { impressions: num(t?.impressionCount), reach: num(t?.uniqueImpressionsCount), clicks: num(t?.clickCount), shares: num(t?.shareCount) });
+      } catch (e) {
+        if (!gone(e)) throw e;
+      }
+    }
+    return clean(out);
+  } catch (e) {
+    if (gone(e)) return {};
+    throw e;
+  }
+}
+
 const personId = () => process.env.LINKEDIN_CLIENT_ID ?? "";
 const personSecret = () => process.env.LINKEDIN_CLIENT_SECRET ?? "";
 const pageId = () => process.env.LINKEDIN_PAGE_CLIENT_ID || personId();
@@ -139,6 +173,8 @@ export const linkedin: Provider = {
   refresh: (s) => refreshWith(s, personId(), personSecret()),
   check: (p) => (p.media.filter(isVideo).length && p.media.length > 1 ? "LinkedIn takes one video, or pictures only" : null),
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:person:${accountId}`, p),
+  // Verify: member posts read through socialActions may need r_member_social, which this app doesn't ask for (then {}).
+  postStats: (s, _accountId, remoteId) => stats(s.accessToken, remoteId),
 };
 
 export const linkedinPage: Provider = {
@@ -188,4 +224,5 @@ export const linkedinPage: Provider = {
     );
     return r.firstDegreeSize ?? null;
   },
+  postStats: (s, accountId, remoteId) => stats(s.accessToken, remoteId, `urn:li:organization:${accountId}`),
 };

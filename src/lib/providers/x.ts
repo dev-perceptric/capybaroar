@@ -145,4 +145,31 @@ export const x: Provider = {
     );
     return r.data.public_metrics?.followers_count ?? null;
   },
+  postStats: async (s, _accountId, remoteId) => {
+    type Metrics = { data?: { public_metrics?: Record<string, number>; non_public_metrics?: Record<string, number> }; errors?: unknown[] };
+    const get = (fields: string) =>
+      call<Metrics>(`${API}/tweets/${encodeURIComponent(remoteId)}?${qs({ "tweet.fields": fields })}`, { headers: bearer(s.accessToken) }, { what: "X post stats" });
+    let r: Metrics;
+    try {
+      // non_public_metrics only works for the author's own recent posts (Verify: 30-day window).
+      r = await get("public_metrics,non_public_metrics");
+    } catch (e) {
+      if (!(e instanceof PostError)) throw e;
+      r = await get("public_metrics");
+    }
+    // A deleted post comes back as 200 with errors and no data.
+    if (!r.data) return {};
+    const pub = r.data.public_metrics ?? {};
+    const priv = r.data.non_public_metrics ?? {};
+    const n = (v: unknown) => (typeof v === "number" ? v : null);
+    const sum = (a: unknown, b: unknown) => (n(a) == null && n(b) == null ? null : (n(a) ?? 0) + (n(b) ?? 0));
+    return {
+      impressions: n(pub.impression_count) ?? n(priv.impression_count),
+      likes: n(pub.like_count),
+      comments: n(pub.reply_count),
+      shares: sum(pub.retweet_count, pub.quote_count),
+      saves: n(pub.bookmark_count),
+      clicks: sum(priv.url_link_clicks, priv.user_profile_clicks),
+    };
+  },
 };

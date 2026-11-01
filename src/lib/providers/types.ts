@@ -27,6 +27,18 @@ export type Publishable = { text: string; media: MediaFile[]; settings: Record<s
 /** `note` reports something that went wrong after the post was already out (a first comment that failed). */
 export type Published = { id: string; url?: string | null; note?: string | null };
 
+/** One published post's results. Leave out (or null) whatever the network doesn't report. */
+export type PostStats = {
+  views?: number | null;
+  reach?: number | null;
+  impressions?: number | null;
+  likes?: number | null;
+  comments?: number | null;
+  shares?: number | null;
+  saves?: number | null;
+  clicks?: number | null;
+};
+
 /** Values a person typed before signing in (a Mastodon server) and values kept between the two steps of sign-in. */
 export type OAuthInput = Record<string, string>;
 
@@ -58,6 +70,11 @@ export type Provider = {
    */
   publish: (s: Secret, accountId: string, p: Publishable) => Promise<Published>;
   followers?: (s: Secret, accountId: string) => Promise<number | null>;
+  /**
+   * Results for one published post. `remoteId` is exactly what publish returned as `id`.
+   * Throw AuthError when the token is bad; return {} when the post is gone or the network has no numbers for it.
+   */
+  postStats?: (s: Secret, accountId: string, remoteId: string) => Promise<PostStats>;
 };
 
 /** A failure that a retry won't fix: the person must reconnect the channel. */

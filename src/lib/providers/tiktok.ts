@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type Provider } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type PostStats, type Provider } from "./types";
 
 // TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server.
 // Who can watch is the person's choice (TikTok requires it); until TikTok audits the app only "Only me" is offered.
@@ -113,5 +113,23 @@ export const tiktok: Provider = {
   followers: async (s) => {
     const u = await tt<{ user: { follower_count?: number } }>(`${API}/user/info/?fields=follower_count`, { headers: { Authorization: `Bearer ${s.accessToken}` } }, "TikTok followers");
     return u.user.follower_count ?? null;
+  },
+  postStats: async (s, _openId, remoteId) => {
+    type Video = { id: string; view_count?: number; like_count?: number; comment_count?: number; share_count?: number };
+    try {
+      // A publish_id (when TikTok gave no post id) matches no video, so it comes back empty: {}.
+      const r = await tt<{ videos?: Video[] }>(
+        `${API}/video/query/?fields=id,view_count,like_count,comment_count,share_count`,
+        { method: "POST", headers: json(s.accessToken), body: JSON.stringify({ filters: { video_ids: [remoteId] } }) },
+        "TikTok post stats",
+      );
+      const v = r.videos?.find((x) => String(x.id) === remoteId) ?? r.videos?.[0];
+      if (!v) return {};
+      const out: PostStats = { views: v.view_count, likes: v.like_count, comments: v.comment_count, shares: v.share_count };
+      return Object.fromEntries(Object.entries(out).filter(([, x]) => typeof x === "number")) as PostStats;
+    } catch (e) {
+      if (e instanceof PostError || (e instanceof Error && /not found|404/i.test(e.message) && !(e instanceof AuthError))) return {};
+      throw e;
+    }
   },
 };

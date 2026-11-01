@@ -63,3 +63,10 @@ export async function saveAlt(id: string, alt: string): Promise<{ error?: string
     return fail(e);
   }
 }
+
+/** The workspace's 3 best slots, from its own results (empty until there's enough data). */
+export async function bestSlots() {
+  const ctx = await getCtx();
+  const { suggestedTimes } = await import("@/lib/analytics");
+  return suggestedTimes(ctx.workspaceId, ctx.timezone);
+}

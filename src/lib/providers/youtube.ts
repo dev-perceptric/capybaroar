@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type PostStats, type Provider, type Secret } from "./types";
 
 // YouTube: Google sign-in (offline access) + YouTube Data API v3, resumable video upload from our server.
 // Until Google audits the app, uploads from an unverified API project are locked to private.
@@ -119,6 +119,25 @@ export const youtube: Provider = {
     const r = await call<{ items?: Channel[] }>(`${API}/channels?${qs({ part: "statistics", id: channelId })}`, { headers: auth(s.accessToken) }, { what: "YouTube subscribers" });
     const st = r.items?.[0]?.statistics;
     return st && !st.hiddenSubscriberCount && st.subscriberCount ? Number(st.subscriberCount) : null;
+  },
+  postStats: async (s, _channelId, videoId) => {
+    try {
+      // A deleted video is simply missing from items.
+      const r = await call<{ items?: { statistics?: { viewCount?: string; likeCount?: string; commentCount?: string } }[] }>(
+        `${API}/videos?${qs({ part: "statistics", id: videoId })}`,
+        { headers: auth(s.accessToken) },
+        { what: "YouTube video stats" },
+      );
+      const st = r.items?.[0]?.statistics;
+      if (!st) return {};
+      // likeCount and commentCount are left out when hidden or comments are off.
+      const n = (v?: string) => (v === undefined || v === "" ? undefined : Number(v));
+      const out: PostStats = { views: n(st.viewCount), likes: n(st.likeCount), comments: n(st.commentCount) };
+      return Object.fromEntries(Object.entries(out).filter(([, x]) => typeof x === "number" && Number.isFinite(x))) as PostStats;
+    } catch (e) {
+      if (e instanceof PostError || (e instanceof Error && !(e instanceof AuthError) && /not found|404/i.test(e.message))) return {};
+      throw e;
+    }
   },
 };
 

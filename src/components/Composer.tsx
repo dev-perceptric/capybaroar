@@ -12,7 +12,7 @@ import { askConfirm, askText } from "./Dialogs";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { duplicate, loadMedia, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
+import { bestSlots, duplicate, loadMedia, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
 
 type Media = { id: string; name: string; mime: string; thumb: string | null; alt: string | null };
 type Target = { text: string | null; settings: Record<string, string> };
@@ -26,6 +26,16 @@ const nextHour = () => {
 };
 const initialSettings = (c: Channel) => Object.fromEntries((networkOf(c.network).fields ?? []).filter((f) => f.initial).map((f) => [f.key, f.initial!]));
 const count = (s: string) => [...s].length;
+/** The next time this weekday and hour comes around (browser time, which matches the workspace for most people). */
+const nextAt = (day: number, hour: number) => {
+  const d = new Date();
+  d.setMinutes(0, 0, 0);
+  d.setHours(hour);
+  let add = (day - d.getDay() + 7) % 7;
+  if (add === 0 && d.getTime() <= Date.now()) add = 7;
+  d.setDate(d.getDate() + add);
+  return d;
+};
 
 /** Write a post once, change it per channel, pick when it goes out. */
 export function Composer({ channels, at, post, preset, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; onClose: () => void; onSaved: () => void }) {
@@ -44,6 +54,10 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
 
+  const [best, setBest] = useState<{ day: number; hour: number }[]>([]);
+  useEffect(() => {
+    bestSlots().then(setBest, () => setBest([]));
+  }, []);
   useEffect(() => {
     if (!library) loadMedia().then((m) => setLibrary(m as Media[]), () => setLibrary([]));
   }, [library]);
@@ -134,6 +148,14 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
         ) : (
           <div className="flex w-full flex-wrap items-center gap-2">
             <input type="datetime-local" aria-label="Publish time" value={when} onChange={(e) => setWhen(e.target.value)} className={inputClass.replace("w-full", "w-[210px]")} />
+            {best.map((b) => {
+              const at = nextAt(b.day, b.hour);
+              return (
+                <button key={`${b.day}${b.hour}`} type="button" title="One of your best times, from your results" onClick={() => setWhen(localValue(at))} className={`h-8 border px-2 text-[11px] font-medium ${when === localValue(at) ? "border-frame bg-yolk" : "border-line hover:border-frame"}`}>
+                  {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
+                </button>
+              );
+            })}
             {post ? (
               <>
                 <IconButton label="Duplicate" onClick={dup} disabled={busy}>

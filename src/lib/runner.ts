@@ -6,7 +6,8 @@ import { mediaFiles } from "./media";
 import { settlePost } from "./posts";
 import { providerOf } from "./providers";
 import { AuthError, type Provider, type Secret } from "./providers/types";
-import { runDue, type Job, type Store, type TargetCtx } from "./publisher";
+import { STATS_AFTER_MIN, runDue, type Job, type Store, type TargetCtx } from "./publisher";
+import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
 
 // Runs inside the web server: every 15 seconds it publishes due posts, and once an hour it refreshes tokens that
@@ -98,6 +99,29 @@ export const supabaseStore: Store = {
   },
   media: mediaFiles,
   alert: (kind: "post_failed" | "reconnect", t: TargetCtx, error: string) => sendAlert(kind, t, error),
+  async statsLater(t) {
+    for (const min of STATS_AFTER_MIN) await enqueue("stats", { targetId: t.id }, new Date(Date.now() + min * 60000));
+  },
+  async saveStats(t, st) {
+    const n = (v: number | null | undefined) => (v == null || !Number.isFinite(v) ? null : Math.round(v));
+    const { error } = await adminClient()
+      .from("post_metrics")
+      .upsert({
+        target_id: t.id,
+        workspace_id: t.workspaceId,
+        channel_id: t.channelId,
+        fetched_at: new Date().toISOString(),
+        views: n(st.views),
+        reach: n(st.reach),
+        impressions: n(st.impressions),
+        likes: n(st.likes),
+        comments: n(st.comments),
+        shares: n(st.shares),
+        saves: n(st.saves),
+        clicks: n(st.clicks),
+      });
+    if (error) throw new Error(error.message);
+  },
 };
 
 let started = false;

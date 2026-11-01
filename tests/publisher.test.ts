@@ -104,6 +104,14 @@ class Memory implements Store {
   async alert(kind: string, t: TargetCtx) {
     this.alerts.push(`${kind}:${t.id}`);
   }
+  statsQueued: string[] = [];
+  saved = new Map<string, Record<string, unknown>>();
+  async statsLater(t: TargetCtx) {
+    this.statsQueued.push(t.id);
+  }
+  async saveStats(t: TargetCtx, st: Record<string, unknown>) {
+    this.saved.set(t.id, st);
+  }
 }
 
 /** A fake network: records every post that went live, and fails at the given rate before posting. */
@@ -228,4 +236,26 @@ test("retries back off and give up after max attempts", async () => {
   assert.equal(j.attempts, 6);
   assert.equal(m.targets.get("t0")!.status, "failed");
   assert.equal(net.live.length, 0);
+});
+
+test("a published post queues its result checks once; failed posts queue none", async () => {
+  const m = new Memory();
+  m.add(20);
+  const net = fakeNetwork({ failRate: 0.4, seed: 5 });
+  await drain(m, net.provider, 3);
+  const published = [...m.targets.values()].filter((t) => t.status === "published").map((t) => t.id).sort();
+  assert.deepEqual([...m.statsQueued].sort(), published);
+});
+
+test("result checks read the network with the saved remote id and store the numbers", async () => {
+  const m = new Memory();
+  m.add(1);
+  Object.assign(m.targets.get("t0")!, { status: "published", remoteId: "remote-9" });
+  let asked = "";
+  const provider: Provider = { network: "fake" as never, publish: async () => ({ id: "x" }), postStats: async (_s, _a, id) => ((asked = id), { likes: 7, views: 120 }) };
+  m.jobs = [{ id: 99, kind: "stats", payload: { targetId: "t0" }, attempts: 0, max_attempts: 6, runAfter: m.now, lockedAt: null, done: false, lastError: null }];
+  await runDue(m, () => provider, "w");
+  assert.equal(asked, "remote-9");
+  assert.deepEqual(m.saved.get("t0"), { likes: 7, views: 120 });
+  assert.ok(m.jobs[0].done);
 });

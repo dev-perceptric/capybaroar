@@ -1,4 +1,4 @@
-import { PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Publishable, type Published } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type PostStats, type Provider, type Publishable, type Published } from "./types";
 
 // Facebook Pages and Instagram (through Facebook login, Instagram professional accounts linked to a Page),
 // and Threads (its own sign-in on threads.net). One Meta app holds all three.
@@ -65,6 +65,79 @@ async function facebookPost(token: string, pageId: string, p: Publishable): Prom
   return { id: r.id, url: `https://www.facebook.com/${r.id}` };
 }
 
+/** A post that was deleted (Meta answers 400 "does not exist") or a stats call this media can't take: no numbers, never a throw. */
+const gone = (e: unknown) => !(e instanceof AuthError) && (e instanceof PostError || (e instanceof Error && /not found|404|does not exist|unsupported get request/i.test(e.message)));
+const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v.trim() && Number.isFinite(Number(v)) ? Number(v) : undefined);
+/** Drop the fields the network didn't give. */
+const clean = (o: PostStats): PostStats => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined && v !== null)) as PostStats;
+type Insights = { data?: { name: string; values?: { value?: unknown }[]; total_value?: { value?: unknown } }[] };
+const metric = (r: Insights, name: string) => {
+  const m = r.data?.find((d) => d.name === name);
+  return m ? num(m.total_value?.value ?? m.values?.[0]?.value) : undefined;
+};
+
+async function facebookStats(token: string, remoteId: string): Promise<PostStats> {
+  // Feed and photo posts come back as "{page}_{post}"; videos and Reels as a bare video id.
+  if (!remoteId.includes("_")) {
+    const v = await call<{ likes?: { summary?: { total_count?: number } }; comments?: { summary?: { total_count?: number } } }>(
+      G(`${remoteId}?${qs({ fields: "likes.summary(true).limit(0),comments.summary(true).limit(0)", access_token: token })}`),
+      {},
+      { what: "Facebook video stats" },
+    );
+    const out: PostStats = { likes: num(v.likes?.summary?.total_count), comments: num(v.comments?.summary?.total_count) };
+    try {
+      // Verify: total_video_views is still offered on video_insights for Reels in the current Graph version.
+      const ins = await call<Insights>(G(`${remoteId}/video_insights?${qs({ metric: "total_video_views,total_video_impressions_unique", access_token: token })}`), {}, { what: "Facebook video insights" });
+      Object.assign(out, { views: metric(ins, "total_video_views"), reach: metric(ins, "total_video_impressions_unique") });
+    } catch (e) {
+      if (e instanceof AuthError) throw e;
+    }
+    return clean(out);
+  }
+  const p = await call<{ reactions?: { summary?: { total_count?: number } }; comments?: { summary?: { total_count?: number } }; shares?: { count?: number } }>(
+    G(`${remoteId}?${qs({ fields: "reactions.summary(true).limit(0),comments.summary(true).limit(0),shares", access_token: token })}`),
+    {},
+    { what: "Facebook post stats" },
+  );
+  const out: PostStats = { likes: num(p.reactions?.summary?.total_count), comments: num(p.comments?.summary?.total_count), shares: num(p.shares?.count) };
+  try {
+    // Verify: Meta keeps retiring post insights metrics; post_impressions_unique may need replacing with a "views" metric.
+    const ins = await call<Insights>(G(`${remoteId}/insights?${qs({ metric: "post_impressions_unique,post_clicks", access_token: token })}`), {}, { what: "Facebook post insights" });
+    Object.assign(out, { reach: metric(ins, "post_impressions_unique"), clicks: metric(ins, "post_clicks") });
+  } catch (e) {
+    if (e instanceof AuthError) throw e;
+  }
+  return clean(out);
+}
+
+async function instagramStats(token: string, mediaId: string): Promise<PostStats> {
+  try {
+    // Verify: Stories reject likes/comments/saved, which lands in the fallback below (fields only).
+    const r = await call<Insights>(G(`${mediaId}/insights?${qs({ metric: "reach,likes,comments,shares,saved,views", access_token: token })}`), {}, { what: "Instagram insights" });
+    return clean({ reach: metric(r, "reach"), likes: metric(r, "likes"), comments: metric(r, "comments"), shares: metric(r, "shares"), saves: metric(r, "saved"), views: metric(r, "views") });
+  } catch (e) {
+    if (!gone(e)) throw e;
+  }
+  const m = await call<{ like_count?: number; comments_count?: number }>(G(`${mediaId}?${qs({ fields: "like_count,comments_count", access_token: token })}`), {}, { what: "Instagram post stats" });
+  return clean({ likes: num(m.like_count), comments: num(m.comments_count) });
+}
+
+async function threadsStats(token: string, mediaId: string): Promise<PostStats> {
+  const r = await call<Insights>(T(`${mediaId}/insights?${qs({ metric: "views,likes,replies,reposts,quotes,shares", access_token: token })}`), {}, { what: "Threads insights" });
+  const parts = [metric(r, "reposts"), metric(r, "quotes"), metric(r, "shares")].filter((v): v is number => v !== undefined);
+  return clean({ views: metric(r, "views"), likes: metric(r, "likes"), comments: metric(r, "replies"), shares: parts.length ? parts.reduce((a, b) => a + b, 0) : undefined });
+}
+
+/** Run a stats call; a post that's gone (or numbers this post can't have) is {}. Bad tokens still throw AuthError. */
+async function stats(run: () => Promise<PostStats>): Promise<PostStats> {
+  try {
+    return await run();
+  } catch (e) {
+    if (gone(e)) return {};
+    throw e;
+  }
+}
+
 const metaConfigured = () => Boolean(appId() && appSecret());
 
 export const facebook: Provider = {
@@ -106,6 +179,7 @@ export const facebook: Provider = {
     return out;
   },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
+  postStats: (s, _pageId, remoteId) => stats(() => facebookStats(s.accessToken, remoteId)),
 };
 
 /** Wait for Meta to finish a media container (videos take a while). */
@@ -191,6 +265,7 @@ export const instagram: Provider = {
     return out;
   },
   followers: async (s, igId) => (await call<{ followers_count?: number }>(G(`${igId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Instagram followers" })).followers_count ?? null,
+  postStats: (s, _igId, remoteId) => stats(() => instagramStats(s.accessToken, remoteId)),
 };
 
 const T = (path: string) => `https://graph.threads.net/v1.0/${path}`;
@@ -269,5 +344,6 @@ export const threads: Provider = {
     const r = await call<{ data?: { total_value?: { value?: number } }[] }>(T(`${userId}/threads_insights?${qs({ metric: "followers_count", access_token: s.accessToken })}`), {}, { what: "Threads followers" });
     return r.data?.[0]?.total_value?.value ?? null;
   },
+  postStats: (s, _userId, remoteId) => stats(() => threadsStats(s.accessToken, remoteId)),
 };
 

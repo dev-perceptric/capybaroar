@@ -68,5 +68,17 @@ export const bluesky: Provider = {
     const r = await call<{ followersCount?: number }>(`${PDS}/app.bsky.actor.getProfile?actor=${encodeURIComponent(did)}`, { headers: { Authorization: `Bearer ${sess.accessJwt}` } }, { what: "Bluesky followers" });
     return r.followersCount ?? null;
   },
+  postStats: async (_s, _did, remoteId) => {
+    // Public AppView: counts are public, no sign-in needed.
+    const r = await call<{ posts?: { likeCount?: number; replyCount?: number; repostCount?: number; quoteCount?: number }[] }>(
+      `https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?uris=${encodeURIComponent(remoteId)}`,
+      {},
+      { what: "Bluesky post stats" },
+    );
+    const p = r.posts?.[0];
+    if (!p) return {};
+    const shares = p.repostCount == null && p.quoteCount == null ? null : (p.repostCount ?? 0) + (p.quoteCount ?? 0);
+    return { likes: p.likeCount ?? null, comments: p.replyCount ?? null, shares };
+  },
 };
 
