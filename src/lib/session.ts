@@ -8,10 +8,11 @@ export type Ctx = { userId: string; email: string; name: string; workspaceId: st
 /** The signed-in user and their workspace. The first visit makes the workspace. */
 export const getCtx = cache(async (): Promise<Ctx> => {
   const sb = await userClient();
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
-  if (!user) redirect("/login");
+  // Checks the sign-in token's signature here (cached public key), with no round trip to Supabase Auth.
+  const { data } = await sb.auth.getClaims();
+  const c = data?.claims;
+  if (!c?.sub) redirect("/login");
+  const user = { id: c.sub, email: (c.email as string) ?? "", user_metadata: (c.user_metadata ?? {}) as Record<string, unknown> };
   const db = adminClient();
   const { data: m } = await db.from("members").select("workspace_id, workspaces(name, timezone)").eq("user_id", user.id).order("created_at").limit(1).maybeSingle();
   const name = (user.user_metadata?.name as string | undefined) || user.email!.split("@")[0];

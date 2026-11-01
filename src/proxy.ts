@@ -16,9 +16,9 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
+  // Verified locally against Supabase's public key; refreshes the session when it has expired.
+  const { data } = await sb.auth.getClaims();
+  const user = data?.claims?.sub ? data.claims : null;
   const path = request.nextUrl.pathname;
   const open = OPEN.some((p) => path === p || path.startsWith(p));
   if (!user && !open) {

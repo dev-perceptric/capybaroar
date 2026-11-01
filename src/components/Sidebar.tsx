@@ -27,7 +27,7 @@ function NavLink({ href, label, icon }: { href: string; label: string; icon: Rea
   const path = usePathname();
   const on = path === href || path.startsWith(`${href}/`);
   return (
-    <Link href={href} aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
+    <Link href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
       <span className={on ? "[&_svg]:stroke-[2.25]" : "text-ink/70 group-hover:text-ink"}>{icon}</span>
       {label}
     </Link>
