@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+
+const noop = () => () => {};
 import Link from "next/link";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Avatar, Badge, Button, Page, Segmented } from "@/components/ui";
@@ -52,6 +54,8 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
     return () => clearInterval(t);
   }, [reload]);
   const [now, setNow] = useState(() => new Date());
+  // Times depend on the viewer's time zone, so the grid draws in the browser only (no server/browser mismatch).
+  const ready = useSyncExternalStore(noop, () => true, () => false);
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(t);
@@ -167,7 +171,7 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
         </div>
 
         <div className="min-h-0 flex-1">
-          {mode === "week" ? (
+          {!ready ? null : mode === "week" ? (
             <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={(at) => setCompose({ at })} onDrop={(id, at) => drop(id, at, false)} />
           ) : mode === "month" ? (
             <Month
