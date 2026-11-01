@@ -1,4 +1,4 @@
-import { PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider } from "./types";
+import { PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Publishable, type Published } from "./types";
 
 // Facebook Pages and Instagram (through Facebook login, Instagram professional accounts linked to a Page),
 // and Threads (its own sign-in on threads.net). One Meta app holds all three.
@@ -38,6 +38,33 @@ async function pages(token: string, fields: string) {
   return out;
 }
 
+async function facebookPost(token: string, pageId: string, p: Publishable): Promise<Published> {
+  const videos = p.media.filter(isVideo);
+  if (p.settings.format === "reel") {
+    // Reels: start, upload by URL to rupload, then finish to publish.
+    const start = await call<{ video_id: string; upload_url: string }>(G(`${pageId}/video_reels`), { method: "POST", body: form({ upload_phase: "start", access_token: token }) }, { what: "Facebook Reel" });
+    await call(start.upload_url, { method: "POST", headers: { Authorization: `OAuth ${token}`, file_url: videos[0].url } }, { what: "Facebook Reel upload" });
+    await call(G(`${pageId}/video_reels`), { method: "POST", body: form({ upload_phase: "finish", video_id: start.video_id, video_state: "PUBLISHED", description: p.text, access_token: token }) }, { what: "Facebook Reel" });
+    return { id: start.video_id, url: `https://www.facebook.com/reel/${start.video_id}` };
+  }
+  if (videos.length) {
+    const r = await call<{ id: string }>(G(`${pageId}/videos`), { method: "POST", body: form({ file_url: videos[0].url, description: p.text, access_token: token }) }, { what: "Facebook video" });
+    return { id: r.id, url: `https://www.facebook.com/${pageId}/videos/${r.id}` };
+  }
+  if (p.media.length === 1) {
+    const r = await call<{ id: string; post_id?: string }>(G(`${pageId}/photos`), { method: "POST", body: form({ url: p.media[0].url, caption: p.text, access_token: token }) }, { what: "Facebook photo" });
+    const id = r.post_id ?? r.id;
+    return { id, url: `https://www.facebook.com/${id}` };
+  }
+  const attached: Record<string, string> = {};
+  for (const [i, m] of p.media.entries()) {
+    const r = await call<{ id: string }>(G(`${pageId}/photos`), { method: "POST", body: form({ url: m.url, published: "false", access_token: token }) }, { what: "Facebook photo" });
+    attached[`attached_media[${i}]`] = JSON.stringify({ media_fbid: r.id });
+  }
+  const r = await call<{ id: string }>(G(`${pageId}/feed`), { method: "POST", body: form({ message: p.text, access_token: token, ...attached }) }, { what: "Facebook post" });
+  return { id: r.id, url: `https://www.facebook.com/${r.id}` };
+}
+
 const metaConfigured = () => Boolean(appId() && appSecret());
 
 export const facebook: Provider = {
@@ -59,26 +86,24 @@ export const facebook: Provider = {
       return list.map((p) => ({ accountId: p.id, name: p.name, username: p.username ?? null, avatar: p.picture?.data?.url ?? null, accessToken: p.access_token }));
     },
   },
+  check: (p) => {
+    const videos = p.media.filter(isVideo);
+    if (p.settings.format === "reel") return videos.length === 1 && p.media.length === 1 ? null : "A Facebook Reel is one video";
+    return videos.length > 1 || (videos.length && p.media.length > 1) ? "Facebook takes one video, or pictures only" : null;
+  },
   publish: async (s, pageId, p) => {
     const token = s.accessToken;
-    const videos = p.media.filter(isVideo);
-    if (videos.length > 1 || (videos.length && p.media.length > 1)) throw new PostError("Facebook takes one video, or pictures only");
-    if (videos.length) {
-      const r = await call<{ id: string }>(G(`${pageId}/videos`), { method: "POST", body: form({ file_url: videos[0].url, description: p.text, access_token: token }) }, { what: "Facebook video" });
-      return { id: r.id, url: `https://www.facebook.com/${pageId}/videos/${r.id}` };
+    const out = await facebookPost(token, pageId, p);
+    // The post is live: from here on, problems go in the note, never a throw (a retry would post twice).
+    const comment = p.settings.first_comment?.trim();
+    if (comment) {
+      try {
+        await call(G(`${out.id}/comments`), { method: "POST", body: form({ message: comment, access_token: token }) }, { what: "Facebook first comment" });
+      } catch (e) {
+        out.note = e instanceof Error ? e.message : String(e);
+      }
     }
-    if (p.media.length === 1) {
-      const r = await call<{ id: string; post_id?: string }>(G(`${pageId}/photos`), { method: "POST", body: form({ url: p.media[0].url, caption: p.text, access_token: token }) }, { what: "Facebook photo" });
-      const id = r.post_id ?? r.id;
-      return { id, url: `https://www.facebook.com/${id}` };
-    }
-    const attached: Record<string, string> = {};
-    for (const [i, m] of p.media.entries()) {
-      const r = await call<{ id: string }>(G(`${pageId}/photos`), { method: "POST", body: form({ url: m.url, published: "false", access_token: token }) }, { what: "Facebook photo" });
-      attached[`attached_media[${i}]`] = JSON.stringify({ media_fbid: r.id });
-    }
-    const r = await call<{ id: string }>(G(`${pageId}/feed`), { method: "POST", body: form({ message: p.text, access_token: token, ...attached }) }, { what: "Facebook post" });
-    return { id: r.id, url: `https://www.facebook.com/${r.id}` };
+    return out;
   },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
 };
@@ -117,16 +142,23 @@ export const instagram: Provider = {
       });
     },
   },
-  check: (p) => (!p.media.length ? "Instagram needs a picture or video" : p.media.length > 10 ? "Instagram takes up to 10 files" : null),
+  check: (p) => {
+    if (!p.media.length) return "Instagram needs a picture or video";
+    if (p.settings.format === "story") return p.media.length === 1 ? null : "An Instagram Story is one picture or video";
+    if (p.settings.format === "reel") return p.media.length === 1 && isVideo(p.media[0]) ? null : "An Instagram Reel is one video";
+    return p.media.length > 10 ? "Instagram takes up to 10 files" : null;
+  },
   publish: async (s, igId, p) => {
     const token = s.accessToken;
     const status = (id: string) => G(`${id}?${qs({ fields: "status_code", access_token: token })}`);
+    const format = p.settings.format || "post";
     const container = async (m: MediaFile, child: boolean) => {
       const body: Record<string, string> = { access_token: token };
-      if (isVideo(m)) Object.assign(body, { media_type: child ? "VIDEO" : "REELS", video_url: m.url });
-      else body.image_url = m.url;
+      if (format === "story") Object.assign(body, { media_type: "STORIES", [isVideo(m) ? "video_url" : "image_url"]: m.url });
+      else if (isVideo(m)) Object.assign(body, { media_type: child ? "VIDEO" : "REELS", video_url: m.url }, !child && p.cover ? { cover_url: p.cover.url } : {});
+      else Object.assign(body, { image_url: m.url }, m.alt ? { alt_text: m.alt } : {});
       if (child) body.is_carousel_item = "true";
-      else body.caption = p.text;
+      else if (format !== "story") body.caption = p.text;
       const r = await call<{ id: string }>(G(`${igId}/media`), { method: "POST", body: form(body) }, { what: "Instagram media" });
       if (isVideo(m)) await ready(status, r.id, "status_code");
       return r.id;
@@ -141,8 +173,22 @@ export const instagram: Provider = {
       creation = r.id;
     }
     const pub = await call<{ id: string }>(G(`${igId}/media_publish`), { method: "POST", body: form({ creation_id: creation, access_token: token }) }, { what: "Instagram publish" });
-    const link = await call<{ permalink?: string }>(G(`${pub.id}?${qs({ fields: "permalink", access_token: token })}`), {}, { what: "Instagram link" }).catch(() => ({ permalink: undefined }));
-    return { id: pub.id, url: link.permalink ?? null };
+    // The post is live: from here on, problems go in the note, never a throw (a retry would post twice).
+    const out: Published = { id: pub.id, url: null };
+    try {
+      out.url = (await call<{ permalink?: string }>(G(`${pub.id}?${qs({ fields: "permalink", access_token: token })}`), {}, { what: "Instagram link" })).permalink ?? null;
+    } catch {
+      // no link, the post is still out
+    }
+    const comment = p.settings.first_comment?.trim();
+    if (comment && format !== "story") {
+      try {
+        await call(G(`${pub.id}/comments`), { method: "POST", body: form({ message: comment, access_token: token }) }, { what: "Instagram first comment" });
+      } catch (e) {
+        out.note = e instanceof Error ? e.message : String(e);
+      }
+    }
+    return out;
   },
   followers: async (s, igId) => (await call<{ followers_count?: number }>(G(`${igId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Instagram followers" })).followers_count ?? null,
 };

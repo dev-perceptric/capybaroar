@@ -4,24 +4,23 @@ import { revalidatePath } from "next/cache";
 import { getCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { saveAccounts } from "@/lib/channels";
-import { blueskyLogin } from "@/lib/providers/bluesky";
+import { providerOf } from "@/lib/providers";
+import type { NetworkId } from "@/lib/networks";
 
-export async function connectBluesky(_: { error?: string }, form: FormData): Promise<{ error?: string; ok?: boolean }> {
+/** Connect a network that uses a form (Bluesky, Telegram, Discord). */
+export async function connectWithForm(network: string, values: Record<string, string>): Promise<{ error?: string }> {
   const ctx = await getCtx();
-  const handle = String(form.get("handle") ?? "").trim().replace(/^@/, "");
-  const password = String(form.get("password") ?? "").trim();
-  if (!handle || !password) return { error: "Enter your handle and app password" };
+  const p = providerOf(network);
+  if (!p?.form?.configured()) return { error: "This network isn't set up" };
+  for (const f of p.form.fields) if (!values[f.key]?.trim()) return { error: `Enter ${f.label.toLowerCase()}` };
   try {
-    const s = await blueskyLogin(handle, password);
-    const prof = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(s.did)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-    await saveAccounts(ctx.workspaceId, "bluesky", [
-      { accountId: s.did, name: prof?.displayName || s.handle, username: s.handle, avatar: prof?.avatar ?? null, accessToken: password, extra: { handle: s.handle } },
-    ]);
+    const accounts = await p.form.connect(Object.fromEntries(p.form.fields.map((f) => [f.key, values[f.key].trim()])));
+    await saveAccounts(ctx.workspaceId, network as NetworkId, accounts);
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
   }
   revalidatePath("/channels");
-  return { ok: true };
+  return {};
 }
 
 export async function removeChannel(id: string) {

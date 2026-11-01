@@ -15,25 +15,47 @@ export type Account = {
 /** The stored tokens for one channel, already decrypted. */
 export type Secret = { accessToken: string; refreshToken: string | null; expiresAt: Date | null; extra: Record<string, unknown> };
 
-export type MediaFile = { url: string; mime: string; size: number; name: string; bytes: () => Promise<Buffer> };
+export type MediaFile = { url: string; mime: string; size: number; name: string; alt?: string | null; bytes: () => Promise<Buffer> };
 
-export type Publishable = { text: string; media: MediaFile[] };
+/**
+ * One post for one channel. `text` is that channel's text (its own edit, or the shared text).
+ * `settings` holds the network's own fields (see NETWORKS[].fields): first_comment, privacy, title, tags, format,
+ * subreddit, board, link... always strings. `cover` is the picture chosen for a video, when the network takes one.
+ */
+export type Publishable = { text: string; media: MediaFile[]; settings: Record<string, string>; cover?: MediaFile | null };
 
-export type Published = { id: string; url?: string | null };
+/** `note` reports something that went wrong after the post was already out (a first comment that failed). */
+export type Published = { id: string; url?: string | null; note?: string | null };
+
+/** Values a person typed before signing in (a Mastodon server) and values kept between the two steps of sign-in. */
+export type OAuthInput = Record<string, string>;
 
 export type Provider = {
   network: NetworkId;
   /** Sign in with the network. Missing for networks connected with a form (Bluesky). */
   oauth?: {
     configured: () => boolean;
-    authUrl: (o: { state: string; redirect: string; verifier: string }) => string;
-    exchange: (o: { code: string; redirect: string; verifier: string }) => Promise<Account[]>;
+    /** Fields asked before sign-in (Mastodon: the server). */
+    asks?: { key: string; label: string; placeholder?: string }[];
+    /** The sign-in address. May return values to keep until exchange (an app registered on the fly). */
+    authUrl: (o: { state: string; redirect: string; verifier: string; input: OAuthInput }) => string | Promise<string | { url: string; keep: OAuthInput }>;
+    exchange: (o: { code: string; redirect: string; verifier: string; input: OAuthInput }) => Promise<Account[]>;
+  };
+  /** Connected with a form instead of sign-in (Bluesky app password, Telegram channel, Discord webhook). */
+  form?: {
+    configured: () => boolean;
+    fields: { key: string; label: string; placeholder?: string; secret?: boolean }[];
+    connect: (values: Record<string, string>) => Promise<Account[]>;
   };
   refresh?: (s: Secret) => Promise<Pick<Account, "accessToken" | "refreshToken" | "expiresAt">>;
   /** Whether these tokens can be refreshed. Defaults to having a refresh token. */
   refreshable?: (s: Secret) => boolean;
   /** Checks before scheduling: returns a reason this post can't go to this network. */
   check?: (p: Publishable) => string | null;
+  /**
+   * Post it. Throw AuthError (reconnect), PostError (the post is wrong, no retry) or Error (retry later).
+   * Never throw after the post is live: report later problems (first comment) in `note`, or the retry posts twice.
+   */
   publish: (s: Secret, accountId: string, p: Publishable) => Promise<Published>;
   followers?: (s: Secret, accountId: string) => Promise<number | null>;
 };

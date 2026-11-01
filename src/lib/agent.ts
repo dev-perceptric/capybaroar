@@ -78,7 +78,7 @@ async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): 
     const out = [];
     for (const p of (input.posts as { channel_ids: string[]; text: string; publish_at: string; mode: "draft" | "schedule" }[]) ?? []) {
       try {
-        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, channelIds: p.channel_ids, mediaIds: [], publishAt: new Date(p.publish_at).toISOString(), mode: p.mode });
+        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds: [], publishAt: new Date(p.publish_at).toISOString(), mode: p.mode });
         out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode: p.mode });
       } catch (e) {
         out.push({ ok: false, error: e instanceof Error ? e.message : String(e) });

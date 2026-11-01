@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type Provider, type Publishable, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // LinkedIn: Sign In with LinkedIn (OpenID) + Share on LinkedIn for people; Community Management API for Pages.
 // Pages use their own app (LinkedIn wants that product alone on its app).
@@ -42,11 +42,36 @@ async function uploadImage(tok: string, owner: string, bytes: Buffer) {
   return init.value.image;
 }
 
-async function post(tok: string, author: string, p: Publishable) {
-  if (p.media.some(isVideo)) throw new PostError("LinkedIn videos aren't supported yet");
-  const images: string[] = [];
-  for (const m of p.media.slice(0, 20)) images.push(await uploadImage(tok, author, await m.bytes()));
-  const content = images.length === 1 ? { media: { id: images[0] } } : images.length > 1 ? { multiImage: { images: images.map((id) => ({ id })) } } : undefined;
+async function uploadVideo(tok: string, owner: string, bytes: Buffer) {
+  const init = await call<{ value: { video: string; uploadToken: string; uploadInstructions: { uploadUrl: string; firstByte: number; lastByte: number }[] } }>(
+    "https://api.linkedin.com/rest/videos?action=initializeUpload",
+    { method: "POST", headers: rest(tok), body: JSON.stringify({ initializeUploadRequest: { owner, fileSizeBytes: bytes.length, uploadCaptions: false, uploadThumbnail: false } }) },
+    { what: "LinkedIn video upload" },
+  );
+  const parts: string[] = [];
+  for (const ins of init.value.uploadInstructions) {
+    const put = await fetch(ins.uploadUrl, { method: "PUT", headers: { "Content-Type": "application/octet-stream" }, body: new Uint8Array(bytes.subarray(ins.firstByte, ins.lastByte + 1)), signal: AbortSignal.timeout(300000) });
+    if (!put.ok) throw new Error(`LinkedIn video upload: ${put.status}`);
+    parts.push(put.headers.get("etag") ?? "");
+  }
+  await call(
+    "https://api.linkedin.com/rest/videos?action=finalizeUpload",
+    { method: "POST", headers: rest(tok), body: JSON.stringify({ finalizeUploadRequest: { video: init.value.video, uploadToken: init.value.uploadToken, uploadedPartIds: parts } }) },
+    { what: "LinkedIn video upload" },
+  );
+  return init.value.video;
+}
+
+async function post(tok: string, author: string, p: Publishable): Promise<Published> {
+  const videos = p.media.filter(isVideo);
+  if (videos.length > 1 || (videos.length && p.media.length > 1)) throw new PostError("LinkedIn takes one video, or pictures only");
+  let content: Record<string, unknown> | undefined;
+  if (videos.length) content = { media: { id: await uploadVideo(tok, author, await videos[0].bytes()) } };
+  else if (p.media.length) {
+    const images: { id: string; altText?: string }[] = [];
+    for (const m of p.media.slice(0, 20)) images.push({ id: await uploadImage(tok, author, await m.bytes()), ...(m.alt ? { altText: m.alt.slice(0, 4086) } : {}) });
+    content = images.length === 1 ? { media: images[0] } : { multiImage: { images } };
+  }
   const res = await fetch("https://api.linkedin.com/rest/posts", {
     method: "POST",
     headers: rest(tok),
@@ -68,7 +93,21 @@ async function post(tok: string, author: string, p: Publishable) {
     throw new Error(msg);
   }
   const id = res.headers.get("x-restli-id") ?? "";
-  return { id, url: id ? `https://www.linkedin.com/feed/update/${id}/` : null };
+  const out: Published = { id, url: id ? `https://www.linkedin.com/feed/update/${id}/` : null };
+  // The post is live: from here on, problems go in the note, never a throw (a retry would post twice).
+  const comment = p.settings.first_comment?.trim();
+  if (comment && id) {
+    try {
+      await call(
+        `https://api.linkedin.com/rest/socialActions/${encodeURIComponent(id)}/comments`,
+        { method: "POST", headers: rest(tok), body: JSON.stringify({ actor: author, object: id, message: { text: comment } }) },
+        { what: "LinkedIn first comment" },
+      );
+    } catch (e) {
+      out.note = e instanceof Error ? e.message : String(e);
+    }
+  }
+  return out;
 }
 
 const personId = () => process.env.LINKEDIN_CLIENT_ID ?? "";
@@ -98,7 +137,7 @@ export const linkedin: Provider = {
     },
   },
   refresh: (s) => refreshWith(s, personId(), personSecret()),
-  check: (p) => (p.media.some(isVideo) ? "LinkedIn videos aren't supported yet" : null),
+  check: (p) => (p.media.filter(isVideo).length && p.media.length > 1 ? "LinkedIn takes one video, or pictures only" : null),
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:person:${accountId}`, p),
 };
 
@@ -139,7 +178,7 @@ export const linkedinPage: Provider = {
     },
   },
   refresh: (s) => refreshWith(s, pageId(), pageSecret()),
-  check: (p) => (p.media.some(isVideo) ? "LinkedIn videos aren't supported yet" : null),
+  check: (p) => (p.media.filter(isVideo).length && p.media.length > 1 ? "LinkedIn takes one video, or pictures only" : null),
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:organization:${accountId}`, p),
   followers: async (s, accountId) => {
     const r = await call<{ firstDegreeSize?: number }>(

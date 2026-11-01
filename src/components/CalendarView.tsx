@@ -3,14 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { CalendarDays, ChevronLeft, ChevronRight, Layers, Plus } from "lucide-react";
-import { Button, IconButton, Page, Segmented } from "@/components/ui";
+import { Badge, Button, IconButton, Page, Segmented } from "@/components/ui";
 import { Composer } from "@/components/Composer";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { loadPosts } from "@/app/(app)/calendar/actions";
+import { loadPosts, move } from "@/app/(app)/calendar/actions";
+import { tell } from "@/components/Dialogs";
 
-type Mode = "week" | "month";
+type Mode = "week" | "month" | "list";
 
 const DAY = 86400000;
 const HOURS = Array.from({ length: 24 }, (_, h) => h);
@@ -33,6 +34,10 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
   const [channel, setChannel] = useState<string>("all");
   const [posts, setPosts] = useState<PostRow[]>([]);
   const range = useMemo(() => {
+    if (mode === "list") {
+      const from = startOfDay(anchor);
+      return { from, to: new Date(from.getTime() + 28 * DAY) };
+    }
     const from = mode === "week" ? startOfWeek(anchor) : startOfWeek(new Date(anchor.getFullYear(), anchor.getMonth(), 1));
     return { from, to: new Date(from.getTime() + (mode === "week" ? 7 : 42) * DAY) };
   }, [mode, anchor]);
@@ -47,6 +52,20 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
   const shown = channel === "all" ? posts : posts.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
   const byId = useMemo(() => new Map(channels.map((c) => [c.id, c])), [channels]);
   const chip = (p: PostRow) => <PostChip key={p.id} post={p} byId={byId} onOpen={() => setCompose({ post: p })} />;
+  // Drag a draft or scheduled post to another slot. Month keeps its time of day.
+  const drop = async (postId: string, at: Date, keepTime: boolean) => {
+    const p = posts.find((x) => x.id === postId);
+    if (!p) return;
+    const to = new Date(at);
+    if (keepTime && p.publish_at) {
+      const old = new Date(p.publish_at);
+      to.setHours(old.getHours(), old.getMinutes(), 0, 0);
+    }
+    setPosts((all) => all.map((x) => (x.id === postId ? { ...x, publish_at: to.toISOString() } : x)));
+    const r = await move(postId, to.toISOString());
+    if (r.error) await tell("Couldn't move the post", r.error);
+    reload();
+  };
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60000);
@@ -54,10 +73,11 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
   }, []);
 
   const step = (dir: -1 | 1) =>
-    setAnchor((a) => (mode === "week" ? new Date(a.getTime() + dir * 7 * DAY) : new Date(a.getFullYear(), a.getMonth() + dir, 1)));
+    setAnchor((a) => (mode === "month" ? new Date(a.getFullYear(), a.getMonth() + dir, 1) : new Date(a.getTime() + dir * (mode === "list" ? 28 : 7) * DAY)));
 
   const title = useMemo(() => {
     if (mode === "month") return anchor.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    if (mode === "list") return `From ${anchor.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
     const s = startOfWeek(anchor);
     const e = new Date(s.getTime() + 6 * DAY);
     const sm = s.toLocaleDateString("en-US", { month: "short" });
@@ -94,6 +114,7 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
             options={[
               { value: "week", label: "Week" },
               { value: "month", label: "Month" },
+              { value: "list", label: "List" },
             ]}
           />
         </>
@@ -115,7 +136,13 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
           ) : null}
         </aside>
         <div className="min-w-0 flex-1">
-          {mode === "week" ? <Week anchor={anchor} now={now} posts={shown} chip={chip} onPick={(at) => setCompose({ at })} /> : <Month anchor={anchor} now={now} posts={shown} chip={chip} onPick={(at) => setCompose({ at })} />}
+          {mode === "week" ? (
+            <Week anchor={anchor} now={now} posts={shown} chip={chip} onPick={(at) => setCompose({ at })} onDrop={(id, at) => drop(id, at, false)} />
+          ) : mode === "month" ? (
+            <Month anchor={anchor} now={now} posts={shown} chip={chip} onPick={(at) => setCompose({ at })} onDrop={(id, at) => drop(id, at, true)} />
+          ) : (
+            <List posts={shown} byId={byId} onOpen={(p) => setCompose({ post: p })} />
+          )}
         </div>
       </div>
       {compose ? (
@@ -149,7 +176,7 @@ function ChannelItem({ on, onClick, icon, label }: { on: boolean; onClick: () =>
   );
 }
 
-function Week({ anchor, now, posts, chip, onPick }: { anchor: Date; now: Date; posts: PostRow[]; chip: (p: PostRow) => React.ReactNode; onPick: (at: Date) => void }) {
+function Week({ anchor, now, posts, chip, onPick, onDrop }: { anchor: Date; now: Date; posts: PostRow[]; chip: (p: PostRow) => React.ReactNode; onPick: (at: Date) => void; onDrop: (postId: string, at: Date) => void }) {
   const days = Array.from({ length: 7 }, (_, i) => new Date(startOfWeek(anchor).getTime() + i * DAY));
   const eight = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -178,7 +205,7 @@ function Week({ anchor, now, posts, chip, onPick }: { anchor: Date; now: Date; p
             const nowHere = sameDay(d, now) && now.getHours() === h;
             const here = posts.filter((p) => p.publish_at && hourOf(p.publish_at, at));
             return (
-              <div key={at.toISOString()} className="relative h-14 border-b border-l border-line-light">
+              <div key={at.toISOString()} className="relative h-14 border-b border-l border-line-light" {...dropTarget(past, () => at, onDrop)}>
               <button
                 type="button"
                 disabled={past}
@@ -203,7 +230,7 @@ function Week({ anchor, now, posts, chip, onPick }: { anchor: Date; now: Date; p
   );
 }
 
-function Month({ anchor, now, posts, chip, onPick }: { anchor: Date; now: Date; posts: PostRow[]; chip: (p: PostRow) => React.ReactNode; onPick: (at: Date) => void }) {
+function Month({ anchor, now, posts, chip, onPick, onDrop }: { anchor: Date; now: Date; posts: PostRow[]; chip: (p: PostRow) => React.ReactNode; onPick: (at: Date) => void; onDrop: (postId: string, at: Date) => void }) {
   const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
   const start = startOfWeek(first);
   const days = Array.from({ length: 42 }, (_, i) => new Date(start.getTime() + i * DAY));
@@ -220,7 +247,7 @@ function Month({ anchor, now, posts, chip, onPick }: { anchor: Date; now: Date; 
         const past = startOfDay(d).getTime() < startOfDay(now).getTime();
         const here = posts.filter((p) => p.publish_at && sameDay(new Date(p.publish_at), d));
         return (
-          <div key={d.toISOString()} className="relative flex h-28 flex-col items-start gap-0.5 border-b border-l border-line-light p-1.5 [&:nth-child(7n+1)]:border-l-0">
+          <div key={d.toISOString()} className="relative flex h-28 flex-col items-start gap-0.5 border-b border-l border-line-light p-1.5 [&:nth-child(7n+1)]:border-l-0" {...dropTarget(past, () => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9), onDrop)}>
             <button
               type="button"
               disabled={past}
@@ -253,12 +280,82 @@ function PostChip({ post, byId, onOpen }: { post: PostRow; byId: Map<string, Cha
   const nets = [...new Set(post.post_targets.map((t) => byId.get(t.channel_id)?.network).filter(Boolean))] as Channel["network"][];
   const time = post.publish_at ? new Date(post.publish_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
   return (
-    <button type="button" onClick={onOpen} title={`${post.status}: ${post.text}`} className={`flex h-6 w-full min-w-0 items-center gap-1 border px-1 text-left text-[11px] ${STATUS[post.status]}`}>
+    <button
+      type="button"
+      onClick={onOpen}
+      title={`${post.status}: ${post.text}`}
+      draggable={MOVABLE.includes(post.status)}
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/x-post", post.id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
+      className={`flex h-6 w-full min-w-0 items-center gap-1 border px-1 text-left text-[11px] ${MOVABLE.includes(post.status) ? "cursor-grab active:cursor-grabbing" : ""} ${STATUS[post.status]}`}
+    >
       {nets.slice(0, 3).map((n) => (
         <NetworkLogo key={n} id={n} size={11} />
       ))}
       <span className="shrink-0 font-medium tabular-nums">{time}</span>
       <span className="min-w-0 truncate">{post.text}</span>
     </button>
+  );
+}
+
+const MOVABLE: PostRow["status"][] = ["draft", "scheduled", "failed"];
+
+/** Props that make a calendar cell accept a dragged post. Past cells don't. */
+function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: Date) => void) {
+  if (past) return {};
+  return {
+    onDragOver: (e: React.DragEvent) => {
+      if (e.dataTransfer.types.includes("text/x-post")) {
+        e.preventDefault();
+        e.currentTarget.classList.add("bg-yolk-soft");
+      }
+    },
+    onDragLeave: (e: React.DragEvent) => e.currentTarget.classList.remove("bg-yolk-soft"),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      e.currentTarget.classList.remove("bg-yolk-soft");
+      const id = e.dataTransfer.getData("text/x-post");
+      if (id) onDrop(id, at());
+    },
+  };
+}
+
+const LABEL: Record<PostRow["status"], string> = { draft: "Draft", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed" };
+const TONE: Record<PostRow["status"], "gray" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red" };
+
+function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void }) {
+  if (!posts.length) return <p className="px-6 py-12 text-center text-[13px] text-muted">No posts in these 4 weeks</p>;
+  const days = new Map<string, PostRow[]>();
+  for (const p of posts) {
+    const k = new Date(p.publish_at!).toDateString();
+    days.set(k, [...(days.get(k) ?? []), p]);
+  }
+  return (
+    <div className="mx-auto w-full max-w-[880px] p-4 md:p-6">
+      {[...days.entries()].map(([day, list]) => (
+        <section key={day} className="mb-6">
+          <p className="label-mono mb-2">
+            <span className="bracket">{new Date(day).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span>
+          </p>
+          <div className="border border-frame">
+            {list.map((p) => (
+              <button key={p.id} type="button" onClick={() => onOpen(p)} className="flex w-full items-center gap-3 border-b border-line px-3 py-2.5 text-left last:border-b-0 hover:bg-hover">
+                <span className="w-16 shrink-0 text-[12px] font-medium tabular-nums">{new Date(p.publish_at!).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</span>
+                <span className="flex shrink-0 gap-0.5">
+                  {p.post_targets.map((t) => {
+                    const c = byId.get(t.channel_id);
+                    return c ? <NetworkLogo key={t.id} id={c.network} size={14} /> : null;
+                  })}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[13px]">{p.text || p.post_targets.find((t) => t.text)?.text || "No text"}</span>
+                <Badge tone={TONE[p.status]}>{LABEL[p.status]}</Badge>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }

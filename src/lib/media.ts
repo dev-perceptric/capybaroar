@@ -2,7 +2,7 @@ import "server-only";
 import { adminClient } from "./supabase/server";
 import type { MediaFile } from "./providers/types";
 
-export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; created_at: string };
+export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string };
 
 const BUCKET = "media";
 export const MAX_BYTES = 250 * 1024 * 1024;
@@ -10,7 +10,7 @@ export const ALLOWED = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime))$/;
 
 export async function listMedia(workspaceId: string): Promise<(MediaRow & { thumb: string | null })[]> {
   const db = adminClient();
-  const { data, error } = await db.from("media").select("id, path, name, mime, size, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(200);
+  const { data, error } = await db.from("media").select("id, path, name, mime, size, alt, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(200);
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as MediaRow[];
   if (!rows.length) return [];
@@ -51,7 +51,7 @@ export async function deleteMedia(workspaceId: string, id: string) {
 export async function mediaFiles(workspaceId: string, ids: string[]): Promise<MediaFile[]> {
   if (!ids.length) return [];
   const db = adminClient();
-  const { data, error } = await db.from("media").select("id, path, name, mime, size").eq("workspace_id", workspaceId).in("id", ids);
+  const { data, error } = await db.from("media").select("id, path, name, mime, size, alt").eq("workspace_id", workspaceId).in("id", ids);
   if (error) throw new Error(error.message);
   const byId = new Map((data ?? []).map((r) => [r.id as string, r as MediaRow]));
   const out: MediaFile[] = [];
@@ -65,6 +65,7 @@ export async function mediaFiles(workspaceId: string, ids: string[]): Promise<Me
       mime: r.mime,
       size: Number(r.size),
       name: r.name,
+      alt: r.alt,
       bytes: async () => {
         const { data: blob, error: e3 } = await db.storage.from(BUCKET).download(r.path);
         if (e3 || !blob) throw new Error(e3?.message ?? "Couldn't read a file");
@@ -76,8 +77,13 @@ export async function mediaFiles(workspaceId: string, ids: string[]): Promise<Me
 }
 
 /** Size and type only, for checks before scheduling (no download). */
-export async function mediaInfo(workspaceId: string, ids: string[]): Promise<MediaFile[]> {
+export async function mediaInfo(workspaceId: string, ids: string[]): Promise<(MediaFile & { id: string })[]> {
   if (!ids.length) return [];
-  const { data } = await adminClient().from("media").select("id, name, mime, size").eq("workspace_id", workspaceId).in("id", ids);
-  return (data ?? []).map((r) => ({ url: "", mime: r.mime as string, size: Number(r.size), name: r.name as string, bytes: async () => Buffer.alloc(0) }));
+  const { data } = await adminClient().from("media").select("id, name, mime, size, alt").eq("workspace_id", workspaceId).in("id", ids);
+  return (data ?? []).map((r) => ({ id: r.id as string, url: "", mime: r.mime as string, size: Number(r.size), name: r.name as string, alt: r.alt as string | null, bytes: async () => Buffer.alloc(0) }));
+}
+
+export async function setAlt(workspaceId: string, id: string, alt: string) {
+  const { error } = await adminClient().from("media").update({ alt: alt.trim() || null }).eq("id", id).eq("workspace_id", workspaceId);
+  if (error) throw new Error(error.message);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw, Trash2 } from "lucide-react";
 import { Avatar, Badge, Button, Field, IconButton, Input } from "./ui";
@@ -9,16 +9,18 @@ import { NetworkLogo } from "./NetworkLogo";
 import { askConfirm } from "./Dialogs";
 import { NETWORKS, networkOf, type NetworkId } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
-import { connectBluesky, removeChannel } from "@/app/(app)/channels/actions";
+import { connectWithForm, removeChannel } from "@/app/(app)/channels/actions";
+
+export type Ask = { kind: "form" | "oauth"; fields: { key: string; label: string; placeholder?: string; secret?: boolean }[] } | null;
 
 const connectHref = (n: NetworkId) => `/api/channels/${n}/connect`;
 
-export function ChannelsView({ channels, ready, error }: { channels: Channel[]; ready: NetworkId[]; error: string | null }) {
-  const [bsky, setBsky] = useState(false);
+export function ChannelsView({ channels, ready, asks, error }: { channels: Channel[]; ready: NetworkId[]; asks: Record<string, Ask>; error: string | null }) {
+  const [asking, setAsking] = useState<NetworkId | null>(null);
   const [, start] = useTransition();
   const router = useRouter();
   const connect = (n: NetworkId) => {
-    if (n === "bluesky") setBsky(true);
+    if (asks[n]) setAsking(n);
     else window.location.assign(connectHref(n));
   };
   const del = async (c: Channel) => {
@@ -98,28 +100,45 @@ export function ChannelsView({ channels, ready, error }: { channels: Channel[]; 
           );
         })}
       </div>
-      {bsky ? <BlueskyDialog onClose={() => setBsky(false)} onDone={() => (setBsky(false), router.refresh())} /> : null}
+      {asking && asks[asking] ? (
+        <AskDialog
+          network={asking}
+          ask={asks[asking]!}
+          onClose={() => setAsking(null)}
+          onDone={() => {
+            setAsking(null);
+            router.refresh();
+          }}
+        />
+      ) : null}
     </div>
   );
 }
 
-function BlueskyDialog({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
-  const [state, action, busy] = useActionState(async (prev: { error?: string; ok?: boolean }, form: FormData) => {
-    const r = await connectBluesky(prev, form);
-    if (r.ok) onDone();
-    return r;
-  }, {});
+function AskDialog({ network, ask, onClose, onDone }: { network: NetworkId; ask: NonNullable<Ask>; onClose: () => void; onDone: () => void }) {
+  const [error, setError] = useState("");
+  const [busy, start] = useTransition();
+  const submit = (form: FormData) => {
+    const values = Object.fromEntries(ask.fields.map((f) => [f.key, String(form.get(f.key) ?? "").trim()]));
+    if (ask.kind === "oauth") {
+      window.location.assign(`${connectHref(network)}?${new URLSearchParams(values)}`);
+      return;
+    }
+    start(async () => {
+      const r = await connectWithForm(network, values);
+      if (r.error) setError(r.error);
+      else onDone();
+    });
+  };
   return (
-    <Modal title="Connect Bluesky" onClose={onClose}>
-      <form action={action} className="flex flex-col gap-3">
-        <Field label="Handle">
-          <Input name="handle" placeholder="you.bsky.social" autoComplete="username" required />
-        </Field>
-        <Field label="App password">
-          <Input name="password" type="password" placeholder="xxxx-xxxx-xxxx-xxxx" required />
-        </Field>
-        <p className="text-[12px] text-muted">Make one in Bluesky under Settings, Privacy and security, App passwords.</p>
-        {state.error ? <p className="text-[12px] text-danger">{state.error}</p> : null}
+    <Modal title={`Connect ${networkOf(network).name}`} onClose={onClose}>
+      <form action={submit} className="flex flex-col gap-3">
+        {ask.fields.map((f) => (
+          <Field key={f.key} label={f.label}>
+            <Input name={f.key} type={f.secret ? "password" : "text"} placeholder={f.placeholder} required autoComplete="off" />
+          </Field>
+        ))}
+        {error ? <p className="text-[12px] text-danger">{error}</p> : null}
         <div className="flex justify-end">
           <Button type="submit" disabled={busy}>
             Connect

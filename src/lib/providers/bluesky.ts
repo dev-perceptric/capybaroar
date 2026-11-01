@@ -30,6 +30,21 @@ function linkFacets(text: string) {
 
 export const bluesky: Provider = {
   network: "bluesky",
+  form: {
+    configured: () => true,
+    fields: [
+      { key: "handle", label: "Handle", placeholder: "you.bsky.social" },
+      { key: "password", label: "App password", placeholder: "xxxx-xxxx-xxxx-xxxx", secret: true },
+    ],
+    connect: async (v) => {
+      const handle = v.handle.replace(/^@/, "");
+      const s = await blueskyLogin(handle, v.password);
+      const prof = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(s.did)}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+      return [{ accountId: s.did, name: prof?.displayName || s.handle, username: s.handle, avatar: prof?.avatar ?? null, accessToken: v.password, extra: { handle: s.handle } }];
+    },
+  },
   check: (p) =>
     [...p.text].length > 300 ? "Bluesky posts are up to 300 characters" : p.media.some(isVideo) ? "Bluesky videos aren't supported yet" : p.media.length > 4 ? "Bluesky takes up to 4 pictures" : p.media.some((m) => m.size > 1_000_000) ? "Bluesky pictures must be under 1 MB" : null,
   publish: async (s, did, p) => {
@@ -38,7 +53,7 @@ export const bluesky: Provider = {
     const images = [];
     for (const m of p.media) {
       const r = await call<{ blob: unknown }>(`${PDS}/com.atproto.repo.uploadBlob`, { method: "POST", headers: { ...auth, "Content-Type": m.mime }, body: new Uint8Array(await m.bytes()) }, { what: "Bluesky upload" });
-      images.push({ alt: "", image: r.blob });
+      images.push({ alt: m.alt ?? "", image: r.blob });
     }
     const record: Record<string, unknown> = { $type: "app.bsky.feed.post", text: p.text, createdAt: new Date().toISOString() };
     const facets = linkFacets(p.text);

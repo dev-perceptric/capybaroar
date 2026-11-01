@@ -5,14 +5,100 @@ import { readSecret, writeSecret } from "./channels";
 import { mediaFiles } from "./media";
 import { settlePost } from "./posts";
 import { providerOf } from "./providers";
-import { AuthError, PostError, type Secret } from "./providers/types";
+import { AuthError, type Provider, type Secret } from "./providers/types";
+import { runDue, type Job, type Store, type TargetCtx } from "./publisher";
+import { sendAlert } from "./alerts";
 
-// The publisher. Runs inside the web server: every 15 seconds it claims due jobs (row locks, so two servers never
-// take the same one), and once an hour it refreshes tokens that expire soon and records follower counts.
+// Runs inside the web server: every 15 seconds it publishes due posts, and once an hour it refreshes tokens that
+// expire soon and records follower counts.
 const WORKER = `${hostname()}:${process.pid}`;
-const BACKOFF_MIN = [1, 5, 15, 60, 240];
 
-type Job = { id: number; kind: string; payload: Record<string, string>; attempts: number; max_attempts: number };
+const canRefresh = (p: Provider, s: Secret) => (p.refreshable ? p.refreshable(s) : Boolean(s.refreshToken));
+
+type Row = {
+  id: string;
+  status: string;
+  remote_id: string | null;
+  post_id: string;
+  workspace_id: string;
+  channel_id: string;
+  text: string | null;
+  settings: Record<string, string> | null;
+  posts: { text: string; media_ids: string[] };
+  channels: { network: string; account_id: string; name: string; status: string };
+};
+
+export const supabaseStore: Store = {
+  async claim(worker, n) {
+    const { data, error } = await adminClient().rpc("claim_jobs", { worker, n });
+    if (error) throw new Error(error.message);
+    return (data ?? []) as Job[];
+  },
+  async jobDone(id, error) {
+    await adminClient().from("jobs").update({ done_at: new Date().toISOString(), locked_at: null, last_error: error }).eq("id", id);
+  },
+  async jobRetry(id, runAfter, error) {
+    await adminClient().from("jobs").update({ run_after: runAfter.toISOString(), locked_at: null, last_error: error }).eq("id", id);
+  },
+  async target(id) {
+    const { data } = await adminClient()
+      .from("post_targets")
+      .select("id, status, remote_id, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids), channels(network, account_id, name, status)")
+      .eq("id", id)
+      .maybeSingle();
+    if (!data) return null;
+    const r = data as unknown as Row;
+    return {
+      id: r.id,
+      status: r.status,
+      remoteId: r.remote_id,
+      postId: r.post_id,
+      workspaceId: r.workspace_id,
+      channelId: r.channel_id,
+      channelName: r.channels.name,
+      channelStatus: r.channels.status,
+      network: r.channels.network,
+      accountId: r.channels.account_id,
+      text: r.text ?? r.posts.text,
+      settings: r.settings ?? {},
+      mediaIds: r.posts.media_ids ?? [],
+    };
+  },
+  async publishing(t) {
+    const db = adminClient();
+    await db.from("posts").update({ status: "publishing" }).eq("id", t.postId).eq("status", "scheduled");
+    await db.from("post_targets").update({ status: "publishing", error: null }).eq("id", t.id);
+  },
+  async published(t, out) {
+    const { error } = await adminClient()
+      .from("post_targets")
+      .update({ status: "published", remote_id: out.id, url: out.url ?? null, note: out.note ?? null, error: null, published_at: new Date().toISOString() })
+      .eq("id", t.id);
+    if (error) throw new Error(error.message);
+  },
+  async retrying(targetId, error) {
+    await adminClient().from("post_targets").update({ status: "pending", error }).eq("id", targetId).neq("status", "published");
+  },
+  async failed(targetId, error) {
+    const { data } = await adminClient().from("post_targets").update({ status: "failed", error }).eq("id", targetId).neq("status", "published").select("id").maybeSingle();
+    return data ? supabaseStore.target(targetId) : null;
+  },
+  async reconnect(channelId) {
+    await adminClient().from("channels").update({ status: "reconnect" }).eq("id", channelId);
+  },
+  settle: settlePost,
+  async secret(channelId, p) {
+    const s = await readSecret(channelId);
+    if (p.refresh && canRefresh(p, s) && s.expiresAt && s.expiresAt.getTime() < Date.now() + 5 * 60000) {
+      const next = await p.refresh(s);
+      await writeSecret(channelId, next);
+      return { ...s, accessToken: next.accessToken, refreshToken: next.refreshToken ?? null, expiresAt: next.expiresAt ?? null };
+    }
+    return s;
+  },
+  media: mediaFiles,
+  alert: (kind: "post_failed" | "reconnect", t: TargetCtx, error: string) => sendAlert(kind, t, error),
+};
 
 let started = false;
 export function startRunner() {
@@ -23,7 +109,7 @@ export function startRunner() {
     if (busy) return;
     busy = true;
     try {
-      await runDue();
+      await runDue(supabaseStore, providerOf, WORKER);
     } catch (e) {
       console.error("runner:", e);
     } finally {
@@ -38,85 +124,10 @@ export function startRunner() {
   console.log(`runner started on ${WORKER}`);
 }
 
-export async function runDue() {
-  const db = adminClient();
-  const { data, error } = await db.rpc("claim_jobs", { worker: WORKER, n: 5 });
-  if (error) throw new Error(error.message);
-  for (const job of (data ?? []) as Job[]) {
-    try {
-      if (job.kind === "publish") await publishTarget(job.payload.targetId);
-      await db.from("jobs").update({ done_at: new Date().toISOString(), locked_at: null, last_error: null }).eq("id", job.id);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      const final = e instanceof AuthError || e instanceof PostError || job.attempts >= job.max_attempts;
-      if (final) {
-        await db.from("jobs").update({ done_at: new Date().toISOString(), locked_at: null, last_error: msg }).eq("id", job.id);
-        if (job.kind === "publish") await failTarget(job.payload.targetId, msg);
-      } else {
-        const wait = BACKOFF_MIN[Math.min(job.attempts - 1, BACKOFF_MIN.length - 1)] * 60000;
-        await db.from("jobs").update({ run_after: new Date(Date.now() + wait).toISOString(), locked_at: null, last_error: msg }).eq("id", job.id);
-        await db.from("post_targets").update({ status: "pending", error: `${msg} (retrying)` }).eq("id", job.payload.targetId);
-      }
-    }
-  }
-}
-
-const canRefresh = (p: NonNullable<ReturnType<typeof providerOf>>, s: Secret) => (p.refreshable ? p.refreshable(s) : Boolean(s.refreshToken));
-
-async function freshSecret(channelId: string, network: string): Promise<Secret> {
-  const s = await readSecret(channelId);
-  const p = providerOf(network);
-  if (p?.refresh && canRefresh(p, s) && s.expiresAt && s.expiresAt.getTime() < Date.now() + 5 * 60000) {
-    const next = await p.refresh(s);
-    await writeSecret(channelId, next);
-    return { ...s, accessToken: next.accessToken, refreshToken: next.refreshToken ?? null, expiresAt: next.expiresAt ?? null };
-  }
-  return s;
-}
-
-async function publishTarget(targetId: string) {
-  const db = adminClient();
-  const { data: t } = await db
-    .from("post_targets")
-    .select("id, status, remote_id, post_id, channel_id, posts(text, media_ids, workspace_id), channels(network, account_id, name, status)")
-    .eq("id", targetId)
-    .maybeSingle();
-  if (!t) return;
-  // Already out (a retry after the post went through): never post twice.
-  if (t.status === "published" || t.remote_id) {
-    await db.from("post_targets").update({ status: "published" }).eq("id", t.id);
-    await settlePost(t.post_id);
-    return;
-  }
-  const post = t.posts as unknown as { text: string; media_ids: string[]; workspace_id: string };
-  const ch = t.channels as unknown as { network: string; account_id: string; name: string; status: string };
-  if (ch.status === "reconnect") throw new AuthError(`Reconnect ${ch.name}`);
-  const p = providerOf(ch.network);
-  if (!p) throw new PostError(`${ch.network} isn't supported yet`);
-  await db.from("posts").update({ status: "publishing" }).eq("id", t.post_id).eq("status", "scheduled");
-  await db.from("post_targets").update({ status: "publishing", error: null }).eq("id", t.id);
-  try {
-    const secret = await freshSecret(t.channel_id, ch.network);
-    const media = await mediaFiles(post.workspace_id, post.media_ids ?? []);
-    const out = await p.publish(secret, ch.account_id, { text: post.text, media });
-    await db.from("post_targets").update({ status: "published", remote_id: out.id, url: out.url ?? null, error: null, published_at: new Date().toISOString() }).eq("id", t.id);
-  } catch (e) {
-    if (e instanceof AuthError) await db.from("channels").update({ status: "reconnect" }).eq("id", t.channel_id);
-    throw e;
-  }
-  await settlePost(t.post_id);
-}
-
-async function failTarget(targetId: string, msg: string) {
-  const db = adminClient();
-  const { data } = await db.from("post_targets").update({ status: "failed", error: msg }).eq("id", targetId).neq("status", "published").select("post_id").maybeSingle();
-  if (data) await settlePost(data.post_id);
-}
-
 /** Hourly: refresh tokens that expire within a week, and record today's follower counts. */
 export async function upkeep() {
   const db = adminClient();
-  const { data: chans } = await db.from("channels").select("id, workspace_id, network, account_id, status").eq("status", "active");
+  const { data: chans } = await db.from("channels").select("id, workspace_id, network, account_id, name, status").eq("status", "active");
   const today = new Date().toISOString().slice(0, 10);
   const { data: done } = await db.from("metrics").select("channel_id").eq("day", today);
   const counted = new Set((done ?? []).map((r) => r.channel_id));
@@ -131,7 +142,10 @@ export async function upkeep() {
         if (followers != null) await db.from("metrics").upsert({ channel_id: c.id, workspace_id: c.workspace_id, day: today, followers });
       }
     } catch (e) {
-      if (e instanceof AuthError) await db.from("channels").update({ status: "reconnect" }).eq("id", c.id);
+      if (e instanceof AuthError) {
+        await db.from("channels").update({ status: "reconnect" }).eq("id", c.id);
+        await sendAlert("reconnect", { channelId: c.id, workspaceId: c.workspace_id, channelName: c.name, network: c.network } as TargetCtx, e.message);
+      }
       console.error(`upkeep ${c.network}:`, e instanceof Error ? e.message : e);
     }
   }

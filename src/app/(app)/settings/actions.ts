@@ -20,3 +20,13 @@ export async function saveWorkspace(name: string, timezone: string): Promise<{ e
   revalidatePath("/", "layout");
   return {};
 }
+
+export async function saveQueue(slots: { day: number; time: string }[]): Promise<{ error?: string }> {
+  const ctx = await getCtx();
+  const clean = slots.filter((s) => Number.isInteger(s.day) && s.day >= 0 && s.day <= 6 && /^([01]\d|2[0-3]):[0-5]\d$/.test(s.time));
+  if (clean.length !== slots.length) return { error: "Each slot needs a day and a time" };
+  const unique = [...new Map(clean.map((s) => [`${s.day} ${s.time}`, s])).values()].sort((a, b) => a.day - b.day || a.time.localeCompare(b.time));
+  const { error } = await adminClient().from("workspaces").update({ queue: unique }).eq("id", ctx.workspaceId);
+  if (error) return { error: error.message };
+  return {};
+}

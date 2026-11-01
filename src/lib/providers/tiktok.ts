@@ -1,7 +1,7 @@
 import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type Provider } from "./types";
 
 // TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server.
-// Until TikTok audits the app, posts must be private (SELF_ONLY). Set TIKTOK_PUBLIC=1 after the audit.
+// Who can watch is the person's choice (TikTok requires it); until TikTok audits the app only "Only me" is offered.
 const API = "https://open.tiktokapis.com/v2";
 const key = () => process.env.TIKTOK_CLIENT_ID ?? "";
 const secret = () => process.env.TIKTOK_CLIENT_SECRET ?? "";
@@ -64,8 +64,9 @@ export const tiktok: Provider = {
     const token = s.accessToken;
     const video = p.media[0];
     const creator = await tt<{ privacy_level_options: string[] }>(`${API}/post/publish/creator_info/query/`, { method: "POST", headers: json(token) }, "TikTok account");
-    const wantPublic = process.env.TIKTOK_PUBLIC === "1" && creator.privacy_level_options.includes("PUBLIC_TO_EVERYONE");
-    const privacy = wantPublic ? "PUBLIC_TO_EVERYONE" : creator.privacy_level_options.includes("SELF_ONLY") ? "SELF_ONLY" : creator.privacy_level_options[0];
+    const privacy = p.settings.privacy;
+    if (!privacy) throw new PostError("Choose who can watch this TikTok");
+    if (!creator.privacy_level_options.includes(privacy)) throw new PostError(`This TikTok account can only post as: ${creator.privacy_level_options.join(", ")}`);
     const bytes = await video.bytes();
     const size = bytes.length;
     const chunk = size <= CHUNK * 2 ? size : CHUNK;
@@ -76,7 +77,7 @@ export const tiktok: Provider = {
         method: "POST",
         headers: json(token),
         body: JSON.stringify({
-          post_info: { title: p.text, privacy_level: privacy, disable_comment: false, disable_duet: false, disable_stitch: false },
+          post_info: { title: p.text, privacy_level: privacy, disable_comment: p.settings.comments === "off", disable_duet: false, disable_stitch: false },
           source_info: { source: "FILE_UPLOAD", video_size: size, chunk_size: chunk, total_chunk_count: count },
         }),
       },
