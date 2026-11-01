@@ -1,6 +1,7 @@
 import "server-only";
 import { open, seal } from "./crypto";
 import { adminClient } from "./supabase/server";
+import { assertCanAddChannel, newChannelCount } from "./billing";
 import type { NetworkId } from "./networks";
 import type { Account, Secret } from "./providers/types";
 
@@ -18,6 +19,7 @@ export async function listChannels(workspaceId: string): Promise<Channel[]> {
 
 /** Save connected accounts. Reconnecting the same account updates it in place. */
 export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[]) {
+  await assertCanAddChannel(workspaceId, await newChannelCount(workspaceId, network, accounts.map((a) => a.accountId)));
   const db = adminClient();
   for (const a of accounts) {
     const { data: ch, error } = await db

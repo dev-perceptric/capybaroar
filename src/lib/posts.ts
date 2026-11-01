@@ -6,6 +6,7 @@ import { listChannels } from "./channels";
 import { providerOf } from "./providers";
 import { networkOf, type NetworkId } from "./networks";
 import { nextQueueSlot, type Slot } from "./queue";
+import { assertCanSchedule } from "./billing";
 
 export type PostStatus = "draft" | "scheduled" | "publishing" | "published" | "partial" | "failed";
 export type TargetRow = {
@@ -82,6 +83,7 @@ async function queueTime(workspaceId: string): Promise<Date> {
 /** Save a draft or send a post out. Sending checks every channel first and queues one job per channel. */
 export async function savePost(workspaceId: string, userId: string, input: SaveInput): Promise<{ id: string; publishAt: string | null }> {
   const sending = input.mode !== "draft";
+  if (sending) await assertCanSchedule(workspaceId, input.id);
   const at = input.mode === "now" ? new Date() : input.mode === "queue" ? await queueTime(workspaceId) : input.publishAt ? new Date(input.publishAt) : null;
   if (sending) {
     if (!at) throw new Error("Pick a time");

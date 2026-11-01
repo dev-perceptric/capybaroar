@@ -5,13 +5,14 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button, Field, IconButton, Input, inputClass } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
+import { BillingSection, type BillingInfo } from "./BillingSection";
 import { saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-export function SettingsView({ name, timezone, queue }: { name: string; timezone: string; queue: { day: number; time: string }[] }) {
+export function SettingsView({ name, timezone, queue, billing }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo }) {
   const [n, setN] = useState(name);
   const [tz, setTz] = useState(timezone);
   const [msg, setMsg] = useState("");
@@ -43,6 +44,7 @@ export function SettingsView({ name, timezone, queue }: { name: string; timezone
         </div>
       </section>
       <Queue initial={queue} timezone={tz} />
+      {billing ? <BillingSection info={billing} /> : null}
     </div>
   );
 }

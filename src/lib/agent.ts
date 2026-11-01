@@ -5,6 +5,7 @@ import { listChannels } from "./channels";
 import { postsBetween, savePost } from "./posts";
 import { networkOf } from "./networks";
 import type { Ctx } from "./session";
+import { assertCanUseAgent } from "./billing";
 
 // The agent: Claude with three tools over this workspace. It writes drafts unless asked to schedule.
 const MODEL = "claude-opus-5-5";
@@ -93,6 +94,7 @@ export type ChatMessage = { role: "user" | "assistant"; content: Anthropic.Messa
 
 /** Send one user message and run the agent until it answers. Every message is saved, append-only. */
 export async function agentTurn(ctx: Ctx, chatId: string | null, text: string): Promise<{ chatId: string }> {
+  await assertCanUseAgent(ctx.workspaceId);
   const db = adminClient();
   let id = chatId;
   if (!id) {

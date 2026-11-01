@@ -37,8 +37,9 @@ export async function finishUpload(workspaceId: string, userId: string, file: { 
   const base = file.path.slice(file.path.lastIndexOf("/") + 1);
   const { data: found } = await db.storage.from(BUCKET).list(dir, { search: base, limit: 1 });
   if (!found?.length) throw new Error("Upload didn't finish");
-  const { error } = await db.from("media").insert({ workspace_id: workspaceId, path: file.path, name: file.name.slice(0, 200), mime: file.type, size: file.size, created_by: userId });
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path: file.path, name: file.name.slice(0, 200), mime: file.type, size: file.size, created_by: userId }).select("id").single();
   if (error) throw new Error(error.message);
+  return data.id as string;
 }
 
 export async function deleteMedia(workspaceId: string, id: string) {

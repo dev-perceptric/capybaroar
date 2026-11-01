@@ -15,15 +15,16 @@ export async function startUpload(file: FileInfo): Promise<{ error?: string; pat
   }
 }
 
-export async function endUpload(file: FileInfo & { path: string }): Promise<{ error?: string }> {
+export async function endUpload(file: FileInfo & { path: string }): Promise<{ error?: string; id?: string }> {
   const ctx = await getCtx();
+  let id: string;
   try {
-    await finishUpload(ctx.workspaceId, ctx.userId, file);
+    id = await finishUpload(ctx.workspaceId, ctx.userId, file);
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
   }
   revalidatePath("/media");
-  return {};
+  return { id };
 }
 
 export async function removeMedia(id: string) {
