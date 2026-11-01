@@ -70,3 +70,60 @@ export async function bestSlots() {
   const { suggestedTimes } = await import("@/lib/analytics");
   return suggestedTimes(ctx.workspaceId, ctx.timezone);
 }
+
+export async function aiRewrite(text: string, how: string, network: string | null): Promise<{ error?: string; text?: string }> {
+  const ctx = await getCtx();
+  const { rewrite } = await import("@/lib/composer");
+  try {
+    return { text: await rewrite(ctx.workspaceId, text, how as never, (network as never) ?? null) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function loadSnippets() {
+  const ctx = await getCtx();
+  const { listSnippets } = await import("@/lib/composer");
+  return listSnippets(ctx.workspaceId);
+}
+
+export async function newSnippet(name: string, body: string): Promise<{ error?: string; snippet?: { id: string; name: string; body: string } }> {
+  const ctx = await getCtx();
+  const { addSnippet } = await import("@/lib/composer");
+  try {
+    return { snippet: await addSnippet(ctx.workspaceId, name, body) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function removeSnippet(id: string): Promise<{ error?: string }> {
+  const ctx = await getCtx();
+  const { deleteSnippet } = await import("@/lib/composer");
+  try {
+    await deleteSnippet(ctx.workspaceId, id);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function shortLink(url: string): Promise<{ error?: string; url?: string }> {
+  const ctx = await getCtx();
+  const { shorten } = await import("@/lib/composer");
+  try {
+    return { url: await shorten(ctx.workspaceId, url) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function trim(id: string, start: number, end: number): Promise<{ error?: string; id?: string }> {
+  const ctx = await getCtx();
+  const { trimVideo } = await import("@/lib/composer");
+  try {
+    return { id: await trimVideo(ctx.workspaceId, ctx.userId, id, start, end) };
+  } catch (e) {
+    return fail(e);
+  }
+}

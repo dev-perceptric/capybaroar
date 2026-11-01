@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Check, Copy, ImagePlus, Layers, Monitor, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
 import { Avatar, Button, Field, IconButton, Input, Segmented, TextArea, inputClass } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
+import { TextTools, mod, toggleStyle } from "./TextTools";
+import { MediaEdit } from "./MediaEdit";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
@@ -31,6 +33,28 @@ const nextHour = () => {
 };
 const initialSettings = (c: Channel) => Object.fromEntries((networkOf(c.network).fields ?? []).filter((f) => f.initial).map((f) => [f.key, f.initial!]));
 const count = (s: string) => [...s].length;
+type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string };
+const noSub = () => () => {};
+const readLocal = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+const opened = new Map<string, string | null>();
+const openedWith = (key: string) => {
+  if (!opened.has(key)) opened.set(key, readLocal(key));
+  return opened.get(key)!;
+};
+const writeLocal = (key: string, v: string | null) => {
+  try {
+    if (v == null) localStorage.removeItem(key);
+    else localStorage.setItem(key, v);
+  } catch {
+    /* private window: no autosave */
+  }
+};
 /** The next time this weekday and hour comes around (browser time, which matches the workspace for most people). */
 const nextAt = (day: number, hour: number) => {
   const d = new Date();
@@ -65,13 +89,60 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
   const fileInput = useRef<HTMLInputElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
+  const sharedArea = useRef<HTMLTextAreaElement>(null);
+  const chanArea = useRef<HTMLTextAreaElement>(null);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [editing, setEditing] = useState<Media | null>(null);
+  const [dragId, setDragId] = useState<string | null>(null);
 
+  // Autosave on this device: every change is kept, and offered back the next time this post opens.
+  const draftKey = `capybaroar:compose:${post?.id ?? "new"}`;
+  const snap: Snapshot = { text, targets, mediaIds, when };
+  const snapJson = JSON.stringify(snap);
+  const [first] = useState(snapJson);
+  const dirty = snapJson !== first;
+  // Read once when the composer opens, so the bar never shows the autosave of what is being typed now.
+  const stored = useSyncExternalStore(noSub, () => openedWith(draftKey), () => null);
+  useEffect(() => () => void opened.delete(draftKey), [draftKey]);
+  const [restoreSeen, setRestoreSeen] = useState(false);
+  const restorable = !restoreSeen && !locked && stored && (() => {
+    try {
+      const v = JSON.parse(stored) as Snapshot & { savedAt: number };
+      const { savedAt, ...rest } = v;
+      return JSON.stringify(rest) !== first ? { ...v, savedAt } : null;
+    } catch {
+      return null;
+    }
+  })();
+  useEffect(() => {
+    if (!dirty || locked) return;
+    const t = setTimeout(() => writeLocal(draftKey, JSON.stringify({ ...JSON.parse(snapJson), savedAt: Date.now() })), 400);
+    return () => clearTimeout(t);
+  }, [snapJson, dirty, draftKey, locked]);
+  const restore = () => {
+    if (!restorable) return;
+    setText(restorable.text);
+    setTargets(restorable.targets);
+    setMediaIds(restorable.mediaIds);
+    setWhen(restorable.when);
+    setRestoreSeen(true);
+  };
+  const discardLocal = () => {
+    writeLocal(draftKey, null);
+    setRestoreSeen(true);
+  };
+  const requestClose = async () => {
+    if (dirty && !locked && !(await askConfirm("Close without saving?", { body: "Your changes stay on this device. Open this post again to get them back.", ok: "Close" }))) return;
+    onClose();
+  };
+
+  const keys = useRef<(e: KeyboardEvent) => void>(() => {});
   useLayoutEffect(() => {
     void fadeIn(shell.current);
     void dialogIn(card.current);
   }, []);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && !document.querySelector("[data-dialog-open]") && onClose();
+    const onKey = (e: KeyboardEvent) => keys.current(e);
     window.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -79,7 +150,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
-  }, [onClose]);
+  }, []);
 
   const [best, setBest] = useState<{ day: number; hour: number }[]>([]);
   useEffect(() => {
@@ -120,7 +191,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
   const setSetting = (id: string, key: string, value: string) => setTargets((t) => ({ ...t, [id]: { ...t[id], settings: { ...t[id].settings, [key]: value } } }));
 
   /** Upload straight to storage with a one-time link, then attach. Several files upload one after another. */
-  const upload = async (list: FileList | File[]) => {
+  const upload = async (list: FileList | File[], replace?: string) => {
     const all = Array.from(list).filter((f) => ACCEPT.split(",").includes(f.type));
     if (!all.length) {
       setError("Use JPG, PNG, GIF, WebP, MP4 or MOV");
@@ -150,7 +221,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
       }
       const fresh = (await loadMedia()) as Media[];
       setLibrary(fresh);
-      setMediaIds((ids) => [...ids, done.id!]);
+      setMediaIds((ids) => (replace && ids.includes(replace) ? ids.map((x) => (x === replace ? done.id! : x)) : [...ids, done.id!]));
       setUploading((u) => u.filter((x) => x.key !== key));
     }
   };
@@ -167,7 +238,10 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
         mode,
       });
       if (r.error) setError(r.error);
-      else onSaved();
+      else {
+        writeLocal(draftKey, null);
+        onSaved();
+      }
     });
   const del = async () => {
     if (!post || !(await askConfirm("Delete this post?", { ok: "Delete", danger: true }))) return;
@@ -192,6 +266,31 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
     else setLibrary((lib) => (lib ?? []).map((x) => (x.id === m.id ? { ...x, alt: v.trim() || null } : x)));
   };
   const ready = picked.length > 0 && (text.trim() || mediaIds.length || picked.some((c) => targets[c.id].text?.trim())) && !problems.length && !uploading.some((u) => !u.error);
+  useEffect(() => {
+    keys.current = (e: KeyboardEvent) => {
+      if (document.querySelector("[data-dialog-open]")) return;
+      const cmd = e.metaKey || e.ctrlKey;
+      const box = e.target instanceof HTMLTextAreaElement && (e.target === sharedArea.current || e.target === chanArea.current) ? e.target : null;
+      if (e.key === "Escape") {
+        if (e.defaultPrevented || aiOpen || editing || document.querySelector('[role="menu"],[role="listbox"]')) return;
+        e.preventDefault();
+        void requestClose();
+      } else if (cmd && e.key === "Enter" && !locked) {
+        e.preventDefault();
+        if (ready && !busy) submit(e.shiftKey ? "now" : "schedule");
+      } else if (cmd && e.key.toLowerCase() === "s" && !locked) {
+        e.preventDefault();
+        if (!busy) submit("draft");
+      } else if (cmd && box && !locked && (e.key.toLowerCase() === "b" || e.key.toLowerCase() === "i")) {
+        e.preventDefault();
+        toggleStyle(box, e.key.toLowerCase() === "b" ? "bold" : "italic");
+      } else if (cmd && e.key.toLowerCase() === "j" && !locked) {
+        e.preventDefault();
+        (active ? chanArea : sharedArea).current?.focus();
+        setAiOpen(!aiOpen);
+      }
+    };
+  });
 
   return (
     <div ref={shell} className="fixed inset-0 z-[80] flex bg-scrim md:p-4" role="dialog" aria-modal="true" aria-label={post ? "Edit post" : "New post"}>
@@ -233,10 +332,22 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
               ) : null}
             </>
           ) : null}
-          <IconButton label="Close" onClick={onClose}>
+          <IconButton label="Close (Esc)" onClick={requestClose}>
             <X size={18} />
           </IconButton>
         </header>
+
+        {restorable ? (
+          <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-yolk-soft px-4 py-2 text-[12px]">
+            <History size={14} />
+            <span>Unsaved changes from {new Date(restorable.savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+            <span className="flex-1" />
+            <Button variant="ghost" onClick={discardLocal}>
+              Discard
+            </Button>
+            <Button onClick={restore}>Restore</Button>
+          </div>
+        ) : null}
 
         <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(440px,560px)]">
           {/* Editor */}
@@ -310,15 +421,21 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                       ) : null
                     }
                   >
-                    <TextArea rows={9} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className="text-[14px] leading-relaxed" />
+                    <div>
+                      {!locked ? <TextTools area={chanArea} network={active.network} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
+                      <TextArea ref={chanArea} rows={11} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className="block text-[14px] leading-relaxed" />
+                    </div>
                   </Field>
                   <Counter c={active} text={textOf(active)} />
                 </>
               ) : (
                 <>
                   <Field label="Text">
+                    <div>
+                    {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
                     <TextArea
-                      rows={10}
+                      ref={sharedArea}
+                      rows={12}
                       value={text}
                       readOnly={locked}
                       onChange={(e) => setText(e.target.value)}
@@ -329,8 +446,9 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                         }
                       }}
                       placeholder="What do you want to share?"
-                      className="text-[14px] leading-relaxed"
+                      className="block text-[14px] leading-relaxed"
                     />
+                    </div>
                   </Field>
                   {picked.length ? (
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -346,14 +464,51 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
               <div className="flex flex-col gap-2">
                 <p className="text-[12px] font-medium text-muted">Media</p>
                 <div className="flex flex-wrap gap-2">
-                  {files.map((m) => (
-                    <div key={m.id} className="group/thumb relative">
+                  {files.map((m, i) => (
+                    <div
+                      key={m.id}
+                      draggable={!locked && files.length > 1}
+                      onDragStart={(e) => {
+                        setDragId(m.id);
+                        e.dataTransfer.effectAllowed = "move";
+                        e.dataTransfer.setData("text/x-capybaroar-media", m.id);
+                      }}
+                      onDragEnd={() => setDragId(null)}
+                      onDragOver={(e) => {
+                        if (!dragId || dragId === m.id) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMediaIds((ids) => {
+                          const from = ids.indexOf(dragId);
+                          const to = ids.indexOf(m.id);
+                          if (from < 0 || to < 0 || from === to) return ids;
+                          const next = [...ids];
+                          next.splice(from, 1);
+                          next.splice(to, 0, dragId);
+                          return next;
+                        });
+                      }}
+                      onDrop={(e) => {
+                        if (dragId) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDragId(null);
+                        }
+                      }}
+                      className={`group/thumb relative ${files.length > 1 && !locked ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === m.id ? "opacity-40" : ""}`}
+                    >
                       <Thumb m={m} />
+                      {files.length > 1 ? <span className="absolute top-1 left-1 flex size-5 items-center justify-center border border-frame bg-panel text-[10px] font-semibold tabular-nums">{i + 1}</span> : null}
                       {!locked ? (
                         <>
-                          <button type="button" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="absolute top-1 right-1 hidden size-6 items-center justify-center border border-frame bg-panel group-hover/thumb:flex">
-                            <X size={13} />
-                          </button>
+                          <span className="absolute top-1 right-1 hidden gap-1 group-hover/thumb:flex">
+                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center border border-frame bg-panel hover:bg-yolk">
+                              {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
+                            </button>
+                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center border border-frame bg-panel hover:bg-yolk">
+                              <X size={13} />
+                            </button>
+                          </span>
                           {!m.mime.startsWith("video/") ? (
                             <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1 bottom-1 border bg-panel px-1 text-[10px] font-medium ${m.alt ? "border-line text-muted" : "border-frame"}`}>
                               {m.alt ? "Alt text" : "Add alt"}
@@ -548,20 +703,32 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
               );
             })}
             <span className="min-w-0 flex-1 truncate text-[12px]">{error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : null}</span>
-            <Button variant="ghost" disabled={busy} onClick={() => submit("draft")}>
+            <Button variant="ghost" disabled={busy} onClick={() => submit("draft")} title={`${mod()}S`}>
               Save draft
             </Button>
             <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("queue")}>
               Add to queue
             </Button>
-            <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("now")}>
+            <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("now")} title={`${mod()}Shift+Enter`}>
               Post now
             </Button>
-            <Button disabled={busy || !ready} onClick={() => submit("schedule")}>
+            <Button disabled={busy || !ready} onClick={() => submit("schedule")} title={`${mod()}Enter`}>
               {busy ? <Loader /> : null}
               Schedule
             </Button>
           </footer>
+        ) : null}
+
+        {editing ? (
+          <MediaEdit
+            m={editing}
+            onClose={() => setEditing(null)}
+            onCropped={(f) => upload([f], editing.id)}
+            onTrimmed={async (id) => {
+              setLibrary((await loadMedia()) as Media[]);
+              setMediaIds((ids) => ids.map((x) => (x === editing.id ? id : x)));
+            }}
+          />
         ) : null}
 
         {dragging ? (

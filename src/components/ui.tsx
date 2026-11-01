@@ -551,7 +551,7 @@ export function Input({ className = "", ...props }: React.InputHTMLAttributes<HT
   return <input {...props} className={`${inputClass} ${className}`} />;
 }
 
-export function TextArea({ className = "", ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextArea({ className = "", ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { ref?: React.Ref<HTMLTextAreaElement> }) {
   return <textarea {...props} className={`${areaClass} ${className}`} />;
 }
 

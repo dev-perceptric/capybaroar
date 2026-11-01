@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login.
-const OPEN = ["/login", "/signup", "/auth/"];
+const OPEN = ["/login", "/signup", "/auth/", "/l/"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
