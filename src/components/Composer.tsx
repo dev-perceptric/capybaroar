@@ -224,7 +224,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                 <TextArea rows={7} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} />
               </Field>
               <Counter c={active} text={textOf(active)} />
-              {(networkOf(active.network).fields ?? []).map((f) => (
+              {(networkOf(active.network).fields ?? []).filter((f) => !f.when || targets[active.id].settings[f.when.key] === f.when.value).map((f) => (
                 <SettingField
                   key={f.key}
                   f={f}

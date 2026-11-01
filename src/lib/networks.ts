@@ -26,6 +26,8 @@ export type NetworkField = {
   placeholder?: string;
   /** Default value when the person leaves it alone. */
   initial?: string;
+  /** Show only when another setting has this value (a Reel cover only for Reels). */
+  when?: { key: string; value: string };
 };
 
 export type Network = {
@@ -59,7 +61,7 @@ export const NETWORKS: Network[] = [
     needsMedia: true,
     fields: [
       { key: "format", label: "Format", kind: "select", initial: "post", options: [{ value: "post", label: "Post" }, { value: "reel", label: "Reel" }, { value: "story", label: "Story" }] },
-      { key: "cover", label: "Reel cover", kind: "cover" },
+      { key: "cover", label: "Reel cover", kind: "cover", when: { key: "format", value: "reel" } },
       FIRST_COMMENT,
     ],
   },
