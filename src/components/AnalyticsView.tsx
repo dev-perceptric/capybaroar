@@ -119,7 +119,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
                           ) : null}
                         </div>
                         <p className="mt-0.5 text-[11px] text-faint">
-                          {c?.name}, {new Date(t.at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          {c?.name}, {new Date(t.at).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: timezone })}
                         </p>
                       </td>
                       <Num v={reach} />
