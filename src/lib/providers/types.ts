@@ -39,6 +39,60 @@ export type PostStats = {
   clicks?: number | null;
 };
 
+export type InboxKind = "comment" | "reply" | "mention" | "dm";
+
+/**
+ * One comment, reply, mention or message, as the network gives it. `networkId` is unique within the channel.
+ * `parentId` is the comment it answers (null when it answers the post itself, or for a message). `threadId` groups a
+ * conversation: the top-level comment or the DM conversation; leave it out when the network doesn't say and it is
+ * worked out from `parentId`. `postRemoteId` is the post in the same form publish returns as `id`.
+ * `mine` marks what the channel itself wrote (a reply sent from here or on the network). `extra` keeps what a reply,
+ * like or hide needs later (a Bluesky cid, a LinkedIn object urn).
+ */
+export type InboxItem = {
+  networkId: string;
+  kind: InboxKind;
+  threadId?: string | null;
+  parentId?: string | null;
+  postRemoteId?: string | null;
+  postUrl?: string | null;
+  postText?: string | null;
+  url?: string | null;
+  authorId?: string | null;
+  authorName: string;
+  authorHandle?: string | null;
+  authorAvatar?: string | null;
+  text: string;
+  createdAt: Date;
+  mine?: boolean;
+  liked?: boolean;
+  hidden?: boolean;
+  extra?: Record<string, string>;
+};
+
+/** What a fetch starts from: the network's own cursor from last time, and the oldest item still worth reading. */
+export type InboxQuery = { cursor: string | null; since: Date };
+
+export type InboxBatch = { items: InboxItem[]; cursor: string | null };
+
+/** A saved item, as reply, like and hide get it back. `likeRef` is what like returned (to undo it). */
+export type InboxRef = Pick<InboxItem, "networkId" | "kind" | "threadId" | "parentId" | "postRemoteId" | "authorId" | "authorHandle"> & { likeRef?: string | null; extra: Record<string, string> };
+
+/**
+ * Comments and messages. `fetch` reads what's new; throw AuthError (reconnect), PostError (a permission or setting
+ * is missing; no retry) or Error (try again next round). `enabled` is off when reading costs money per call and
+ * isn't switched on (X). `like` returns what `unlike` needs, when the network wants one (Bluesky's like record).
+ */
+export type Inbox = {
+  enabled?: () => boolean;
+  /** Minutes between reads when 10 is too often for the network's quota or price (YouTube, X). */
+  every?: number;
+  fetch: (s: Secret, accountId: string, q: InboxQuery) => Promise<InboxBatch>;
+  reply: (s: Secret, accountId: string, to: InboxRef, text: string) => Promise<{ id: string; url?: string | null }>;
+  like?: (s: Secret, accountId: string, to: InboxRef, on: boolean) => Promise<string | null>;
+  hide?: (s: Secret, accountId: string, to: InboxRef, on: boolean) => Promise<void>;
+};
+
 /** Values a person typed before signing in (a Mastodon server) and values kept between the two steps of sign-in. */
 export type OAuthInput = Record<string, string>;
 
@@ -75,7 +129,19 @@ export type Provider = {
    * Throw AuthError when the token is bad; return {} when the post is gone or the network has no numbers for it.
    */
   postStats?: (s: Secret, accountId: string, remoteId: string) => Promise<PostStats>;
+  /** Comments, replies, mentions and messages for the Inbox. */
+  inbox?: Inbox;
 };
+
+/** Plain text from a little HTML (Mastodon statuses): line breaks kept, tags dropped, entities decoded. */
+export function plainText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>\s*<p[^>]*>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&(amp|lt|gt|quot|#39|apos|nbsp);/g, (_, e: string) => ({ amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'", apos: "'", nbsp: " " })[e] ?? "")
+    .trim();
+}
 
 /** A failure that a retry won't fix: the person must reconnect the channel. */
 export class AuthError extends Error {}

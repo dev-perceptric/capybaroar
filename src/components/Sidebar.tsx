@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, Image as ImageIcon, LogOut, Plug, Settings } from "lucide-react";
+import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, Image as ImageIcon, Inbox, LogOut, Plug, Settings } from "lucide-react";
 import { Avatar, Dot } from "./ui";
 import { Floating } from "./Floating";
 import { tell } from "./Dialogs";
@@ -17,6 +17,7 @@ const SECTIONS = [
     label: "Workspace",
     items: [
       { href: "/calendar", label: "Calendar", icon: <CalendarDays />, client: true },
+      { href: "/inbox", label: "Inbox", icon: <Inbox /> },
       { href: "/channels", label: "Channels", icon: <Plug /> },
       { href: "/agents", label: "Agents", icon: <Bot /> },
       { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
@@ -29,20 +30,25 @@ const item = "group flex h-8 shrink-0 items-center gap-2 border px-2 text-[13px]
 const itemOn = "border-frame bg-yolk font-semibold text-on-yolk";
 const itemOff = "border-transparent text-ink/85 hover:bg-pressed hover:text-ink";
 
-function NavLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
+function NavLink({ href, label, icon, count }: { href: string; label: string; icon: React.ReactNode; count?: number }) {
   const path = usePathname();
   const on = path === href || path.startsWith(`${href}/`);
   return (
     <Link href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
       <span className={on ? "[&_svg]:stroke-[2.25]" : "text-ink/70 group-hover:text-ink"}>{icon}</span>
       {label}
+      {count ? (
+        <span aria-label={`${count} open`} className="ml-auto inline-flex h-4 min-w-4 items-center justify-center border border-frame bg-panel px-1 text-[11px] leading-none font-medium text-ink tabular-nums">
+          {count > 99 ? "99+" : count}
+        </span>
+      ) : null}
     </Link>
   );
 }
 
 export type Switcher = { role: Role; brands: Brand[]; brand: string | null; workspaces: { id: string; name: string }[]; workspaceId: string };
 
-export function Sidebar({ name, email, workspace, switcher }: { name: string; email: string; workspace: string; switcher: Switcher }) {
+export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name: string; email: string; workspace: string; switcher: Switcher; inbox?: number }) {
   const settings = switcher.role === "owner" || switcher.role === "admin";
   return (
     <aside className="flex shrink-0 flex-col border-b border-frame bg-side md:w-[220px] md:border-r md:border-b-0">
@@ -63,7 +69,7 @@ export function Sidebar({ name, email, workspace, switcher }: { name: string; em
             {sec.items
               .filter((n) => switcher.role !== "client" || n.client)
               .map((n) => (
-                <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} />
+                <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} count={n.href === "/inbox" ? inbox : undefined} />
               ))}
           </div>
         ))}

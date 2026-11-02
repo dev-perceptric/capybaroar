@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type PostStats, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxItem, type PostStats, type Provider, type Secret } from "./types";
 
 // YouTube: Google sign-in (offline access) + YouTube Data API v3, resumable video upload from our server.
 // Until Google audits the app, uploads from an unverified API project are locked to private.
@@ -12,6 +12,8 @@ const auth = (token: string) => ({ Authorization: `Bearer ${token}` });
 const SCOPES = [
   "https://www.googleapis.com/auth/youtube.upload",
   "https://www.googleapis.com/auth/youtube.readonly",
+  // Answering and removing comments (Inbox).
+  "https://www.googleapis.com/auth/youtube.force-ssl",
   "https://www.googleapis.com/auth/userinfo.profile",
 ].join(" ");
 
@@ -30,6 +32,9 @@ async function send(url: string, init: RequestInit, what: string, timeout = 6000
   if (res.status === 400 || res.status === 403 || res.status === 422) throw new PostError(msg);
   throw new Error(msg);
 }
+
+type YtComment = { id: string; snippet: { authorDisplayName?: string; authorProfileImageUrl?: string; authorChannelUrl?: string; authorChannelId?: { value?: string }; textOriginal?: string; publishedAt: string; parentId?: string } };
+type YtThread = { id: string; snippet: { videoId?: string; topLevelComment: YtComment }; replies?: { comments?: YtComment[] } };
 
 const tags = (s: string | undefined) =>
   (s ?? "")
@@ -138,6 +143,59 @@ export const youtube: Provider = {
       if (e instanceof PostError || (e instanceof Error && !(e instanceof AuthError) && /not found|404/i.test(e.message))) return {};
       throw e;
     }
+  },
+  inbox: {
+    // Every read costs 1 unit of the project's daily quota (10,000 by default), shared by all channels.
+    every: 30,
+    // Newest comment threads on the channel's videos, with up to 5 replies each: 1 quota unit a call.
+    fetch: async (s, channelId, q) => {
+      const r = await call<{ items?: YtThread[] }>(
+        `${API}/commentThreads?${qs({ part: "snippet,replies", allThreadsRelatedToChannelId: channelId, order: "time", maxResults: "50", textFormat: "plainText" })}`,
+        { headers: auth(s.accessToken) },
+        { what: "YouTube comments" },
+      );
+      const items: InboxItem[] = [];
+      const add = (t: YtThread, c: YtComment, top: boolean) => {
+        const at = new Date(c.snippet.publishedAt);
+        if (at < q.since) return;
+        const video = t.snippet.videoId ?? null;
+        items.push({
+          networkId: c.id,
+          kind: top ? "comment" : "reply",
+          threadId: t.id,
+          parentId: top ? null : t.id,
+          postRemoteId: video,
+          postUrl: video ? `https://www.youtube.com/watch?v=${video}` : null,
+          url: video ? `https://www.youtube.com/watch?v=${video}&lc=${c.id}` : null,
+          authorId: c.snippet.authorChannelId?.value ?? null,
+          authorName: c.snippet.authorDisplayName || "YouTube user",
+          authorHandle: c.snippet.authorChannelUrl?.split("/").pop()?.replace(/^@/, "") ?? null,
+          authorAvatar: c.snippet.authorProfileImageUrl ?? null,
+          text: c.snippet.textOriginal ?? "",
+          createdAt: at,
+          mine: c.snippet.authorChannelId?.value === channelId,
+        });
+      };
+      for (const t of r.items ?? []) {
+        add(t, t.snippet.topLevelComment, true);
+        for (const c of t.replies?.comments ?? []) add(t, c, false);
+      }
+      return { items, cursor: null };
+    },
+    // comments.insert: 50 quota units. Replies always go under the top-level comment.
+    reply: async (s, _channelId, to, text) => {
+      const r = await call<{ id: string }>(
+        `${API}/comments?${qs({ part: "snippet" })}`,
+        { method: "POST", headers: { ...auth(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ snippet: { parentId: to.threadId || to.networkId, textOriginal: text } }) },
+        { what: "YouTube reply" },
+      );
+      return { id: r.id };
+    },
+    // Rejecting removes the comment from the channel for good; YouTube can't show it again (50 quota units).
+    hide: async (s, _channelId, to, on) => {
+      if (!on) throw new PostError("YouTube can't show a removed comment again");
+      await send(`${API}/comments/setModerationStatus?${qs({ id: to.networkId, moderationStatus: "rejected" })}`, { method: "POST", headers: auth(s.accessToken) }, "YouTube hide");
+    },
   },
 };
 

@@ -38,13 +38,15 @@ export type Network = {
   /** Needs a picture or video to post. */
   needsMedia?: boolean;
   fields?: NetworkField[];
+  /** What the Inbox can do on this network. Missing when it has no Inbox. `hideOnce`: a hidden item can't be shown again. */
+  inbox?: { like?: boolean; hide?: boolean; hideOnce?: boolean };
 };
 
 const FIRST_COMMENT: NetworkField = { key: "first_comment", label: "First comment", kind: "textarea", placeholder: "Posted as a comment right after" };
 
 export const NETWORKS: Network[] = [
   { id: "linkedin", name: "LinkedIn", limit: 3000, fields: [FIRST_COMMENT] },
-  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, fields: [FIRST_COMMENT] },
+  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, fields: [FIRST_COMMENT], inbox: { like: true } },
   {
     id: "facebook",
     name: "Facebook",
@@ -53,6 +55,7 @@ export const NETWORKS: Network[] = [
       { key: "format", label: "Format", kind: "select", initial: "post", options: [{ value: "post", label: "Post" }, { value: "reel", label: "Reel" }] },
       FIRST_COMMENT,
     ],
+    inbox: { like: true, hide: true },
   },
   {
     id: "instagram",
@@ -64,8 +67,9 @@ export const NETWORKS: Network[] = [
       { key: "cover", label: "Reel cover", kind: "cover", when: { key: "format", value: "reel" } },
       FIRST_COMMENT,
     ],
+    inbox: { hide: true },
   },
-  { id: "threads", name: "Threads", limit: 500 },
+  { id: "threads", name: "Threads", limit: 500, inbox: { hide: true } },
   {
     id: "tiktok",
     name: "TikTok",
@@ -99,8 +103,9 @@ export const NETWORKS: Network[] = [
       { key: "for_kids", label: "Made for kids", kind: "select", initial: "no", options: [{ value: "no", label: "No" }, { value: "yes", label: "Yes" }] },
       { key: "cover", label: "Thumbnail", kind: "cover" },
     ],
+    inbox: { hide: true, hideOnce: true },
   },
-  { id: "x", name: "X", limit: 280 },
+  { id: "x", name: "X", limit: 280, inbox: { like: true, hide: true } },
   {
     id: "pinterest",
     name: "Pinterest",
@@ -121,7 +126,7 @@ export const NETWORKS: Network[] = [
       { key: "title", label: "Title", kind: "text", required: true, placeholder: "Up to 300 characters" },
     ],
   },
-  { id: "bluesky", name: "Bluesky", limit: 300 },
+  { id: "bluesky", name: "Bluesky", limit: 300, inbox: { like: true } },
   {
     id: "mastodon",
     name: "Mastodon",
@@ -130,6 +135,7 @@ export const NETWORKS: Network[] = [
       { key: "visibility", label: "Visibility", kind: "select", initial: "public", options: [{ value: "public", label: "Public" }, { value: "unlisted", label: "Quiet public" }, { value: "private", label: "Followers" }] },
       { key: "spoiler", label: "Content warning", kind: "text" },
     ],
+    inbox: { like: true },
   },
   { id: "telegram", name: "Telegram", limit: 4096 },
   { id: "discord", name: "Discord", limit: 2000 },
