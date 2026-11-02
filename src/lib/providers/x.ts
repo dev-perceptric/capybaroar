@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Secret } from "./types";
 
 // X: OAuth 2.0 with PKCE (confidential client) and the v2 API for posts and media.
 const API = "https://api.x.com/2";
-const SCOPES = "tweet.read tweet.write users.read media.write offline.access";
+// like.write and tweet.moderate.write are for the Inbox (like, hide replies); older channels need a reconnect for them.
+const SCOPES = "tweet.read tweet.write users.read media.write offline.access like.write tweet.moderate.write";
 const clientId = () => process.env.X_CLIENT_ID ?? "";
 const clientSecret = () => process.env.X_CLIENT_SECRET ?? "";
 const basic = () => `Basic ${Buffer.from(`${encodeURIComponent(clientId())}:${encodeURIComponent(clientSecret())}`).toString("base64")}`;
@@ -70,6 +71,9 @@ async function setAlt(tok: string, id: string, alt: string) {
     { what: "X alt text" },
   ).catch(() => null);
 }
+
+type Mention = { id: string; text: string; author_id?: string; created_at?: string; conversation_id?: string; in_reply_to_user_id?: string; referenced_tweets?: { type: string; id: string }[] };
+type XUser = { id: string; name: string; username: string; profile_image_url?: string };
 
 export const x: Provider = {
   network: "x",
@@ -171,5 +175,63 @@ export const x: Provider = {
       saves: n(pub.bookmark_count),
       clicks: sum(priv.url_link_clicks, priv.user_profile_clicks),
     };
+  },
+  inbox: {
+    // X bills every post read, so the Inbox reads mentions only when X_INBOX=1.
+    enabled: () => process.env.X_INBOX === "1",
+    // Mentions include replies to our posts. The cursor is the newest id seen (since_id).
+    fetch: async (s, userId, q) => {
+      const params: Record<string, string> = {
+        max_results: "100",
+        "tweet.fields": "created_at,conversation_id,in_reply_to_user_id,referenced_tweets,author_id",
+        expansions: "author_id",
+        "user.fields": "name,username,profile_image_url",
+      };
+      if (q.cursor) params.since_id = q.cursor;
+      else params.start_time = q.since.toISOString();
+      const r = await call<{ data?: Mention[]; includes?: { users?: XUser[] }; meta?: { newest_id?: string } }>(`${API}/users/${encodeURIComponent(userId)}/mentions?${qs(params)}`, { headers: bearer(s.accessToken) }, { what: "X mentions" });
+      const users = new Map((r.includes?.users ?? []).map((u) => [u.id, u]));
+      const items: InboxItem[] = (r.data ?? []).map((t) => {
+        const u = t.author_id ? users.get(t.author_id) : undefined;
+        const parent = t.referenced_tweets?.find((x) => x.type === "replied_to")?.id ?? null;
+        const toUs = t.in_reply_to_user_id === userId;
+        const top = toUs && parent === t.conversation_id;
+        return {
+          networkId: t.id,
+          kind: top ? "comment" : toUs ? "reply" : "mention",
+          threadId: top || !parent ? t.id : null,
+          parentId: top ? null : parent,
+          postRemoteId: toUs ? (t.conversation_id ?? null) : null,
+          postUrl: toUs && t.conversation_id ? `https://x.com/i/web/status/${t.conversation_id}` : null,
+          url: `https://x.com/i/web/status/${t.id}`,
+          authorId: t.author_id ?? null,
+          authorName: u?.name ?? "X user",
+          authorHandle: u?.username ?? null,
+          authorAvatar: u?.profile_image_url ?? null,
+          text: t.text,
+          createdAt: t.created_at ? new Date(t.created_at) : new Date(),
+          mine: t.author_id === userId,
+        };
+      });
+      return { items, cursor: r.meta?.newest_id ?? q.cursor };
+    },
+    reply: async (s, _userId, to, text) => {
+      const r = await call<{ data: { id: string } }>(
+        `${API}/tweets`,
+        { method: "POST", headers: { ...bearer(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ text, reply: { in_reply_to_tweet_id: to.networkId } }) },
+        { what: "X reply" },
+      );
+      return { id: r.data.id, url: `https://x.com/i/web/status/${r.data.id}` };
+    },
+    like: async (s, userId, to, on) => {
+      const u = `${API}/users/${encodeURIComponent(userId)}/likes`;
+      if (on) await call(u, { method: "POST", headers: { ...bearer(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ tweet_id: to.networkId }) }, { what: "X like" });
+      else await call(`${u}/${encodeURIComponent(to.networkId)}`, { method: "DELETE", headers: bearer(s.accessToken) }, { what: "X like" });
+      return null;
+    },
+    // Only replies to our own posts can be hidden.
+    hide: async (s, _userId, to, on) => {
+      await call(`${API}/tweets/${encodeURIComponent(to.networkId)}/hidden`, { method: "PUT", headers: { ...bearer(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ hidden: on }) }, { what: "X hide" });
+    },
   },
 };

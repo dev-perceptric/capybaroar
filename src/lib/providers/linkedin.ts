@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxBatch, type InboxItem, type InboxQuery, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // LinkedIn: Sign In with LinkedIn (OpenID) + Share on LinkedIn for people; Community Management API for Pages.
 // Pages use their own app (LinkedIn wants that product alone on its app).
@@ -144,6 +144,74 @@ async function stats(tok: string, urn: string, org?: string): Promise<PostStats>
   }
 }
 
+type LiComment = { id?: string; commentUrn?: string; actor?: string; message?: { text?: string }; created?: { time?: number }; object?: string; parentComment?: string };
+
+/**
+ * Comments on the Page's posts from the last 14 days (r_organization_social). One call lists the posts, one reads
+ * their comment counts (socialMetadata), and only posts whose count moved are read. The cursor keeps the counts.
+ * TODO: people's names. LinkedIn doesn't let a Page app look up members, so commenters show as "LinkedIn member".
+ */
+async function linkedinInbox(s: Secret, accountId: string, q: InboxQuery): Promise<InboxBatch> {
+  const tok = s.accessToken;
+  const org = `urn:li:organization:${accountId}`;
+  const posts = await call<{ elements?: { id: string; commentary?: string; createdAt?: number }[] }>(
+    `https://api.linkedin.com/rest/posts?${qs({ q: "author", author: org, count: "10", sortBy: "LAST_MODIFIED" })}`,
+    { headers: { ...rest(tok), "X-RestLi-Method": "FINDER" } },
+    { what: "LinkedIn posts" },
+  );
+  const recent = (posts.elements ?? []).filter((p) => (p.createdAt ?? 0) > Date.now() - 14 * 86400000);
+  let seen: Record<string, number> = {};
+  try {
+    seen = q.cursor ? (JSON.parse(q.cursor) as Record<string, number>) : {};
+  } catch {
+    seen = {};
+  }
+  const counts: Record<string, number> = {};
+  if (recent.length) {
+    try {
+      // Verify: socialMetadata batch get with Rest.li 2.0 List() of encoded URNs.
+      const r = await call<{ results?: Record<string, { commentSummary?: { count?: number } }> }>(
+        `https://api.linkedin.com/rest/socialMetadata?ids=List(${recent.map((p) => encodeURIComponent(p.id)).join(",")})`,
+        { headers: rest(tok) },
+        { what: "LinkedIn comment counts" },
+      );
+      for (const [urn, m] of Object.entries(r.results ?? {})) counts[urn] = m.commentSummary?.count ?? 0;
+    } catch (e) {
+      if (e instanceof AuthError) throw e;
+      // without counts, read every recent post
+    }
+  }
+  const items: InboxItem[] = [];
+  for (const p of recent) {
+    if (p.id in counts && counts[p.id] === seen[p.id]) continue;
+    const r = await call<{ elements?: LiComment[] }>(`https://api.linkedin.com/rest/socialActions/${encodeURIComponent(p.id)}/comments?${qs({ count: "50" })}`, { headers: rest(tok) }, { what: "LinkedIn comments" });
+    for (const c of r.elements ?? []) {
+      const urn = c.commentUrn ?? (c.id ? `urn:li:comment:(${c.object ?? p.id},${c.id})` : null);
+      if (!urn) continue;
+      const at = new Date(c.created?.time ?? Date.now());
+      if (at < q.since) continue;
+      const fromOrg = c.actor?.startsWith("urn:li:organization:");
+      items.push({
+        networkId: urn,
+        kind: c.parentComment ? "reply" : "comment",
+        threadId: c.parentComment ? null : urn,
+        parentId: c.parentComment ?? null,
+        postRemoteId: p.id,
+        postUrl: `https://www.linkedin.com/feed/update/${p.id}/`,
+        postText: p.commentary ?? null,
+        url: `https://www.linkedin.com/feed/update/${p.id}/`,
+        authorId: c.actor ?? null,
+        authorName: c.actor === org ? "You" : fromOrg ? "LinkedIn Page" : "LinkedIn member",
+        text: c.message?.text ?? "",
+        createdAt: at,
+        mine: c.actor === org,
+        extra: { object: c.object ?? p.id },
+      });
+    }
+  }
+  return { items, cursor: JSON.stringify({ ...seen, ...counts }) };
+}
+
 const personId = () => process.env.LINKEDIN_CLIENT_ID ?? "";
 const personSecret = () => process.env.LINKEDIN_CLIENT_SECRET ?? "";
 const pageId = () => process.env.LINKEDIN_PAGE_CLIENT_ID || personId();
@@ -225,4 +293,26 @@ export const linkedinPage: Provider = {
     return r.firstDegreeSize ?? null;
   },
   postStats: (s, accountId, remoteId) => stats(s.accessToken, remoteId, `urn:li:organization:${accountId}`),
+  inbox: {
+    fetch: linkedinInbox,
+    reply: async (s, accountId, to, text) => {
+      const org = `urn:li:organization:${accountId}`;
+      // An answer goes under the top-level comment (LinkedIn keeps two levels).
+      const parent = to.threadId || to.networkId;
+      const r = await call<{ commentUrn?: string; id?: string } | null>(
+        `https://api.linkedin.com/rest/socialActions/${encodeURIComponent(parent)}/comments`,
+        { method: "POST", headers: rest(s.accessToken), body: JSON.stringify({ actor: org, object: to.extra.object ?? to.postRemoteId, parentComment: parent, message: { text } }) },
+        { what: "LinkedIn reply" },
+      );
+      return { id: r?.commentUrn ?? "" };
+    },
+    // Verify: reactions on comments take the comment URN as root.
+    like: async (s, accountId, to, on) => {
+      const org = `urn:li:organization:${accountId}`;
+      if (on)
+        await call(`https://api.linkedin.com/rest/reactions?${qs({ actor: org })}`, { method: "POST", headers: rest(s.accessToken), body: JSON.stringify({ root: to.networkId, reactionType: "LIKE" }) }, { what: "LinkedIn like" });
+      else await call(`https://api.linkedin.com/rest/reactions/(actor:${encodeURIComponent(org)},entity:${encodeURIComponent(to.networkId)})`, { method: "DELETE", headers: rest(s.accessToken) }, { what: "LinkedIn like" });
+      return null;
+    },
+  },
 };

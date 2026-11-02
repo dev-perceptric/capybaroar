@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type PostStats, type Provider, type Publishable, type Published } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type InboxRef, type MediaFile, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // Facebook Pages and Instagram (through Facebook login, Instagram professional accounts linked to a Page),
 // and Threads (its own sign-in on threads.net). One Meta app holds all three.
@@ -138,6 +138,131 @@ async function stats(run: () => Promise<PostStats>): Promise<PostStats> {
   }
 }
 
+// Inbox: comments on the Page's or account's latest posts in one call each, and DMs when their permission was granted.
+// DMs need Meta's app review, so their permissions are asked for only when META_MESSAGING=1.
+const messaging = () => process.env.META_MESSAGING === "1";
+
+/** The permissions the person granted, kept on the channel so DMs are read only where they're allowed. */
+async function granted(token: string): Promise<string[]> {
+  try {
+    const r = await call<{ data?: { permission: string; status: string }[] }>(G(`me/permissions?${qs({ access_token: token })}`), {}, { what: "Facebook permissions" });
+    return (r.data ?? []).filter((p) => p.status === "granted").map((p) => p.permission);
+  } catch {
+    return [];
+  }
+}
+const allowed = (s: Secret, scope: string) => Array.isArray(s.extra.scopes) && (s.extra.scopes as unknown[]).includes(scope);
+
+type Msg = { id: string; message?: string; from?: { id: string; name?: string; username?: string }; created_time: string };
+
+/** Messenger or Instagram conversations through the Page token ("me" is the Page). */
+async function conversations(token: string, platform: "messenger" | "instagram", ownId: string, since: Date): Promise<InboxItem[]> {
+  const r = await call<{ data?: { id: string; updated_time: string; messages?: { data?: Msg[] } }[] }>(
+    G(`me/conversations?${qs({ platform, fields: "id,updated_time,messages.limit(10){id,message,from,created_time}", limit: "20", access_token: token })}`),
+    {},
+    { what: platform === "instagram" ? "Instagram messages" : "Messenger" },
+  );
+  const out: InboxItem[] = [];
+  for (const c of r.data ?? []) {
+    if (new Date(c.updated_time) < since) continue;
+    for (const m of c.messages?.data ?? []) {
+      const at = new Date(m.created_time);
+      if (at < since) continue;
+      out.push({ networkId: m.id, kind: "dm", threadId: c.id, parentId: null, authorId: m.from?.id ?? null, authorName: m.from?.name || m.from?.username || "Someone", authorHandle: m.from?.username ?? null, text: m.message ?? "", createdAt: at, mine: m.from?.id === ownId });
+    }
+  }
+  return out;
+}
+
+/** Answer a DM. Meta only allows it within 24 hours of the person's last message (outside that it answers 400). */
+async function sendMessage(token: string, to: InboxRef, text: string, what: string) {
+  if (!to.authorId) throw new PostError(`${what}: no one to answer`);
+  const r = await call<{ message_id: string }>(
+    G(`me/messages?${qs({ access_token: token })}`),
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ recipient: { id: to.authorId }, messaging_type: "RESPONSE", message: { text } }) },
+    { what },
+  );
+  return { id: r.message_id };
+}
+
+const noDm = (to: InboxRef, what: string) => {
+  if (to.kind === "dm") throw new PostError(`${what} isn't possible on a message`);
+};
+
+type FbComment = { id: string; message?: string; from?: { id: string; name?: string }; created_time: string; parent?: { id: string }; permalink_url?: string; is_hidden?: boolean; user_likes?: boolean };
+
+async function facebookInbox(s: Secret, pageId: string, q: InboxQuery): Promise<InboxBatch> {
+  const token = s.accessToken;
+  // filter(stream) returns replies too, each with its parent. Verify: order() on the nested comments edge.
+  const fields = `id,message,permalink_url,comments.filter(stream).order(reverse_chronological).limit(50){id,message,from{id,name},created_time,parent{id},permalink_url,is_hidden,user_likes}`;
+  const r = await call<{ data?: { id: string; message?: string; permalink_url?: string; comments?: { data?: FbComment[] } }[] }>(G(`${pageId}/posts?${qs({ fields, limit: "15", access_token: token })}`), {}, { what: "Facebook comments" });
+  const items: InboxItem[] = [];
+  for (const p of r.data ?? [])
+    for (const c of p.comments?.data ?? []) {
+      const at = new Date(c.created_time);
+      if (at < q.since) continue;
+      items.push({
+        networkId: c.id,
+        kind: c.parent ? "reply" : "comment",
+        threadId: c.parent?.id ?? c.id,
+        parentId: c.parent?.id ?? null,
+        postRemoteId: p.id,
+        postUrl: p.permalink_url ?? null,
+        postText: p.message ?? null,
+        url: c.permalink_url ?? null,
+        authorId: c.from?.id ?? null,
+        authorName: c.from?.name || "Facebook user",
+        text: c.message ?? "",
+        createdAt: at,
+        mine: c.from?.id === pageId,
+        liked: Boolean(c.user_likes),
+        hidden: Boolean(c.is_hidden),
+      });
+    }
+  if (messaging() && allowed(s, "pages_messaging")) items.push(...(await conversations(token, "messenger", pageId, q.since)));
+  return { items, cursor: null };
+}
+
+type IgComment = { id: string; text?: string; username?: string; timestamp: string; from?: { id: string; username?: string }; parent_id?: string; hidden?: boolean; replies?: { data?: IgComment[] } };
+
+async function instagramInbox(s: Secret, igId: string, q: InboxQuery): Promise<InboxBatch> {
+  const token = s.accessToken;
+  const one = "id,text,username,timestamp,from{id,username},hidden";
+  // Verify: the order nested comments come back in; 50 per post covers a 10-minute window for nearly every account.
+  const fields = `id,caption,permalink,comments.limit(50){${one},replies{${one},parent_id}}`;
+  const r = await call<{ data?: { id: string; caption?: string; permalink?: string; comments?: { data?: IgComment[] } }[] }>(G(`${igId}/media?${qs({ fields, limit: "15", access_token: token })}`), {}, { what: "Instagram comments" });
+  const items: InboxItem[] = [];
+  const add = (m: { id: string; caption?: string; permalink?: string }, c: IgComment, parent: string | null) => {
+    const at = new Date(c.timestamp);
+    if (at < q.since) return;
+    const name = c.username || c.from?.username || "Instagram user";
+    items.push({
+      networkId: c.id,
+      kind: parent ? "reply" : "comment",
+      threadId: parent ?? c.id,
+      parentId: parent,
+      postRemoteId: m.id,
+      postUrl: m.permalink ?? null,
+      postText: m.caption ?? null,
+      url: m.permalink ?? null,
+      authorId: c.from?.id ?? null,
+      authorName: name,
+      authorHandle: c.username || c.from?.username || null,
+      text: c.text ?? "",
+      createdAt: at,
+      mine: c.from?.id === igId,
+      hidden: Boolean(c.hidden),
+    });
+  };
+  for (const m of r.data ?? [])
+    for (const c of m.comments?.data ?? []) {
+      add(m, c, null);
+      for (const rep of c.replies?.data ?? []) add(m, rep, rep.parent_id ?? c.id);
+    }
+  if (messaging() && allowed(s, "instagram_manage_messages")) items.push(...(await conversations(token, "instagram", igId, q.since)));
+  return { items, cursor: null };
+}
+
 const metaConfigured = () => Boolean(appId() && appSecret());
 
 export const facebook: Provider = {
@@ -150,13 +275,14 @@ export const facebook: Provider = {
         redirect_uri: redirect,
         state,
         response_type: "code",
-        scope: "pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement,read_insights,business_management",
+        scope: ["pages_show_list,pages_manage_posts,pages_read_engagement,pages_manage_engagement,pages_read_user_content,read_insights,business_management", messaging() ? "pages_messaging" : ""].filter(Boolean).join(","),
       })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const tok = await userToken(code, redirect);
       const list = await pages(tok, "id,name,access_token,username,picture{url}");
       if (!list.length) throw new PostError("No Facebook Pages were shared with Capybaroar");
-      return list.map((p) => ({ accountId: p.id, name: p.name, username: p.username ?? null, avatar: p.picture?.data?.url ?? null, accessToken: p.access_token }));
+      const scopes = await granted(tok);
+      return list.map((p) => ({ accountId: p.id, name: p.name, username: p.username ?? null, avatar: p.picture?.data?.url ?? null, accessToken: p.access_token, extra: { scopes } }));
     },
   },
   check: (p) => {
@@ -180,6 +306,24 @@ export const facebook: Provider = {
   },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
   postStats: (s, _pageId, remoteId) => stats(() => facebookStats(s.accessToken, remoteId)),
+  inbox: {
+    fetch: facebookInbox,
+    reply: async (s, _pageId, to, text) => {
+      if (to.kind === "dm") return sendMessage(s.accessToken, to, text, "Messenger reply");
+      // Facebook keeps two levels: an answer to a reply goes under its top-level comment.
+      const r = await call<{ id: string }>(G(`${to.threadId || to.networkId}/comments`), { method: "POST", body: form({ message: text, access_token: s.accessToken }) }, { what: "Facebook reply" });
+      return { id: r.id };
+    },
+    like: async (s, _pageId, to, on) => {
+      noDm(to, "Liking");
+      await call(G(`${to.networkId}/likes?${qs({ access_token: s.accessToken })}`), { method: on ? "POST" : "DELETE" }, { what: "Facebook like" });
+      return null;
+    },
+    hide: async (s, _pageId, to, on) => {
+      noDm(to, "Hiding");
+      await call(G(to.networkId), { method: "POST", body: form({ is_hidden: String(on), access_token: s.accessToken }) }, { what: "Facebook hide" });
+    },
+  },
 };
 
 /** Wait for Meta to finish a media container (videos take a while). */
@@ -204,15 +348,16 @@ export const instagram: Provider = {
         redirect_uri: redirect,
         state,
         response_type: "code",
-        scope: "instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management",
+        scope: ["instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management", messaging() ? "instagram_manage_messages,pages_manage_metadata" : ""].filter(Boolean).join(","),
       })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const tok = await userToken(code, redirect);
       const list = (await pages(tok, "id,name,access_token,instagram_business_account{id,username,name,profile_picture_url}")).filter((p) => p.instagram_business_account);
       if (!list.length) throw new PostError("No Instagram professional account is linked to your Facebook Pages");
+      const scopes = await granted(tok);
       return list.map((p) => {
         const ig = p.instagram_business_account!;
-        return { accountId: ig.id, name: ig.name || ig.username || p.name, username: ig.username ?? null, avatar: ig.profile_picture_url ?? null, accessToken: p.access_token };
+        return { accountId: ig.id, name: ig.name || ig.username || p.name, username: ig.username ?? null, avatar: ig.profile_picture_url ?? null, accessToken: p.access_token, extra: { scopes } };
       });
     },
   },
@@ -266,6 +411,19 @@ export const instagram: Provider = {
   },
   followers: async (s, igId) => (await call<{ followers_count?: number }>(G(`${igId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Instagram followers" })).followers_count ?? null,
   postStats: (s, _igId, remoteId) => stats(() => instagramStats(s.accessToken, remoteId)),
+  inbox: {
+    fetch: instagramInbox,
+    reply: async (s, _igId, to, text) => {
+      if (to.kind === "dm") return sendMessage(s.accessToken, to, text, "Instagram message");
+      // Instagram keeps two levels: an answer to a reply goes under its top-level comment.
+      const r = await call<{ id: string }>(G(`${to.threadId || to.networkId}/replies`), { method: "POST", body: form({ message: text, access_token: s.accessToken }) }, { what: "Instagram reply" });
+      return { id: r.id };
+    },
+    hide: async (s, _igId, to, on) => {
+      noDm(to, "Hiding");
+      await call(G(to.networkId), { method: "POST", body: form({ hide: String(on), access_token: s.accessToken }) }, { what: "Instagram hide" });
+    },
+  },
 };
 
 const T = (path: string) => `https://graph.threads.net/v1.0/${path}`;
@@ -277,7 +435,7 @@ export const threads: Provider = {
   oauth: {
     configured: () => Boolean(thId() && thSecret()),
     authUrl: ({ state, redirect }) =>
-      `https://threads.net/oauth/authorize?${qs({ client_id: thId(), redirect_uri: redirect, state, response_type: "code", scope: "threads_basic,threads_content_publish,threads_manage_replies,threads_manage_insights" })}`,
+      `https://threads.net/oauth/authorize?${qs({ client_id: thId(), redirect_uri: redirect, state, response_type: "code", scope: "threads_basic,threads_content_publish,threads_manage_replies,threads_read_replies,threads_manage_insights" })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const short = await call<{ access_token: string; user_id: string }>(
         "https://graph.threads.net/oauth/access_token",
@@ -345,5 +503,61 @@ export const threads: Provider = {
     return r.data?.[0]?.total_value?.value ?? null;
   },
   postStats: (s, _userId, remoteId) => stats(() => threadsStats(s.accessToken, remoteId)),
+  inbox: {
+    fetch: threadsInbox,
+    reply: async (s, userId, to, text) => {
+      const token = s.accessToken;
+      const c = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form({ media_type: "TEXT", text, reply_to_id: to.networkId, access_token: token }) }, { what: "Threads reply" });
+      const r = await call<{ id: string }>(T(`${userId}/threads_publish`), { method: "POST", body: form({ creation_id: c.id, access_token: token }) }, { what: "Threads reply" });
+      return { id: r.id };
+    },
+    // Only replies straight under a post can be hidden (that hides the ones under it too).
+    hide: async (s, _userId, to, on) => {
+      await call(T(`${to.networkId}/manage_reply`), { method: "POST", body: form({ hide: String(on), access_token: s.accessToken }) }, { what: "Threads hide" });
+    },
+  },
 };
+
+type ThreadsReply = { id: string; text?: string; username?: string; permalink?: string; timestamp: string; replied_to?: { id: string }; is_reply_owned_by_me?: boolean; hide_status?: string; profile_picture_url?: string };
+
+/** Replies under the account's posts from the last 14 days: one call for the posts, one per post for its replies. */
+async function threadsInbox(s: Secret, userId: string, q: InboxQuery): Promise<InboxBatch> {
+  const token = s.accessToken;
+  const posts = await call<{ data?: { id: string; text?: string; permalink?: string; timestamp: string }[] }>(T(`${userId}/threads?${qs({ fields: "id,text,permalink,timestamp", limit: "10", access_token: token })}`), {}, { what: "Threads posts" });
+  const items: InboxItem[] = [];
+  const recent = Date.now() - 14 * 86400000;
+  for (const p of posts.data ?? []) {
+    if (new Date(p.timestamp).getTime() < recent) continue;
+    let r: { data?: ThreadsReply[] };
+    try {
+      r = await call(T(`${p.id}/conversation?${qs({ fields: "id,text,username,permalink,timestamp,replied_to,is_reply_owned_by_me,hide_status,profile_picture_url", reverse: "true", access_token: token })}`), {}, { what: "Threads replies" });
+    } catch (e) {
+      if (gone(e) && !/permission/i.test((e as Error).message)) continue;
+      throw e;
+    }
+    for (const c of r.data ?? []) {
+      const at = new Date(c.timestamp);
+      if (at < q.since) continue;
+      const top = !c.replied_to || c.replied_to.id === p.id;
+      items.push({
+        networkId: c.id,
+        kind: top ? "comment" : "reply",
+        threadId: top ? c.id : null,
+        parentId: top ? null : c.replied_to!.id,
+        postRemoteId: p.id,
+        postUrl: p.permalink ?? null,
+        postText: p.text ?? null,
+        url: c.permalink ?? null,
+        authorName: c.username || "Threads user",
+        authorHandle: c.username ?? null,
+        authorAvatar: c.profile_picture_url ?? null,
+        text: c.text ?? "",
+        createdAt: at,
+        mine: Boolean(c.is_reply_owned_by_me),
+        hidden: c.hide_status === "HIDDEN",
+      });
+    }
+  }
+  return { items, cursor: null };
+}
 

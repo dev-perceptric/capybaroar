@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, plainText, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Secret } from "./types";
 
 // Mastodon: any server. The app is registered on that server the first time someone signs in with it.
-const SCOPES = "read write:statuses write:media";
+// write:favourites is for likes in the Inbox; channels connected before it was added answer 403 there until reconnected.
+const SCOPES = "read write:statuses write:media write:favourites";
 const VISIBILITY = new Set(["public", "unlisted", "private"]);
 
 /** "https://Mastodon.social/", "@me@mastodon.social" or "mastodon.social" → "mastodon.social". */
@@ -43,6 +44,20 @@ async function upload(base: string, tok: string, m: MediaFile) {
 
 /** A 404 from call() comes back as a plain Error; the post was deleted. */
 const gone = (e: unknown) => e instanceof Error && !(e instanceof AuthError) && !(e instanceof PostError) && /\b404\b|not found/i.test(e.message);
+
+type Status = {
+  id: string;
+  url?: string | null;
+  uri: string;
+  content: string;
+  created_at: string;
+  in_reply_to_id?: string | null;
+  in_reply_to_account_id?: string | null;
+  favourited?: boolean;
+  visibility?: string;
+  account: { id: string; acct: string; display_name?: string; avatar?: string };
+};
+type Notification = { id: string; type: string; created_at: string; status?: Status };
 
 export const mastodon: Provider = {
   network: "mastodon",
@@ -121,5 +136,68 @@ export const mastodon: Provider = {
     });
     if (!r) return {};
     return { likes: r.favourites_count ?? null, shares: r.reblogs_count ?? null, comments: r.replies_count ?? null };
+  },
+  inbox: {
+    // Mentions (replies to us are mentions too). The cursor is the newest notification id: min_id reads the ones
+    // right after it, 40 at a time, up to 5 pages a round.
+    fetch: async (s, accountId, q) => {
+      const base = `https://${instanceOf(s)}`;
+      const me = accountId.split("@")[0];
+      const items: InboxItem[] = [];
+      let cursor = q.cursor;
+      for (let page = 0; page < 5; page++) {
+        const params = new URLSearchParams({ limit: "40" });
+        params.append("types[]", "mention");
+        if (cursor) params.set("min_id", cursor);
+        const list = await call<Notification[]>(`${base}/api/v1/notifications?${params}`, { headers: bearer(s.accessToken) }, { what: "Mastodon notifications" });
+        if (!list.length) break;
+        for (const n of list) {
+          const st = n.status;
+          if (n.type !== "mention" || !st) continue;
+          const at = new Date(st.created_at);
+          if (at < q.since) continue;
+          const toUs = st.in_reply_to_account_id === me;
+          items.push({
+            networkId: st.id,
+            // A private mention is Mastodon's direct message.
+            kind: st.visibility === "direct" ? "dm" : toUs ? "reply" : "mention",
+            threadId: st.in_reply_to_id ? null : st.id,
+            parentId: st.in_reply_to_id ?? null,
+            postRemoteId: toUs ? (st.in_reply_to_id ?? null) : null,
+            url: st.url ?? st.uri,
+            authorId: st.account.id,
+            authorName: st.account.display_name || st.account.acct,
+            authorHandle: st.account.acct,
+            authorAvatar: st.account.avatar ?? null,
+            text: plainText(st.content),
+            createdAt: at,
+            mine: st.account.id === me,
+            liked: Boolean(st.favourited),
+            extra: { visibility: st.visibility ?? "public" },
+          });
+        }
+        // Newest first: the first one is the newest. Without a cursor (the first read) one page is enough.
+        cursor = list[0].id;
+        if (!q.cursor || list.length < 40) break;
+      }
+      return { items, cursor };
+    },
+    // A reply starts with the author's handle, so they're told about it, and keeps the visibility it answers
+    // (a direct message stays direct).
+    reply: async (s, _accountId, to, text) => {
+      const base = `https://${instanceOf(s)}`;
+      const handle = to.authorHandle ? `@${to.authorHandle}` : "";
+      const status = handle && !text.includes(handle) ? `${handle} ${text}` : text;
+      const r = await call<{ id: string; url?: string | null; uri: string }>(
+        `${base}/api/v1/statuses`,
+        { method: "POST", headers: { ...bearer(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ status, in_reply_to_id: to.networkId, visibility: VISIBILITY.has(to.extra.visibility) || to.extra.visibility === "direct" ? to.extra.visibility : "public" }) },
+        { what: "Mastodon reply" },
+      );
+      return { id: r.id, url: r.url ?? r.uri };
+    },
+    like: async (s, _accountId, to, on) => {
+      await call(`https://${instanceOf(s)}/api/v1/statuses/${encodeURIComponent(to.networkId)}/${on ? "favourite" : "unfavourite"}`, { method: "POST", headers: bearer(s.accessToken) }, { what: "Mastodon like" });
+      return null;
+    },
   },
 };

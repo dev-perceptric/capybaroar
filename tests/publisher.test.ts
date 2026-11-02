@@ -112,6 +112,19 @@ class Memory implements Store {
   async saveStats(t: TargetCtx, st: Record<string, unknown>) {
     this.saved.set(t.id, st);
   }
+  // The Inbox has its own tests (inbox.test.ts).
+  async claimInbox() {
+    return [];
+  }
+  async inboxChannel() {
+    return null;
+  }
+  async threadsOf() {
+    return new Map<string, string>();
+  }
+  async saveInbox() {}
+  async closeThread() {}
+  async inboxError() {}
 }
 
 /** A fake network: records every post that went live, and fails at the given rate before posting. */

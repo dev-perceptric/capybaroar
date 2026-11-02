@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Bot, CalendarDays, Image as ImageIcon, LogOut, Plug, Settings } from "lucide-react";
+import { BarChart3, Bot, CalendarDays, Image as ImageIcon, Inbox, LogOut, Plug, Settings } from "lucide-react";
 import { Avatar } from "./ui";
 import { signOut } from "@/app/login/actions";
 
@@ -11,6 +11,7 @@ const SECTIONS = [
     label: "Workspace",
     items: [
       { href: "/calendar", label: "Calendar", icon: <CalendarDays /> },
+      { href: "/inbox", label: "Inbox", icon: <Inbox /> },
       { href: "/channels", label: "Channels", icon: <Plug /> },
       { href: "/agents", label: "Agents", icon: <Bot /> },
       { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
@@ -23,18 +24,23 @@ const item = "group flex h-8 shrink-0 items-center gap-2 border px-2 text-[13px]
 const itemOn = "border-frame bg-yolk font-semibold text-on-yolk";
 const itemOff = "border-transparent text-ink/85 hover:bg-pressed hover:text-ink";
 
-function NavLink({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
+function NavLink({ href, label, icon, count }: { href: string; label: string; icon: React.ReactNode; count?: number }) {
   const path = usePathname();
   const on = path === href || path.startsWith(`${href}/`);
   return (
     <Link href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
       <span className={on ? "[&_svg]:stroke-[2.25]" : "text-ink/70 group-hover:text-ink"}>{icon}</span>
       {label}
+      {count ? (
+        <span aria-label={`${count} open`} className="ml-auto inline-flex h-4 min-w-4 items-center justify-center border border-frame bg-panel px-1 text-[11px] leading-none font-medium text-ink tabular-nums">
+          {count > 99 ? "99+" : count}
+        </span>
+      ) : null}
     </Link>
   );
 }
 
-export function Sidebar({ name, email, workspace }: { name: string; email: string; workspace: string }) {
+export function Sidebar({ name, email, workspace, inbox = 0 }: { name: string; email: string; workspace: string; inbox?: number }) {
   return (
     <aside className="flex shrink-0 flex-col border-b border-frame bg-side md:w-[220px] md:border-r md:border-b-0">
       <div className="flex h-12 items-center gap-2 px-3 md:h-14 md:border-b md:border-frame">
@@ -51,7 +57,7 @@ export function Sidebar({ name, email, workspace }: { name: string; email: strin
               <span className="bracket">{sec.label}</span>
             </p>
             {sec.items.map((n) => (
-              <NavLink key={n.href} {...n} />
+              <NavLink key={n.href} {...n} count={n.href === "/inbox" ? inbox : undefined} />
             ))}
           </div>
         ))}
