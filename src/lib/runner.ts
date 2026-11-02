@@ -124,6 +124,7 @@ export const supabaseStore: Store = {
   },
 };
 
+const BATCH = 5;
 let started = false;
 export function startRunner() {
   if (started) return;
@@ -133,7 +134,10 @@ export function startRunner() {
     if (busy) return;
     busy = true;
     try {
-      await runDue(supabaseStore, providerOf, WORKER);
+      // A full batch means more are due (posts at a popular time): keep going for up to a minute instead of waiting
+      // 15 seconds per batch of 5.
+      const until = Date.now() + 60000;
+      while ((await runDue(supabaseStore, providerOf, WORKER, BATCH)) === BATCH && Date.now() < until);
     } catch (e) {
       console.error("runner:", e);
     } finally {

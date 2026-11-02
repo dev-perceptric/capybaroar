@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
 import { Avatar, Button, Field, IconButton, Input, Segmented, TextArea, inputClass } from "./ui";
@@ -10,14 +11,15 @@ import { NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { TextTools, mod, toggleStyle } from "./TextTools";
-import { MediaEdit } from "./MediaEdit";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { bestSlots, duplicate, loadMedia, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
+import { composerData, duplicate, loadMedia, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
-import { browserClient } from "@/lib/supabase/browser";
 import { dialogIn, fadeIn } from "@/lib/motion";
+
+// Crop and trim load when first used.
+const MediaEdit = dynamic(() => import("./MediaEdit").then((m) => m.MediaEdit), { ssr: false });
 
 type Media = { id: string; name: string; mime: string; thumb: string | null; alt: string | null };
 type Target = { text: string | null; settings: Record<string, string> };
@@ -154,11 +156,17 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
 
   const [best, setBest] = useState<{ day: number; hour: number }[]>([]);
   useEffect(() => {
-    bestSlots().then(setBest, () => setBest([]));
+    composerData().then(
+      (d) => {
+        setBest(d.best ?? []);
+        setLibrary((d.media ?? []) as Media[]);
+      },
+      () => {
+        setBest([]);
+        setLibrary([]);
+      },
+    );
   }, []);
-  useEffect(() => {
-    if (!library) loadMedia().then((m) => setLibrary(m as Media[]), () => setLibrary([]));
-  }, [library]);
 
   const picked = channels.filter((c) => targets[c.id]);
   const active = picked.find((c) => c.id === tab) ?? null;
@@ -198,7 +206,8 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
       return;
     }
     setError("");
-    const sb = browserClient();
+    // Storage's client loads with the first upload, while its one-time link is made.
+    const storage = import("@/lib/supabase/browser");
     for (const f of all) {
       const key = `${f.name}-${f.size}-${f.lastModified}`;
       setUploading((u) => [...u, { key, name: f.name }]);
@@ -209,6 +218,7 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
         fail(s.error ?? "Couldn't start the upload");
         continue;
       }
+      const sb = (await storage).browserClient();
       const { error: e } = await sb.storage.from("media").uploadToSignedUrl(s.path, s.token, f, { contentType: f.type });
       if (e) {
         fail(e.message);
@@ -819,7 +829,7 @@ function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
         <video src={m.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
       ) : (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={m.thumb ?? ""} alt={m.alt ?? ""} className="size-full object-cover" />
+        <img src={m.thumb ?? ""} alt={m.alt ?? ""} loading="lazy" decoding="async" className="size-full object-cover" />
       )}
     </span>
   );

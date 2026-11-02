@@ -1,10 +1,18 @@
 // Saved time slots ("Mon, Wed, Fri at 9 AM") in the workspace time zone, and finding the next free one.
 export type Slot = { day: number; time: string };
 
+// Making a date format is slow next to using one, and finding a slot can check hundreds of times: one per zone.
+const clocks = new Map<string, Intl.DateTimeFormat>();
+const clockIn = (timeZone: string) => {
+  let f = clocks.get(timeZone);
+  if (!f) clocks.set(timeZone, (f = new Intl.DateTimeFormat("en-US", { timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })));
+  return f;
+};
+
 /** Minutes the zone is ahead of UTC at this instant (negative west of Greenwich). */
 function offsetMinutes(at: Date, timeZone: string): number {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat("en-US", { timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })
+    clockIn(timeZone)
       .formatToParts(at)
       .map((p) => [p.type, p.value]),
   );

@@ -8,7 +8,6 @@ import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { askConfirm } from "./Dialogs";
 import { endUpload, removeMedia, startUpload } from "@/app/(app)/media/actions";
-import { browserClient } from "@/lib/supabase/browser";
 
 type File = { id: string; name: string; mime: string; size: number; thumb: string | null };
 
@@ -24,7 +23,8 @@ export function MediaView({ files }: { files: File[] }) {
     if (!list?.length) return;
     start(async () => {
       setError("");
-      const sb = browserClient();
+      // Storage's client loads with the first upload, while its one-time link is made.
+      const storage = import("@/lib/supabase/browser");
       for (const f of Array.from(list)) {
         const info = { name: f.name, type: f.type, size: f.size };
         const s = await startUpload(info);
@@ -32,6 +32,7 @@ export function MediaView({ files }: { files: File[] }) {
           setError(`${f.name}: ${s.error}`);
           break;
         }
+        const sb = (await storage).browserClient();
         const { error } = await sb.storage.from("media").uploadToSignedUrl(s.path, s.token, f, { contentType: f.type });
         if (error) {
           setError(`${f.name}: ${error.message}`);
@@ -71,10 +72,10 @@ export function MediaView({ files }: { files: File[] }) {
               <figure key={f.id} className="group border border-frame">
                 <div className="relative aspect-square bg-pressed">
                   {f.mime.startsWith("video/") ? (
-                    <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls />
+                    <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls preload="metadata" />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={f.thumb ?? ""} alt={f.name} className="size-full object-cover" />
+                    <img src={f.thumb ?? ""} alt={f.name} loading="lazy" decoding="async" className="size-full object-cover" />
                   )}
                   <span className="absolute top-1 right-1 hidden bg-panel group-hover:block">
                     <IconButton label="Delete" onClick={() => del(f)}>

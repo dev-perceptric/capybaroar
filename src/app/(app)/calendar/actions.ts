@@ -64,6 +64,15 @@ export async function saveAlt(id: string, alt: string): Promise<{ error?: string
   }
 }
 
+/** What the composer needs when it opens, in one trip: the browser sends server actions one at a time. Each part is
+ * null when it failed. */
+export async function composerData() {
+  const ctx = await getCtx();
+  const { suggestedTimes } = await import("@/lib/analytics");
+  const [best, media] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId)]);
+  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null };
+}
+
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */
 export async function bestSlots() {
   const ctx = await getCtx();

@@ -11,7 +11,11 @@ const RANGES = [7, 30, 90];
 
 export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ days?: string; channel?: string }> }) {
   const ctx = await getCtx();
-  const channels = await listChannels(ctx.workspaceId);
+  const q = await searchParams;
+  const days = RANGES.includes(Number(q.days)) ? Number(q.days) : 30;
+  const asked = q.channel ?? null;
+  // The numbers load alongside the channels. A channel that isn't this workspace's loads again for all channels.
+  const [channels, first] = await Promise.all([listChannels(ctx.workspaceId), analytics(ctx.workspaceId, ctx.timezone, days, asked).catch(() => null)]);
   if (!channels.length)
     return (
       <Page icon={<BarChart3 />} title="Analytics">
@@ -27,10 +31,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         />
       </Page>
     );
-  const q = await searchParams;
-  const days = RANGES.includes(Number(q.days)) ? Number(q.days) : 30;
-  const channel = channels.some((c) => c.id === q.channel) ? q.channel! : null;
-  const data = await analytics(ctx.workspaceId, ctx.timezone, days, channel);
+  const channel = channels.some((c) => c.id === asked) ? asked : null;
+  const data = first && channel === asked ? first : await analytics(ctx.workspaceId, ctx.timezone, days, channel);
   return (
     <Page icon={<BarChart3 />} title="Analytics" flush>
       <AnalyticsView data={data} channels={channels} channel={channel} timezone={ctx.timezone} />

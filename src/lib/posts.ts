@@ -29,6 +29,15 @@ export async function postsBetween(workspaceId: string, from: Date, to: Date): P
   return (data ?? []) as PostRow[];
 }
 
+/** Posts around now, for the calendar's opening week. The grid is drawn in the viewer's time zone, which the server
+ * doesn't know, so this covers any zone's current week: it starts at most 7 days back and ends at most 7 days ahead. */
+export async function postsAroundNow(workspaceId: string) {
+  const now = Date.now();
+  const from = new Date(now - 8 * 86400000);
+  const to = new Date(now + 8 * 86400000);
+  return { from: from.toISOString(), to: to.toISOString(), posts: await postsBetween(workspaceId, from, to) };
+}
+
 /** One channel's part of a post: its own text (null = the shared text) and the network's settings. */
 export type TargetInput = { channelId: string; text: string | null; settings: Record<string, string> };
 
@@ -46,12 +55,11 @@ const EDITABLE: PostStatus[] = ["draft", "scheduled", "failed"];
 
 /** Everything that would stop this post going out, checked per channel before anything is saved. */
 async function validate(workspaceId: string, input: SaveInput, publishAt: Date) {
-  const channels = await listChannels(workspaceId);
+  const coverIds = input.targets.map((t) => t.settings.cover).filter(Boolean);
+  const [channels, all] = await Promise.all([listChannels(workspaceId), mediaInfo(workspaceId, [...new Set([...input.mediaIds, ...coverIds])])]);
   const byId = new Map(channels.map((c) => [c.id, c]));
   if (!input.targets.length) throw new Error("Pick at least one channel");
   if (publishAt.getTime() < Date.now() - 60000) throw new Error("Pick a time in the future");
-  const coverIds = input.targets.map((t) => t.settings.cover).filter(Boolean);
-  const all = await mediaInfo(workspaceId, [...new Set([...input.mediaIds, ...coverIds])]);
   const media = input.mediaIds.map((id) => all.find((m) => m.id === id)).filter((m) => m !== undefined);
   if (media.length !== input.mediaIds.length) throw new Error("A file in this post was deleted");
   for (const t of input.targets) {

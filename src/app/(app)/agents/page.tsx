@@ -10,10 +10,14 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   const ctx = await getCtx();
   const { chat } = await searchParams;
   const db = adminClient();
-  const { data: chats } = await db.from("agent_chats").select("id, title").eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).order("created_at", { ascending: false }).limit(50);
+  // The open chat's messages load alongside the list, and show only when the chat is in it (this person's).
+  const [{ data: chats }, open] = await Promise.all([
+    db.from("agent_chats").select("id, title").eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).order("created_at", { ascending: false }).limit(50),
+    chat ? db.from("agent_messages").select("id, role, content").eq("chat_id", chat).order("id") : null,
+  ]);
   let shown: Shown[] = [];
   if (chat && chats?.some((c) => c.id === chat)) {
-    const { data: rows } = await db.from("agent_messages").select("id, role, content").eq("chat_id", chat).order("id");
+    const rows = open?.data;
     shown = (rows ?? []).flatMap((r) => {
       const blocks = (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[];
       return blocks.flatMap((b, i): Shown[] => {

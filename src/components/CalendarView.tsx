@@ -4,15 +4,20 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 
 const noop = () => () => {};
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Avatar, Badge, Button, Page, Segmented } from "@/components/ui";
-import { Composer } from "@/components/Composer";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
 import { loadPosts, move } from "@/app/(app)/calendar/actions";
 import { tell } from "@/components/Dialogs";
+
+// The composer (previews, text tools, uploads) loads after the calendar shows, and is fetched while the browser is
+// idle so it opens at once.
+const loadComposer = () => import("@/components/Composer").then((m) => m.Composer);
+const Composer = dynamic(loadComposer, { ssr: false });
 
 type Mode = "week" | "month" | "list";
 
@@ -32,13 +37,18 @@ const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6;
 const MOVABLE: PostRow["status"][] = ["draft", "scheduled", "failed"];
 const postText = (p: PostRow) => p.text || p.post_targets.find((t) => t.text)?.text || "No text";
 
-export function CalendarView({ channels }: { channels: Channel[] }) {
+/** Posts the server already loaded for the opening week (a range wide enough for any time zone). */
+type Initial = { from: string; to: string; posts: PostRow[] };
+// A tab reopened from the browser's cache brings the same first load again, which may be out of date: use each once.
+let usedSeed = "";
+
+export function CalendarView({ channels, initial }: { channels: Channel[]; initial?: Initial }) {
   const startNew = useSearchParams().has("new");
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
   const [channel, setChannel] = useState<string>("all");
-  const [posts, setPosts] = useState<PostRow[]>([]);
+  const [posts, setPosts] = useState<PostRow[]>(() => initial?.posts ?? []);
   const range = useMemo(() => {
     if (mode === "list") {
       const from = startOfDay(anchor);
@@ -50,11 +60,27 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
   const reload = useCallback(() => {
     loadPosts(range.from.toISOString(), range.to.toISOString()).then(setPosts, () => setPosts([]));
   }, [range]);
+  // The first range comes with the page when the server's covers it; after that, load on every change.
+  const seeded = useRef(initial ? { key: initial.from, from: Date.parse(initial.from), to: Date.parse(initial.to) } : null);
   useEffect(() => {
-    reload();
-    const t = setInterval(reload, 30000);
-    return () => clearInterval(t);
-  }, [reload]);
+    const s = seeded.current;
+    seeded.current = null;
+    const covered = s && s.key !== usedSeed && range.from.getTime() >= s.from && range.to.getTime() <= s.to;
+    if (s) usedSeed = s.key;
+    if (!covered) reload();
+    // Refresh every 30 seconds while the tab is in view, and as soon as it comes back.
+    const t = setInterval(() => document.visibilityState === "visible" && reload(), 30000);
+    const back = () => document.visibilityState === "visible" && reload();
+    document.addEventListener("visibilitychange", back);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", back);
+    };
+  }, [reload, range]);
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((f: () => void) => window.setTimeout(f, 1500));
+    idle(() => void loadComposer());
+  }, []);
   const [now, setNow] = useState(() => new Date());
   // Times depend on the viewer's time zone, so the grid draws in the browser only (no server/browser mismatch).
   const ready = useSyncExternalStore(noop, () => true, () => false);
@@ -63,13 +89,23 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
     return () => clearInterval(t);
   }, []);
 
-  const shown = channel === "all" ? posts : posts.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
+  // Only the range on screen (the server's first load is wider). Counted in the browser, where the range is known.
+  const inRange = useMemo(() => {
+    if (!ready) return [];
+    const from = range.from.getTime();
+    const to = range.to.getTime();
+    return posts.filter((p) => {
+      const t = p.publish_at ? Date.parse(p.publish_at) : NaN;
+      return t >= from && t < to;
+    });
+  }, [posts, range, ready]);
+  const shown = channel === "all" ? inRange : inRange.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
   const byId = useMemo(() => new Map(channels.map((c) => [c.id, c])), [channels]);
   const counts = useMemo(() => {
     const m = new Map<string, number>();
-    for (const p of posts) for (const t of p.post_targets) m.set(t.channel_id, (m.get(t.channel_id) ?? 0) + 1);
+    for (const p of inRange) for (const t of p.post_targets) m.set(t.channel_id, (m.get(t.channel_id) ?? 0) + 1);
     return m;
-  }, [posts]);
+  }, [inRange]);
 
   // Drag a draft or scheduled post to another slot. Month keeps its time of day.
   const drop = async (postId: string, at: Date, keepTime: boolean) => {
@@ -157,7 +193,7 @@ export function CalendarView({ channels }: { channels: Channel[] }) {
             />
           </div>
           <div className="flex items-center gap-1.5 overflow-x-auto px-5 pb-3">
-            <FilterChip on={channel === "all"} onClick={() => setChannel("all")} count={posts.length}>
+            <FilterChip on={channel === "all"} onClick={() => setChannel("all")} count={inRange.length}>
               All channels
             </FilterChip>
             {channels.map((c) => (

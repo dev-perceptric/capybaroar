@@ -8,14 +8,34 @@ const BUCKET = "media";
 export const MAX_BYTES = 250 * 1024 * 1024;
 export const ALLOWED = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime))$/;
 
+// Links for showing files are made for 2 hours and reused while they have more than an hour left. The same file keeps
+// the same address between visits, so the browser shows it from its cache, and most lists skip the call to storage.
+const SHOW_FOR_S = 2 * 3600;
+const REUSE_MS = 3600 * 1000;
+const shown = new Map<string, { url: string; until: number }>();
+
+async function showLinks(paths: string[]): Promise<(string | null)[]> {
+  const now = Date.now();
+  const need = [...new Set(paths.filter((p) => !((shown.get(p)?.until ?? 0) - now > REUSE_MS)))];
+  if (need.length) {
+    const { data } = await adminClient().storage.from(BUCKET).createSignedUrls(need, SHOW_FOR_S);
+    if (shown.size > 20000) for (const [p, v] of shown) if (v.until - now <= REUSE_MS) shown.delete(p);
+    if (shown.size > 20000) shown.clear();
+    (data ?? []).forEach((s, i) => {
+      if (s.signedUrl && !s.error) shown.set(need[i], { url: s.signedUrl, until: now + SHOW_FOR_S * 1000 });
+    });
+  }
+  return paths.map((p) => shown.get(p)?.url ?? null);
+}
+
 export async function listMedia(workspaceId: string): Promise<(MediaRow & { thumb: string | null })[]> {
   const db = adminClient();
   const { data, error } = await db.from("media").select("id, path, name, mime, size, alt, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(200);
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as MediaRow[];
   if (!rows.length) return [];
-  const { data: signed } = await db.storage.from(BUCKET).createSignedUrls(rows.map((r) => r.path), 3600);
-  return rows.map((r, i) => ({ ...r, thumb: signed?.[i]?.signedUrl ?? null }));
+  const thumbs = await showLinks(rows.map((r) => r.path));
+  return rows.map((r, i) => ({ ...r, thumb: thumbs[i] }));
 }
 
 /** Step 1 of an upload: check the file and hand back a one-time link the browser uploads to directly. */

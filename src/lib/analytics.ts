@@ -21,10 +21,14 @@ const one = <T,>(v: T | T[] | null): T | null => (Array.isArray(v) ? (v[0] ?? nu
 /** People who saw it: reach when the network gives it, else views, else impressions. */
 const seen = (m: Metrics | null) => (m ? (m.reach ?? m.views ?? m.impressions ?? null) : null);
 
-async function published(workspaceId: string, from: Date, to: Date, channelId: string | null) {
+const FULL = "id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
+/** Enough for best times: when it went out and how it did. */
+const TIMES = "published_at, post_metrics(engagement)";
+
+async function published(workspaceId: string, from: Date, to: Date, channelId: string | null, cols = FULL) {
   let q = adminClient()
     .from("post_targets")
-    .select("id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)")
+    .select(cols)
     .eq("workspace_id", workspaceId)
     .eq("status", "published")
     .gte("published_at", from.toISOString())
@@ -59,18 +63,30 @@ function totals(rows: Row[]): Totals {
   return { posts: rows.length, views, engagement, rate: seenSum ? seenEng / seenSum : null, withStats };
 }
 
+// Making a date format is slow next to using one, and a 90-day range runs one per post: keep one per time zone.
+const dateFormats = new Map<string, Intl.DateTimeFormat>();
+const formatFor = (key: string, make: () => Intl.DateTimeFormat) => {
+  let f = dateFormats.get(key);
+  if (!f) dateFormats.set(key, (f = make()));
+  return f;
+};
+
 /** Weekday (0 = Sunday) and hour of an instant in a time zone. */
 function dayHour(iso: string, timeZone: string) {
-  const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short", hour: "numeric", hourCycle: "h23" }).formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
+  const f = formatFor(`dh:${timeZone}`, () => new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short", hour: "numeric", hourCycle: "h23" }));
+  const p = Object.fromEntries(f.formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
   return { day: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), hour: Number(p.hour) % 24 };
 }
-const dateIn = (iso: string, timeZone: string) => new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
+const dateIn = (iso: string, timeZone: string) => formatFor(`d:${timeZone}`, () => new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" })).format(new Date(iso));
 
 export type BestCell = { day: number; hour: number; posts: number; engagement: number };
 
 /** Average engagement per post by weekday and hour, from the last 90 days. */
 export async function bestTimes(workspaceId: string, timeZone: string, channelId: string | null = null): Promise<BestCell[]> {
-  const rows = await published(workspaceId, new Date(Date.now() - 90 * DAY), new Date(), channelId);
+  return bestCells(await published(workspaceId, new Date(Date.now() - 90 * DAY), new Date(), channelId, TIMES), timeZone);
+}
+
+function bestCells(rows: Pick<Row, "published_at" | "post_metrics">[], timeZone: string): BestCell[] {
   const cells = new Map<string, BestCell>();
   for (const r of rows) {
     const m = one(r.post_metrics);
@@ -101,7 +117,16 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
   const now = new Date();
   const from = new Date(now.getTime() - days * DAY);
   const before = new Date(from.getTime() - days * DAY);
-  const [cur, prev, best] = await Promise.all([published(workspaceId, from, now, channelId), published(workspaceId, before, from, channelId), bestTimes(workspaceId, timeZone, channelId)]);
+  let fq = db.from("metrics").select("channel_id, day, followers").eq("workspace_id", workspaceId).gte("day", before.toISOString().slice(0, 10)).order("day");
+  if (channelId) fq = fq.eq("channel_id", channelId);
+  // Best times look at the last 90 days: on the 90-day view that's the current range itself.
+  const [cur, prev, best90, { data: followers }] = await Promise.all([
+    published(workspaceId, from, now, channelId),
+    published(workspaceId, before, from, channelId),
+    days === 90 ? null : bestTimes(workspaceId, timeZone, channelId),
+    fq,
+  ]);
+  const best = best90 ?? bestCells(cur, timeZone);
 
   const mediaIds = [...new Set(cur.flatMap((r) => r.posts.media_ids ?? []))];
   const { data: media } = mediaIds.length ? await db.from("media").select("id, mime").in("id", mediaIds) : { data: [] };
@@ -130,10 +155,6 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
     const list = top.filter((t) => t.format === f && t.m);
     return { format: f, posts: top.filter((t) => t.format === f).length, avg: list.length ? list.reduce((s, t) => s + t.m!.engagement, 0) / list.length : null };
   });
-
-  let fq = db.from("metrics").select("channel_id, day, followers").eq("workspace_id", workspaceId).gte("day", before.toISOString().slice(0, 10)).order("day");
-  if (channelId) fq = fq.eq("channel_id", channelId);
-  const { data: followers } = await fq;
 
   return {
     days,
