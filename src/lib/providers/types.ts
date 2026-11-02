@@ -85,6 +85,8 @@ export type InboxRef = Pick<InboxItem, "networkId" | "kind" | "threadId" | "pare
  */
 export type Inbox = {
   enabled?: () => boolean;
+  /** Minutes between reads when 10 is too often for the network's quota or price (YouTube, X). */
+  every?: number;
   fetch: (s: Secret, accountId: string, q: InboxQuery) => Promise<InboxBatch>;
   reply: (s: Secret, accountId: string, to: InboxRef, text: string) => Promise<{ id: string; url?: string | null }>;
   like?: (s: Secret, accountId: string, to: InboxRef, on: boolean) => Promise<string | null>;

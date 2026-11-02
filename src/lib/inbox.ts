@@ -257,11 +257,12 @@ export async function suggestReply(workspaceId: string, itemId: string): Promise
     .join("\n\n");
   const res = await new Anthropic().beta.messages.create({
     model: MODEL,
-    max_tokens: 600,
+    // Thinking is always on with this model and counts toward max_tokens; low effort suits a short reply.
+    max_tokens: 4000,
     system,
     messages: [{ role: "user", content }],
     betas: ["server-side-fallback-2026-07-01"],
-    ...({ fallbacks: "default" } as object),
+    ...({ fallbacks: "default", output_config: { effort: "low" } } as object),
   } as Anthropic.Beta.MessageCreateParamsNonStreaming);
   if (res.stop_reason === "refusal") throw new Error("Claude can't suggest a reply to this");
   const out = res.content

@@ -179,6 +179,7 @@ export const x: Provider = {
   inbox: {
     // X bills every post read, so the Inbox reads mentions only when X_INBOX=1.
     enabled: () => process.env.X_INBOX === "1",
+    every: 30,
     // Mentions include replies to our posts. The cursor is the newest id seen (since_id).
     fetch: async (s, userId, q) => {
       const params: Record<string, string> = {

@@ -145,6 +145,8 @@ export const youtube: Provider = {
     }
   },
   inbox: {
+    // Every read costs 1 unit of the project's daily quota (10,000 by default), shared by all channels.
+    every: 30,
     // Newest comment threads on the channel's videos, with up to 5 replies each: 1 quota unit a call.
     fetch: async (s, channelId, q) => {
       const r = await call<{ items?: YtThread[] }>(

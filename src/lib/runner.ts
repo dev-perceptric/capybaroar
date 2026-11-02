@@ -263,7 +263,15 @@ export async function queueInbox() {
   const { data: waiting, error: e1 } = await db.from("jobs").select("payload").eq("kind", "inbox").or(`done_at.is.null,done_at.gt."${recent}"`);
   if (e1) throw new Error(e1.message);
   const have = new Set((waiting ?? []).map((j) => (j.payload as { channelId?: string }).channelId));
-  const rows = want.filter((c) => !have.has(c.id)).map((c) => ({ kind: "inbox", payload: { channelId: c.id } }));
+  // Networks read less often than every round: skip channels read within their own interval.
+  const slow = want.filter((c) => (providerOf(c.network)!.inbox!.every ?? 10) > 10);
+  const lastRead = new Map<string, number>();
+  for (let i = 0; i < slow.length; i += 200) {
+    const { data } = await db.from("inbox_state").select("channel_id, fetched_at").in("channel_id", slow.slice(i, i + 200).map((c) => c.id));
+    for (const r of data ?? []) if (r.fetched_at) lastRead.set(r.channel_id as string, new Date(r.fetched_at as string).getTime());
+  }
+  const due = (c: { id: string; network: string }) => Date.now() - (lastRead.get(c.id) ?? 0) >= ((providerOf(c.network)!.inbox!.every ?? 10) - 1) * 60000;
+  const rows = want.filter((c) => !have.has(c.id) && due(c)).map((c) => ({ kind: "inbox", payload: { channelId: c.id } }));
   for (let i = 0; i < rows.length; i += 500) {
     const { error: e } = await db.from("jobs").insert(rows.slice(i, i + 500));
     if (e) throw new Error(e.message);

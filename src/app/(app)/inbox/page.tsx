@@ -22,7 +22,7 @@ export default async function InboxPage() {
         <ToolIntro
           drawing="inbox"
           title="Answer comments and messages"
-          lead="Comments, replies, mentions and messages from your channels arrive here every 10 minutes."
+          lead="Comments, replies, mentions and messages from your channels, in one place."
           action={
             reading.length ? undefined : (
               <Link href="/channels" className="inline-flex h-8 items-center border border-frame bg-yolk px-3 text-[12px] font-medium text-on-yolk hover:bg-yolk-hover">
