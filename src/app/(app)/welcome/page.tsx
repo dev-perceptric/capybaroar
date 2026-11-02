@@ -2,15 +2,17 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import { listChannels } from "@/lib/channels";
-import { getCtx } from "@/lib/session";
+import { teamCtx } from "@/lib/session";
+import { getBrandCtx } from "@/lib/brands";
 import { PROVIDERS, isReady } from "@/lib/providers";
 import { NETWORKS } from "@/lib/networks";
 
 const primary = "inline-flex h-8 items-center justify-center gap-1.5 border border-frame bg-yolk px-3.5 text-[12px] font-medium text-on-yolk hover:bg-yolk-hover";
 
 export default async function WelcomePage() {
-  const ctx = await getCtx();
-  const channels = await listChannels(ctx.workspaceId);
+  await teamCtx();
+  const ctx = await getBrandCtx();
+  const channels = await listChannels(ctx.workspaceId, ctx.scope);
   const step = channels.length ? 2 : 1;
   const ready = NETWORKS.filter((n) => isReady(PROVIDERS[n.id]));
   // Sign-in networks go straight to the network; ones that ask something first (a form, a server) open on Channels.

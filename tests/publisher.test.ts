@@ -4,7 +4,7 @@
 // taken over, auth failures stop retrying and alert once.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runDue, setSaveRetryMs, type Job, type Store, type TargetCtx } from "../src/lib/publisher";
+import { runDue, sendsToReview, setSaveRetryMs, type Job, type Store, type TargetCtx } from "../src/lib/publisher";
 import { AuthError, PostError, type Provider, type Published } from "../src/lib/providers/types";
 
 setSaveRetryMs(0);
@@ -64,7 +64,7 @@ class Memory implements Store {
   }
   async target(id: string) {
     const t = this.targets.get(id);
-    return t ? { ...t, channelStatus: this.channels.get(t.channelId)! } : null;
+    return t ? { ...t, channelStatus: this.channels.get(t.channelId)!, postStatus: this.posts.get(t.postId) } : null;
   }
   async publishing(t: TargetCtx) {
     this.targets.get(t.id)!.status = "publishing";
@@ -258,4 +258,43 @@ test("result checks read the network with the saved remote id and store the numb
   assert.equal(asked, "remote-9");
   assert.deepEqual(m.saved.get("t0"), { likes: 7, views: 120 });
   assert.ok(m.jobs[0].done);
+});
+
+test("a post waiting for approval is never published, even with jobs queued for it", async () => {
+  const m = new Memory();
+  m.add(6);
+  for (const id of ["p1", "p3", "p5"]) m.posts.set(id, "review");
+  m.posts.set("p4", "draft");
+  // Flaky network on top, so retries run too.
+  const net = fakeNetwork({ failRate: 0.5, seed: 3 });
+  await drain(m, net.provider);
+  for (const i of [1, 3, 4, 5]) {
+    assert.equal(m.targets.get(`t${i}`)!.status, "pending", `t${i} must wait`);
+    assert.ok(!net.live.includes(`post ${i}`), `post ${i} went out while held`);
+  }
+  assert.equal(m.posts.get("p1"), "review");
+  assert.ok(m.jobs.every((j) => j.done), "held jobs end instead of looping");
+  assert.equal(m.alerts.length, [...m.targets.values()].filter((t) => t.status === "failed").length, "held posts never alert");
+});
+
+test("an approved post publishes exactly once from its new job", async () => {
+  const m = new Memory();
+  m.add(1);
+  m.posts.set("p0", "review");
+  const net = fakeNetwork();
+  await drain(m, net.provider);
+  assert.equal(net.live.length, 0);
+  // Approve: the post is scheduled and a fresh job is queued, as savePost does.
+  m.posts.set("p0", "scheduled");
+  m.jobs.push({ id: 500, kind: "publish", payload: { postId: "p0", targetId: "t0" }, attempts: 0, max_attempts: 6, runAfter: m.now, lockedAt: null, done: false, lastError: null });
+  await drain(m, net.provider, 3);
+  assert.deepEqual(net.live, ["post 0"]);
+  assert.equal(m.targets.get("t0")!.status, "published");
+  assert.equal(m.posts.get("p0"), "published");
+});
+
+test("only editors' posts to a brand that needs approval go to review", () => {
+  assert.equal(sendsToReview("editor", true), true);
+  assert.equal(sendsToReview("editor", false), false);
+  for (const role of ["owner", "admin", "client", undefined]) assert.equal(sendsToReview(role, true), false, `${role} schedules directly`);
 });

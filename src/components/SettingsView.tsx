@@ -6,13 +6,14 @@ import { Button, Field, IconButton, Input, inputClass } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
+import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
 import { saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-export function SettingsView({ name, timezone, queue, billing }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo }) {
+export function SettingsView({ name, timezone, queue, billing, team }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo }) {
   const [n, setN] = useState(name);
   const [tz, setTz] = useState(timezone);
   const [msg, setMsg] = useState("");
@@ -43,6 +44,8 @@ export function SettingsView({ name, timezone, queue, billing }: { name: string;
           {msg ? <span className={`text-[12px] ${msg === "Saved" ? "text-success" : "text-danger"}`}>{msg}</span> : null}
         </div>
       </section>
+      {team ? <BrandsSection team={team} /> : null}
+      {team ? <MembersSection team={team} /> : null}
       <Queue initial={queue} timezone={tz} />
       {billing ? <BillingSection info={billing} /> : null}
     </div>

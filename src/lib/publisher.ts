@@ -4,6 +4,8 @@
 //   never published again.
 // - AuthError marks the channel "reconnect"; AuthError and PostError fail the target at once; other errors retry
 //   with backoff until max_attempts.
+// - A post that is a draft or waits for approval (HELD) is never published, whatever jobs exist for it. Approving it
+//   queues fresh jobs.
 import { AuthError, PostError, type MediaFile, type PostStats, type Provider, type Published, type Secret } from "./providers/types";
 
 export type Job = { id: number; kind: string; payload: Record<string, string>; attempts: number; max_attempts: number };
@@ -13,6 +15,8 @@ export type TargetCtx = {
   status: string;
   remoteId: string | null;
   postId: string;
+  /** The post's own status: "review" and "draft" are never published. */
+  postStatus?: string;
   workspaceId: string;
   channelId: string;
   channelName: string;
@@ -46,6 +50,12 @@ export interface Store {
 
 /** When to read a post's results after it goes out: 1 hour, 1 day, 7 days, 30 days. */
 export const STATS_AFTER_MIN = [60, 1440, 10080, 43200];
+
+/** Post statuses the publisher leaves alone. */
+export const HELD = ["draft", "review"];
+
+/** Approval: an editor's post to a brand that needs approval waits in review instead of being scheduled. */
+export const sendsToReview = (role: string | undefined, needsApproval: boolean) => needsApproval && role === "editor";
 
 export const BACKOFF_MIN = [1, 5, 15, 60, 240];
 
@@ -89,6 +99,8 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
     await store.settle(t.postId);
     return;
   }
+  // Waiting for approval, or back to a draft: not now. The job ends; approving queues a new one.
+  if (t.postStatus && HELD.includes(t.postStatus)) return;
   if (t.channelStatus === "reconnect") throw new AuthError(`Reconnect ${t.channelName}`);
   const p = providers(t.network);
   if (!p) throw new PostError(`${t.network} isn't supported yet`);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
-import { Avatar, Button, Field, IconButton, Input, Segmented, TextArea, inputClass } from "./ui";
+import { Avatar, Badge, Button, Field, IconButton, Input, Segmented, TextArea, inputClass } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
@@ -13,8 +13,10 @@ import { TextTools, mod, toggleStyle } from "./TextTools";
 import { MediaEdit } from "./MediaEdit";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
-import type { PostRow } from "@/lib/posts";
-import { bestSlots, duplicate, loadMedia, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
+import type { Comment, PostRow } from "@/lib/posts";
+import type { Access } from "./CalendarView";
+import { approve, bestSlots, duplicate, loadComments, loadMedia, reject, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
+import { fmtDateTime } from "@/lib/format";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
 import { browserClient } from "@/lib/supabase/browser";
 import { dialogIn, fadeIn } from "@/lib/motion";
@@ -67,8 +69,13 @@ const nextAt = (day: number, hour: number) => {
 };
 
 /** Write a post once, change it per channel, see it on a phone and a desktop, pick when it goes out. Full screen. */
-export function Composer({ channels, at, post, preset, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; onClose: () => void; onSaved: () => void }) {
-  const locked = post ? !["draft", "scheduled", "failed"].includes(post.status) : false;
+export function Composer({ channels, at, post, preset, access = { write: true, approve: false }, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; access?: Access; onClose: () => void; onSaved: () => void }) {
+  const locked = !access.write || (post ? !["draft", "review", "scheduled", "failed"].includes(post.status) : false);
+  const inReview = post?.status === "review";
+  const [comments, setComments] = useState<Comment[]>([]);
+  useEffect(() => {
+    if (post) loadComments(post.id).then(setComments, () => setComments([]));
+  }, [post]);
   const [targets, setTargets] = useState<Record<string, Target>>(() => {
     if (post) return Object.fromEntries(post.post_targets.map((t) => [t.channel_id, { text: t.text, settings: t.settings ?? {} }]));
     const c = channels.find((x) => x.id === preset) ?? (channels.length === 1 ? channels[0] : undefined);
@@ -251,6 +258,19 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
       else onSaved();
     });
   };
+  const decide = async (ok: boolean) => {
+    if (!post) return;
+    const comment = ok ? "" : await askText("Reject this post", { placeholder: "What should change?", ok: "Reject" });
+    if (comment === null) return;
+    start(async () => {
+      const r = ok ? await approve(post.id) : await reject(post.id, comment);
+      if (r.error) setError(r.error);
+      else {
+        writeLocal(draftKey, null);
+        onSaved();
+      }
+    });
+  };
   const dup = () =>
     post &&
     start(async () => {
@@ -314,13 +334,26 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
       >
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line px-4">
           <h2 className="text-[15px] font-semibold tracking-[-0.01em]">{post ? (locked ? "Post" : "Edit post") : "New post"}</h2>
+          {inReview ? <Badge tone="violet">In review</Badge> : null}
+          {locked && error ? <span className="min-w-0 truncate text-[12px] text-danger">{error}</span> : null}
           {picked.length ? (
             <span className="flex items-center gap-1 text-[12px] text-muted">
               to {picked.length} channel{picked.length === 1 ? "" : "s"}
             </span>
           ) : null}
           <span className="flex-1" />
-          {post ? (
+          {inReview && access.approve ? (
+            <>
+              <Button variant="ghost" disabled={busy} onClick={() => decide(false)}>
+                Reject
+              </Button>
+              <Button variant={locked ? "primary" : "ghost"} disabled={busy} onClick={() => decide(true)}>
+                {busy && locked ? <Loader /> : null}
+                Approve
+              </Button>
+            </>
+          ) : null}
+          {post && access.write ? (
             <>
               <IconButton label="Duplicate" onClick={dup} disabled={busy}>
                 <Copy size={16} />
@@ -621,6 +654,22 @@ export function Composer({ channels, at, post, preset, onClose, onSaved }: { cha
                 : picked.some((c) => (networkOf(c.network).fields ?? []).length) && !locked ? (
                     <p className="text-[12px] text-muted">Open the channel tab for its own settings, like first comment or format.</p>
                   ) : null}
+
+              {comments.length ? (
+                <div className="flex flex-col gap-2 border-t border-line pt-3">
+                  <p className="text-[12px] font-medium text-muted">Approval</p>
+                  {comments.map((c) => (
+                    <div key={c.id} className="flex flex-col gap-0.5 text-[12px]">
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium">{c.author_name || "Review link"}</span>
+                        {c.kind === "approved" ? <Badge tone="green">Approved</Badge> : c.kind === "rejected" ? <Badge tone="red">Changes asked</Badge> : null}
+                        <span className="text-faint">{fmtDateTime(c.created_at)}</span>
+                      </span>
+                      {c.body ? <p className="whitespace-pre-line text-ink">{c.body}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
 
               {post?.post_targets.some((t) => t.error || t.url || t.note) ? (
                 <div className="flex flex-col gap-1 border-t border-line pt-3">

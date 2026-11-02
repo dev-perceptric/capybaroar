@@ -5,10 +5,11 @@ import { adminClient } from "./supabase/server";
 export type PlanId = "free" | "pro" | "agency";
 
 /** Every plan's price and limits. Change the numbers here. null means unlimited. */
-export const PLANS: Record<PlanId, { name: string; price: number; members: number; channels: number; postsPerMonth: number | null; agent: boolean }> = {
-  free: { name: "Free", price: 0, members: 1, channels: 3, postsPerMonth: 30, agent: false },
-  pro: { name: "Pro", price: 19, members: 3, channels: 15, postsPerMonth: null, agent: true },
-  agency: { name: "Agency", price: 59, members: 10, channels: 60, postsPerMonth: null, agent: true },
+/** members counts the team (owners, admins, editors); clients who only approve don't take a seat. */
+export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean }> = {
+  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false },
+  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true },
+  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true },
 };
 
 export const TRIAL_DAYS = 14;
@@ -42,6 +43,36 @@ export async function assertCanAddChannel(workspaceId: string, adding: number) {
   const { count, error } = await adminClient().from("channels").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
   if (error) throw new Error(error.message);
   if ((count ?? 0) + adding > limits.channels) throw new Error(`Your plan allows ${limits.channels} channels. Upgrade to add more.`);
+}
+
+/** Throws when one more brand would pass the plan's brand limit. */
+export async function assertCanAddBrand(workspaceId: string) {
+  const limits = await limitsOf(workspaceId);
+  if (limits.brands == null) return;
+  const { count, error } = await adminClient().from("brands").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
+  if (error) throw new Error(error.message);
+  if ((count ?? 0) >= limits.brands) throw new Error(`Your plan allows ${limits.brands} ${limits.brands === 1 ? "brand" : "brands"}. Upgrade to add more.`);
+}
+
+/** Team seats in use: members who aren't clients, plus open invites for team roles. */
+export async function seatsUsed(workspaceId: string, withInvites = true) {
+  const db = adminClient();
+  const [m, i] = await Promise.all([
+    db.from("members").select("user_id", { count: "exact", head: true }).eq("workspace_id", workspaceId).neq("role", "client"),
+    withInvites
+      ? db.from("invites").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).neq("role", "client").is("accepted_at", null).gt("expires_at", new Date().toISOString())
+      : Promise.resolve({ count: 0, error: null }),
+  ]);
+  if (m.error) throw new Error(m.error.message);
+  if (i.error) throw new Error(i.error.message);
+  return (m.count ?? 0) + (i.count ?? 0);
+}
+
+/** Throws when one more team member would pass the plan's member limit. Clients don't count. */
+export async function assertCanAddMember(workspaceId: string, role: string, withInvites = true) {
+  if (role === "client") return;
+  const limits = await limitsOf(workspaceId);
+  if ((await seatsUsed(workspaceId, withInvites)) >= limits.members) throw new Error(`Your plan allows ${limits.members} ${limits.members === 1 ? "member" : "members"}. Upgrade to add more.`);
 }
 
 export const monthStart = (d = new Date()) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));

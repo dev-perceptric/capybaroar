@@ -68,19 +68,19 @@ const tools: Anthropic.Tool[] = [
 
 async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): Promise<string> {
   if (name === "list_channels") {
-    const chans = await listChannels(ctx.workspaceId);
+    const chans = await listChannels(ctx.workspaceId, ctx.brandIds);
     return JSON.stringify(chans.map((c) => ({ id: c.id, network: networkOf(c.network).name, name: c.name, status: c.status, limit: networkOf(c.network).limit })));
   }
   if (name === "list_posts") {
-    const posts = await postsBetween(ctx.workspaceId, new Date(String(input.from)), new Date(String(input.to)));
+    const posts = await postsBetween(ctx.workspaceId, new Date(String(input.from)), new Date(String(input.to)), ctx.brandIds);
     return JSON.stringify(posts.map((p) => ({ id: p.id, status: p.status, publish_at: p.publish_at, text: p.text, channel_ids: p.post_targets.map((t) => t.channel_id) })));
   }
   if (name === "save_posts") {
     const out = [];
     for (const p of (input.posts as { channel_ids: string[]; text: string; publish_at: string; mode: "draft" | "schedule" }[]) ?? []) {
       try {
-        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds: [], publishAt: new Date(p.publish_at).toISOString(), mode: p.mode });
-        out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode: p.mode });
+        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds: [], publishAt: new Date(p.publish_at).toISOString(), mode: p.mode }, { role: ctx.role, brandIds: ctx.brandIds, brandId: null });
+        out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode: p.mode, status: r.status });
       } catch (e) {
         out.push({ ok: false, error: e instanceof Error ? e.message : String(e) });
       }

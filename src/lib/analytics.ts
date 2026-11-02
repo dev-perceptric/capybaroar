@@ -21,7 +21,10 @@ const one = <T,>(v: T | T[] | null): T | null => (Array.isArray(v) ? (v[0] ?? nu
 /** People who saw it: reach when the network gives it, else views, else impressions. */
 const seen = (m: Metrics | null) => (m ? (m.reach ?? m.views ?? m.impressions ?? null) : null);
 
-async function published(workspaceId: string, from: Date, to: Date, channelId: string | null) {
+/** One channel, a brand's channels (a list), or every channel (null). */
+type Channels = string | string[] | null;
+
+async function published(workspaceId: string, from: Date, to: Date, channelId: Channels) {
   let q = adminClient()
     .from("post_targets")
     .select("id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)")
@@ -30,7 +33,8 @@ async function published(workspaceId: string, from: Date, to: Date, channelId: s
     .gte("published_at", from.toISOString())
     .lt("published_at", to.toISOString())
     .order("published_at");
-  if (channelId) q = q.eq("channel_id", channelId);
+  if (Array.isArray(channelId)) q = q.in("channel_id", channelId);
+  else if (channelId) q = q.eq("channel_id", channelId);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as Row[];
@@ -69,7 +73,7 @@ const dateIn = (iso: string, timeZone: string) => new Intl.DateTimeFormat("en-CA
 export type BestCell = { day: number; hour: number; posts: number; engagement: number };
 
 /** Average engagement per post by weekday and hour, from the last 90 days. */
-export async function bestTimes(workspaceId: string, timeZone: string, channelId: string | null = null): Promise<BestCell[]> {
+export async function bestTimes(workspaceId: string, timeZone: string, channelId: Channels = null): Promise<BestCell[]> {
   const rows = await published(workspaceId, new Date(Date.now() - 90 * DAY), new Date(), channelId);
   const cells = new Map<string, BestCell>();
   for (const r of rows) {
@@ -96,7 +100,7 @@ export async function suggestedTimes(workspaceId: string, timeZone: string) {
     .map(({ day, hour }) => ({ day, hour }));
 }
 
-export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: string | null) {
+export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: Channels) {
   const db = adminClient();
   const now = new Date();
   const from = new Date(now.getTime() - days * DAY);
@@ -132,7 +136,8 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
   });
 
   let fq = db.from("metrics").select("channel_id, day, followers").eq("workspace_id", workspaceId).gte("day", before.toISOString().slice(0, 10)).order("day");
-  if (channelId) fq = fq.eq("channel_id", channelId);
+  if (Array.isArray(channelId)) fq = fq.in("channel_id", channelId);
+  else if (channelId) fq = fq.eq("channel_id", channelId);
   const { data: followers } = await fq;
 
   return {

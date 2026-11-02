@@ -6,16 +6,17 @@ import { RefreshCw, Trash2 } from "lucide-react";
 import { Avatar, Badge, Button, Field, IconButton, Input } from "./ui";
 import { Modal } from "./Overlay";
 import { NetworkLogo } from "./NetworkLogo";
-import { askConfirm } from "./Dialogs";
+import { askConfirm, tell } from "./Dialogs";
+import { Select } from "./Select";
 import { NETWORKS, networkOf, type NetworkId } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
-import { connectWithForm, removeChannel } from "@/app/(app)/channels/actions";
+import { connectWithForm, removeChannel, setChannelBrand } from "@/app/(app)/channels/actions";
 
 export type Ask = { kind: "form" | "oauth"; fields: { key: string; label: string; placeholder?: string; secret?: boolean }[] } | null;
 
 const connectHref = (n: NetworkId) => `/api/channels/${n}/connect`;
 
-export function ChannelsView({ channels, ready, asks, error }: { channels: Channel[]; ready: NetworkId[]; asks: Record<string, Ask>; error: string | null }) {
+export function ChannelsView({ channels, ready, asks, error, brands = [] }: { channels: Channel[]; ready: NetworkId[]; asks: Record<string, Ask>; error: string | null; brands?: { id: string; name: string }[] }) {
   const [asking, setAsking] = useState<NetworkId | null>(null);
   const [, start] = useTransition();
   const router = useRouter();
@@ -26,10 +27,17 @@ export function ChannelsView({ channels, ready, asks, error }: { channels: Chann
   const del = async (c: Channel) => {
     if (!(await askConfirm(`Remove ${c.name}?`, { body: "Scheduled posts stop going to this channel.", ok: "Remove", danger: true }))) return;
     start(async () => {
-      await removeChannel(c.id);
+      const r = await removeChannel(c.id);
+      if (r.error) await tell("Couldn't remove the channel", r.error);
       router.refresh();
     });
   };
+  const move = (c: Channel, brandId: string) =>
+    start(async () => {
+      const r = await setChannelBrand(c.id, brandId);
+      if (r.error) await tell("Couldn't move the channel", r.error);
+      router.refresh();
+    });
   return (
     <div className="mx-auto w-full max-w-[960px]">
       {error ? <p className="mb-4 border border-danger bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
@@ -59,6 +67,11 @@ export function ChannelsView({ channels, ready, asks, error }: { channels: Chann
                     {c.username ? `, @${c.username}` : ""}
                   </p>
                 </div>
+                {brands.length ? (
+                  <div className="w-40">
+                    <Select ariaLabel="Brand" value={c.brand_id ?? ""} placeholder="No brand" onChange={(v) => move(c, v)} options={brands.map((b) => ({ value: b.id, label: b.name }))} />
+                  </div>
+                ) : null}
                 {c.status === "reconnect" ? (
                   <>
                     <Badge tone="red">Reconnect</Badge>

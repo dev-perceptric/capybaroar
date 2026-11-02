@@ -1,13 +1,13 @@
 import { Bot } from "lucide-react";
 import { Page } from "@/components/ui";
 import { AgentChat, type Shown } from "@/components/AgentChat";
-import { getCtx } from "@/lib/session";
+import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 
 type Block = { type: string; text?: string; name?: string; input?: { posts?: unknown[] } };
 
 export default async function AgentsPage({ searchParams }: { searchParams: Promise<{ chat?: string }> }) {
-  const ctx = await getCtx();
+  const ctx = await teamCtx();
   const { chat } = await searchParams;
   const db = adminClient();
   const { data: chats } = await db.from("agent_chats").select("id, title").eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).order("created_at", { ascending: false }).limit(50);
