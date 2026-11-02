@@ -108,3 +108,15 @@ export async function setAlt(workspaceId: string, id: string, alt: string) {
   const { error } = await adminClient().from("media").update({ alt: alt.trim() || null }).eq("id", id).eq("workspace_id", workspaceId);
   if (error) throw new Error(error.message);
 }
+
+/** Signed links to show these files (an hour), for previews outside the app. */
+export async function mediaThumbs(workspaceId: string, ids: string[]): Promise<{ id: string; mime: string; thumb: string | null; alt: string | null }[]> {
+  if (!ids.length) return [];
+  const db = adminClient();
+  const { data, error } = await db.from("media").select("id, path, mime, alt").eq("workspace_id", workspaceId).in("id", ids);
+  if (error) throw new Error(error.message);
+  const rows = data ?? [];
+  if (!rows.length) return [];
+  const { data: signed } = await db.storage.from(BUCKET).createSignedUrls(rows.map((r) => r.path as string), 3600);
+  return rows.map((r, i) => ({ id: r.id as string, mime: r.mime as string, thumb: signed?.[i]?.signedUrl ?? null, alt: (r.alt as string | null) ?? null }));
+}

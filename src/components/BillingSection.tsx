@@ -6,7 +6,7 @@ import { Loader } from "./Loader";
 import { tell } from "./Dialogs";
 import { fmtDate, fmtNum } from "@/lib/format";
 
-export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; channels: number; postsPerMonth: number | null; agent: boolean };
+export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean };
 
 export type BillingInfo = {
   plan: PlanCard["id"];
@@ -18,7 +18,7 @@ export type BillingInfo = {
   ready: boolean;
   canManage: boolean;
   plans: PlanCard[];
-  usage: { channels: number; posts: number; members: number };
+  usage: { channels: number; posts: number; members: number; brands: number };
 };
 
 const limit = (n: number | null) => (n == null ? "Unlimited" : fmtNum(n));
@@ -58,13 +58,14 @@ export function BillingSection({ info }: { info: BillingInfo }) {
         {info.status === "past_due" ? <Badge tone="red">Payment due</Badge> : null}
         {info.paying && info.periodEnd ? <span className="text-muted">Renews {fmtDate(info.periodEnd, { year: true })}</span> : null}
       </div>
-      <div className="grid grid-cols-3 border border-frame">
+      <div className="grid grid-cols-2 border border-frame sm:grid-cols-4">
         {[
+          { label: "Brands", used: info.usage.brands, max: cur.brands },
           { label: "Channels", used: info.usage.channels, max: cur.channels as number | null },
           { label: "Posts this month", used: info.usage.posts, max: cur.postsPerMonth },
           { label: "Members", used: info.usage.members, max: cur.members as number | null },
         ].map((u, i) => (
-          <div key={u.label} className={`flex flex-col gap-1 p-3 ${i ? "border-l border-line" : ""}`}>
+          <div key={u.label} className={`flex flex-col gap-1 p-3 ${i % 2 ? "border-l border-line" : ""} ${i > 1 ? "border-t border-line sm:border-t-0" : ""} ${i === 2 ? "sm:border-l" : ""}`}>
             <span className="text-[12px] text-muted">{u.label}</span>
             <span className={`text-[15px] font-medium ${u.max != null && u.used >= u.max ? "text-danger" : ""}`}>
               {fmtNum(u.used)} <span className="text-muted">/ {limit(u.max)}</span>
@@ -89,6 +90,7 @@ export function BillingSection({ info }: { info: BillingInfo }) {
               </div>
               <ul className="flex flex-col gap-1 text-[12px] text-muted">
                 <li>{limit(p.members)} {p.members === 1 ? "member" : "members"}</li>
+                <li>{p.brands == null ? "Unlimited brands" : `${fmtNum(p.brands)} ${p.brands === 1 ? "brand" : "brands"}`}</li>
                 <li>{limit(p.channels)} channels</li>
                 <li>{p.postsPerMonth == null ? "Unlimited posts" : `${fmtNum(p.postsPerMonth)} posts a month`}</li>
                 <li>{p.agent ? "Agent" : "No agent"}</li>

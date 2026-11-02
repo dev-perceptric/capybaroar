@@ -25,7 +25,7 @@ type Row = {
   channel_id: string;
   text: string | null;
   settings: Record<string, string> | null;
-  posts: { text: string; media_ids: string[] };
+  posts: { text: string; media_ids: string[]; status: string };
   channels: { network: string; account_id: string; name: string; status: string };
 };
 
@@ -44,7 +44,7 @@ export const supabaseStore: Store = {
   async target(id) {
     const { data } = await adminClient()
       .from("post_targets")
-      .select("id, status, remote_id, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids), channels(network, account_id, name, status)")
+      .select("id, status, remote_id, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids, status), channels(network, account_id, name, status)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -54,6 +54,7 @@ export const supabaseStore: Store = {
       status: r.status,
       remoteId: r.remote_id,
       postId: r.post_id,
+      postStatus: r.posts.status,
       workspaceId: r.workspace_id,
       channelId: r.channel_id,
       channelName: r.channels.name,

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
-import { getCtx } from "@/lib/session";
+import { getBrandCtx, homeBrand } from "@/lib/brands";
 import { adminClient } from "@/lib/supabase/server";
 import { providerOf } from "@/lib/providers";
 import { redirectFor } from "@/lib/channels";
@@ -11,7 +11,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { network } = await params;
   const p = providerOf(network);
   if (!p?.oauth?.configured()) return NextResponse.json({ error: "This network isn't set up" }, { status: 404 });
-  const ctx = await getCtx();
+  const ctx = await getBrandCtx();
+  if (ctx.role === "client") return NextResponse.json({ error: "Clients can't connect channels" }, { status: 403 });
   const input: Record<string, string> = {};
   for (const a of p.oauth.asks ?? []) {
     const v = request.nextUrl.searchParams.get(a.key)?.trim();
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (e) {
     return NextResponse.redirect(new URL(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.url));
   }
-  const { error } = await adminClient().from("oauth_states").insert({ state, workspace_id: ctx.workspaceId, user_id: ctx.userId, network, verifier, input });
+  const { error } = await adminClient().from("oauth_states").insert({ state, workspace_id: ctx.workspaceId, brand_id: homeBrand(ctx), user_id: ctx.userId, network, verifier, input });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.redirect(url);
 }

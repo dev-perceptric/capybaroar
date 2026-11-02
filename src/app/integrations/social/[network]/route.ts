@@ -14,13 +14,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (q.get("error")) return back(q.get("error_description") || q.get("error") || "Sign-in was cancelled");
   if (!state || !code) return back("Sign-in didn't finish");
   const db = adminClient();
-  const { data: row } = await db.from("oauth_states").delete().eq("state", state).eq("network", network).select("workspace_id, verifier, input, created_at").maybeSingle();
+  const { data: row } = await db.from("oauth_states").delete().eq("state", state).eq("network", network).select("workspace_id, brand_id, verifier, input, created_at").maybeSingle();
   if (!row || Date.now() - new Date(row.created_at).getTime() > 15 * 60 * 1000) return back("Sign-in expired, try again");
   const p = providerOf(network);
   if (!p?.oauth) return back("This network isn't set up");
   try {
     const accounts = await p.oauth.exchange({ code, verifier: row.verifier ?? "", redirect: redirectFor(network), input: (row.input ?? {}) as Record<string, string> });
-    await saveAccounts(row.workspace_id, network as NetworkId, accounts);
+    await saveAccounts(row.workspace_id, network as NetworkId, accounts, (row.brand_id as string | null) ?? null);
   } catch (e) {
     return back(e instanceof Error ? e.message : String(e));
   }

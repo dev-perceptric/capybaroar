@@ -6,7 +6,8 @@ import { Button, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
 
-export function AuthForm({ mode }: { mode: "login" | "signup" }) {
+export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next?: string; email?: string }) {
+  const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(mode === "login" ? signIn : signUp, {});
   return (
     <div className="flex min-h-dvh items-center justify-center bg-panel px-4">
@@ -26,6 +27,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             {process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" ? (
               <>
                 <form action={signInWithGoogle} className="mt-6">
+                  {next ? <input type="hidden" name="next" value={next} /> : null}
                   <Button type="submit" variant="ghost" className="w-full justify-center">
                     Continue with Google
                   </Button>
@@ -40,6 +42,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               <div className="mt-6" />
             )}
             <form action={action} className="flex flex-col gap-3">
+              {next ? <input type="hidden" name="next" value={next} /> : null}
               {mode === "signup" ? (
                 <>
                   <Field label="Name">
@@ -51,7 +54,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 </>
               ) : null}
               <Field label="Email">
-                <Input name="email" type="email" autoComplete="email" required />
+                <Input name="email" type="email" autoComplete="email" defaultValue={email} required />
               </Field>
               <Field label="Password">
                 <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
@@ -68,14 +71,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           {mode === "login" ? (
             <>
               New here?{" "}
-              <Link href="/signup" className="font-medium text-ink underline underline-offset-2">
+              <Link href={`/signup${keep}`} className="font-medium text-ink underline underline-offset-2">
                 Create an account
               </Link>
             </>
           ) : (
             <>
               Have an account?{" "}
-              <Link href="/login" className="font-medium text-ink underline underline-offset-2">
+              <Link href={`/login${keep}`} className="font-medium text-ink underline underline-offset-2">
                 Sign in
               </Link>
             </>

@@ -1,5 +1,5 @@
 import "server-only";
-import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
 // Channel tokens are stored encrypted with AES-256-GCM. TOKEN_KEY is 32 random bytes, base64.
 const key = () => {
@@ -22,3 +22,7 @@ export function open(sealed: string): string {
   d.setAuthTag(Buffer.from(tag, "base64"));
   return Buffer.concat([d.update(Buffer.from(body, "base64")), d.final()]).toString("utf8");
 }
+
+/** A link's secret: 24 random bytes, URL-safe. Only its hash is looked up. */
+export const newToken = () => randomBytes(24).toString("base64url");
+export const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");

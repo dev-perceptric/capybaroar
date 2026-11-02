@@ -24,8 +24,10 @@ const seen = (m: Metrics | null) => (m ? (m.reach ?? m.views ?? m.impressions ??
 const FULL = "id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
 /** Enough for best times: when it went out and how it did. */
 const TIMES = "published_at, post_metrics(engagement)";
+/** One channel, a brand's channels (a list), or every channel (null). */
+type Channels = string | string[] | null;
 
-async function published(workspaceId: string, from: Date, to: Date, channelId: string | null, cols = FULL) {
+async function published(workspaceId: string, from: Date, to: Date, channelId: Channels, cols = FULL) {
   let q = adminClient()
     .from("post_targets")
     .select(cols)
@@ -34,7 +36,8 @@ async function published(workspaceId: string, from: Date, to: Date, channelId: s
     .gte("published_at", from.toISOString())
     .lt("published_at", to.toISOString())
     .order("published_at");
-  if (channelId) q = q.eq("channel_id", channelId);
+  if (Array.isArray(channelId)) q = q.in("channel_id", channelId);
+  else if (channelId) q = q.eq("channel_id", channelId);
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as Row[];
@@ -82,7 +85,7 @@ const dateIn = (iso: string, timeZone: string) => formatFor(`d:${timeZone}`, () 
 export type BestCell = { day: number; hour: number; posts: number; engagement: number };
 
 /** Average engagement per post by weekday and hour, from the last 90 days. */
-export async function bestTimes(workspaceId: string, timeZone: string, channelId: string | null = null): Promise<BestCell[]> {
+export async function bestTimes(workspaceId: string, timeZone: string, channelId: Channels = null): Promise<BestCell[]> {
   return bestCells(await published(workspaceId, new Date(Date.now() - 90 * DAY), new Date(), channelId, TIMES), timeZone);
 }
 
@@ -112,13 +115,14 @@ export async function suggestedTimes(workspaceId: string, timeZone: string) {
     .map(({ day, hour }) => ({ day, hour }));
 }
 
-export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: string | null) {
+export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: Channels) {
   const db = adminClient();
   const now = new Date();
   const from = new Date(now.getTime() - days * DAY);
   const before = new Date(from.getTime() - days * DAY);
   let fq = db.from("metrics").select("channel_id, day, followers").eq("workspace_id", workspaceId).gte("day", before.toISOString().slice(0, 10)).order("day");
-  if (channelId) fq = fq.eq("channel_id", channelId);
+  if (Array.isArray(channelId)) fq = fq.in("channel_id", channelId);
+  else if (channelId) fq = fq.eq("channel_id", channelId);
   // Best times look at the last 90 days: on the 90-day view that's the current range itself.
   const [cur, prev, best90, { data: followers }] = await Promise.all([
     published(workspaceId, from, now, channelId),

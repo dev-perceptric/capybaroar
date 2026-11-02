@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getCtx } from "@/lib/session";
+import { canManage, getCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { appUrl } from "@/lib/channels";
 import { getBilling, priceFor, stripe, type PlanId } from "@/lib/billing";
@@ -10,8 +10,7 @@ export async function POST(request: NextRequest) {
   if (!s) return NextResponse.json({ error: "Billing isn't set up" }, { status: 503 });
   const ctx = await getCtx();
   const db = adminClient();
-  const { data: me } = await db.from("members").select("role").eq("workspace_id", ctx.workspaceId).eq("user_id", ctx.userId).single();
-  if (!me || me.role === "editor") return NextResponse.json({ error: "Only owners and admins can change the plan" }, { status: 403 });
+  if (!canManage(ctx.role)) return NextResponse.json({ error: "Only owners and admins can change the plan" }, { status: 403 });
   const body = (await request.json().catch(() => ({}))) as { plan?: string };
   const plan = body.plan as PlanId;
   const price = plan === "pro" || plan === "agency" ? priceFor(plan) : null;

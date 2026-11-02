@@ -6,28 +6,33 @@ import type { NetworkId } from "./networks";
 import type { Account, Secret } from "./providers/types";
 
 /** A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. */
-export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect" };
+export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null };
 
 export const appUrl = () => (process.env.APP_URL || "http://localhost:3000").replace(/\/$/, "");
 export const redirectFor = (network: string) => `${appUrl()}/integrations/social/${network}`;
 
-export async function listChannels(workspaceId: string): Promise<Channel[]> {
-  const { data, error } = await adminClient().from("channels").select("id, network, account_id, name, username, avatar, status").eq("workspace_id", workspaceId).order("created_at");
+/** The workspace's channels; `scope` keeps only these brands' (null: every channel). */
+export async function listChannels(workspaceId: string, scope: string[] | null = null): Promise<Channel[]> {
+  if (scope && !scope.length) return [];
+  let q = adminClient().from("channels").select("id, network, account_id, name, username, avatar, status, brand_id").eq("workspace_id", workspaceId);
+  if (scope) q = q.in("brand_id", scope);
+  const { data, error } = await q.order("created_at");
   if (error) throw new Error(error.message);
   return (data ?? []) as Channel[];
 }
 
-/** Save connected accounts. Reconnecting the same account updates it in place. */
-export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[]) {
+/** Save connected accounts into a brand. Reconnecting the same account updates it in place and keeps its brand. */
+export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[], brandId: string | null = null) {
   await assertCanAddChannel(workspaceId, await newChannelCount(workspaceId, network, accounts.map((a) => a.accountId)));
   const db = adminClient();
   for (const a of accounts) {
     const { data: ch, error } = await db
       .from("channels")
       .upsert({ workspace_id: workspaceId, network, account_id: a.accountId, name: a.name, username: a.username ?? null, avatar: a.avatar ?? null, status: "active" }, { onConflict: "workspace_id,network,account_id" })
-      .select("id")
+      .select("id, brand_id")
       .single();
     if (error) throw new Error(error.message);
+    if (!ch.brand_id && brandId) await db.from("channels").update({ brand_id: brandId }).eq("id", ch.id).is("brand_id", null);
     const { error: e2 } = await db.from("channel_secrets").upsert({
       channel_id: ch.id,
       access_token: seal(a.accessToken),

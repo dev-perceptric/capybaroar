@@ -34,7 +34,10 @@ const sameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 const hourLabel = (h: number) => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`);
 const clock = (d: Date) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6;
-const MOVABLE: PostRow["status"][] = ["draft", "scheduled", "failed"];
+const MOVABLE: PostRow["status"][] = ["draft", "review", "scheduled", "failed"];
+
+/** What this person may do: write posts (team) and approve them (owners, admins, clients). */
+export type Access = { write: boolean; approve: boolean };
 const postText = (p: PostRow) => p.text || p.post_targets.find((t) => t.text)?.text || "No text";
 
 /** Posts the server already loaded for the opening week (a range wide enough for any time zone). */
@@ -42,8 +45,8 @@ type Initial = { from: string; to: string; posts: PostRow[] };
 // A tab reopened from the browser's cache brings the same first load again, which may be out of date: use each once.
 let usedSeed = "";
 
-export function CalendarView({ channels, initial }: { channels: Channel[]; initial?: Initial }) {
-  const startNew = useSearchParams().has("new");
+export function CalendarView({ channels, initial, access }: { channels: Channel[]; initial?: Initial; access: Access }) {
+  const startNew = useSearchParams().has("new") && access.write;
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
@@ -122,6 +125,7 @@ export function CalendarView({ channels, initial }: { channels: Channel[]; initi
     reload();
   };
   const open = (p: PostRow) => setCompose({ post: p });
+  const pick = access.write ? (at: Date) => setCompose({ at }) : null;
   // Month and List open at the top (Week scrolls to the working hours itself).
   useEffect(() => {
     if (mode === "week") return;
@@ -159,9 +163,11 @@ export function CalendarView({ channels, initial }: { channels: Channel[]; initi
       title="Calendar"
       flush
       actions={
-        <Button onClick={() => setCompose({})}>
-          <Plus size={14} /> New post
-        </Button>
+        access.write ? (
+          <Button onClick={() => setCompose({})}>
+            <Plus size={14} /> New post
+          </Button>
+        ) : null
       }
     >
       <div className="flex min-h-full flex-col" style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
@@ -202,15 +208,17 @@ export function CalendarView({ channels, initial }: { channels: Channel[]; initi
                 <span className="max-w-40 truncate">{c.name}</span>
               </FilterChip>
             ))}
-            <Link href="/channels" className="flex h-8 shrink-0 items-center gap-1.5 border border-dashed border-line-strong px-2.5 text-[12px] text-muted transition-colors hover:border-frame hover:text-ink">
-              <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}
-            </Link>
+            {access.write ? (
+              <Link href="/channels" className="flex h-8 shrink-0 items-center gap-1.5 border border-dashed border-line-strong px-2.5 text-[12px] text-muted transition-colors hover:border-frame hover:text-ink">
+                <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}
+              </Link>
+            ) : null}
           </div>
         </div>
 
         <div className="min-h-0 flex-1">
           {!ready ? null : mode === "week" ? (
-            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={(at) => setCompose({ at })} onDrop={(id, at) => drop(id, at, false)} />
+            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} />
           ) : mode === "month" ? (
             <Month
               anchor={anchor}
@@ -218,7 +226,7 @@ export function CalendarView({ channels, initial }: { channels: Channel[]; initi
               posts={shown}
               byId={byId}
               onOpen={open}
-              onPick={(at) => setCompose({ at })}
+              onPick={pick}
               onDrop={(id, at) => drop(id, at, true)}
               onDay={(d) => {
                 setAnchor(d);
@@ -236,6 +244,7 @@ export function CalendarView({ channels, initial }: { channels: Channel[]; initi
           at={compose.at}
           post={compose.post}
           preset={channel === "all" ? undefined : channel}
+          access={access}
           onClose={() => setCompose(null)}
           onSaved={() => {
             setCompose(null);
@@ -312,6 +321,7 @@ function Faces({ post, byId, size = 18 }: { post: PostRow; byId: Map<string, Cha
 // Status reads on the card's left edge, with an icon for the two that need noticing.
 const BAR: Record<PostRow["status"], string> = {
   draft: "bg-line-strong",
+  review: "bg-[var(--purple-9)]",
   scheduled: "bg-ink",
   publishing: "bg-yolk",
   published: "bg-yolk",
@@ -319,8 +329,8 @@ const BAR: Record<PostRow["status"], string> = {
   failed: "bg-danger",
 };
 
-function PostCard({ post, byId, onOpen, compact = false, narrow = false, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; compact?: boolean; narrow?: boolean; style?: React.CSSProperties }) {
-  const movable = MOVABLE.includes(post.status);
+function PostCard({ post, byId, onOpen, compact = false, narrow = false, movable: canMove, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
+  const movable = canMove && MOVABLE.includes(post.status);
   const time = post.publish_at ? clock(new Date(post.publish_at)) : "";
   return (
     <button
@@ -333,7 +343,7 @@ function PostCard({ post, byId, onOpen, compact = false, narrow = false, style }
         e.dataTransfer.effectAllowed = "move";
       }}
       style={style}
-      className={`group/card relative flex w-full min-w-0 overflow-hidden border text-left transition-colors ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : "border-frame bg-panel"} hover:bg-hover ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
+      className={`group/card relative flex w-full min-w-0 overflow-hidden border text-left transition-colors ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-frame bg-violet-soft" : "border-frame bg-panel"} hover:bg-hover ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
     >
       <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[post.status]}`} />
       {compact ? (
@@ -348,7 +358,7 @@ function PostCard({ post, byId, onOpen, compact = false, narrow = false, style }
             {narrow ? null : <Faces post={post} byId={byId} />}
             <span className="text-[11px] font-semibold whitespace-nowrap tabular-nums">{narrow ? time.replace(/ ([AP])M/, "$1").toLowerCase() : time}</span>
             <span className="flex-1" />
-            {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : null}
+            {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : post.status === "review" && !narrow ? <Badge tone="violet">In review</Badge> : null}
           </span>
           <span className={`line-clamp-1 text-[12px] leading-snug ${post.status === "draft" ? "text-muted" : "text-ink"}`}>{postText(post)}</span>
         </span>
@@ -382,7 +392,7 @@ function lanes(posts: PostRow[]) {
   return out;
 }
 
-type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: (at: Date) => void; onDrop: (postId: string, at: Date) => void };
+type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void };
 
 function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
   const days = Array.from({ length: 7 }, (_, i) => new Date(startOfWeek(anchor).getTime() + i * DAY));
@@ -441,9 +451,9 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
                 const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h);
                 const past = at.getTime() + 3600000 <= now.getTime();
                 return (
-                  <div key={h} className="relative border-t border-line-light first:border-t-0" style={{ height: HOUR_PX }} {...dropTarget(past, () => at, onDrop)}>
+                  <div key={h} className="relative border-t border-line-light first:border-t-0" style={{ height: HOUR_PX }} {...dropTarget(past || !onPick, () => at, onDrop)}>
                     <span className="pointer-events-none absolute inset-x-0 top-1/2 border-t border-dashed border-line-light" />
-                    {!past ? (
+                    {!past && onPick ? (
                       <button type="button" onClick={() => onPick(at)} aria-label={`New post ${at.toLocaleString("en-US", { weekday: "long", hour: "numeric" })}`} className="group absolute inset-0">
                         <span className="absolute inset-1 hidden items-center gap-1 border border-dashed border-line-strong bg-panel px-2 text-[11px] text-muted group-hover:flex">
                           <Plus size={12} /> {hourLabel(h).replace(" ", ":00 ")}
@@ -458,7 +468,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
                 const top = ((t.getHours() * 60 + t.getMinutes()) / 60) * HOUR_PX + 1;
                 return (
                   <div key={post.id} className="absolute z-[5] px-1" style={{ top, height: CARD_PX, left: `${(lane / of) * 100}%`, width: `${100 / of}%` }}>
-                    <PostCard post={post} byId={byId} onOpen={() => onOpen(post)} narrow={of > 1} style={{ height: CARD_PX - 2 }} />
+                    <PostCard post={post} byId={byId} onOpen={() => onOpen(post)} narrow={of > 1} movable={!!onPick} style={{ height: CARD_PX - 2 }} />
                   </div>
                 );
               })}
@@ -498,18 +508,18 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
             <div
               key={d.toISOString()}
               className={`group relative flex h-36 flex-col gap-1 border-b border-line-light p-1.5 ${i % 7 ? "border-l" : ""} ${!inMonth ? "bg-hover/60" : isWeekend(d) ? "bg-hover/30" : ""}`}
-              {...dropTarget(past, () => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9), onDrop)}
+              {...dropTarget(past || !onPick, () => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9), onDrop)}
             >
-              {!past ? <button type="button" aria-label={`New post ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`} onClick={() => onPick(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9))} className="absolute inset-0 hover:bg-hover/60" /> : null}
+              {!past && onPick ? <button type="button" aria-label={`New post ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`} onClick={() => onPick(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9))} className="absolute inset-0 hover:bg-hover/60" /> : null}
               <div className="pointer-events-none relative flex items-center justify-between px-0.5">
                 <span className={`flex h-6 min-w-6 items-center justify-center px-1 text-[13px] tabular-nums ${today ? "border border-frame bg-yolk font-semibold text-on-yolk" : inMonth ? "font-medium text-ink" : "text-faint"}`}>
                   {d.getDate() === 1 ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : d.getDate()}
                 </span>
-                {!past ? <Plus size={13} className="hidden text-muted group-hover:block" /> : null}
+                {!past && onPick ? <Plus size={13} className="hidden text-muted group-hover:block" /> : null}
               </div>
               <div className="relative flex w-full flex-col gap-1">
                 {here.slice(0, 3).map((p) => (
-                  <PostCard key={p.id} post={p} byId={byId} onOpen={() => onOpen(p)} compact />
+                  <PostCard key={p.id} post={p} byId={byId} onOpen={() => onOpen(p)} movable={!!onPick} compact />
                 ))}
                 {here.length > 3 ? (
                   <button type="button" onClick={() => onDay(d)} className="w-fit px-1 text-[11px] font-medium text-muted hover:text-ink">
@@ -545,8 +555,8 @@ function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: 
   };
 }
 
-const LABEL: Record<PostRow["status"], string> = { draft: "Draft", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed" };
-const TONE: Record<PostRow["status"], "gray" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red" };
+const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In review", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed" };
+const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red" };
 
 function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void }) {
   if (!posts.length) return <p className="px-6 py-16 text-center text-[13px] text-muted">No posts in these 4 weeks</p>;

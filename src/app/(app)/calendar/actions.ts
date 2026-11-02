@@ -1,28 +1,41 @@
 "use server";
 
-import { getCtx } from "@/lib/session";
-import { deletePost, duplicatePost, postsBetween, reschedulePost, savePost, type SaveInput } from "@/lib/posts";
+import { unstable_rethrow } from "next/navigation";
+import { canApprove, getCtx, writerCtx } from "@/lib/session";
+import { getBrandCtx, homeBrand } from "@/lib/brands";
+import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
 import { listMedia, setAlt } from "@/lib/media";
 
-const fail = (e: unknown) => ({ error: e instanceof Error ? e.message : String(e) });
+const fail = (e: unknown) => {
+  unstable_rethrow(e); // a signed-out visitor still goes to sign in
+  return { error: e instanceof Error ? e.message : String(e) };
+};
+
+/** The person saving, for approval and brand checks. */
+const actor = async () => {
+  const b = await getBrandCtx();
+  if (b.role === "client") throw new Error("Clients can only approve or reject posts");
+  return { ctx: b, actor: { role: b.role, brandIds: b.brandIds, brandId: homeBrand(b) } };
+};
 
 export async function loadPosts(from: string, to: string) {
-  const ctx = await getCtx();
-  return postsBetween(ctx.workspaceId, new Date(from), new Date(to));
+  const b = await getBrandCtx();
+  return postsBetween(b.workspaceId, new Date(from), new Date(to), b.scope);
 }
 
-export async function save(input: SaveInput): Promise<{ error?: string; id?: string; publishAt?: string | null }> {
-  const ctx = await getCtx();
+export async function save(input: SaveInput): Promise<{ error?: string; id?: string; publishAt?: string | null; status?: PostStatus }> {
   try {
-    return await savePost(ctx.workspaceId, ctx.userId, input);
+    const { ctx, actor: a } = await actor();
+    return await savePost(ctx.workspaceId, ctx.userId, input, a);
   } catch (e) {
     return fail(e);
   }
 }
 
 export async function move(id: string, publishAt: string): Promise<{ error?: string }> {
-  const ctx = await getCtx();
   try {
+    const ctx = await writerCtx();
+    await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
     await reschedulePost(ctx.workspaceId, id, new Date(publishAt));
     return {};
   } catch (e) {
@@ -31,18 +44,48 @@ export async function move(id: string, publishAt: string): Promise<{ error?: str
 }
 
 export async function duplicate(id: string): Promise<{ error?: string; id?: string }> {
-  const ctx = await getCtx();
   try {
-    return await duplicatePost(ctx.workspaceId, ctx.userId, id);
+    const { ctx, actor: a } = await actor();
+    await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
+    return await duplicatePost(ctx.workspaceId, ctx.userId, id, a);
   } catch (e) {
     return fail(e);
   }
 }
 
 export async function remove(id: string): Promise<{ error?: string }> {
-  const ctx = await getCtx();
   try {
+    const ctx = await writerCtx();
+    await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
     await deletePost(ctx.workspaceId, id);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function loadComments(postId: string) {
+  const ctx = await getCtx();
+  await assertPostAccess(ctx.workspaceId, postId, ctx.brandIds);
+  return listComments(ctx.workspaceId, postId);
+}
+
+export async function approve(postId: string): Promise<{ error?: string }> {
+  const ctx = await getCtx();
+  if (!canApprove(ctx.role)) return { error: "Only owners, admins and clients can approve" };
+  try {
+    await approvePost(ctx.workspaceId, postId, { userId: ctx.userId, name: ctx.name, brandIds: ctx.brandIds });
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function reject(postId: string, comment: string): Promise<{ error?: string }> {
+  const ctx = await getCtx();
+  if (!canApprove(ctx.role)) return { error: "Only owners, admins and clients can reject" };
+  try {
+    await rejectPost(ctx.workspaceId, postId, { userId: ctx.userId, name: ctx.name, brandIds: ctx.brandIds }, comment);
     return {};
   } catch (e) {
     return fail(e);
@@ -55,8 +98,8 @@ export async function loadMedia() {
 }
 
 export async function saveAlt(id: string, alt: string): Promise<{ error?: string }> {
-  const ctx = await getCtx();
   try {
+    const ctx = await writerCtx();
     await setAlt(ctx.workspaceId, id, alt);
     return {};
   } catch (e) {
@@ -81,9 +124,9 @@ export async function bestSlots() {
 }
 
 export async function aiRewrite(text: string, how: string, network: string | null): Promise<{ error?: string; text?: string }> {
-  const ctx = await getCtx();
   const { rewrite } = await import("@/lib/composer");
   try {
+    const ctx = await writerCtx();
     return { text: await rewrite(ctx.workspaceId, text, how as never, (network as never) ?? null) };
   } catch (e) {
     return fail(e);
@@ -97,9 +140,9 @@ export async function loadSnippets() {
 }
 
 export async function newSnippet(name: string, body: string): Promise<{ error?: string; snippet?: { id: string; name: string; body: string } }> {
-  const ctx = await getCtx();
   const { addSnippet } = await import("@/lib/composer");
   try {
+    const ctx = await writerCtx();
     return { snippet: await addSnippet(ctx.workspaceId, name, body) };
   } catch (e) {
     return fail(e);
@@ -107,9 +150,9 @@ export async function newSnippet(name: string, body: string): Promise<{ error?: 
 }
 
 export async function removeSnippet(id: string): Promise<{ error?: string }> {
-  const ctx = await getCtx();
   const { deleteSnippet } = await import("@/lib/composer");
   try {
+    const ctx = await writerCtx();
     await deleteSnippet(ctx.workspaceId, id);
     return {};
   } catch (e) {
@@ -118,9 +161,9 @@ export async function removeSnippet(id: string): Promise<{ error?: string }> {
 }
 
 export async function shortLink(url: string): Promise<{ error?: string; url?: string }> {
-  const ctx = await getCtx();
   const { shorten } = await import("@/lib/composer");
   try {
+    const ctx = await writerCtx();
     return { url: await shorten(ctx.workspaceId, url) };
   } catch (e) {
     return fail(e);
@@ -128,9 +171,9 @@ export async function shortLink(url: string): Promise<{ error?: string; url?: st
 }
 
 export async function trim(id: string, start: number, end: number): Promise<{ error?: string; id?: string }> {
-  const ctx = await getCtx();
   const { trimVideo } = await import("@/lib/composer");
   try {
+    const ctx = await writerCtx();
     return { id: await trimVideo(ctx.workspaceId, ctx.userId, id, start, end) };
   } catch (e) {
     return fail(e);
