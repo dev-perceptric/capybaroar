@@ -28,7 +28,7 @@ export function zonedInstant(y: number, m: number, d: number, hh: number, mm: nu
 }
 
 /** Today's date in a zone, as year, month (0-based) and day. */
-function todayIn(timeZone: string, now: Date) {
+export function todayIn(timeZone: string, now: Date) {
   const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(now).map((x) => [x.type, x.value]));
   return { y: +p.year, m: +p.month - 1, d: +p.day };
 }

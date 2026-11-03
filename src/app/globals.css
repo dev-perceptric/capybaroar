@@ -601,3 +601,13 @@ tr.row-sel > td {
 [data-spacing="tight"] [data-block]:not([data-type="header"]):not([class*="blk-s-tight"]):not([class*="blk-s-roomy"]) > div { padding-top: 3rem !important; padding-bottom: 3rem !important; }
 [data-spacing="roomy"] [data-block]:not([data-type="header"]):not([class*="blk-s-tight"]):not([class*="blk-s-roomy"]) > div { padding-top: 6.5rem !important; padding-bottom: 6.5rem !important; }
 [data-pictures="rounded"] [data-block] img:not([data-logo]):not([width]), [data-pictures="rounded"] [data-block] video, [data-pictures="rounded"] [data-block] iframe { border-radius: 14px; }
+
+/* Reports (/r/<token>): printed to A4 from the browser's print to PDF. Each section starts a page; charts and table
+   rows never split; fills print as shown. */
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html, body { background: var(--bg-primary); }
+  .report { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .report-section + .report-section { break-before: page; }
+  .report figure, .report tr, .report .break-inside-avoid { break-inside: avoid; }
+}

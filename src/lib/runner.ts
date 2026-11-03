@@ -9,6 +9,7 @@ import { AuthError, type Provider, type Secret } from "./providers/types";
 import { STATS_AFTER_MIN, runDue, runInbox, type Job, type Store, type TargetCtx } from "./publisher";
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
+import { queueReports, runReport } from "./reports";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
@@ -206,6 +207,7 @@ export const supabaseStore: Store = {
   async inboxError(channelId, error) {
     await adminClient().from("inbox_state").upsert({ channel_id: channelId, error: error.slice(0, 500) });
   },
+  report: runReport,
 };
 
 const BATCH = 5;
@@ -246,7 +248,10 @@ export function startRunner() {
   const queueReads = () => queueInbox().catch((e) => console.error("inbox queue:", e instanceof Error ? e.message : e));
   setInterval(queueReads, 600000);
   setTimeout(queueReads, 45000);
-  const hourly = () => upkeep().catch((e) => console.error("upkeep:", e));
+  const hourly = () => {
+    upkeep().catch((e) => console.error("upkeep:", e));
+    queueReports().catch((e) => console.error("reports:", e instanceof Error ? e.message : e));
+  };
   setInterval(hourly, 3600000);
   setTimeout(hourly, 30000);
   console.log(`runner started on ${WORKER}`);

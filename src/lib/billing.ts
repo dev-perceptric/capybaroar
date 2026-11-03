@@ -6,10 +6,11 @@ export type PlanId = "free" | "pro" | "agency";
 
 /** Every plan's price and limits. Change the numbers here. null means unlimited. */
 /** members counts the team (owners, admins, editors); clients who only approve don't take a seat. */
-export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean }> = {
-  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false },
-  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true },
-  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true },
+/** reports: saved reports with share links and scheduled emails; whiteLabel: the agency's logo and color on them. */
+export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean }> = {
+  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false, reports: false, whiteLabel: false },
+  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true, reports: true, whiteLabel: false },
+  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true, reports: true, whiteLabel: true },
 };
 
 export const TRIAL_DAYS = 14;
@@ -34,7 +35,7 @@ export function effectivePlan(ws: Pick<Billing, "plan" | "trial_ends_at">): Plan
   return onTrial(ws) ? "pro" : "free";
 }
 
-const limitsOf = async (workspaceId: string) => PLANS[effectivePlan(await getBilling(workspaceId))];
+export const limitsOf = async (workspaceId: string) => PLANS[effectivePlan(await getBilling(workspaceId))];
 
 /** Throws when connecting these accounts would pass the plan's channel limit. `adding` counts only new accounts. */
 export async function assertCanAddChannel(workspaceId: string, adding: number) {
@@ -97,6 +98,10 @@ export async function assertCanSchedule(workspaceId: string, editingId?: string)
 
 export async function assertCanUseAgent(workspaceId: string) {
   if (!(await limitsOf(workspaceId)).agent) throw new Error("Your plan doesn't include the agent. Upgrade to use it.");
+}
+
+export async function assertCanUseReports(workspaceId: string) {
+  if (!(await limitsOf(workspaceId)).reports) throw new Error("Your plan doesn't include reports. Upgrade to use them.");
 }
 
 // Stripe
