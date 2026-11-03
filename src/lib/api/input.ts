@@ -1,5 +1,7 @@
 // Checks for what callers of the API and the MCP server send, before anything reaches the database. Pure, so tests
 // cover every rule. A bad value throws ApiError with a message the caller can act on.
+import { isIP } from "node:net";
+import { isPublicAddress } from "./net";
 
 export class ApiError extends Error {
   constructor(
@@ -172,6 +174,9 @@ export function webhookInput(body: unknown, events: readonly string[]): { url: U
   if (!isObject(body)) throw bad("Send a JSON object");
   for (const k of Object.keys(body)) if (k !== "url" && k !== "events") throw bad(`Unknown field "${k}"`);
   const url = link(body.url, ["https:"]);
+  // Names are checked again when a delivery is sent; plain private addresses and local names are refused here.
+  const host = url.hostname.replace(/^\[|\]$/g, "");
+  if (/^(localhost|.*\.localhost|.*\.internal|.*\.local)$/i.test(host) || (isIP(host) && !isPublicAddress(host))) throw bad("The webhook address must be on the public internet");
   if (!Array.isArray(body.events) || !body.events.length) throw bad(`events must be a list of one or more of ${events.join(", ")}`);
   const picked = [...new Set(body.events)];
   for (const e of picked) if (typeof e !== "string" || !events.includes(e)) throw bad(`Unknown event "${String(e)}". Use ${events.join(", ")}`);

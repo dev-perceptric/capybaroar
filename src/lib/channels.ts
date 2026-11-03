@@ -3,7 +3,7 @@ import { open, seal } from "./crypto";
 import { adminClient } from "./supabase/server";
 import { assertCanAddChannel, newChannelCount } from "./billing";
 import type { NetworkId } from "./networks";
-import type { Account, Secret } from "./providers/types";
+import { AuthError, type Account, type Secret } from "./providers/types";
 
 /** A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. */
 export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null };
@@ -45,8 +45,10 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
 }
 
 export async function readSecret(channelId: string): Promise<Secret> {
-  const { data, error } = await adminClient().from("channel_secrets").select("access_token, refresh_token, expires_at, extra").eq("channel_id", channelId).single();
+  const { data, error } = await adminClient().from("channel_secrets").select("access_token, refresh_token, expires_at, extra").eq("channel_id", channelId).maybeSingle();
   if (error) throw new Error(error.message);
+  // No sign-in stored for this channel: the person has to connect it again.
+  if (!data) throw new AuthError("Reconnect this channel");
   return {
     accessToken: open(data.access_token),
     refreshToken: data.refresh_token ? open(data.refresh_token) : null,

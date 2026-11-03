@@ -3,10 +3,8 @@ import { notFound } from "next/navigation";
 import { publicBio } from "@/lib/bio";
 import { BioCard } from "@/components/BioCard";
 
-// Public link-in-bio pages. Made on the first visit and kept for a minute (the response says so in its cache
-// headers); saving the page in the editor makes a fresh one at once on that server.
-export const revalidate = 60;
-export const generateStaticParams = async () => [];
+// Public link-in-bio pages, made fresh on every visit so an edit or a delete shows on every server at once.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const view = await publicBio((await params).slug);

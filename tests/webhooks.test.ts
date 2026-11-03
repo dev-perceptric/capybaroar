@@ -134,3 +134,11 @@ test("MCP: the new tools are listed, and bad links and webhooks come back as too
   const c = await call("set_webhook", { id: "11111111-1111-4111-8111-111111111111", enabled: "yes" });
   assert.equal(c.result.isError, true);
 });
+
+test("a webhook to a private address or a local name is refused when it's added", () => {
+  const ev = ["post.published"];
+  for (const url of ["https://127.0.0.1/hook", "https://10.0.0.5/x", "https://[::1]/x", "https://169.254.169.254/", "https://localhost/x", "https://db.internal/x"]) {
+    assert.throws(() => webhookInput({ url, events: ev }, ev), /public internet/, url);
+  }
+  assert.equal(webhookInput({ url: "https://hooks.example.com/x", events: ev }, ev).url.hostname, "hooks.example.com");
+});
