@@ -3,8 +3,11 @@
 Schedule posts to every social channel from one calendar. Our own code on the Omniscient stack (Next.js, Supabase, Fly). No Postiz code: each channel is written from that network's official API docs.
 
 ## Look
-- Omniscient's style (`/home/user/omniscient/docs/brand.md` in sessions with that repo): black and white, square and framed, Inter 13px, 4px grid, no shadows, no gradients, no emoji.
-- Ocelot yellow (`yolk`, #FFE100) with ink text marks the one primary action, the current sidebar item, the current segment, today and selections. Never yellow text on white, never white text on yellow. Black stays for frames, text, links and focus.
+- The calm style shared with Omniscient and Claritia (`/home/user/omniscient/docs/brand.md` in sessions with that repo): Inter 13px, a 4px grid, a light gray shell (`shell`) with the sidebar and the page as two white raised panels, plain grays for text. Use the tokens in `src/app/globals.css`, never a hex. No gradients, no emoji.
+- Corners grow with the size of the thing: `rounded-xs` 4px, `rounded-sm` 6px (tags, menu rows), `rounded-md` 8px (buttons, inputs), `rounded-lg` 12px (cards, menus, panels), `rounded-2xl` 16px (dialogs, sheets). Raised things carry the soft `border-frame` ring (#E5E5E5) and the shadow for their kind (`shadow-card`, `shadow-chip`, `shadow-outline`, `shadow-input`, `shadow-focus`, `shadow-primary`, `shadow-pop`, `shadow-modal`). Never a dark frame.
+- The one primary action is dark gray (`brand`, #333333) with white text.
+- Yellow is the one accent, Zite's palette (`signal`): #FFD202 fill, #E6BD00 ring and hover, #FFF6C7 and #FFFCED soft fills, #262209 ink on yellow (`on-signal`). It marks the open sidebar item's icon, today, picked chips and options, focus, switches and the inbox count, about 5% of a screen. Yellow is always a fill with ink on it: never yellow text or icons on white, never white text on yellow. `yolk` names still work and point to the same yellow.
+- A record's state is a `Badge` (6px tag, soft fill, deep text, no frame). Section labels are gray Inter (`label-mono`); mono is only for code, keys and ids.
 - Shared parts only: `Button`, `IconButton`, `Field`, `Input`, `TabNav`, `Segmented`, `Badge`, `Empty` (`src/components/ui.tsx`), `Modal`/`Sheet` (`Overlay.tsx`), `Select`, dialogs (`Dialogs.tsx`), `ToolIntro`, `Loader`.
 - No `<select>`, `window.prompt`, `window.confirm` or `window.alert`.
 - Networks show their logo (`NetworkLogo`), with the name as the label.

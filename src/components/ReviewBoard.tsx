@@ -15,9 +15,9 @@ export type ReviewPost = { id: string; when: string | null; media: PreviewMedia[
 export function ReviewBoard({ token, brand, posts }: { token: string; brand: string; posts: ReviewPost[] }) {
   return (
     <div className="min-h-dvh bg-panel">
-      <header className="flex h-14 items-center gap-3 border-b border-frame px-4">
+      <header className="flex h-14 items-center gap-3 border-b border-line bg-panel px-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" width={24} height={24} className="size-6 border border-frame bg-white" />
+        <img src="/logo.png" alt="" width={24} height={24} className="size-6 rounded-sm" />
         <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold">
           {brand} <span className="text-faint">{posts.length ? `${posts.length} to review` : ""}</span>
         </h1>
@@ -43,7 +43,7 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
     });
   };
   return (
-    <section className="grid border border-frame md:grid-cols-[minmax(0,1fr)_360px]">
+    <section className="grid overflow-hidden rounded-lg border border-frame bg-panel shadow-card md:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-4 p-5">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="violet">In review</Badge>
@@ -51,7 +51,7 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {post.targets.map((x) => (
-            <span key={x.channel.id} className="flex h-7 items-center gap-1.5 border border-line px-2 text-[12px]">
+            <span key={x.channel.id} className="flex h-7 items-center gap-1.5 rounded-md bg-panel px-2 text-[12px] shadow-chip">
               <NetworkLogo id={x.channel.network} size={14} />
               <span className="max-w-40 truncate">{x.channel.name}</span>
             </span>

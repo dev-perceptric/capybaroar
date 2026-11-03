@@ -11,7 +11,7 @@ export function InviteCard({ title, line, token, mismatch, children }: { title: 
   const [busy, start] = useTransition();
   return (
     <div className="flex min-h-dvh items-center justify-center bg-panel px-4">
-      <div className="w-full max-w-[380px] border border-frame bg-panel p-6">
+      <div className="w-full max-w-[380px] rounded-2xl border border-frame bg-panel p-6 shadow-card">
         <div className="flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={72} height={72} className="size-18" />
@@ -20,7 +20,7 @@ export function InviteCard({ title, line, token, mismatch, children }: { title: 
           {line ? <p className="mt-2 text-[13px] text-muted">{line}</p> : null}
         </div>
         {mismatch ? (
-          <p className="mt-6 border border-danger bg-danger-soft px-3 py-2 text-[12px] text-danger">
+          <p className="mt-6 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[12px] text-danger">
             This invite is for {mismatch.invited}. You are signed in as {mismatch.signedIn}.
           </p>
         ) : null}

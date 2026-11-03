@@ -1,72 +1,97 @@
 @import "tailwindcss";
 
 /*
- * Capybaroar's look (Omniscient's, with Ocelot yellow) (docs/brand.md): black and white with plain grays, square and framed, after folk. Inter at a 13px
- * base, a 4px grid, square corners, black frames around panels, cards and menus, gray hairlines inside them, no shadows. Black is the action: the next step, links, selection and focus. Emerald is the signal, shared with
- * Claritia: the logo's point, fit marks, live and won. Other hues only mean status or object type. The app is white edge to
- * edge; a black rule splits the sidebar from the page.
+ * Capybaroar's look: the calm style shared with Omniscient and Claritia (Omniscient's docs/brand.md). A light gray
+ * shell, white panels lifted by soft ring shadows, Inter at a 13px base, a 4px grid, corners that grow with the size of
+ * the thing (6px tags, 8px buttons and inputs, 12px cards, 16px dialogs). Yellow is the one accent, Zite's palette:
+ * the logo, focus, the open sidebar item, today, picked things, about 5% of a screen. Yellow is always a fill with ink
+ * on it, never yellow text or icons on white. The one primary action is dark gray. Other hues only mean status or
+ * object type.
  * The raw tokens keep Twenty's names; the Tailwind names (ink, panel, line, brand...) map onto them so every screen
  * reads the same tokens. Dark mode: data-theme="dark" on <html> swaps the tokens, not the components.
  */
 
 :root,
 [data-theme="light"] {
-  /* Accent: black */
-  --accent-3: #f5f5f5; --accent-5: #d4d4d4; --accent-9: #0a0a0a; --accent-10: #262626; --accent-11: #0a0a0a;
-  --accent-flash: #ececec;
-  /* Capybaroar: Ocelot yellow for the one primary action, the current item and highlights. Ink text on it, never white. */
-  --yolk-9: #ffe100; --yolk-10: #e6ca00; --yolk-3: #fff8c2; --on-yolk: #0a0a0a;
-  /* Signal: emerald, about 5% of a screen */
-  --signal-3: #e8f5ef; --signal-6: #b8e2cf; --signal-9: #0c8c5e; --signal-11: #0a7a52;
-  /* Surfaces: white panels on a gray shell, gray fills for hover and pressed */
-  --bg-primary: #ffffff; --bg-secondary: #ffffff; --bg-tertiary: #f5f5f5; --bg-quaternary: #ebebeb; --bg-shell: #ffffff;
-  --bg-inverted: #0a0a0a; --bg-danger: #fdecea; --overlay: rgba(0, 0, 0, 0.36);
-  /* Text: black, then plain grays */
-  --text-primary: #0a0a0a; --text-secondary: #737373; --text-tertiary: #a3a3a3; --text-light: #c4c4c4;
-  --text-extra-light: #dcdcdc; --text-inverted: #ffffff; --text-on-accent: #ffffff; --text-danger: #c2412d;
-  /* Borders: black frames outside, gray hairlines inside */
-  --border-frame: #0a0a0a; --border-strong: #d4d4d4; --border-medium: #e5e5e5; --border-light: #f0f0f0; --border-blue: #d4d4d4; --border-danger: #f6c9c1;
+  /* Primary: dark gray for the one main action; a soft yellow halo for focus */
+  --accent-3: #f2f2f2; --accent-5: #fff2b1; --accent-9: #333333; --accent-10: #1f1f1f; --accent-11: #171717;
+  --accent-flash: #fffced;
+  /* Signal: Zite's yellows, about 5% of a screen. 9 is the fill, 10 its hover and ring, 11 gold text, on-signal the
+     ink that sits on a yellow fill. */
+  --signal-1: #fffced; --signal-3: #fff6c7; --signal-6: #fff2b1; --signal-7: #ffe674; --signal-9: #ffd202;
+  --signal-10: #e6bd00; --signal-11: #7a5c00; --on-signal: #262209;
+  /* Older names for the yellow, kept so every screen reads the same tokens */
+  --yolk-3: #fff6c7; --yolk-9: #ffd202; --yolk-10: #e6bd00; --on-yolk: #262209;
+  /* Surfaces: a gray shell, white panels, a near-white canvas, gray fills for hover and pressed */
+  --bg-primary: #ffffff; --bg-secondary: #fafafa; --bg-tertiary: #f5f5f5; --bg-quaternary: #ededed; --bg-shell: #f5f5f5;
+  --bg-inverted: #333333; --bg-danger: #fde8e8; --overlay: rgba(15, 15, 15, 0.28);
+  /* Text */
+  --text-primary: #171717; --text-secondary: #737373; --text-tertiary: #a3a3a3; --text-light: #c4c4c4;
+  --text-extra-light: #dcdcdc; --text-inverted: #ffffff; --text-on-accent: #ffffff; --text-danger: #b91c1c;
+  /* Lines: a soft ring around panels, gray hairlines inside them */
+  --border-frame: #e5e5e5; --border-strong: #d4d4d4; --border-medium: #ebebeb; --border-light: #f2f2f2; --border-blue: #e6bd00; --border-danger: #f5c2c2;
   /* Status */
-  --status-success: #0a7a52; --status-error: #c2412d; --status-warning: #b7791f; --status-info: #0a0a0a;
-  --status-success-bg: #0c8c5e14; --status-error-bg: #c2412d14; --status-warning-bg: #b7791f1f; --status-info-bg: #0a0a0a0d;
+  --status-success: #086444; --status-error: #dc2626; --status-warning: #9a3412; --status-info: #171717;
+  --status-success-bg: #0c8c5e14; --status-error-bg: #dc262614; --status-warning-bg: #ea7a1a1f; --status-info-bg: #1717170d;
   /* Tag palette: step 3 fill, step 9 solid, step 11 text */
-  --red-3: #fdecea; --red-9: #d9472f; --red-11: #b23a26;
-  --orange-3: #fff1e2; --orange-9: #ea7a1a; --orange-11: #b25a09;
-  --yellow-3: #fff6d6; --yellow-9: #f2b600; --yellow-11: #8a6200;
-  --green-3: #e8f5ef; --green-9: #0c8c5e; --green-11: #0a7a52;
-  --turquoise-3: #e0f6f4; --turquoise-9: #15a39a; --turquoise-11: #0b7a73;
-  --sky-3: #e3f2fe; --sky-9: #2f9bf0; --sky-11: #0b62b0;
-  --blue-3: #e8effc; --blue-9: #2563eb; --blue-11: #1d4ed8;
-  --purple-3: #f1ecfe; --purple-9: #6d45e6; --purple-11: #5230c2;
+  --red-3: #fde8e8; --red-9: #dc2626; --red-11: #a8201a;
+  --orange-3: #ffe9cc; --orange-9: #ea7a1a; --orange-11: #9a3412;
+  --yellow-3: #fff6c7; --yellow-9: #ffd202; --yellow-11: #7a5c00;
+  --green-3: #e3f4ec; --green-9: #0c8c5e; --green-11: #086444;
+  --turquoise-3: #e0f6f4; --turquoise-9: #15a39a; --turquoise-11: #0b6f69;
+  --sky-3: #e3f2fe; --sky-9: #2f9bf0; --sky-11: #0b5a9e;
+  --blue-3: #e2effd; --blue-9: #2563eb; --blue-11: #1e4f9a;
+  --purple-3: #e9e3fd; --purple-9: #6d45e6; --purple-11: #5429d6;
   --pink-3: #fde8f0; --pink-9: #e0457f; --pink-11: #a61e55;
-  --gray-3: #f5f5f5; --gray-9: #a3a3a3; --gray-11: #525252;
-  /* Shadows: black, for windows and things that float */
-  --shadow-light: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
-  --shadow-strong: 0px 12px 32px -8px rgba(0, 0, 0, 0.18), 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
-  --shadow-super-heavy: 0px 16px 40px -12px rgba(0, 0, 0, 0.45), 0px 2px 6px 0px rgba(0, 0, 0, 0.05);
+  --gray-3: #ededed; --gray-9: #a3a3a3; --gray-11: #525252;
+  /* Shadows: a 1px ring plus soft layers. Raised things lean on these, never a dark border. */
+  --sh-rest: 0 4px 4px -12px rgba(0,0,0,.02), 0 12px 12px -6px rgba(0,0,0,.02), 0 6px 6px -3px rgba(0,0,0,.02), 0 3px 3px -1.5px rgba(0,0,0,.02), 0 1px 1px -.5px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.06);
+  --sh-hover: 0 24px 24px -12px rgba(0,0,0,.04), 0 12px 12px -6px rgba(0,0,0,.02), 0 6px 6px -3px rgba(0,0,0,.04), 0 3px 3px -1.5px rgba(0,0,0,.08), 0 1px 1px -.5px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.08);
+  --sh-chip: 0 1px 2px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.06);
+  --sh-outline: 0 0 0 1px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.16);
+  --sh-primary: 0 0 0 1px rgba(0,0,0,.8), 0 1px 3px rgba(0,0,0,.4), 1px 4px 8px rgba(0,0,0,.12);
+  --sh-signal: 0 0 0 1px #e6bd00, 0 1px 3px rgba(122,92,0,.3), 1px 4px 8px rgba(122,92,0,.12);
+  --sh-menu: 0 12px 32px -6px rgba(0,0,0,.12), 0 0 0 1px rgba(111,107,107,.1), 0 1px 3px rgba(63,70,75,.1);
+  --sh-modal: 0 0 0 1px rgba(0,0,0,.04), 0 1px 1px -.5px rgba(0,0,0,.04), 0 6px 6px -3px rgba(0,0,0,.04), 0 12px 12px -6px rgba(0,0,0,.03), 0 24px 48px -16px rgba(0,0,0,.18);
+  --sh-input: 0 0 0 1px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.16);
+  --sh-focus: 0 0 0 1px #e6bd00, 0 1px 3px rgba(0,0,0,.16), 0 0 0 3px rgba(255,210,2,.35);
+  --sh-error: 0 0 0 1px rgba(220,38,38,.6), 0 1px 3px rgba(0,0,0,.16), 0 0 0 3px rgba(220,38,38,.12);
+  --shadow-light: var(--sh-chip);
+  --shadow-strong: var(--sh-menu);
+  --shadow-super-heavy: var(--sh-modal);
   --shadow-bottom-panel: 0px 0px 20px 0px rgba(0, 0, 0, 0.06);
   --shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] {
-  --accent-3: #1c1c1c; --accent-5: #333333; --accent-9: #3a3a3a; --accent-10: #4a4a4a; --accent-11: #fafafa;
-  --accent-flash: #262626;
-  --yolk-9: #ffe100; --yolk-10: #e6ca00; --yolk-3: #3a3300; --on-yolk: #0a0a0a;
-  --signal-3: #0f2a20; --signal-6: #1d4a38; --signal-9: #18e299; --signal-11: #3fe6a8;
-  --bg-primary: #121212; --bg-secondary: #0a0a0a; --bg-tertiary: #1c1c1c; --bg-quaternary: #262626; --bg-shell: #121212;
-  --bg-inverted: #fafafa; --bg-danger: #3d1a14; --overlay: rgba(0, 0, 0, 0.6);
-  --text-primary: #fafafa; --text-secondary: #a3a3a3; --text-tertiary: #737373; --text-light: #525252;
-  --text-extra-light: #3a3a3a; --text-inverted: #0a0a0a;
-  --border-frame: #fafafa; --border-strong: #3a3a3a; --border-medium: #262626; --border-light: #1c1c1c; --border-blue: #3a3a3a; --border-danger: #5c2419;
-  --status-info: #fafafa; --status-success-bg: #3dd68c24;
-  --red-3: #3d1a14; --red-11: #ff9d80; --orange-3: #3a2410; --orange-11: #ffb070;
-  --yellow-3: #3a2c05; --yellow-11: #ffd166; --green-3: #0c3328; --green-11: #6fe0b8;
+  --accent-3: #272725; --accent-5: #4a420f; --accent-9: #42423e; --accent-10: #4d4d48; --accent-11: #f5f5f0;
+  --accent-flash: #2e2a0c;
+  --signal-1: #262209; --signal-3: #2e2a0c; --signal-6: #4a420f; --signal-7: #6b5e12; --signal-9: #ffd202;
+  --signal-10: #e6bd00; --signal-11: #ffe674; --on-signal: #262209;
+  --yolk-3: #2e2a0c; --yolk-9: #ffd202; --yolk-10: #e6bd00; --on-yolk: #262209;
+  --bg-primary: #1f1f1d; --bg-secondary: #1a1a18; --bg-tertiary: #272725; --bg-quaternary: #2e2e2b; --bg-shell: #161614;
+  --bg-inverted: #f5f5f0; --bg-danger: #3d1a14; --overlay: rgba(0, 0, 0, 0.55);
+  --text-primary: #e8e8e3; --text-secondary: #9a9a95; --text-tertiary: #6b6b67; --text-light: #52524e;
+  --text-extra-light: #3d3d39; --text-inverted: #171717; --text-on-accent: #171717; --text-danger: #f87171;
+  --border-frame: #333331; --border-strong: #3d3d39; --border-medium: #2c2c29; --border-light: #252523; --border-blue: #ffd202; --border-danger: #5c2419;
+  --status-success: #5fc79a; --status-error: #f87171; --status-warning: #fdba74; --status-info: #f5f5f0;
+  --status-success-bg: #5fc79a24;
+  --red-3: #3d1a14; --red-11: #ff9d80; --orange-3: #3a2410; --orange-11: #fdba74;
+  --yellow-3: #3a2c05; --yellow-11: #ffd166; --green-3: #12301f; --green-11: #5fc79a;
   --turquoise-3: #0c302d; --turquoise-11: #5fdcd1; --sky-3: #0f2c4d; --sky-11: #7cc3ff;
-  --blue-3: #142a57; --blue-9: #3d7bf2; --blue-11: #8fb4ff; --purple-3: #241a4d; --purple-11: #b9a3ff;
-  --pink-3: #3d1426; --pink-11: #ff94bb; --gray-3: #1c1c1c; --gray-9: #737373; --gray-11: #a3a3a3;
-  --shadow-light: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
-  --shadow-strong: 0px 12px 32px 0px rgba(0, 0, 0, 0.4);
-  --shadow-super-heavy: 0px 24px 60px 0px rgba(0, 0, 0, 0.5);
+  --blue-3: #13253f; --blue-9: #3d7bf2; --blue-11: #93c5fd; --purple-3: #261d45; --purple-11: #c4b5fd;
+  --pink-3: #3d1426; --pink-11: #ff94bb; --gray-3: #2c2c29; --gray-9: #6b6b67; --gray-11: #c4c4bf;
+  --sh-rest: 0 1px 2px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.08);
+  --sh-hover: 0 12px 24px -8px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.12);
+  --sh-chip: 0 1px 2px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.08);
+  --sh-outline: 0 0 0 1px rgba(255,255,255,.12), 0 1px 3px rgba(0,0,0,.5);
+  --sh-primary: 0 0 0 1px rgba(255,255,255,.14), 0 1px 3px rgba(0,0,0,.5);
+  --sh-signal: 0 0 0 1px #e6bd00, 0 1px 3px rgba(0,0,0,.5);
+  --sh-menu: 0 12px 32px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
+  --sh-modal: 0 24px 48px -12px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
+  --sh-input: 0 0 0 1px rgba(255,255,255,.14), 0 1px 3px rgba(0,0,0,.5);
+  --sh-focus: 0 0 0 1px #ffd202, 0 0 0 3px rgba(255,210,2,.3);
+  --sh-error: 0 0 0 1px rgba(248,113,113,.7), 0 0 0 3px rgba(248,113,113,.18);
   --shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);
 }
 
@@ -74,15 +99,15 @@
   --space-0_5: 2px; --space-1: 4px; --space-1_5: 6px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
   --icon-sm: 14px; --icon-md: 16px; --icon-lg: 20px; --icon-xl: 24px;
-  --duration-instant: 120ms; --duration-fast: 200ms; --duration-normal: 320ms; --duration-slow: 1.5s;
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1); --ease-spring: cubic-bezier(0.3, 1.5, 0.6, 1);
-  --sidebar-width: 220px; --side-panel-width: 500px; --header-height: 48px; --row-height: 32px;
+  --duration-instant: 120ms; --duration-fast: 150ms; --duration-normal: 280ms; --duration-slow: 560ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-width: 232px; --side-panel-width: 500px; --header-height: 48px; --row-height: 32px;
 }
 
 /* Tailwind names on the tokens. `inline` keeps the var() so dark mode swaps at runtime. */
 @theme inline {
-  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* 4px grid in pixels, whatever the root size. The root is Twenty's 13px, so Tailwind's rem-based widths and type
      sizes are pinned to pixels here to keep their usual size. */
@@ -126,7 +151,7 @@
   --color-frame: var(--border-frame);
   --color-scrim: var(--overlay);
 
-  /* Black for the next action, links, selection and focus */
+  /* Dark gray for the one primary action and the open item; links read in ink */
   --color-brand: var(--accent-9);
   --color-brand-hover: var(--accent-10);
   --color-brand-ink: var(--accent-11);
@@ -135,17 +160,21 @@
   --color-brand-halo: var(--accent-5);
   --color-brand-line: var(--border-blue);
   --color-brand-flash: var(--accent-flash);
-  --color-yolk: var(--yolk-9);
-  --color-yolk-hover: var(--yolk-10);
-  --color-yolk-soft: var(--yolk-3);
-  --color-on-yolk: var(--on-yolk);
   --color-fire: var(--orange-9);
 
-  /* Emerald for the signal: the logo's point, fit marks, live and won */
+  /* Yellow for the signal, Zite's palette: the logo, focus, the open item, today and picked things. Always a fill with
+     ink on it (on-signal); signal-ink is the one gold for small text. */
   --color-signal: var(--signal-9);
+  --color-signal-strong: var(--signal-10);
+  --color-signal-pale: var(--signal-1);
   --color-signal-ink: var(--signal-11);
   --color-signal-soft: var(--signal-3);
   --color-signal-line: var(--signal-6);
+  --color-on-signal: var(--on-signal);
+  --color-yolk: var(--signal-9);
+  --color-yolk-hover: var(--signal-10);
+  --color-yolk-soft: var(--signal-3);
+  --color-on-yolk: var(--on-signal);
 
   /* Status: step 11 text on its step 3 fill */
   --color-success: var(--green-11);
@@ -167,23 +196,32 @@
   --color-yellow-soft: var(--yellow-3);
   --color-gray-soft: var(--gray-3);
 
-  /* Corners: square, everywhere. The scale is kept so every rounded-* class reads 0. Circles (rounded-full) stay
-     for faces and radio buttons only. */
-  --radius-xs: 0px;
-  --radius-sm: 0px;
-  --radius: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-2xl: 0px;
-  --radius-3xl: 0px;
+  /* Corners grow with the size of the thing: tags and small chips 4 to 6px, buttons and inputs 8px, cards and
+     menus 12px, dialogs 16px. rounded-full stays for faces, dots, switches and radio buttons. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
 
-  /* No shadows: things that float get a black frame (border-frame) instead. */
-  --shadow-xs: none;
-  --shadow-sm: none;
-  --shadow-card: none;
-  --shadow-pop: none;
-  --shadow-modal: none;
+  /* Shadows: a ring and soft layers for raised things (card), chips and filters (chip), outline buttons and inputs
+     (outline, input), the primary button (primary), the yellow button (signal), menus (pop) and dialogs (modal). */
+  --shadow-xs: var(--sh-chip);
+  --shadow-sm: var(--sh-chip);
+  --shadow-chip: var(--sh-chip);
+  --shadow-card: var(--sh-rest);
+  --shadow-hover: var(--sh-hover);
+  --shadow-outline: var(--sh-outline);
+  --shadow-input: var(--sh-input);
+  --shadow-focus: var(--sh-focus);
+  --shadow-error: var(--sh-error);
+  --shadow-primary: var(--sh-primary);
+  --shadow-signal: var(--sh-signal);
+  --shadow-pop: var(--sh-menu);
+  --shadow-modal: var(--sh-modal);
 }
 
 html {
@@ -215,7 +253,7 @@ body {
     transition: background 0.1s ease;
   }
   :focus-visible {
-    outline: 2px solid var(--border-blue);
+    outline: 2px solid var(--signal-10);
     outline-offset: 1px;
   }
   ::placeholder {
@@ -235,24 +273,19 @@ body {
 }
 
 ::selection {
-  background: var(--yolk-9);
-  color: var(--on-yolk);
+  background: var(--signal-6);
+  color: var(--text-primary);
 }
 
-/* Section labels: mono at caption size, medium weight, secondary gray, sentence case. `.bracket` wraps one in [ ]. */
+/* Section labels: Inter at caption size, medium weight, secondary gray, sentence case. Mono is only for code, keys
+   and ids now. `.bracket` is kept so older labels still read, and adds nothing. */
 @layer components {
   .label-mono {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font-sans);
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.5;
     color: var(--text-secondary);
-  }
-  .bracket::before {
-    content: "[ ";
-  }
-  .bracket::after {
-    content: " ]";
   }
   /* Small metadata captions */
   .fig {
@@ -322,7 +355,7 @@ table {
 
 input[type="checkbox"],
 input[type="radio"] {
-  accent-color: var(--accent-9);
+  accent-color: var(--signal-9);
 }
 
 /* A Twenty toggle, for checkboxes that switch something on or off: add class "toggle". */
@@ -333,7 +366,7 @@ input[type="checkbox"].toggle {
   height: 16px;
   margin: 0;
   flex-shrink: 0;
-  border-radius: 0;
+  border-radius: 9999px;
   background: var(--border-strong);
   cursor: pointer;
   transition: background var(--duration-fast) ease;
@@ -345,19 +378,20 @@ input[type="checkbox"].toggle::after {
   left: 2px;
   width: 12px;
   height: 12px;
-  border-radius: 0;
+  border-radius: 9999px;
   background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: transform var(--duration-fast) ease;
 }
 input[type="checkbox"].toggle:checked {
-  background: var(--yolk-9);
+  background: var(--signal-9);
 }
 input[type="checkbox"].toggle:checked::after {
   transform: translateX(12px);
 }
 
 /* Motion (docs/brand.md): three speeds (120, 200, 320ms), two curves (ease-out, spring), transform and opacity only.
-   Motion answers what people do; the only ambient motion is work in progress (loaders, Otto at work). */
+   Motion answers what people do; the only ambient motion is work in progress (loaders). */
 
 /* The loader: the mark's four squares blinking in turn. */
 .loader {
@@ -369,7 +403,7 @@ input[type="checkbox"].toggle:checked::after {
 .loader > i {
   width: var(--l, 6px);
   height: var(--l, 6px);
-  border-radius: 0;
+  border-radius: calc(var(--l, 6px) / 3);
   background: currentColor;
   animation: loader-blink 1.2s infinite;
 }
@@ -378,7 +412,7 @@ input[type="checkbox"].toggle:checked::after {
 .loader > i:nth-child(3) { animation-delay: 0.45s; }
 @keyframes loader-blink { 50% { opacity: 0.2; } }
 
-/* Skeleton bars while a list loads: a light blue shimmer. */
+/* Skeleton bars while a list loads: a soft gray shimmer. */
 .bone {
   border-radius: var(--radius-xs);
   background: linear-gradient(90deg, var(--border-light) 30%, var(--accent-3) 50%, var(--border-light) 70%);
@@ -392,7 +426,7 @@ input[type="checkbox"].toggle:checked::after {
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 .slide-in { animation: slide-in var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
 @keyframes slide-in { from { opacity: 0; transform: translateX(14px); } }
-/* A row that just arrived flashes blue and fades to normal. */
+/* A row that just arrived flashes pale yellow and fades to normal. */
 .row-new { animation: rise var(--duration-normal) var(--ease-out) both, row-flash 1.6s ease-out; }
 @keyframes row-flash { from { background: var(--accent-flash); } }
 
@@ -433,30 +467,12 @@ input[type="checkbox"].toggle:checked::after {
 .quarters .on:nth-child(4) { animation-delay: 180ms; }
 @keyframes quarter { from { opacity: 0; transform: scale(0.4); } }
 
-/* Otto, the owl: blinks, eyes follow the pointer, bobs while working, tilts while thinking, hops when done. */
-.otto .lid { transform-box: fill-box; transform-origin: center; animation: otto-blink 5s infinite; }
-.otto .look { transition: transform 160ms var(--ease-out); }
-.otto .hopper { transform-box: view-box; transform-origin: 32px 60px; }
-.otto.working .hopper { animation: otto-bob 1.2s ease-in-out infinite; }
-.otto.thinking .hopper { animation: otto-tilt 1.8s ease-in-out infinite; }
-.otto.done .hopper { animation: otto-hop 420ms var(--ease-spring); }
-@keyframes otto-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.08); } }
-@keyframes otto-bob { 50% { transform: translateY(-2px); } }
-@keyframes otto-tilt { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg); } }
-@keyframes otto-hop { 40% { transform: translateY(-7px); } }
-
-/* The open row in a list turns solid black with white text (Scout). Its fit marks turn mint. */
+/* The open row in a list takes the palest yellow. */
 tr.row-sel > td {
-  background: var(--yolk-9);
-  color: var(--on-yolk);
-  border-color: var(--frame, #0a0a0a);
-  --q-on: #18e299;
-  --q-off: rgba(255, 255, 255, 0.25);
+  background: var(--signal-1);
 }
-tr.row-sel > td :is(.text-muted, .text-faint, .text-ink, .text-light, a) { color: rgba(255, 255, 255, 0.82); }
-tr.row-sel > td .loader { color: #ffffff; }
 
-/* Big moments only (a list launched, a person added to a campaign): small blue squares burst out. */
+/* Big moments only (a list launched, a person added to a campaign): small squares burst out. */
 .burst-bit { position: fixed; z-index: 120; border-radius: 1.5px; pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -465,8 +481,7 @@ tr.row-sel > td .loader { color: #ffffff; }
   *::after {
     transition: none !important;
   }
-  .loader > i, .bone, .rise, .slide-in, .row-new, .pop-once, .ring-once, .flip-word, .under-draw::after, .quarters .on,
-  .otto .lid, .otto .hopper {
+  .loader > i, .bone, .rise, .slide-in, .row-new, .pop-once, .ring-once, .flip-word, .under-draw::after, .quarters .on {
     animation: none !important;
   }
   .draw-check path { animation: none; stroke-dashoffset: 0; }

@@ -80,7 +80,7 @@ const AI: { how: string; label: string }[] = [
   { how: "fix", label: "Fix spelling and grammar" },
 ];
 
-const MENU = "min-w-60 border border-frame bg-panel py-1 text-[13px]";
+const MENU = "min-w-60 rounded-lg border border-frame bg-panel p-1 text-[13px] shadow-pop";
 const ROW = "flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-hover disabled:text-faint";
 
 /** The bar over a post's text: undo, formatting, hashtags, mentions, short links, snippets and Claude. */
@@ -217,7 +217,7 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
           disabled={working === "ai"}
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => setAiOpen(!aiOpen)}
-          className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium ${aiOpen ? "border-frame bg-yolk text-on-yolk" : "border-line bg-panel hover:border-frame"}`}
+          className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium ${aiOpen ? "border-transparent bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "border-transparent bg-panel shadow-outline hover:bg-canvas"}`}
         >
           {working === "ai" ? <Loader /> : <WandSparkles size={14} />}
           Rewrite

@@ -63,13 +63,13 @@ export function MediaView({ files }: { files: File[] }) {
   return (
     <div onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), send(e.dataTransfer.files))}>
       <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => send(e.target.files)} />
-      {error ? <p className="mb-4 border border-danger bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
+      {error ? <p className="mb-4 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
       {files.length ? (
         <>
           <div className="mb-4 flex justify-end">{button}</div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {files.map((f) => (
-              <figure key={f.id} className="group border border-frame">
+              <figure key={f.id} className="group overflow-hidden rounded-lg border border-frame">
                 <div className="relative aspect-square bg-pressed">
                   {f.mime.startsWith("video/") ? (
                     <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls preload="metadata" />

@@ -22,7 +22,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           title="See how your posts do"
           lead="Reach, engagement and followers for every channel, and the best times to post."
           action={
-            <Link href="/channels" className="inline-flex h-8 items-center border border-frame bg-yolk px-3 text-[12px] font-medium text-on-yolk hover:bg-yolk-hover">
+            <Link href="/channels" className="inline-flex h-8 items-center rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover">
               Connect a channel
             </Link>
           }

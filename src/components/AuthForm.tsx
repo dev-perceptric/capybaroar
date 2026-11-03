@@ -11,7 +11,7 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
   const [state, action, busy] = useActionState<AuthState, FormData>(mode === "login" ? signIn : signUp, {});
   return (
     <div className="flex min-h-dvh items-center justify-center bg-panel px-4">
-      <div className="w-full max-w-[380px] border border-frame bg-panel p-6">
+      <div className="w-full max-w-[380px] rounded-2xl border border-frame bg-panel p-6 shadow-card">
         <div className="flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={72} height={72} className="size-18" />
@@ -21,7 +21,7 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
           </h1>
         </div>
         {state.sent ? (
-          <p className="mt-6 border border-frame bg-yolk-soft p-3 text-[13px]">Check your email for a link to finish signing up.</p>
+          <p className="mt-6 rounded-lg bg-signal-soft p-3 text-[13px] shadow-[0_0_0_1px_var(--signal-10)]">Check your email for a link to finish signing up.</p>
         ) : (
           <>
             {process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" ? (

@@ -40,13 +40,13 @@ export function ChannelsView({ channels, ready, asks, error, brands = [] }: { ch
     });
   return (
     <div className="mx-auto w-full max-w-[960px]">
-      {error ? <p className="mb-4 border border-danger bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
+      {error ? <p className="mb-4 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
       {channels.length ? (
         <section className="mb-8">
           <p className="label-mono mb-2">
-            <span className="bracket">Connected</span>
+            Connected
           </p>
-          <div className="border border-frame">
+          <div className="overflow-hidden rounded-lg border border-frame">
             {channels.map((c) => (
               <div key={c.id} className="flex h-14 items-center gap-3 border-b border-line px-3 last:border-b-0">
                 <span className="relative">
@@ -93,13 +93,13 @@ export function ChannelsView({ channels, ready, asks, error, brands = [] }: { ch
         </h2>
       )}
       <p className="label-mono mb-2">
-        <span className="bracket">Add</span>
+        Add
       </p>
-      <div className="grid grid-cols-1 border-t border-l border-frame sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {NETWORKS.map((n) => {
           const on = ready.includes(n.id);
           return (
-            <div key={n.id} className="flex h-16 items-center gap-3 border-r border-b border-frame px-4">
+            <div key={n.id} className="flex h-16 items-center gap-3 rounded-lg border border-frame bg-panel px-4">
               <NetworkLogo id={n.id} size={22} />
               <span className="flex-1 text-[13px] font-medium">{n.name}</span>
               {on ? (

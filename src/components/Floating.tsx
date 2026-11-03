@@ -159,7 +159,7 @@ export function useTip(delay = 300) {
 /** A tooltip: dark glass, small text, above everything. */
 export function Tip({ anchor, text, placement = "bottom", wrap = false, className }: { anchor: React.RefObject<HTMLElement | null>; text: React.ReactNode; placement?: Placement; wrap?: boolean; className?: string }) {
   return (
-    <Floating anchor={anchor} placement={placement} gap={6} passive role="tooltip" className={className ?? `bg-solid px-2 py-1 text-[12px] leading-normal font-normal text-inverted ${wrap ? "w-64 leading-snug whitespace-normal" : "whitespace-nowrap"}`}>
+    <Floating anchor={anchor} placement={placement} gap={6} passive role="tooltip" className={className ?? `rounded-md bg-solid px-2 py-1 text-[12px] leading-normal font-normal text-inverted ${wrap ? "w-64 leading-snug whitespace-normal" : "whitespace-nowrap"}`}>
       {text}
     </Floating>
   );
