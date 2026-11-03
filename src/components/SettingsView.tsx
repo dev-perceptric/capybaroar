@@ -7,13 +7,14 @@ import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
 import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
+import { ApiSection, type ApiInfo } from "./ApiSettings";
 import { saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-export function SettingsView({ name, timezone, queue, billing, team }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo }) {
+export function SettingsView({ name, timezone, queue, billing, team, api }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo }) {
   const [n, setN] = useState(name);
   const [tz, setTz] = useState(timezone);
   const [msg, setMsg] = useState("");
@@ -47,6 +48,7 @@ export function SettingsView({ name, timezone, queue, billing, team }: { name: s
       {team ? <BrandsSection team={team} /> : null}
       {team ? <MembersSection team={team} /> : null}
       <Queue initial={queue} timezone={tz} />
+      {api ? <ApiSection api={api} /> : null}
       {billing ? <BillingSection info={billing} /> : null}
     </div>
   );

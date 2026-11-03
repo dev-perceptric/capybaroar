@@ -6,6 +6,7 @@ import { canManage, getCtx, managerCtx, type Ctx, type Role } from "@/lib/sessio
 import { createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLink, setApproval } from "@/lib/brands";
 import { createInvite, removeMember, revokeInvite, setMemberBrands, setMemberRole } from "@/lib/team";
 import { adminClient } from "@/lib/supabase/server";
+import { createApiKey, deleteApiKey } from "@/lib/api/keys";
 
 export async function saveWorkspace(name: string, timezone: string): Promise<{ error?: string }> {
   const ctx = await getCtx();
@@ -92,4 +93,30 @@ export async function saveMemberBrands(userId: string, brandIds: string[] | null
 }
 export async function removeMemberFrom(userId: string) {
   return manage((ctx) => removeMember(ctx, userId));
+}
+
+// API and MCP keys
+
+export async function newApiKey(name: string): Promise<{ error?: string; key?: string }> {
+  try {
+    const ctx = await managerCtx();
+    const { key } = await createApiKey(ctx.workspaceId, ctx.userId, name);
+    revalidatePath("/settings");
+    return { key };
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function removeApiKey(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await managerCtx();
+    await deleteApiKey(ctx.workspaceId, id);
+    revalidatePath("/settings");
+    return {};
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
 }

@@ -9,12 +9,14 @@ import { PLANS, billingReady, effectivePlan, getBilling, postsThisMonth, seatsUs
 import { listBrands, reviewLinks } from "@/lib/brands";
 import { listInvites, listMembers } from "@/lib/team";
 import { mailReady } from "@/lib/alerts";
+import { listApiKeys } from "@/lib/api/keys";
+import { appUrl } from "@/lib/channels";
 
 export default async function SettingsPage() {
   const ctx = await getCtx();
   if (!canManage(ctx.role)) redirect("/calendar");
   const db = adminClient();
-  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts] = await Promise.all([
+  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys] = await Promise.all([
     db.from("workspaces").select("queue").eq("id", ctx.workspaceId).single(),
     getBilling(ctx.workspaceId),
     postsThisMonth(ctx.workspaceId),
@@ -25,6 +27,8 @@ export default async function SettingsPage() {
     listMembers(ctx.workspaceId),
     listInvites(ctx.workspaceId),
     db.from("channels").select("brand_id").eq("workspace_id", ctx.workspaceId),
+    // Until migration 009 is in, Settings shows without the API section.
+    listApiKeys(ctx.workspaceId).catch(() => null),
   ]);
   const perBrand = new Map<string, number>();
   for (const c of counts.data ?? []) if (c.brand_id) perBrand.set(c.brand_id as string, (perBrand.get(c.brand_id as string) ?? 0) + 1);
@@ -54,6 +58,7 @@ export default async function SettingsPage() {
           members,
           invites,
         }}
+        api={keys ? { base: appUrl(), docs: "https://capybaroar.com/api", keys } : undefined}
       />
     </Page>
   );
