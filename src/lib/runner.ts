@@ -293,6 +293,13 @@ export function startRunner() {
   const alive = () => beat(bootedAt).catch((e) => console.error("beat:", e instanceof Error ? e.message : e));
   setInterval(alive, 60000);
   void alive();
+  // Every 30 minutes: RSS feeds and evergreen posts (src/lib/feeds.ts).
+  const content = () => import("./feeds").then((m) => m.contentUpkeep()).catch((e) => {
+      console.error("content:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: content");
+    });
+  setInterval(content, 1800000);
+  setTimeout(content, 60000);
   console.log(`runner started on ${WORKER}`);
 }
 

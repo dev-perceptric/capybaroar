@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review and report links open signed out.
-const OPEN = ["/login", "/signup", "/auth/", "/l/", "/invite/", "/review/", "/r/"];
+// Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
+// link-in-bio pages open signed out.
+const OPEN = ["/login", "/signup", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/"];
 
 /** Only paths on this site, so a link can't send someone elsewhere after signing in. */
 export const safeNext = (v: string | null | undefined) => (v && /^\/(?![/\\])/.test(v) ? v : "/calendar");

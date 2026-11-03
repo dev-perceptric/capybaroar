@@ -1,6 +1,7 @@
 import { Plug } from "lucide-react";
 import { Page } from "@/components/ui";
 import { ChannelsView } from "@/components/ChannelsView";
+import { ChannelTabs } from "@/components/ChannelTabs";
 import { listChannels } from "@/lib/channels";
 import { getBrandCtx } from "@/lib/brands";
 import { canManage } from "@/lib/session";
@@ -22,7 +23,7 @@ export default async function ChannelsPage({ searchParams }: { searchParams: Pro
     }),
   );
   return (
-    <Page icon={<Plug />} title="Channels" count={channels.length || undefined}>
+    <Page icon={<Plug />} title="Channels" count={channels.length || undefined} tabs={<ChannelTabs />}>
       <ChannelsView channels={channels} ready={ready} asks={asks} error={q.error ?? null} brands={canManage(b.role) && b.brands.length > 1 ? b.brands.map((x) => ({ id: x.id, name: x.name })) : []} />
     </Page>
   );

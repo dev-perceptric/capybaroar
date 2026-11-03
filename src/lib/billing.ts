@@ -96,6 +96,14 @@ export async function assertCanSchedule(workspaceId: string, editingId?: string)
   if ((await postsThisMonth(workspaceId, editingId)) >= limits.postsPerMonth) throw new Error(`Your plan allows ${limits.postsPerMonth} scheduled posts a month. Upgrade to schedule more.`);
 }
 
+/** Throws when scheduling `n` more posts this month would pass the plan's limit (bulk upload checks before it starts). */
+export async function assertCanScheduleMany(workspaceId: string, n: number) {
+  const limits = await limitsOf(workspaceId);
+  if (limits.postsPerMonth == null || n <= 0) return;
+  const left = Math.max(0, limits.postsPerMonth - (await postsThisMonth(workspaceId)));
+  if (n > left) throw new Error(`Your plan allows ${limits.postsPerMonth} scheduled posts a month and ${left} are left. Upgrade to schedule more, or save these as drafts.`);
+}
+
 export async function assertCanUseAgent(workspaceId: string) {
   if (!(await limitsOf(workspaceId)).agent) throw new Error("Your plan doesn't include the agent. Upgrade to use it.");
 }
