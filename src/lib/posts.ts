@@ -64,6 +64,15 @@ const EDITABLE: PostStatus[] = ["draft", "review", "scheduled", "failed"];
 /** Who is saving, when it's a person: their role decides approval, their brands what they may touch. */
 export type Actor = { role: Role; brandIds: string[] | null; brandId: string | null };
 
+/** The person behind work done later on their behalf (a feed, an evergreen post), as an actor. Null once they left. */
+export async function memberActor(workspaceId: string, userId: string | null, brandId: string | null): Promise<Actor | null> {
+  if (!userId) return null;
+  const { data } = await adminClient().from("members").select("role, brand_ids").eq("workspace_id", workspaceId).eq("user_id", userId).maybeSingle();
+  if (!data || data.role === "client") return null;
+  const role = data.role as Role;
+  return { role, brandIds: role === "owner" || role === "admin" ? null : ((data.brand_ids as string[] | null) ?? null), brandId };
+}
+
 /** Everything that would stop this post going out, checked per channel before anything is saved. */
 async function validate(workspaceId: string, input: SaveInput, publishAt: Date, channels: Awaited<ReturnType<typeof listChannels>>) {
   const byId = new Map(channels.map((c) => [c.id, c]));
@@ -181,8 +190,8 @@ export async function reschedulePost(workspaceId: string, id: string, publishAt:
   }
 }
 
-/** Copy a post as a draft, a day later. */
-export async function duplicatePost(workspaceId: string, userId: string, id: string, actor?: Actor): Promise<{ id: string }> {
+/** Copy a post as a draft a day later, or (`queue`) into the queue's next free slot. */
+export async function duplicatePost(workspaceId: string, userId: string, id: string, actor?: Actor, mode: "draft" | "queue" = "draft"): Promise<{ id: string; status: PostStatus }> {
   const db = adminClient();
   const { data: p } = await db.from("posts").select(COLS).eq("id", id).eq("workspace_id", workspaceId).single();
   if (!p) throw new Error("Post not found");
@@ -194,7 +203,7 @@ export async function duplicatePost(workspaceId: string, userId: string, id: str
     mediaIds: src.media_ids,
     targets: src.post_targets.map((t) => ({ channelId: t.channel_id, text: t.text, settings: t.settings ?? {} })),
     publishAt: at.toISOString(),
-    mode: "draft",
+    mode,
   }, actor);
 }
 

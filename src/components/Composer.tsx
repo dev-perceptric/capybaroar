@@ -18,6 +18,7 @@ import type { Access } from "./CalendarView";
 import { approve, composerData, duplicate, loadComments, loadMedia, reject, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
 import { fmtDateTime } from "@/lib/format";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
+import { EvergreenButton } from "./Evergreen";
 import { dialogIn, fadeIn } from "@/lib/motion";
 
 // Crop and trim load when first used.
@@ -365,7 +366,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           ) : null}
           {post && access.write ? (
             <>
-              <IconButton label="Duplicate" onClick={dup} disabled={busy}>
+              {post.status === "published" || post.status === "partial" ? <EvergreenButton postId={post.id} /> : null}
+              <IconButton label={post.status === "published" || post.status === "partial" ? "Post again" : "Duplicate"} onClick={dup} disabled={busy}>
                 <Copy size={16} />
               </IconButton>
               {!locked ? (

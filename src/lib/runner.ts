@@ -249,6 +249,10 @@ export function startRunner() {
   const hourly = () => upkeep().catch((e) => console.error("upkeep:", e));
   setInterval(hourly, 3600000);
   setTimeout(hourly, 30000);
+  // Every 30 minutes: RSS feeds and evergreen posts (src/lib/feeds.ts).
+  const content = () => import("./feeds").then((m) => m.contentUpkeep()).catch((e) => console.error("content:", e instanceof Error ? e.message : e));
+  setInterval(content, 1800000);
+  setTimeout(content, 60000);
   console.log(`runner started on ${WORKER}`);
 }
 
