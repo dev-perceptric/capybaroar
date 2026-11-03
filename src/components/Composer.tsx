@@ -326,7 +326,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     <div ref={shell} className="fixed inset-0 z-[80] flex bg-scrim md:p-4" role="dialog" aria-modal="true" aria-label={post ? "Edit post" : "New post"}>
       <div
         ref={card}
-        className="relative flex min-h-0 w-full flex-col border border-frame bg-panel"
+        className="relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-frame bg-panel shadow-modal"
         onDragOver={(e) => {
           if (locked || !e.dataTransfer.types.includes("Files")) return;
           e.preventDefault();
@@ -381,7 +381,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         </header>
 
         {restorable ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-yolk-soft px-4 py-2 text-[12px]">
+          <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-signal-pale px-4 py-2 text-[12px]">
             <History size={14} />
             <span>Unsaved changes from {new Date(restorable.savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
             <span className="flex-1" />
@@ -409,7 +409,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                           disabled={locked}
                           title={`${c.name}, ${networkOf(c.network).name}`}
                           onClick={() => toggle(c)}
-                          className={`flex h-10 items-center gap-2 border pr-3 pl-1.5 text-[12px] transition-colors ${on ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-line text-ink/85 hover:border-frame"} ${c.status === "reconnect" ? "opacity-50" : ""}`}
+                          className={`flex h-10 items-center gap-2 rounded-md pr-3 pl-1.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"} ${c.status === "reconnect" ? "opacity-50" : ""}`}
                         >
                           <span className="relative">
                             <Face c={c} size={26} />
@@ -423,7 +423,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     })}
                   </div>
                 ) : (
-                  <Link href="/channels" className="inline-flex h-9 w-fit items-center border border-dashed border-line-strong px-3 text-[13px] text-muted hover:border-frame hover:text-ink">
+                  <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-md border border-dashed border-line-strong px-3 text-[13px] text-muted hover:border-ink/40 hover:text-ink">
                     Connect a channel
                   </Link>
                 )}
@@ -541,19 +541,19 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       className={`group/thumb relative ${files.length > 1 && !locked ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === m.id ? "opacity-40" : ""}`}
                     >
                       <Thumb m={m} />
-                      {files.length > 1 ? <span className="absolute top-1 left-1 flex size-5 items-center justify-center border border-frame bg-panel text-[10px] font-semibold tabular-nums">{i + 1}</span> : null}
+                      {files.length > 1 ? <span className="absolute top-1 left-1 flex size-5 items-center justify-center rounded-xs bg-panel text-[10px] font-semibold tabular-nums shadow-chip">{i + 1}</span> : null}
                       {!locked ? (
                         <>
                           <span className="absolute top-1 right-1 hidden gap-1 group-hover/thumb:flex">
-                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center border border-frame bg-panel hover:bg-yolk">
+                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-sm bg-panel shadow-chip hover:bg-hover">
                               {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
                             </button>
-                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center border border-frame bg-panel hover:bg-yolk">
+                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-sm bg-panel shadow-chip hover:bg-hover">
                               <X size={13} />
                             </button>
                           </span>
                           {!m.mime.startsWith("video/") ? (
-                            <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1 bottom-1 border bg-panel px-1 text-[10px] font-medium ${m.alt ? "border-line text-muted" : "border-frame"}`}>
+                            <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1 bottom-1 rounded-xs bg-panel px-1 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
                               {m.alt ? "Alt text" : "Add alt"}
                             </button>
                           ) : null}
@@ -562,7 +562,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     </div>
                   ))}
                   {uploading.map((u) => (
-                    <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 border p-2 text-center text-[11px] ${u.error ? "border-danger text-danger" : "border-dashed border-line-strong text-muted"}`}>
+                    <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 rounded-lg border p-2 text-center text-[11px] ${u.error ? "border-danger text-danger" : "border-dashed border-line-strong text-muted"}`}>
                       {u.error ? (
                         <>
                           <span className="line-clamp-3">{u.error}</span>
@@ -582,7 +582,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     <button
                       type="button"
                       onClick={() => fileInput.current?.click()}
-                      className="flex size-28 flex-col items-center justify-center gap-1.5 border border-dashed border-line-strong text-[12px] text-muted transition-colors hover:border-frame hover:text-ink"
+                      className="flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong text-[12px] text-muted transition-colors hover:border-ink/40 hover:text-ink"
                     >
                       <Upload size={18} />
                       Upload
@@ -593,7 +593,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     <button
                       type="button"
                       onClick={() => setPicking(picking === "media" ? null : "media")}
-                      className={`flex size-28 flex-col items-center justify-center gap-1.5 border text-[12px] transition-colors ${picking === "media" ? "border-frame bg-yolk-soft text-ink" : "border-dashed border-line-strong text-muted hover:border-frame hover:text-ink"}`}
+                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg border text-[12px] transition-colors ${picking === "media" ? "border-signal-strong bg-signal-soft text-ink" : "border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
                     >
                       <ImagePlus size={18} />
                       From library
@@ -602,7 +602,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 </div>
                 <input ref={fileInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
                 {picking ? (
-                  <div className="border border-frame p-2">
+                  <div className="rounded-lg border border-frame p-2">
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-[12px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
                       <button type="button" onClick={() => setPicking(null)} className="text-[12px] text-muted underline underline-offset-2 hover:text-ink">
@@ -632,7 +632,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                               >
                                 <Thumb m={m} small />
                                 {on ? (
-                                  <span className="absolute top-1 right-1 flex size-5 items-center justify-center border border-frame bg-yolk">
+                                  <span className="absolute top-1 right-1 flex size-5 items-center justify-center rounded-xs bg-signal text-on-signal">
                                     <Check size={12} />
                                   </span>
                                 ) : null}
@@ -715,7 +715,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     title={c.name}
                     aria-pressed={shown?.id === c.id}
                     onClick={() => setView(c.id)}
-                    className={`flex size-8 shrink-0 items-center justify-center border ${shown?.id === c.id ? "border-frame bg-yolk" : "border-line hover:border-frame"}`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-md transition-[background-color,box-shadow] ${shown?.id === c.id ? "bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
                   >
                     <NetworkLogo id={c.network} size={16} />
                   </button>
@@ -755,7 +755,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                   type="button"
                   title="One of your best times, from your results"
                   onClick={() => setWhen(localValue(at))}
-                  className={`h-8 border px-2 text-[11px] font-medium ${when === localValue(at) ? "border-frame bg-yolk" : "border-line hover:border-frame"}`}
+                  className={`h-8 rounded-md px-2 text-[11px] font-medium transition-[background-color,box-shadow] ${when === localValue(at) ? "bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
                 >
                   {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
                 </button>
@@ -791,8 +791,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         ) : null}
 
         {dragging ? (
-          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center border-2 border-dashed border-ink bg-yolk-soft/80">
-            <span className="flex items-center gap-2 border border-frame bg-panel px-4 py-3 text-[14px] font-semibold">
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-signal-strong bg-signal-pale/90">
+            <span className="flex items-center gap-2 rounded-lg bg-panel px-4 py-3 text-[14px] font-semibold shadow-pop">
               <Upload size={18} /> Drop pictures or videos to add them
             </span>
           </div>
@@ -813,7 +813,7 @@ function Face({ c, size }: { c: Channel; size: number }) {
 
 function TabButton({ on, onClick, label, children }: { on: boolean; onClick: () => void; label: string; children: React.ReactNode }) {
   return (
-    <button type="button" role="tab" aria-selected={on} title={label} onClick={onClick} className={`flex h-8 items-center gap-1.5 border px-2.5 text-[12px] ${on ? "border-frame bg-yolk font-medium text-on-yolk" : "border-line text-ink/85 hover:border-frame"}`}>
+    <button type="button" role="tab" aria-selected={on} title={label} onClick={onClick} className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}>
       {children}
     </button>
   );
@@ -873,7 +873,7 @@ function SettingField({ f, value, locked, onChange, cover, onPickCover }: { f: N
 
 function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
   return (
-    <span className={`relative block shrink-0 overflow-hidden border border-line ${small ? "size-20" : "size-28"}`} title={m.name}>
+    <span className={`relative block shrink-0 overflow-hidden rounded-md border border-line ${small ? "size-20" : "size-28"}`} title={m.name}>
       {m.mime.startsWith("video/") ? (
         <video src={m.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
       ) : (

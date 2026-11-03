@@ -46,7 +46,7 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
           {empty ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="" width={88} height={88} className="size-22 border border-frame" />
+              <img src="/logo.png" alt="" width={88} height={88} className="size-22 rounded-2xl" />
               <h2 className="mt-6 text-[24px] font-semibold tracking-[-0.035em] text-balance">
                 Plan a week of posts. <span className="text-faint">The agent writes and schedules them.</span>
               </h2>
@@ -73,7 +73,7 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
             e.preventDefault();
             submit();
           }}
-          className="mx-auto mb-6 w-full max-w-[720px] border border-frame bg-panel px-3 pt-2 pb-2"
+          className="mx-auto mb-6 w-full max-w-[720px] rounded-lg bg-panel px-3 pt-2 pb-2 shadow-input transition-shadow focus-within:shadow-focus"
         >
           <textarea
             rows={3}
@@ -98,18 +98,18 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
         </form>
       </div>
       <aside className="hidden w-64 shrink-0 flex-col border-l border-line p-2 lg:flex">
-        <Link href="/agents" className="mb-2 flex h-8 items-center gap-2 border border-frame px-2 text-[13px] font-medium hover:bg-hover">
+        <Link href="/agents" className="mb-2 flex h-8 items-center gap-2 rounded-md bg-panel px-2 text-[13px] font-medium shadow-outline hover:bg-canvas">
           <Plus size={14} /> New chat
         </Link>
         <p className="label-mono flex h-6 items-center px-2">
-          <span className="bracket">Chats</span>
+          Chats
         </p>
         {chats.length ? (
           chats.map((c) => (
             <Link
               key={c.id}
               href={`/agents?chat=${c.id}`}
-              className={`flex h-8 items-center truncate border px-2 text-[13px] ${c.id === chatId ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-transparent text-ink/85 hover:bg-pressed"}`}
+              className={`flex h-8 items-center truncate rounded-md px-2 text-[13px] ${c.id === chatId ? "bg-hover font-medium text-ink shadow-[inset_0_0_0_1px_var(--border-light)]" : "text-ink/85 hover:bg-hover"}`}
             >
               <span className="truncate">{c.title}</span>
             </Link>
@@ -125,10 +125,10 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
 function Bubble({ m }: { m: Shown }) {
   if (m.role === "tool")
     return (
-      <Link href="/calendar" className="flex w-fit items-center gap-2 border border-frame bg-yolk-soft px-2 py-1 text-[12px] font-medium">
+      <Link href="/calendar" className="flex w-fit items-center gap-2 rounded-md bg-signal-soft px-2 py-1 text-[12px] font-medium shadow-[0_0_0_1px_var(--signal-10)]">
         <CalendarCheck size={14} /> {m.text}
       </Link>
     );
-  if (m.role === "user") return <p className="ml-auto max-w-[80%] border border-frame bg-hover px-3 py-2 text-[13px] whitespace-pre-wrap">{m.text}</p>;
+  if (m.role === "user") return <p className="ml-auto max-w-[80%] rounded-lg bg-hover px-3 py-2 text-[13px] whitespace-pre-wrap">{m.text}</p>;
   return <p className="max-w-[90%] text-[13px] leading-relaxed whitespace-pre-wrap">{m.text}</p>;
 }

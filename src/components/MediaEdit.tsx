@@ -97,7 +97,7 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
               type="button"
               aria-pressed={ratio === r.value}
               onClick={() => (setRatio(r.value), setPos({ x: 0.5, y: 0.5 }))}
-              className={`h-8 rounded-md border px-2.5 text-[12px] font-medium ${ratio === r.value ? "border-frame bg-yolk text-on-yolk" : "border-line hover:border-frame"}`}
+              className={`h-8 rounded-md border px-2.5 text-[12px] font-medium ${ratio === r.value ? "border-transparent bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "border-transparent bg-panel shadow-chip hover:bg-canvas"}`}
             >
               {r.label}
             </button>
@@ -125,7 +125,7 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
             <img ref={img} src={m.thumb ?? ""} crossOrigin="anonymous" alt="" draggable={false} onLoad={(e) => setSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })} className="block max-h-[56vh] max-w-full" />
             {box && size ? (
               <div
-                className="absolute cursor-move border-2 border-yolk outline outline-1 outline-ink"
+                className="absolute cursor-move border-2 border-signal shadow-[0_0_0_1px_rgba(0,0,0,.5)]"
                 style={{ left: `${(box.x / size.w) * 100}%`, top: `${(box.y / size.h) * 100}%`, width: `${(box.w / size.w) * 100}%`, height: `${(box.h / size.h) * 100}%`, boxShadow: "0 0 0 9999px rgb(0 0 0 / 0.5)" }}
               />
             ) : null}
@@ -218,7 +218,7 @@ function Trim({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
         {len ? (
           <div className="flex flex-col gap-2 text-[12px]">
             <div className="relative h-2 bg-line">
-              <div className="absolute inset-y-0 bg-yolk outline outline-1 outline-ink" style={{ left: `${(range[0] / len) * 100}%`, width: `${((range[1] - range[0]) / len) * 100}%` }} />
+              <div className="absolute inset-y-0 rounded-xs bg-signal/80 shadow-[0_0_0_1px_var(--signal-10)]" style={{ left: `${(range[0] / len) * 100}%`, width: `${((range[1] - range[0]) / len) * 100}%` }} />
             </div>
             <label className="flex items-center gap-3 text-muted">
               <span className="w-10">Start</span>

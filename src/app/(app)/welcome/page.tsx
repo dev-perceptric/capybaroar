@@ -7,7 +7,7 @@ import { getBrandCtx } from "@/lib/brands";
 import { PROVIDERS, isReady } from "@/lib/providers";
 import { NETWORKS } from "@/lib/networks";
 
-const primary = "inline-flex h-8 items-center justify-center gap-1.5 border border-frame bg-yolk px-3.5 text-[12px] font-medium text-on-yolk hover:bg-yolk-hover";
+const primary = "inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover";
 
 export default async function WelcomePage() {
   await teamCtx();
@@ -23,13 +23,13 @@ export default async function WelcomePage() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-8 px-4 py-10 md:py-16">
-        <ol className="grid grid-cols-2 border border-frame" aria-label="Progress">
+        <ol className="grid grid-cols-2 gap-0.5 rounded-md bg-hover p-0.5" aria-label="Progress">
           {["Connect a channel", "Schedule a post"].map((label, i) => {
             const done = i + 1 < step;
             const on = i + 1 === step;
             return (
-              <li key={label} aria-current={on ? "step" : undefined} className={`flex h-10 items-center gap-2 px-3 text-[13px] ${i ? "border-l border-frame" : ""} ${on ? "bg-yolk font-semibold text-on-yolk" : done ? "text-ink" : "text-muted"}`}>
-                <span className="flex size-5 items-center justify-center border border-frame text-[11px]">{done ? <Check size={12} /> : i + 1}</span>
+              <li key={label} aria-current={on ? "step" : undefined} className={`flex h-9 items-center gap-2 rounded-sm px-3 text-[13px] ${on ? "bg-panel font-medium text-ink shadow-chip" : done ? "text-ink" : "text-muted"}`}>
+                <span className={`flex size-5 items-center justify-center rounded-full text-[11px] ${on || done ? "bg-signal text-on-signal" : "bg-panel shadow-chip"}`}>{done ? <Check size={12} /> : i + 1}</span>
                 {label}
               </li>
             );
@@ -42,9 +42,9 @@ export default async function WelcomePage() {
               <br />
               <span className="text-muted">Pick where you post.</span>
             </h1>
-            <div className="grid grid-cols-2 border-t border-l border-frame sm:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {ready.map((n) => (
-                <a key={n.id} href={href(n.id)} className="flex h-14 items-center gap-2.5 border-r border-b border-frame px-3 text-[13px] hover:bg-hover">
+                <a key={n.id} href={href(n.id)} className="flex h-14 items-center gap-2.5 rounded-lg border border-frame bg-panel px-3 text-[13px] transition-shadow hover:shadow-hover">
                   <NetworkLogo id={n.id} size={20} />
                   {n.name}
                 </a>

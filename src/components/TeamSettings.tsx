@@ -76,7 +76,7 @@ export function BrandsSection({ team }: { team: TeamInfo }) {
         <h2 className="text-[15px] font-medium">Brands</h2>
         <p className="text-[12px] text-muted">Each brand has its own channels, posts and approvals</p>
       </div>
-      <div className="border border-frame">
+      <div className="overflow-hidden rounded-lg border border-frame">
         {team.brands.map((b) => (
           <div key={b.id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-3 py-2 last:border-b-0">
             <Dot tone={b.color} />
@@ -149,7 +149,7 @@ export function MembersSection({ team }: { team: TeamInfo }) {
           <UserPlus size={14} /> Invite
         </Button>
       </div>
-      <div className="border border-frame">
+      <div className="overflow-hidden rounded-lg border border-frame">
         {team.members.map((m) => {
           const fixed = m.role === "owner" || m.userId === team.me;
           return (
@@ -213,7 +213,7 @@ export function MembersSection({ team }: { team: TeamInfo }) {
 function BrandPicks({ brands, value, onChange }: { brands: Brand[]; value: string[] | null; onChange: (v: string[] | null) => void }) {
   const on = (id: string) => value === null || value.includes(id);
   return (
-    <div className="flex flex-col border border-line">
+    <div className="flex flex-col overflow-hidden rounded-lg border border-line">
       <label className="flex h-9 items-center gap-2 border-b border-line px-3 text-[13px]">
         <Checkbox checked={value === null} onChange={(v) => onChange(v ? null : [])} />
         All brands

@@ -29,7 +29,7 @@ export default async function InboxPage() {
           lead="Comments, replies, mentions and messages from your channels, in one place."
           action={
             reading.length ? undefined : (
-              <Link href="/channels" className="inline-flex h-8 items-center border border-frame bg-yolk px-3 text-[12px] font-medium text-on-yolk hover:bg-yolk-hover">
+              <Link href="/channels" className="inline-flex h-8 items-center rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover">
                 Connect a channel
               </Link>
             )

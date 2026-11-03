@@ -97,7 +97,7 @@ export function DialogHost() {
               onChange={(e) => setText(e.target.value)}
               placeholder={req.placeholder}
               maxLength={120}
-              className="h-8 w-full rounded-md border border-line bg-hover focus:bg-panel px-2.5 text-[13px] outline-none focus:border-brand focus:shadow-[0_0_0_3px_var(--accent-5)]"
+              className="h-8 w-full rounded-md bg-panel px-2.5 text-[13px] shadow-input outline-none transition-shadow focus:shadow-focus"
             />
           ) : null}
         </div>

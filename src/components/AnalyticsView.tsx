@@ -56,7 +56,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
         ))}
       </div>
 
-      <div className="mt-5 grid grid-cols-2 border border-frame md:grid-cols-4">
+      <div className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border border-frame md:grid-cols-4">
         <Tile label="Posts out" value={num(data.current.posts)} cur={data.current.posts} prev={data.previous.posts} />
         <Tile label="Reach" value={data.current.withStats ? num(data.current.views) : "None yet"} cur={data.current.views} prev={data.previous.views} show={data.current.withStats > 0} />
         <Tile label="Engagements" value={data.current.withStats ? num(data.current.engagement) : "None yet"} cur={data.current.engagement} prev={data.previous.engagement} show={data.current.withStats > 0} />
@@ -73,7 +73,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
           <Heatmap cells={data.best} />
         </Section>
         <Section title="What works">
-          <div className="border border-frame">
+          <div className="overflow-hidden rounded-lg border border-frame">
             {data.formats.map((f) => (
               <div key={f.format} className="flex items-center gap-3 border-b border-line px-3 py-2.5 last:border-b-0">
                 <span className="w-20 text-[13px] font-medium capitalize">{f.format}</span>
@@ -89,7 +89,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
 
       <Section title="Top posts">
         {data.top.length ? (
-          <div className="overflow-x-auto border border-frame">
+          <div className="overflow-x-auto rounded-lg border border-frame">
             <table className="w-full min-w-[720px] text-[13px]">
               <thead>
                 <tr className="border-b border-line text-left text-[11px] tracking-[0.04em] text-faint uppercase">
@@ -135,7 +135,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
             </table>
           </div>
         ) : (
-          <p className="border border-dashed border-line-strong px-4 py-8 text-center text-[13px] text-muted">No results in this period yet</p>
+          <p className="rounded-lg border border-dashed border-line-strong px-4 py-8 text-center text-[13px] text-muted">No results in this period yet</p>
         )}
       </Section>
 
@@ -146,7 +146,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
             const last = points.at(-1)?.value;
             const first = points.find((p) => p.day >= data.since)?.value ?? points[0]?.value;
             return (
-              <div key={c.id} className="border border-frame p-3">
+              <div key={c.id} className="rounded-lg border border-frame p-3">
                 <div className="flex items-center gap-2">
                   {c.avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -178,7 +178,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={`flex h-8 shrink-0 items-center gap-2 border px-2.5 text-[12px] transition-colors ${on ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-line text-ink/85 hover:border-frame"}`}>
+    <button type="button" aria-pressed={on} onClick={onClick} className={`flex h-8 shrink-0 items-center gap-2 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}>
       {children}
     </button>
   );
@@ -189,7 +189,7 @@ function Section({ title, note, children }: { title: string; note?: string; chil
     <section className="mt-8">
       <div className="mb-2 flex items-baseline gap-2">
         <p className="label-mono">
-          <span className="bracket">{title}</span>
+          {title}
         </p>
         {note ? <span className="text-[11px] text-faint">{note}</span> : null}
       </div>
@@ -227,9 +227,9 @@ function Bars({ daily }: { daily: { day: string; posts: number; engagement: numb
   const max = Math.max(1, ...daily.map((d) => d.engagement));
   const h = hover != null ? daily[hover] : null;
   return (
-    <figure className="relative border border-frame px-3 pt-8 pb-2">
+    <figure className="relative rounded-lg border border-frame px-3 pt-8 pb-2">
       {h ? (
-        <figcaption className="pointer-events-none absolute top-2 right-3 border border-frame bg-panel px-2 py-0.5 text-[11px] tabular-nums">
+        <figcaption className="pointer-events-none absolute top-2 right-3 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-pop">
           {new Date(`${h.day}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })}: {num(h.engagement)} engagements, {h.posts} post{h.posts === 1 ? "" : "s"}
         </figcaption>
       ) : (
@@ -238,7 +238,7 @@ function Bars({ daily }: { daily: { day: string; posts: number; engagement: numb
       <div className="flex h-36 items-end gap-[2px]" onMouseLeave={() => setHover(null)} role="img" aria-label="Engagements by day">
         {daily.map((d, i) => (
           <div key={d.day} className="flex h-full min-w-0 flex-1 items-end" onMouseEnter={() => setHover(i)}>
-            <div className={`w-full ${hover === i ? "bg-yolk outline outline-1 outline-ink" : d.engagement ? "bg-ink" : "bg-line-light"}`} style={{ height: d.engagement ? `${Math.max(3, (d.engagement / max) * 100)}%` : "2px" }} />
+            <div className={`w-full rounded-t-xs ${hover === i ? "bg-signal" : d.engagement ? "bg-ink" : "bg-line-light"}`} style={{ height: d.engagement ? `${Math.max(3, (d.engagement / max) * 100)}%` : "2px" }} />
           </div>
         ))}
       </div>
@@ -260,7 +260,7 @@ function Heatmap({ cells }: { cells: BestCell[] }) {
   const shade = ["bg-[#e5e5e5]", "bg-[#bdbdbd]", "bg-[#8a8a8a]", "bg-[#4d4d4d]", "bg-ink"];
   const best = [...cells].filter((c) => c.posts >= 2).sort((a, b) => b.engagement - a.engagement)[0];
   return (
-    <figure className="border border-frame p-3">
+    <figure className="rounded-lg border border-frame p-3">
       <figcaption className="mb-2 h-4 text-[11px] tabular-nums">
         {hover ? (
           <span>
@@ -280,7 +280,7 @@ function Heatmap({ cells }: { cells: BestCell[] }) {
             <span className="flex items-center text-[10px] text-faint">{DAYS[d]}</span>
             {Array.from({ length: 24 }, (_, h) => {
               const c = map.get(`${d}:${h}`);
-              return <div key={h} onMouseEnter={() => setHover(c ?? null)} className={`aspect-square ${c ? shade[step(c.engagement)] : "border border-line-light"} ${c && best && c.day === best.day && c.hour === best.hour ? "outline outline-2 outline-yolk" : ""}`} />;
+              return <div key={h} onMouseEnter={() => setHover(c ?? null)} className={`aspect-square ${c ? shade[step(c.engagement)] : "border border-line-light"} ${c && best && c.day === best.day && c.hour === best.hour ? "outline outline-2 outline-signal-strong" : ""}`} />;
             })}
           </div>
         ))}
@@ -325,7 +325,7 @@ function Line({ points, label }: { points: { day: string; value: number }[]; lab
         {h ? <circle cx={x(hover!)} cy={y(h.value)} r="4" fill="var(--yolk-9)" stroke="var(--text-primary)" strokeWidth="2" vectorEffect="non-scaling-stroke" /> : null}
       </svg>
       {h ? (
-        <figcaption className="pointer-events-none absolute top-0 right-0 border border-frame bg-panel px-2 py-0.5 text-[11px] tabular-nums">
+        <figcaption className="pointer-events-none absolute top-0 right-0 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-pop">
           {new Date(`${h.day}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })}: {num(h.value)}
         </figcaption>
       ) : null}

@@ -187,7 +187,7 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={`flex h-7 shrink-0 items-center gap-1.5 border px-2 text-[12px] transition-colors ${on ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-line text-ink/85 hover:border-frame"}`}>
+    <button type="button" aria-pressed={on} onClick={onClick} className={`flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}>
       {children}
     </button>
   );
@@ -219,7 +219,7 @@ function Row({ row, channel, on, onClick }: { row: ThreadRow; channel?: Channel;
       data-thread={row.key}
       aria-current={on || undefined}
       onClick={onClick}
-      className={`flex w-full gap-3 border-b border-line px-3 py-2.5 text-left transition-colors ${on ? "bg-yolk-soft" : "hover:bg-hover"}`}
+      className={`flex w-full gap-3 border-b border-line px-3 py-2.5 text-left transition-colors ${on ? "bg-signal-pale shadow-[inset_2px_0_0_var(--signal-9)]" : "hover:bg-hover"}`}
     >
       <Face item={it} channel={channel} />
       <span className="min-w-0 flex-1">
@@ -335,10 +335,10 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
         ) : (
           <div className="mx-auto flex w-full max-w-[720px] flex-col gap-4 px-4 py-5">
             {thread?.post.text || thread?.post.url ? (
-              <div className="border border-frame p-3">
+              <div className="rounded-lg border border-frame p-3">
                 <div className="mb-1.5 flex items-center gap-2">
                   <p className="label-mono">
-                    <span className="bracket">Post</span>
+                    Post
                   </p>
                   <span className="flex-1" />
                   {thread.post.url ? (
@@ -362,7 +362,7 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
           e.preventDefault();
           void send();
         }}
-        className="mx-3 mb-3 border border-frame bg-panel md:mx-4 md:mb-4"
+        className="mx-3 mb-3 rounded-lg bg-panel shadow-input transition-shadow focus-within:shadow-focus md:mx-4 md:mb-4"
       >
         <TextArea
           ref={box}
@@ -378,7 +378,7 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
           }}
           placeholder={target ? `Reply to ${target.author_name || "them"}` : "Reply"}
           disabled={!target}
-          className="resize-none border-0 hover:border-0 focus:shadow-none"
+          className="resize-none rounded-lg border-0 bg-transparent shadow-none focus:shadow-none"
         />
         <div className="flex items-center gap-2 border-t border-line px-2 py-1.5">
           {error ? <p className="min-w-0 truncate text-[12px] text-danger">{error}</p> : null}
@@ -389,7 +389,7 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
             Suggest reply
           </Button>
           <IconButton label="Send" variant="primary" type="submit" align="end" disabled={!text.trim() || !target || sending}>
-            {sending ? <Loader className="text-on-yolk" /> : <ArrowUp size={16} />}
+            {sending ? <Loader className="text-white" /> : <ArrowUp size={16} />}
           </IconButton>
         </div>
       </form>
@@ -401,7 +401,7 @@ function Message({ item, channel, like, hide }: { item: Item; channel?: Channel;
   if (item.mine)
     return (
       <div className="ml-auto max-w-[85%]">
-        <p className="border border-frame bg-hover px-3 py-2 text-[13px] whitespace-pre-wrap">{item.text}</p>
+        <p className="rounded-lg bg-hover px-3 py-2 text-[13px] whitespace-pre-wrap">{item.text}</p>
         <p className="mt-1 text-right text-[11px] text-faint">
           {channel?.name}, {timeAgo(item.created_at)}
         </p>

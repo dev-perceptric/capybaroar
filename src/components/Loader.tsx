@@ -12,10 +12,10 @@ export function Loader({ size = 6, className = "text-brand" }: { size?: number; 
   );
 }
 
-/** Big moments only: small blue squares burst out from a point (a list launched, a person added to a campaign). */
+/** Big moments only: small yellow and gray squares burst out from a point (a list launched, a person added to a campaign). */
 export function burst(x: number, y: number) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const colors = ["var(--accent-9)", "var(--accent-5)", "var(--text-tertiary)", "var(--text-primary)"];
+  const colors = ["var(--signal-9)", "var(--signal-7)", "var(--accent-9)", "var(--text-tertiary)"];
   for (let i = 0; i < 30; i++) {
     const p = document.createElement("i");
     const s = 4 + Math.random() * 4;

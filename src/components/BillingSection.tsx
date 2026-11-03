@@ -58,7 +58,7 @@ export function BillingSection({ info }: { info: BillingInfo }) {
         {info.status === "past_due" ? <Badge tone="red">Payment due</Badge> : null}
         {info.paying && info.periodEnd ? <span className="text-muted">Renews {fmtDate(info.periodEnd, { year: true })}</span> : null}
       </div>
-      <div className="grid grid-cols-2 border border-frame sm:grid-cols-4">
+      <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-frame sm:grid-cols-4">
         {[
           { label: "Brands", used: info.usage.brands, max: cur.brands },
           { label: "Channels", used: info.usage.channels, max: cur.channels as number | null },
@@ -73,13 +73,13 @@ export function BillingSection({ info }: { info: BillingInfo }) {
           </div>
         ))}
       </div>
-      <div className="grid gap-0 border-t border-l border-frame sm:grid-cols-3">
+      <div className="grid gap-2 sm:grid-cols-3">
         {info.plans.map((p) => {
           const current = p.id === info.plan && (info.paying || p.id === "free");
           const higher = order.indexOf(p.id) > order.indexOf(info.plan);
           const primary = !info.paying && p.id === "pro";
           return (
-            <div key={p.id} className="flex flex-col gap-3 border-r border-b border-frame p-4">
+            <div key={p.id} className="flex flex-col gap-3 rounded-lg border border-frame bg-panel p-4">
               <div className="flex items-center justify-between">
                 <span className="text-[13px] font-medium">{p.name}</span>
                 {current ? <Badge>Current</Badge> : null}

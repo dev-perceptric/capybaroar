@@ -176,14 +176,14 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
             <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
               {lead} <span className="text-faint">{tail}</span>
             </h2>
-            <div className="flex h-8 items-stretch border border-frame">
-              <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-8 items-center justify-center hover:bg-hover">
+            <div className="flex h-8 items-stretch overflow-hidden rounded-md bg-panel shadow-outline">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-8 items-center justify-center hover:bg-canvas">
                 <ChevronLeft size={16} />
               </button>
-              <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-frame px-3 text-[12px] font-medium hover:bg-hover">
+              <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3 text-[12px] font-medium hover:bg-canvas">
                 Today
               </button>
-              <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-8 items-center justify-center hover:bg-hover">
+              <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-8 items-center justify-center hover:bg-canvas">
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -209,7 +209,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               </FilterChip>
             ))}
             {access.write ? (
-              <Link href="/channels" className="flex h-8 shrink-0 items-center gap-1.5 border border-dashed border-line-strong px-2.5 text-[12px] text-muted transition-colors hover:border-frame hover:text-ink">
+              <Link href="/channels" className="flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-dashed border-line-strong px-2.5 text-[12px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
                 <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}
               </Link>
             ) : null}
@@ -262,11 +262,11 @@ function FilterChip({ on, onClick, count, warn, children }: { on: boolean; onCli
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`flex h-8 shrink-0 items-center gap-2 border px-2.5 text-[12px] transition-colors ${on ? "border-frame bg-yolk font-semibold text-on-yolk" : "border-line text-ink/85 hover:border-frame"}`}
+      className={`flex h-8 shrink-0 items-center gap-2 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}
     >
       {children}
       {warn ? <AlertTriangle size={12} className="text-danger" aria-label="Needs reconnecting" /> : null}
-      <span className={`tabular-nums ${on ? "text-on-yolk/60" : "text-faint"}`}>{count}</span>
+      <span className={`tabular-nums ${on ? "text-ink/60" : "text-faint"}`}>{count}</span>
     </button>
   );
 }
@@ -343,7 +343,7 @@ function PostCard({ post, byId, onOpen, compact = false, narrow = false, movable
         e.dataTransfer.effectAllowed = "move";
       }}
       style={style}
-      className={`group/card relative flex w-full min-w-0 overflow-hidden border text-left transition-colors ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-frame bg-violet-soft" : "border-frame bg-panel"} hover:bg-hover ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
+      className={`group/card relative flex w-full min-w-0 overflow-hidden rounded-md border text-left transition-[background-color,box-shadow] ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-transparent bg-violet-soft" : "border-transparent bg-panel shadow-chip"} hover:bg-canvas ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
     >
       <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[post.status]}`} />
       {compact ? (
@@ -420,7 +420,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
           const n = posts.filter((p) => p.publish_at && sameDay(new Date(p.publish_at), d)).length;
           return (
             <div key={d.toISOString()} className="flex items-end gap-2 border-l border-line px-3 pt-3 pb-2.5">
-              <span className={`flex h-8 min-w-8 items-center justify-center px-1 text-[20px] leading-none tabular-nums ${today ? "border border-frame bg-yolk font-semibold text-on-yolk" : isWeekend(d) ? "font-[350] text-muted" : "font-[350]"}`}>{d.getDate()}</span>
+              <span className={`flex h-8 min-w-8 items-center justify-center px-1 text-[20px] leading-none tabular-nums ${today ? "rounded-md bg-signal font-semibold text-on-signal" : isWeekend(d) ? "font-[350] text-muted" : "font-[350]"}`}>{d.getDate()}</span>
               <span className="mb-0.5 flex flex-col leading-tight">
                 <span className={`text-[11px] font-medium tracking-[0.06em] uppercase ${today ? "text-ink" : "text-muted"}`}>{d.toLocaleDateString("en-US", { weekday: "short" })}</span>
                 <span className="text-[11px] text-faint tabular-nums">{n ? `${n} post${n === 1 ? "" : "s"}` : "\u00a0"}</span>
@@ -437,7 +437,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
             </div>
           ))}
           {thisWeek ? (
-            <span className="absolute right-1 z-10 -translate-y-1/2 bg-ink px-1 py-0.5 text-[10px] font-medium text-inverted tabular-nums" style={{ top: nowTop }}>
+            <span className="absolute right-1 z-10 -translate-y-1/2 rounded-xs bg-ink px-1 py-0.5 text-[10px] font-medium text-inverted tabular-nums" style={{ top: nowTop }}>
               {clock(now).replace(/ [AP]M/, "")}
             </span>
           ) : null}
@@ -446,7 +446,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
           const today = sameDay(d, now);
           const dayPosts = posts.filter((p) => p.publish_at && sameDay(new Date(p.publish_at), d));
           return (
-            <div key={d.toISOString()} className={`relative border-l border-line ${today ? "bg-yolk-soft/30" : isWeekend(d) ? "bg-hover/50" : ""}`}>
+            <div key={d.toISOString()} className={`relative border-l border-line ${today ? "bg-signal-pale" : isWeekend(d) ? "bg-hover/50" : ""}`}>
               {HOURS.map((h) => {
                 const at = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h);
                 const past = at.getTime() + 3600000 <= now.getTime();
@@ -455,7 +455,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
                     <span className="pointer-events-none absolute inset-x-0 top-1/2 border-t border-dashed border-line-light" />
                     {!past && onPick ? (
                       <button type="button" onClick={() => onPick(at)} aria-label={`New post ${at.toLocaleString("en-US", { weekday: "long", hour: "numeric" })}`} className="group absolute inset-0">
-                        <span className="absolute inset-1 hidden items-center gap-1 border border-dashed border-line-strong bg-panel px-2 text-[11px] text-muted group-hover:flex">
+                        <span className="absolute inset-1 hidden items-center gap-1 rounded-md border border-dashed border-line-strong bg-panel px-2 text-[11px] text-muted group-hover:flex">
                           <Plus size={12} /> {hourLabel(h).replace(" ", ":00 ")}
                         </span>
                       </button>
@@ -474,7 +474,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
               })}
               {today ? (
                 <span className="pointer-events-none absolute inset-x-0 z-10 h-0.5 bg-ink" style={{ top: nowTop }}>
-                  <span className="absolute -top-[3px] -left-[4px] size-2 border border-ink bg-yolk" />
+                  <span className="absolute -top-[3px] -left-[4px] size-2 rounded-full bg-ink" />
                 </span>
               ) : null}
             </div>
@@ -491,14 +491,14 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
   const days = Array.from({ length: 42 }, (_, i) => new Date(start.getTime() + i * DAY));
   return (
     <div className="min-w-[840px] px-6 pt-4 pb-6">
-      <div className="sticky top-[var(--cal-head,0px)] z-20 grid grid-cols-7 border-x border-t border-b border-line bg-panel">
+      <div className="sticky top-[var(--cal-head,0px)] z-20 grid grid-cols-7 rounded-t-lg border-x border-t border-b border-line bg-panel">
         {days.slice(0, 7).map((d) => (
           <div key={d.getDay()} className={`border-l border-line px-3 py-2 text-[11px] font-medium tracking-[0.06em] uppercase first:border-l-0 ${isWeekend(d) ? "text-faint" : "text-muted"}`}>
             {d.toLocaleDateString("en-US", { weekday: "short" })}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 border-x border-line">
+      <div className="grid grid-cols-7 overflow-hidden rounded-b-lg border-x border-line">
         {days.map((d, i) => {
           const inMonth = d.getMonth() === anchor.getMonth();
           const today = sameDay(d, now);
@@ -512,7 +512,7 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
             >
               {!past && onPick ? <button type="button" aria-label={`New post ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`} onClick={() => onPick(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9))} className="absolute inset-0 hover:bg-hover/60" /> : null}
               <div className="pointer-events-none relative flex items-center justify-between px-0.5">
-                <span className={`flex h-6 min-w-6 items-center justify-center px-1 text-[13px] tabular-nums ${today ? "border border-frame bg-yolk font-semibold text-on-yolk" : inMonth ? "font-medium text-ink" : "text-faint"}`}>
+                <span className={`flex h-6 min-w-6 items-center justify-center px-1 text-[13px] tabular-nums ${today ? "rounded-sm bg-signal font-semibold text-on-signal" : inMonth ? "font-medium text-ink" : "text-faint"}`}>
                   {d.getDate() === 1 ? d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : d.getDate()}
                 </span>
                 {!past && onPick ? <Plus size={13} className="hidden text-muted group-hover:block" /> : null}
@@ -542,13 +542,13 @@ function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: 
     onDragOver: (e: React.DragEvent) => {
       if (e.dataTransfer.types.includes("text/x-post")) {
         e.preventDefault();
-        e.currentTarget.classList.add("!bg-yolk-soft");
+        e.currentTarget.classList.add("!bg-signal-soft");
       }
     },
-    onDragLeave: (e: React.DragEvent) => e.currentTarget.classList.remove("!bg-yolk-soft"),
+    onDragLeave: (e: React.DragEvent) => e.currentTarget.classList.remove("!bg-signal-soft"),
     onDrop: (e: React.DragEvent) => {
       e.preventDefault();
-      e.currentTarget.classList.remove("!bg-yolk-soft");
+      e.currentTarget.classList.remove("!bg-signal-soft");
       const id = e.dataTransfer.getData("text/x-post");
       if (id) onDrop(id, at());
     },
@@ -574,7 +574,7 @@ function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Cha
             <h3 className="mb-3 text-[16px] font-semibold tracking-[-0.02em]">
               {d.toLocaleDateString("en-US", { weekday: "long" })} <span className="text-faint">{d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span>
             </h3>
-            <div className="border border-frame">
+            <div className="overflow-hidden rounded-lg border border-frame">
               {list.map((p) => (
                 <button key={p.id} type="button" onClick={() => onOpen(p)} className="relative flex w-full items-center gap-4 border-b border-line py-3 pr-3 pl-4 text-left last:border-b-0 hover:bg-hover">
                   <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[p.status]}`} />

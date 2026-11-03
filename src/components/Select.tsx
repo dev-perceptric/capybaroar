@@ -150,7 +150,7 @@ export function Select<T extends string | number>({
                   onClick={() => pickAt(i)}
                   className={`flex h-8 cursor-pointer items-center gap-2 rounded-md px-2 whitespace-nowrap ${i === active ? "bg-hover" : ""}`}
                 >
-                  {o.dot ? <span className="size-2 shrink-0" style={{ background: o.dot }} /> : null}
+                  {o.dot ? <span className="size-2 shrink-0 rounded-full" style={{ background: o.dot }} /> : null}
                   <span className="flex-1">{o.label}</span>
                   {o.hint ? <span className="font-mono text-[11px] text-faint tabular-nums">{o.hint}</span> : null}
                   {o.value === value ? <Check size={13} className="text-brand" /> : <span className="w-[13px]" />}

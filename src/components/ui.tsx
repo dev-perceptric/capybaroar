@@ -147,7 +147,7 @@ function EditableTitle({ title, onRename }: { title: string; onRename: (name: st
         onChange={(e) => setDraft(e.target.value)}
         onBlur={done}
         onKeyDown={(e) => (e.key === "Enter" ? done() : e.key === "Escape" ? setDraft(null) : null)}
-        className="h-7 w-[min(480px,60vw)] rounded-sm border border-brand bg-panel px-1.5 text-[13px] font-medium outline-none shadow-[0_0_0_3px_var(--accent-5)]"
+        className="h-7 w-[min(480px,60vw)] rounded-md bg-panel px-1.5 text-[13px] font-medium shadow-focus outline-none"
       />
     );
   return (
@@ -160,7 +160,7 @@ function EditableTitle({ title, onRename }: { title: string; onRename: (name: st
 }
 
 export function Panel({ children, className = "", frame = false }: { children: React.ReactNode; className?: string; frame?: boolean }) {
-  return <div className={`border border-frame bg-panel ${frame ? "frame" : ""} ${className}`}>{children}</div>;
+  return <div className={`rounded-lg border border-frame bg-panel ${frame ? "frame" : ""} ${className}`}>{children}</div>;
 }
 
 /** A card's header row: its name, a count, and room for actions on the right. */
@@ -210,7 +210,7 @@ export function Hint({ text, align = "center" }: { text: string; align?: "center
 export function ErrorNote({ message }: { message: string }) {
   return message ? (
     <p role="alert" className="flex items-start gap-2 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[13px] text-ink">
-      <span className="mt-[5px] size-2 shrink-0 bg-[var(--status-error)]" />
+      <span className="mt-[5px] size-2 shrink-0 rounded-full bg-[var(--status-error)]" />
       {message}
     </p>
   ) : null;
@@ -219,13 +219,13 @@ export function ErrorNote({ message }: { message: string }) {
 export function Notice({ message }: { message: string }) {
   return message ? (
     <p role="status" className="flex items-start gap-2 rounded-lg border border-line bg-success-soft px-3 py-2 text-[13px] text-ink">
-      <span className="mt-[5px] size-2 shrink-0 bg-[var(--status-success)]" />
+      <span className="mt-[5px] size-2 shrink-0 rounded-full bg-[var(--status-success)]" />
       {message}
     </p>
   ) : null;
 }
 
-/** Skeleton rows with a light blue shimmer while a list loads. */
+/** Skeleton rows with a soft gray shimmer while a list loads. */
 /**
  * The skeleton while a screen loads, in the shape of what's coming, so nothing jumps when the data lands: `rows` for
  * a short list, `table` for a list screen (a header row, then rows of cells), `record` for a record page (a header,
@@ -307,29 +307,29 @@ export function Loading({ shape = "rows" }: { shape?: "rows" | "table" | "record
   );
 }
 
-/** Square buttons: primary is the one black action on a view, ghost is secondary (framed), plain is tertiary. */
+/** Buttons: primary is the one dark gray action on a view, ghost is secondary (a soft ring), plain is tertiary. */
 export function Button({ variant = "primary", className = "", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "plain" | "danger" }) {
   const look =
     variant === "primary"
-      ? "border-frame bg-yolk text-on-yolk hover:bg-yolk-hover"
+      ? "border-transparent bg-brand text-white shadow-primary hover:bg-brand-hover"
       : variant === "ghost"
-        ? "border-frame bg-panel text-ink hover:bg-hover"
+        ? "border-transparent bg-panel text-ink shadow-outline hover:bg-canvas"
         : variant === "danger"
-          ? "border-danger-line bg-danger-soft text-danger hover:brightness-[0.98]"
+          ? "border-transparent bg-danger-soft text-danger shadow-[0_0_0_1px_var(--border-danger)] hover:brightness-[0.98]"
           : "border-transparent bg-transparent text-muted hover:bg-hover hover:text-ink";
   return (
     <button
       {...props}
-      className={`inline-flex h-8 items-center justify-center gap-1.5 border px-3.5 text-[12px] leading-none font-medium whitespace-nowrap transition-[background-color,border-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-spring)] active:scale-[0.96] disabled:cursor-not-allowed disabled:active:scale-100 disabled:border-transparent disabled:bg-hover disabled:text-light [&_svg]:size-4 ${look} ${className}`}
+      className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-md border px-3 text-[13px] leading-none font-medium whitespace-nowrap transition-[background-color,border-color,box-shadow,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-spring)] active:scale-[0.96] disabled:cursor-not-allowed disabled:active:scale-100 disabled:border-transparent disabled:bg-hover disabled:text-light disabled:shadow-none [&_svg]:size-4 ${look} ${className}`}
     />
   );
 }
 
 export type Tone = "gray" | "brand" | "violet" | "green" | "amber" | "red" | "turquoise" | "sky" | "pink" | "yellow";
-// Tags: a step 3 fill with step 11 text, square, framed in their own color.
+// Tags: a step 3 fill with step 11 text, 6px corners, no frame.
 const TONES: Record<Tone, { bg: string; dot: string }> = {
-  gray: { bg: "bg-gray-soft text-muted", dot: "bg-[var(--gray-9)]" },
-  brand: { bg: "bg-brand-soft text-brand-ink", dot: "bg-[var(--blue-9)]" },
+  gray: { bg: "bg-gray-soft text-ink", dot: "bg-[var(--gray-9)]" },
+  brand: { bg: "bg-[var(--blue-3)] text-[var(--blue-11)]", dot: "bg-[var(--blue-9)]" },
   violet: { bg: "bg-violet-soft text-violet", dot: "bg-[var(--purple-9)]" },
   green: { bg: "bg-success-soft text-success", dot: "bg-[var(--green-9)]" },
   amber: { bg: "bg-warning-soft text-warning", dot: "bg-[var(--orange-9)]" },
@@ -342,11 +342,11 @@ const TONES: Record<Tone, { bg: string; dot: string }> = {
 
 /** A record's state: a tag. */
 export function Badge({ children, tone = "gray" }: { children: React.ReactNode; tone?: Tone }) {
-  return <span className={`inline-flex h-5 items-center gap-1 border border-current px-1.5 text-[12px] leading-none font-medium whitespace-nowrap ${TONES[tone].bg}`}>{children}</span>;
+  return <span className={`inline-flex h-5 items-center gap-1 rounded-sm px-2 text-[12px] leading-none font-medium whitespace-nowrap ${TONES[tone].bg}`}>{children}</span>;
 }
 
 export function Dot({ tone }: { tone: Tone }) {
-  return <span className={`inline-block size-2 ${TONES[tone].dot}`} />;
+  return <span className={`inline-block size-2 rounded-full ${TONES[tone].dot}`} />;
 }
 
 const initialsOf = (label: string) =>
@@ -376,7 +376,7 @@ export function Avatar({ label, size = 24 }: { label: string; size?: number }) {
 /** A company shown inline as a small chip: logo and name. */
 export function Search({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
   return (
-    <label className="flex h-8 w-64 max-w-full items-center gap-2 rounded-sm border border-line bg-hover px-2 text-muted transition-colors hover:border-line-strong focus-within:border-brand focus-within:bg-panel focus-within:shadow-[0_0_0_3px_var(--accent-5)]">
+    <label className="flex h-8 w-64 max-w-full items-center gap-2 rounded-md bg-panel px-2 text-muted shadow-input transition-shadow focus-within:shadow-focus">
       <SearchIcon size={14} />
       <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="min-w-0 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-faint" />
     </label>
@@ -385,7 +385,7 @@ export function Search({ value, onChange, placeholder }: { value: string; onChan
 
 /** A page's tabs: an underline nav where each tab is its own address, like Arrowsterr's Settings. */
 export function TabNav<T extends string>({ value, tabs, onChange, label }: { value: T; tabs: { value: T; label: string; icon?: React.ReactNode; count?: number }[]; onChange: (v: T) => void; label: string }) {
-  // One black underline that slides to the picked tab (200ms on the brand curve; transform only).
+  // One ink underline that slides to the picked tab (150ms on the brand curve; transform only).
   const bar = useRef<HTMLElement>(null);
   const [line, setLine] = useState<{ x: number; w: number; moved: boolean } | null>(null);
   const keys = tabs.map((t) => t.value).join("|");
@@ -406,7 +406,7 @@ export function TabNav<T extends string>({ value, tabs, onChange, label }: { val
         >
           {t.icon}
           {t.label}
-          {t.count != null ? <span className={`text-[12px] tabular-nums ${value === t.value ? "font-medium text-brand" : "font-normal text-faint"}`}>{t.count}</span> : null}
+          {t.count != null ? <span className={`text-[12px] tabular-nums ${value === t.value ? "font-medium text-ink" : "font-normal text-faint"}`}>{t.count}</span> : null}
         </button>
       ))}
       {line ? (
@@ -423,14 +423,14 @@ export function TabNav<T extends string>({ value, tabs, onChange, label }: { val
 /** A row of choices where one is picked, like Attio's view switcher. */
 export function Segmented<T extends string>({ value, options, onChange }: { value: T; options: { value: T; label: string; icon?: React.ReactNode; count?: number }[]; onChange: (v: T) => void }) {
   return (
-    <div className="inline-flex h-8 items-stretch border border-frame">
+    <div className="inline-flex h-8 items-stretch gap-0.5 rounded-md bg-hover p-0.5">
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           aria-pressed={value === o.value}
-          className={`inline-flex items-center gap-1.5 px-3 text-[12px] font-medium transition-colors not-first:border-l not-first:border-frame [&_svg]:size-3.5 ${value === o.value ? "bg-yolk text-on-yolk" : "text-muted hover:bg-hover hover:text-ink"}`}
+          className={`inline-flex items-center gap-1.5 rounded-sm px-3 text-[12px] font-medium transition-[background-color,color,box-shadow] duration-300 [&_svg]:size-3.5 ${value === o.value ? "bg-panel text-ink shadow-chip" : "text-muted hover:text-ink"}`}
         >
           {o.icon}
           {o.label}
@@ -490,7 +490,7 @@ export function StatStrip({ children, cols, className = "" }: { children: React.
 export const StatCards = StatStrip;
 
 export function Kbd({ children }: { children: React.ReactNode }) {
-  return <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-xs bg-pressed px-1 font-sans text-[11px] leading-none text-muted">{children}</kbd>;
+  return <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-xs bg-hover px-1 font-sans text-[11px] leading-none text-muted shadow-[inset_0_0_0_1px_var(--border-medium)]">{children}</kbd>;
 }
 
 /** Page content stays centered and no wider than this, so wide screens don't stretch one side. Body grids add their padding. */
@@ -511,9 +511,9 @@ export function IconButton({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { label: string; variant?: "primary" | "ghost" | "plain"; tip?: "top" | "bottom"; align?: "center" | "start" | "end" }) {
   const look =
     variant === "primary"
-      ? "border border-frame bg-yolk text-on-yolk hover:bg-yolk-hover"
+      ? "bg-brand text-white shadow-primary hover:bg-brand-hover"
       : variant === "ghost"
-        ? "border border-line bg-panel text-muted hover:bg-hover"
+        ? "bg-panel text-muted shadow-outline hover:bg-canvas hover:text-ink"
         : "text-muted hover:bg-hover hover:text-ink";
   const ref = useRef<HTMLButtonElement>(null);
   const hover = useTip();
@@ -534,7 +534,7 @@ export function IconButton({
       onFocus={on("onFocus")}
       onBlur={on("onBlur")}
       aria-label={label}
-      className={`relative inline-flex size-8 shrink-0 items-center justify-center rounded-sm transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-spring)] active:scale-[0.94] disabled:pointer-events-none disabled:text-light [&_svg]:size-4 ${look} ${className}`}>
+      className={`relative inline-flex size-8 shrink-0 items-center justify-center rounded-md transition-[background-color,color,box-shadow,transform] duration-[var(--duration-fast)] ease-[var(--ease-spring)] active:scale-[0.94] disabled:pointer-events-none disabled:text-light [&_svg]:size-4 ${look} ${className}`}>
       {children}
       {hover.on && !props.disabled ? <Tip anchor={ref} text={label} placement={at} /> : null}
     </button>
@@ -543,9 +543,9 @@ export function IconButton({
 
 /** Start Google's sign-in for Gmail and Calendar. `back` is "welcome" or the page to return to. */
 /** Where a person is in the buying journey. Moves forward on its own as they're contacted, reply, get a deal and win. */
-/** The one look for a text box: 6px corners, gray until focused, the brand halo on focus. */
-export const inputClass = "h-8 w-full border border-line-strong bg-panel px-2.5 text-[13px] outline-none placeholder:text-faint hover:border-frame focus:border-brand focus:shadow-[0_0_0_1px_var(--accent-9)] disabled:bg-canvas disabled:text-muted";
-export const areaClass = "w-full border border-line-strong bg-panel px-2.5 py-2 text-[13px] outline-none placeholder:text-faint hover:border-frame focus:border-brand focus:shadow-[0_0_0_1px_var(--accent-9)] disabled:bg-canvas disabled:text-muted";
+/** The one look for a text box: 8px corners, a soft ring, the yellow ring and halo on focus. */
+export const inputClass = "h-8 w-full rounded-md border border-transparent bg-panel px-2.5 text-[13px] shadow-input outline-none transition-shadow placeholder:text-faint focus:shadow-focus disabled:bg-canvas disabled:text-muted disabled:shadow-none";
+export const areaClass = "w-full rounded-md border border-transparent bg-panel px-2.5 py-2 text-[13px] shadow-input outline-none transition-shadow placeholder:text-faint focus:shadow-focus disabled:bg-canvas disabled:text-muted disabled:shadow-none";
 
 export function Input({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputClass} ${className}`} />;
@@ -578,19 +578,19 @@ export function Field({ label, aside, row = false, children }: { label: string; 
 /** An on/off switch. */
 export function Switch({ on, label, disabled, onChange }: { on: boolean; label: string; disabled?: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button type="button" role="switch" aria-checked={on} aria-label={label} disabled={disabled} onClick={() => onChange(!on)} className={`relative h-5 w-9 shrink-0 transition-colors duration-[var(--duration-instant)] disabled:cursor-not-allowed disabled:opacity-60 ${on ? "bg-yolk ring-1 ring-frame ring-inset" : "bg-line-strong"}`}>
-      <span className={`absolute top-0.5 left-0.5 size-4 bg-white transition-transform duration-[var(--duration-instant)] ease-[var(--ease-out)] ${on ? "translate-x-4" : ""}`} />
+    <button type="button" role="switch" aria-checked={on} aria-label={label} disabled={disabled} onClick={() => onChange(!on)} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors duration-[var(--duration-instant)] disabled:cursor-not-allowed disabled:opacity-60 ${on ? "bg-signal" : "bg-line-strong"}`}>
+      <span className={`absolute top-0.5 left-0.5 size-4 rounded-full bg-white shadow-chip transition-transform duration-[var(--duration-instant)] ease-[var(--ease-out)] ${on ? "translate-x-4" : ""}`} />
     </button>
   );
 }
 
-/** A checkbox, one size and the brand color. It can show "some picked" with `indeterminate`. */
+/** A checkbox, one size and the yellow. It can show "some picked" with `indeterminate`. */
 export function Checkbox({ checked, indeterminate = false, onChange, label, disabled, className = "" }: { checked: boolean; indeterminate?: boolean; onChange: (v: boolean) => void; label?: string; disabled?: boolean; className?: string }) {
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (ref.current) ref.current.indeterminate = indeterminate && !checked;
   }, [indeterminate, checked]);
-  return <input ref={ref} type="checkbox" aria-label={label} checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} onClick={(e) => e.stopPropagation()} className={`size-4 shrink-0 cursor-pointer accent-[var(--color-brand)] disabled:cursor-not-allowed ${className}`} />;
+  return <input ref={ref} type="checkbox" aria-label={label} checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} onClick={(e) => e.stopPropagation()} className={`size-4 shrink-0 cursor-pointer accent-[var(--color-signal)] disabled:cursor-not-allowed ${className}`} />;
 }
 
 /** Copies text, then shows a check for a moment. */
