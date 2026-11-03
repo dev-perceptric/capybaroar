@@ -120,6 +120,15 @@ export const youtube: Provider = {
     }
     return out;
   },
+  // videos.delete takes youtube.force-ssl, asked for since the Inbox; a channel connected before that answers 403.
+  unpublish: async (s, _channelId, r) => {
+    try {
+      await call(`${API}/videos?${qs({ id: r.id })}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "YouTube delete" });
+    } catch (e) {
+      if (e instanceof PostError && /scope|insufficient/i.test(e.message)) throw new PostError("Reconnect YouTube to delete from here");
+      throw e;
+    }
+  },
   followers: async (s, channelId) => {
     const r = await call<{ items?: Channel[] }>(`${API}/channels?${qs({ part: "statistics", id: channelId })}`, { headers: auth(s.accessToken) }, { what: "YouTube subscribers" });
     const st = r.items?.[0]?.statistics;

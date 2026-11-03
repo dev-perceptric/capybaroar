@@ -22,12 +22,19 @@ export type ApiChannel = {
 
 export type ApiPost = {
   id: string;
-  status: "draft" | "review" | "scheduled" | "publishing" | "published" | "partial" | "failed";
+  /** "deleted": deleted on every channel it went out on (delete_post with everywhere). */
+  status: "draft" | "review" | "scheduled" | "publishing" | "published" | "partial" | "failed" | "deleted";
   text: string;
   publish_at: string | null;
   brand_id: string | null;
   media_ids: string[];
-  channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null }[];
+  channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null; deleted_at: string | null }[];
+};
+
+/** What deleting everywhere did on each channel. manual: the network can't delete from here; delete it at url. */
+export type ApiUnpublish = {
+  deleted: boolean;
+  channels: { channel_id: string; name: string; network: string; result: "deleted" | "failed" | "manual" | "skipped"; error: string | null; note: string | null; url: string | null }[];
 };
 
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
@@ -50,6 +57,8 @@ export interface Ops {
   create(fields: PostFields & { channelIds: string[]; mode: Mode }): Promise<ApiPost>;
   update(id: string, fields: PostFields): Promise<ApiPost>;
   remove(id: string): Promise<void>;
+  /** Delete a published post on its channels (null: every channel it went out on). The record stays. */
+  unpublish(id: string, channelIds: string[] | null): Promise<ApiUnpublish>;
   media(): Promise<ApiMedia[]>;
   nextSlot(): Promise<string>;
   analytics(days: 7 | 30 | 90, channelId: string | null): Promise<ApiAnalytics>;

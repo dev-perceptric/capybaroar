@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowDownRight, ArrowUpRight, ExternalLink } from "lucide-react";
-import { Avatar, Segmented } from "./ui";
+import { Avatar, Badge, Segmented } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { Analytics, BestCell } from "@/lib/analytics";
@@ -117,6 +117,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
                               <ExternalLink size={13} />
                             </a>
                           ) : null}
+                          {t.deleted ? <Badge>Deleted</Badge> : null}
                         </div>
                         <p className="mt-0.5 text-[11px] text-faint">
                           {c?.name}, {new Date(t.at).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: timezone })}

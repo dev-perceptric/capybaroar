@@ -141,6 +141,10 @@ export const x: Provider = {
     const r = await call<{ data: { id: string } }>(`${API}/tweets`, { method: "POST", headers: { ...bearer(tok), "Content-Type": "application/json" }, body: JSON.stringify(body) }, { what: "X post" });
     return { id: r.data.id, url: `https://x.com/i/web/status/${r.data.id}` };
   },
+  // DELETE /2/tweets/:id answers 200 { data: { deleted } }; a post that's gone answers 404 (NotFound: deleted).
+  unpublish: async (s, _accountId, r) => {
+    await call(`${API}/tweets/${encodeURIComponent(r.id)}`, { method: "DELETE", headers: bearer(s.accessToken) }, { what: "X delete" });
+  },
   followers: async (s) => {
     const r = await call<{ data: { public_metrics?: { followers_count?: number } } }>(
       `${API}/users/me?${qs({ "user.fields": "public_metrics" })}`,

@@ -8,7 +8,7 @@ const secret = () => process.env.REDDIT_CLIENT_SECRET ?? "";
 const basic = () => `Basic ${Buffer.from(`${id()}:${secret()}`).toString("base64")}`;
 const auth = (token: string) => ({ Authorization: `Bearer ${token}`, "User-Agent": UA });
 
-type Token = { access_token?: string; expires_in?: number; refresh_token?: string; error?: string; message?: string };
+type Token = { access_token?: string; expires_in?: number; refresh_token?: string; scope?: string; error?: string; message?: string };
 type Me = { name: string; icon_img?: string; subreddit?: { title?: string; subscribers?: number } | null };
 
 // Reddit can answer a bad grant with 200 and { error }, so check for the token itself.
@@ -27,7 +27,7 @@ export const reddit: Provider = {
   oauth: {
     configured: () => Boolean(id() && secret()),
     authUrl: ({ state, redirect }) =>
-      `https://www.reddit.com/api/v1/authorize?${qs({ client_id: id(), response_type: "code", state, redirect_uri: redirect, duration: "permanent", scope: "identity submit read flair" })}`,
+      `https://www.reddit.com/api/v1/authorize?${qs({ client_id: id(), response_type: "code", state, redirect_uri: redirect, duration: "permanent", scope: "identity submit read flair edit" })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await token({ grant_type: "authorization_code", code, redirect_uri: redirect }, "Reddit sign-in");
       const me = await call<Me>(`${API}/api/v1/me`, { headers: auth(t.access_token) }, { what: "Reddit profile" });
@@ -40,6 +40,8 @@ export const reddit: Provider = {
           accessToken: t.access_token,
           refreshToken: t.refresh_token ?? null,
           expiresAt: expires(t),
+          // What was granted: deleting needs "edit", which channels connected before it was asked for don't have.
+          extra: { scopes: (t.scope ?? "").split(/[\s,]+/).filter(Boolean) },
         },
       ];
     },
@@ -99,5 +101,14 @@ export const reddit: Provider = {
     if (!d) return {};
     // score is upvotes minus downvotes (fuzzed by Reddit), not a raw like count.
     return { likes: d.score ?? null, comments: d.num_comments ?? null };
+  },
+  unpublishable: (s, r) => {
+    if (!/^t3_\w+$/.test(r.id)) return "Capybaroar didn't keep this post's id";
+    const scopes = Array.isArray(s.extra.scopes) ? (s.extra.scopes as unknown[]) : [];
+    return scopes.includes("edit") ? null : "Reconnect Reddit to delete from here";
+  },
+  // POST /api/del with the post's fullname (scope "edit"). A post that's already deleted answers 200 too.
+  unpublish: async (s, _name, r) => {
+    await call(`${API}/api/del`, { method: "POST", headers: auth(s.accessToken), body: form({ id: r.id }) }, { what: "Reddit delete" });
   },
 };

@@ -8,11 +8,13 @@ type Row = {
   published_at: string;
   text: string | null;
   url: string | null;
+  deleted_at: string | null;
   posts: { text: string; media_ids: string[] };
   post_metrics: Metrics | Metrics[] | null;
 };
 
-export type TopPost = { id: string; channelId: string; at: string; text: string; url: string | null; format: Format; m: Metrics | null; rate: number | null };
+/** `deleted`: deleted on the network since; its numbers stay. */
+export type TopPost = { id: string; channelId: string; at: string; text: string; url: string | null; deleted: boolean; format: Format; m: Metrics | null; rate: number | null };
 export type Format = "video" | "picture" | "text";
 export type Totals = { posts: number; views: number; engagement: number; rate: number | null; withStats: number };
 
@@ -21,7 +23,7 @@ const one = <T,>(v: T | T[] | null): T | null => (Array.isArray(v) ? (v[0] ?? nu
 /** People who saw it: reach when the network gives it, else views, else impressions. */
 const seen = (m: Metrics | null) => (m ? (m.reach ?? m.views ?? m.impressions ?? null) : null);
 
-const FULL = "id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
+const FULL = "id, channel_id, published_at, text, url, deleted_at, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
 /** Enough for best times: when it went out and how it did. */
 const TIMES = "published_at, post_metrics(engagement)";
 /** One channel, a brand's channels (a list), or every channel (null). */
@@ -152,7 +154,7 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
   const top: TopPost[] = cur.map((r) => {
     const m = one(r.post_metrics);
     const s = seen(m);
-    return { id: r.id, channelId: r.channel_id, at: r.published_at, text: r.text ?? r.posts.text, url: r.url, format: formatOf(r), m, rate: m && s ? m.engagement / s : null };
+    return { id: r.id, channelId: r.channel_id, at: r.published_at, text: r.text ?? r.posts.text, url: r.deleted_at ? null : r.url, deleted: !!r.deleted_at, format: formatOf(r), m, rate: m && s ? m.engagement / s : null };
   });
 
   const formats = (["video", "picture", "text"] as Format[]).map((f) => {

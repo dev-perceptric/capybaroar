@@ -2,6 +2,8 @@ import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, typ
 
 /** Inbox permissions are asked for only once they are added to the Meta app (META_INBOX=1), so sign-in never breaks. */
 const inboxScopes = () => process.env.META_INBOX === "1";
+/** threads_delete, the same way: asked for once the Meta app has it (META_THREADS_DELETE=1). */
+const threadsDelete = () => process.env.META_THREADS_DELETE === "1";
 
 // Facebook Pages and Instagram (through Facebook login, Instagram professional accounts linked to a Page),
 // and Threads (its own sign-in on threads.net). One Meta app holds all three.
@@ -307,6 +309,12 @@ export const facebook: Provider = {
     }
     return out;
   },
+  // DELETE /{post-id} with the Page token (pages_manage_posts). Feed and photo posts are "{page}_{post}", videos and
+  // Reels a video id; both delete the same way. Verify: a post that's gone answers 400 "does not exist", not 404, so it
+  // shows as failed with Meta's message.
+  unpublish: async (s, _pageId, r) => {
+    await call(G(`${r.id}?${qs({ access_token: s.accessToken })}`), { method: "DELETE" }, { what: "Facebook delete" });
+  },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
   postStats: (s, _pageId, remoteId) => stats(() => facebookStats(s.accessToken, remoteId)),
   inbox: {
@@ -438,7 +446,7 @@ export const threads: Provider = {
   oauth: {
     configured: () => Boolean(thId() && thSecret()),
     authUrl: ({ state, redirect }) =>
-      `https://threads.net/oauth/authorize?${qs({ client_id: thId(), redirect_uri: redirect, state, response_type: "code", scope: `threads_basic,threads_content_publish,threads_manage_replies,threads_manage_insights${inboxScopes() ? ",threads_read_replies" : ""}` })}`,
+      `https://threads.net/oauth/authorize?${qs({ client_id: thId(), redirect_uri: redirect, state, response_type: "code", scope: `threads_basic,threads_content_publish,threads_manage_replies,threads_manage_insights${inboxScopes() ? ",threads_read_replies" : ""}${threadsDelete() ? ",threads_delete" : ""}` })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const short = await call<{ access_token: string; user_id: string }>(
         "https://graph.threads.net/oauth/access_token",
@@ -463,6 +471,8 @@ export const threads: Provider = {
           avatar: me.threads_profile_picture_url ?? null,
           accessToken: long.access_token,
           expiresAt: new Date(Date.now() + long.expires_in * 1000),
+          // Channels signed in while threads_delete was asked for can delete; older ones reconnect first.
+          extra: threadsDelete() ? { threads_delete: true } : {},
         },
       ];
     },
@@ -506,6 +516,11 @@ export const threads: Provider = {
     return r.data?.[0]?.total_value?.value ?? null;
   },
   postStats: (s, _userId, remoteId) => stats(() => threadsStats(s.accessToken, remoteId)),
+  // DELETE /{threads-media-id} needs threads_delete, 100 deletes a day per account.
+  unpublishable: (s) => (!threadsDelete() ? "Delete it in the Threads app" : s.extra.threads_delete !== true ? "Reconnect Threads to delete from here" : null),
+  unpublish: async (s, _userId, r) => {
+    await call(T(`${encodeURIComponent(r.id)}?${qs({ access_token: s.accessToken })}`), { method: "DELETE" }, { what: "Threads delete" });
+  },
   inbox: {
     fetch: threadsInbox,
     reply: async (s, userId, to, text) => {

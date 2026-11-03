@@ -92,4 +92,9 @@ export const gbp: Provider = {
     );
     return { id: r.name, url: r.searchUrl ?? null };
   },
+  unpublishable: (_s, r) => (/^accounts\/[^/]+\/locations\/[^/]+\/localPosts\/[^/]+$/.test(r.id) ? null : "Capybaroar didn't keep this post's id"),
+  unpublish: async (s, _accountId, r) => {
+    // The name keeps its slashes: it is the path.
+    await call(`https://mybusiness.googleapis.com/v4/${r.id}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "Google Business delete" });
+  },
 };

@@ -12,7 +12,8 @@ import { sendReviewMail } from "./alerts";
 import { sendsToReview } from "./publisher";
 import type { Role } from "./session";
 
-export type PostStatus = "draft" | "review" | "scheduled" | "publishing" | "published" | "partial" | "failed";
+/** "deleted": deleted on every channel it went out on (Delete everywhere). Kept for Analytics, off the calendar. */
+export type PostStatus = "draft" | "review" | "scheduled" | "publishing" | "published" | "partial" | "failed" | "deleted";
 export type TargetRow = {
   id: string;
   channel_id: string;
@@ -22,15 +23,17 @@ export type TargetRow = {
   url: string | null;
   error: string | null;
   note: string | null;
+  /** When it was deleted on the network (the status stays "published"). */
+  deleted_at: string | null;
 };
 export type PostRow = { id: string; text: string; media_ids: string[]; status: PostStatus; publish_at: string | null; brand_id: string | null; post_targets: TargetRow[] };
 
-const COLS = "id, text, media_ids, status, publish_at, brand_id, post_targets(id, channel_id, status, text, settings, url, error, note)";
+const COLS = "id, text, media_ids, status, publish_at, brand_id, post_targets(id, channel_id, status, text, settings, url, error, note, deleted_at)";
 
-/** Posts in a time range; `scope` keeps only these brands' (null: every post). */
+/** Posts in a time range; `scope` keeps only these brands' (null: every post). Posts deleted everywhere are left out. */
 export async function postsBetween(workspaceId: string, from: Date, to: Date, scope: string[] | null = null): Promise<PostRow[]> {
   if (scope && !scope.length) return [];
-  let q = adminClient().from("posts").select(COLS).eq("workspace_id", workspaceId).gte("publish_at", from.toISOString()).lt("publish_at", to.toISOString());
+  let q = adminClient().from("posts").select(COLS).eq("workspace_id", workspaceId).neq("status", "deleted").gte("publish_at", from.toISOString()).lt("publish_at", to.toISOString());
   if (scope) q = q.in("brand_id", scope);
   const { data, error } = await q.order("publish_at");
   if (error) throw new Error(error.message);
@@ -212,14 +215,14 @@ export async function deletePost(workspaceId: string, id: string) {
   if (error) throw new Error(error.message);
 }
 
-/** A post's status follows its channels: all out, some out, or all failed. */
+/** A post's status follows its channels: all out, some out, or all failed. A post deleted everywhere stays deleted. */
 export async function settlePost(postId: string) {
   const db = adminClient();
   const { data } = await db.from("post_targets").select("status").eq("post_id", postId);
   const s = (data ?? []).map((t) => t.status as string);
   if (!s.length || s.some((x) => x === "pending" || x === "publishing")) return;
   const status = s.every((x) => x === "published") ? "published" : s.some((x) => x === "published") ? "partial" : "failed";
-  await db.from("posts").update({ status, updated_at: new Date().toISOString() }).eq("id", postId);
+  await db.from("posts").update({ status, updated_at: new Date().toISOString() }).eq("id", postId).neq("status", "deleted");
 }
 
 // Approvals

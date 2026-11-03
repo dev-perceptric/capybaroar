@@ -273,6 +273,20 @@ test("result checks read the network with the saved remote id and store the numb
   assert.ok(m.jobs[0].done);
 });
 
+test("a post deleted on its network reads no more results, so the numbers it had stay", async () => {
+  const m = new Memory();
+  m.add(1);
+  m.saved.set("t0", { likes: 7 });
+  Object.assign(m.targets.get("t0")!, { status: "published", remoteId: "remote-9", deletedAt: new Date().toISOString() });
+  let asked = 0;
+  const provider: Provider = { network: "fake" as never, publish: async () => ({ id: "x" }), postStats: async () => (asked++, {}) };
+  m.jobs = [{ id: 99, kind: "stats", payload: { targetId: "t0" }, attempts: 0, max_attempts: 6, runAfter: m.now, lockedAt: null, done: false, lastError: null }];
+  await runDue(m, () => provider, "w");
+  assert.equal(asked, 0);
+  assert.deepEqual(m.saved.get("t0"), { likes: 7 });
+  assert.ok(m.jobs[0].done);
+});
+
 test("a post waiting for approval is never published, even with jobs queued for it", async () => {
   const m = new Memory();
   m.add(6);

@@ -327,6 +327,7 @@ const BAR: Record<PostRow["status"], string> = {
   published: "bg-yolk",
   partial: "bg-warning",
   failed: "bg-danger",
+  deleted: "bg-line-strong",
 };
 
 function PostCard({ post, byId, onOpen, compact = false, narrow = false, movable: canMove, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
@@ -555,8 +556,8 @@ function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: 
   };
 }
 
-const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In review", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed" };
-const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red" };
+const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In review", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed", deleted: "Deleted" };
+const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red", deleted: "gray" };
 
 function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void }) {
   if (!posts.length) return <p className="px-6 py-16 text-center text-[13px] text-muted">No posts in these 4 weeks</p>;

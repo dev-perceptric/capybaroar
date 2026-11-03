@@ -5,6 +5,7 @@ import { canApprove, getCtx, writerCtx } from "@/lib/session";
 import { getBrandCtx, homeBrand } from "@/lib/brands";
 import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
 import { listMedia, setAlt } from "@/lib/media";
+import type { ChannelResult, PlanItem } from "@/lib/unpublisher";
 
 const fail = (e: unknown) => {
   unstable_rethrow(e); // a signed-out visitor still goes to sign in
@@ -59,6 +60,28 @@ export async function remove(id: string): Promise<{ error?: string }> {
     await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
     await deletePost(ctx.workspaceId, id);
     return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** The channels a published post went out on, for the delete dialog. */
+export async function deletePlan(id: string): Promise<{ error?: string; items?: PlanItem[] }> {
+  const { unpublishPlan } = await import("@/lib/unpublish");
+  try {
+    const ctx = await writerCtx();
+    return { items: await unpublishPlan(ctx.workspaceId, id, ctx) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** Delete a published post on these channels. The post stays, as deleted once every channel is. */
+export async function deleteEverywhere(id: string, channelIds: string[]): Promise<{ error?: string; results?: ChannelResult[]; postDeleted?: boolean }> {
+  const { unpublishPost } = await import("@/lib/unpublish");
+  try {
+    const ctx = await writerCtx();
+    return await unpublishPost(ctx.workspaceId, id, channelIds, ctx);
   } catch (e) {
     return fail(e);
   }
