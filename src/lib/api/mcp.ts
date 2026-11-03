@@ -1,7 +1,8 @@
 // The MCP server: JSON-RPC over plain HTTP POST (MCP's Streamable HTTP, without sessions or streams). Every request is
 // answered on its own, so any server can take it and a restart loses nothing. Pure: it runs the tools through Ops,
 // so tests drive it with fake actions.
-import { ApiError, MAX_BATCH, days, id, optionalId, postFields, range } from "./input";
+import { ApiError, MAX_BATCH, days, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
+import { EVENTS } from "./hookRules";
 import type { Ops } from "./types";
 
 export const SERVER = { name: "capybaroar", title: "Capybaroar", version: "1.0.0" };
@@ -78,6 +79,13 @@ export const TOOLS: Tool[] = [
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   },
   { name: "list_media", title: "List media", description: "The newest files in the media library, with ids to attach to posts.", inputSchema: { type: "object", properties: {} }, annotations: read },
+  {
+    name: "upload_media",
+    title: "Upload media from a link",
+    description: "Download a picture or video (JPG, PNG, GIF, WebP, MP4 or MOV, up to 250 MB) from a public link into the media library. Returns its id for media_ids.",
+    inputSchema: { type: "object", properties: { url: { type: "string", description: "A public http or https link to the file" }, alt: { type: "string", description: "Alt text for people who can't see it" } }, required: ["url"] },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  },
   { name: "next_queue_slot", title: "Next queue slot", description: "The next free time slot in the workspace's posting queue.", inputSchema: { type: "object", properties: {} }, annotations: read },
   {
     name: "get_analytics",
@@ -85,6 +93,29 @@ export const TOOLS: Tool[] = [
     description: "Reach and engagement for a period against the one before, the best times to post, results by format and the top posts.",
     inputSchema: { type: "object", properties: { days: { type: "number", enum: [7, 30, 90], description: "7, 30 (default) or 90" }, channel_id: { type: "string", description: "Only this channel" } } },
     annotations: read,
+  },
+  { name: "list_webhooks", title: "List webhooks", description: "The workspace's webhooks with their events and how the last delivery went. Owners and admins only.", inputSchema: { type: "object", properties: {} }, annotations: read },
+  {
+    name: "create_webhook",
+    title: "Add a webhook",
+    description: `Have Capybaroar POST to an https URL when these events happen: ${EVENTS.join(", ")}. Returns a signing secret, shown once. Owners and admins only.`,
+    inputSchema: { type: "object", properties: { url: { type: "string", description: "An https URL" }, events: { type: "array", items: { type: "string", enum: [...EVENTS] } } }, required: ["url", "events"] },
+    annotations: write,
+  },
+  {
+    name: "set_webhook",
+    title: "Turn a webhook on or off",
+    description: "Turn a webhook on or off. Turning it on again starts its failure count over.",
+    inputSchema: { type: "object", properties: { id: { type: "string" }, enabled: { type: "boolean" } }, required: ["id", "enabled"] },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  { name: "test_webhook", title: "Test a webhook", description: "Send a ping event to a webhook now, to check its URL answers.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: write },
+  {
+    name: "delete_webhook",
+    title: "Delete a webhook",
+    description: "Delete a webhook. Nothing more is sent to its URL.",
+    inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
   },
 ];
 
@@ -138,6 +169,25 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       return { deleted: true };
     case "list_media":
       return { media: await ops.media() };
+    case "upload_media": {
+      const m = mediaLink(args);
+      return { media: await ops.uploadFromLink(m.url, m.alt) };
+    }
+    case "list_webhooks":
+      return { webhooks: await ops.webhooks() };
+    case "create_webhook": {
+      const w = webhookInput(args, EVENTS);
+      return await ops.createWebhook(w.url, w.events);
+    }
+    case "set_webhook":
+      if (typeof args.enabled !== "boolean") throw new ApiError(400, "invalid_request", "enabled must be true or false");
+      return { webhook: await ops.setWebhook(id(args.id), args.enabled) };
+    case "test_webhook":
+      await ops.testWebhook(id(args.id));
+      return { sent: true };
+    case "delete_webhook":
+      await ops.deleteWebhook(id(args.id));
+      return { deleted: true };
     case "next_queue_slot":
       return { publish_at: await ops.nextSlot() };
     case "get_analytics":

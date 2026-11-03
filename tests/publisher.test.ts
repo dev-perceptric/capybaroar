@@ -125,6 +125,12 @@ class Memory implements Store {
   async saveInbox() {}
   async closeThread() {}
   async inboxError() {}
+  events: string[] = [];
+  failEvents = false;
+  async event(type: string, t: TargetCtx) {
+    if (this.failEvents) throw new Error("webhook store down");
+    this.events.push(`${type}:${t.id}`);
+  }
 }
 
 /** A fake network: records every post that went live, and fails at the given rate before posting. */
@@ -310,4 +316,32 @@ test("only editors' posts to a brand that needs approval go to review", () => {
   assert.equal(sendsToReview("editor", true), true);
   assert.equal(sendsToReview("editor", false), false);
   for (const role of ["owner", "admin", "client", undefined]) assert.equal(sendsToReview(role, true), false, `${role} schedules directly`);
+});
+
+test("webhooks hear once per channel: published when it went out, failed when it failed for good", async () => {
+  for (const seed of [3, 11, 77]) {
+    const m = new Memory();
+    m.add(120);
+    m.failPublishedSaves = 2;
+    const net = fakeNetwork({ failRate: 0.5, seed });
+    await drain(m, net.provider, 3);
+    const told = new Map<string, number>();
+    for (const e of m.events) told.set(e, (told.get(e) ?? 0) + 1);
+    assert.ok([...told.values()].every((n) => n === 1), `seed ${seed}: an event was sent twice`);
+    for (const t of m.targets.values()) {
+      const want = t.status === "published" ? `post.published:${t.id}` : `post.failed:${t.id}`;
+      assert.equal(told.get(want), 1, `seed ${seed}: ${t.id} has no ${want}`);
+    }
+    assert.equal(m.events.length, m.targets.size, `seed ${seed}: one event per channel`);
+  }
+});
+
+test("a broken webhook store never stops a post going out", async () => {
+  const m = new Memory();
+  m.add(20);
+  m.failEvents = true;
+  const net = fakeNetwork({ failRate: 0.3, seed: 5 });
+  await drain(m, net.provider);
+  assert.ok([...m.targets.values()].every((t) => t.status === "published" || t.status === "failed"));
+  assert.equal(net.live.length, [...m.targets.values()].filter((t) => t.status === "published").length);
 });

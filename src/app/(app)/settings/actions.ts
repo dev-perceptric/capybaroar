@@ -7,6 +7,9 @@ import { createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLi
 import { createInvite, removeMember, revokeInvite, setMemberBrands, setMemberRole } from "@/lib/team";
 import { adminClient } from "@/lib/supabase/server";
 import { createApiKey, deleteApiKey } from "@/lib/api/keys";
+import { createWebhook, deleteWebhook, setWebhookOn, testWebhook } from "@/lib/webhooks";
+import { webhookInput } from "@/lib/api/input";
+import { EVENTS } from "@/lib/api/hookRules";
 
 export async function saveWorkspace(name: string, timezone: string): Promise<{ error?: string }> {
   const ctx = await getCtx();
@@ -114,6 +117,56 @@ export async function removeApiKey(id: string): Promise<{ error?: string }> {
     const ctx = await managerCtx();
     await deleteApiKey(ctx.workspaceId, id);
     revalidatePath("/settings");
+    return {};
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+// Webhooks
+
+export async function addWebhook(url: string, events: string[]): Promise<{ error?: string; secret?: string }> {
+  try {
+    const ctx = await managerCtx();
+    const w = webhookInput({ url, events }, EVENTS);
+    const { secret } = await createWebhook(ctx.workspaceId, ctx.userId, w.url, w.events);
+    revalidatePath("/settings");
+    return { secret };
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function removeWebhook(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await managerCtx();
+    await deleteWebhook(ctx.workspaceId, id);
+    revalidatePath("/settings");
+    return {};
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function saveWebhookOn(id: string, on: boolean): Promise<{ error?: string }> {
+  try {
+    const ctx = await managerCtx();
+    await setWebhookOn(ctx.workspaceId, id, on);
+    revalidatePath("/settings");
+    return {};
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function sendTestWebhook(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await managerCtx();
+    await testWebhook(ctx.workspaceId, id);
     return {};
   } catch (e) {
     unstable_rethrow(e);

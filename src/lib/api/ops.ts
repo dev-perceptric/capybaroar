@@ -3,7 +3,9 @@ import { listBrands, mayUseBrand } from "../brands";
 import { listChannels, type Channel } from "../channels";
 import { networkOf } from "../networks";
 import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePost, type PostRow, type SaveInput } from "../posts";
-import { listMedia } from "../media";
+import { listMedia, mediaThumbs } from "../media";
+import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
+import { uploadFromLink } from "./upload";
 import { adminClient } from "../supabase/server";
 import { analytics } from "../analytics";
 import { ApiError, isId } from "./input";
@@ -67,6 +69,15 @@ function checkSettings(channels: Map<string, Channel>, settings: Record<string, 
 }
 
 export function realOps(ctx: ApiCtx): Ops {
+  // Webhooks see every brand's posts, so only owners and admins manage them.
+  const manager = () => {
+    if (ctx.role !== "owner" && ctx.role !== "admin") throw new ApiError(403, "forbidden", "Only owners and admins can manage webhooks");
+  };
+  const hook = async (id: string) => {
+    const h = (await listWebhooks(ctx.workspaceId)).find((x) => x.id === id);
+    if (!h) throw notFound("Webhook");
+    return h;
+  };
   const actor = { role: ctx.role, brandIds: ctx.brandIds, brandId: null };
   const scopeFor = (brandId: string | null) => {
     if (!brandId) return ctx.brandIds;
@@ -136,6 +147,36 @@ export function realOps(ctx: ApiCtx): Ops {
       if (cur.status === "publishing") throw new ApiError(409, "conflict", "This post is going out right now. Try again in a minute.");
       await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
       await deletePost(ctx.workspaceId, id);
+    },
+    async uploadFromLink(url, alt) {
+      const id = await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt);
+      const [m] = await mediaThumbs(ctx.workspaceId, [id]);
+      const { data } = await adminClient().from("media").select("id, name, mime, size, alt, created_at").eq("id", id).single();
+      return { id, name: data!.name as string, mime: data!.mime as string, size: data!.size as number, alt: (data!.alt as string | null) ?? null, created_at: data!.created_at as string, preview_url: m?.thumb ?? null };
+    },
+    async webhooks() {
+      manager();
+      return listWebhooks(ctx.workspaceId);
+    },
+    async createWebhook(url, events) {
+      manager();
+      return createWebhook(ctx.workspaceId, ctx.userId, url, events);
+    },
+    async setWebhook(id, enabled) {
+      manager();
+      await hook(id);
+      await setWebhookOn(ctx.workspaceId, id, enabled);
+      return hook(id);
+    },
+    async deleteWebhook(id) {
+      manager();
+      await hook(id);
+      await deleteWebhook(ctx.workspaceId, id);
+    },
+    async testWebhook(id) {
+      manager();
+      await hook(id);
+      await testWebhook(ctx.workspaceId, id);
     },
     async media() {
       return (await listMedia(ctx.workspaceId)).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));

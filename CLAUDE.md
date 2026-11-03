@@ -23,3 +23,5 @@ Schedule posts to every social channel from one calendar. Our own code on the Om
 - Every write goes through `savePost`, so the API keeps the app's checks: limits, settings, media, plan, brands and approvals.
 - Keys (`009_api.sql`) are stored as a hash, shown once, and act as the person who made them, checked on every request. 120 requests a minute per key.
 - Input is checked in `src/lib/api/input.ts` and the protocol in `src/lib/api/mcp.ts`, both pure and covered by `tests/api.test.ts`.
+- Anything the server fetches or calls for people (webhook URLs, links to upload from) goes through `src/lib/api/fetchSafe.ts`: public internet only, checked on the IP it connects to. Never call a person's URL with plain `fetch`.
+- Webhooks (`020_webhooks.sql`, `src/lib/webhooks.ts`) have their own deliveries table and loop, so a slow URL never holds up publishing. `emit()` never throws. Rules (signature, retries, turning off) are in `src/lib/api/hookRules.ts`, covered by `tests/webhooks.test.ts`.

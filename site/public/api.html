@@ -13,7 +13,7 @@
 <main class="wrap doc">
 <p class="eyebrow">Developers</p>
 <h1>API and MCP server</h1>
-<p class="lead">Let Claude, Cursor, ChatGPT or your own code plan and schedule posts. Every plan includes both, the Free plan too.</p>
+<p class="lead">Let Claude, Cursor, ChatGPT or your own code plan and schedule posts, upload media and hear when posts go out. Every plan includes it, the Free plan too.</p>
 
 <h2>1. Make a key</h2>
 <p>In the app, open <strong>Settings</strong>, then <strong>API and MCP</strong>, and press <strong>New key</strong>. The key starts with <code>cbr_</code> and shows only once. A key acts as the person who made it, with their role and brands. Delete it any time, and apps using it stop working.</p>
@@ -45,8 +45,10 @@
 <tr><th><code>update_post</code></th><td>Change a post that hasn't gone out</td></tr>
 <tr><th><code>delete_post</code></th><td>Delete a post</td></tr>
 <tr><th><code>list_media</code></th><td>Files in the media library, to attach by id</td></tr>
+<tr><th><code>upload_media</code></th><td>Add a picture or video from a public link</td></tr>
 <tr><th><code>next_queue_slot</code></th><td>The next free time in the posting queue</td></tr>
 <tr><th><code>get_analytics</code></th><td>Reach, engagement, best times to post and top posts</td></tr>
+<tr><th><code>list_webhooks</code>, <code>create_webhook</code>, <code>set_webhook</code>, <code>test_webhook</code>, <code>delete_webhook</code></th><td>Manage webhooks (owners and admins)</td></tr>
 </tbody></table></div>
 <p>Try asking: <em>"Write a week of LinkedIn posts about our launch, one each weekday at 9 AM, as drafts."</em></p>
 
@@ -63,8 +65,14 @@
 <tr><th><code>PATCH /posts/{id}</code></th><td>Change the fields you send</td></tr>
 <tr><th><code>DELETE /posts/{id}</code></th><td>Delete a post</td></tr>
 <tr><th><code>GET /media</code></th><td>Media library</td></tr>
+<tr><th><code>POST /media</code></th><td>Add a file from a link</td></tr>
 <tr><th><code>GET /queue</code></th><td>Next free queue time</td></tr>
 <tr><th><code>GET /analytics?days=30&amp;channel_id=</code></th><td>Results for 7, 30 or 90 days</td></tr>
+<tr><th><code>GET /webhooks</code></th><td>Webhooks</td></tr>
+<tr><th><code>POST /webhooks</code></th><td>Add a webhook</td></tr>
+<tr><th><code>PATCH /webhooks/{id}</code></th><td>Turn it on or off: <code>{"enabled": false}</code></td></tr>
+<tr><th><code>POST /webhooks/{id}/test</code></th><td>Send a <code>ping</code> event now</td></tr>
+<tr><th><code>DELETE /webhooks/{id}</code></th><td>Delete a webhook</td></tr>
 </tbody></table></div>
 
 <p><strong>Make a post</strong></p>
@@ -90,6 +98,49 @@
 <tr><th><code>settings</code></th><td>Network settings by channel id, like a first comment, a YouTube title or a Pinterest board</td></tr>
 </tbody></table></div>
 <p>Posts get the same checks as in the app: character limits, required settings, media, plan limits, brands and approvals. In a brand that needs approval, an editor's post waits in review.</p>
+
+<h2>Upload a file by link</h2>
+<p>Send a public link and Capybaroar downloads the file into the media library. It takes JPG, PNG, GIF, WebP, MP4 and MOV up to 250 MB, judged by the file itself. Links to private networks are refused.</p>
+<pre><code>curl https://app.capybaroar.com/api/v1/media \
+  -H "Authorization: Bearer cbr_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "url": "https://example.com/launch.png", "alt": "The new calendar" }'</code></pre>
+<p>The answer has the file's <code>id</code>. Put it in <code>media_ids</code> when you make a post.</p>
+
+<h2>Webhooks</h2>
+<p>Add a webhook in Settings or with <code>POST /webhooks</code>, with an https URL and the events you want. Capybaroar sends a POST to it when they happen.</p>
+<div class="scroll"><table class="cmp">
+<thead><tr><th>Event</th><th>When</th></tr></thead>
+<tbody>
+<tr><th><code>post.published</code></th><td>A post went out on a channel, with its link</td></tr>
+<tr><th><code>post.failed</code></th><td>A post failed on a channel after its retries, with the reason</td></tr>
+<tr><th><code>post.in_review</code></th><td>A post waits for approval</td></tr>
+<tr><th><code>post.approved</code></th><td>A post was approved</td></tr>
+<tr><th><code>post.rejected</code></th><td>A post was sent back, with the comment</td></tr>
+<tr><th><code>channel.reconnect</code></th><td>A channel needs reconnecting</td></tr>
+</tbody></table></div>
+<pre><code>POST https://your-site.com/hooks/capybaroar
+Capybaroar-Event: post.published
+Capybaroar-Delivery: evt_6f1c...
+Capybaroar-Signature: t=1793700000,v1=5257a8...
+
+{
+  "id": "evt_6f1c...",
+  "type": "post.published",
+  "created_at": "2026-11-05T14:00:03.120Z",
+  "workspace_id": "...",
+  "data": { "post_id": "...", "brand_id": "...", "channel_id": "...", "channel_name": "Perceptric", "network": "linkedin", "url": "https://www.linkedin.com/feed/update/..." }
+}</code></pre>
+<p><strong>Check the signature.</strong> You get the signing secret once, when you add the webhook. Check each request before you trust it:</p>
+<pre><code>import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verify(secret, header, rawBody) {
+  const { t, v1 } = Object.fromEntries(header.split(",").map((p) =&gt; p.split("=")));
+  const want = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest("hex");
+  const fresh = Math.abs(Date.now() / 1000 - Number(t)) &lt; 300;
+  return fresh &amp;&amp; timingSafeEqual(Buffer.from(want), Buffer.from(v1));
+}</code></pre>
+<p><strong>Answer with a 2xx within 10 seconds.</strong> Anything else is tried again after 1, 5, 15 and 60 minutes, then 3, 6 and 12 hours. A webhook whose deliveries fail 5 times in a row turns itself off, and Settings shows why. Every try of an event has the same <code>id</code>, so you can skip ones you already handled.</p>
 
 <h2>Errors and limits</h2>
 <p>Errors come back as <code>{"error": {"code": "...", "message": "..."}}</code> with a status: 400 for a request to fix, 401 for a missing or deleted key, 404 when something isn't there, 409 when a post already went out, 429 when you go over 120 requests a minute (wait for the seconds in <code>Retry-After</code>).</p>

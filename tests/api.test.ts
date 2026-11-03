@@ -101,6 +101,12 @@ function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[] } {
     analytics: async () => {
       throw new Error("no data");
     },
+    uploadFromLink: async (url) => ({ id: "m1", name: url.pathname, mime: "image/png", size: 1, alt: null, created_at: AT, preview_url: null }),
+    webhooks: async () => [],
+    createWebhook: async (url, events) => ({ webhook: { id: "h1", url: url.toString(), events, enabled: true, failures: 0, last_status: null, last_error: null, last_delivered_at: null, created_at: AT }, secret: "whsec_x" }),
+    setWebhook: async (id, enabled) => ({ id, url: "https://x.test/", events: [], enabled, failures: 0, last_status: null, last_error: null, last_delivered_at: null, created_at: AT }),
+    deleteWebhook: async () => undefined,
+    testWebhook: async () => undefined,
     ...over,
   };
 }
