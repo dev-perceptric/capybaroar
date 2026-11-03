@@ -18,9 +18,9 @@ const mailer = () =>
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-function html(title: string, body: string, button: string, href: string) {
+function html(title: string, body: string, button: string, href: string, label = "Capybaroar") {
   return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;color:#0A0A0A;max-width:520px">
-<p style="font-size:13px;font-weight:600;letter-spacing:.18em">CAPYBAROAR</p>
+<p style="font-size:13px;font-weight:600;letter-spacing:.18em">${esc(label.toUpperCase())}</p>
 <h1 style="font-size:20px;font-weight:600">${esc(title)}</h1>
 <p style="font-size:14px;color:#737373;line-height:1.5;white-space:pre-line">${esc(body)}</p>
 <p><a href="${href}" style="display:inline-block;background:#FFE100;color:#0A0A0A;border:1px solid #0A0A0A;padding:10px 16px;text-decoration:none;font-weight:600;font-size:13px">${esc(button)}</a></p>
@@ -40,11 +40,12 @@ export async function emailsOf(userIds: string[]) {
   return emails;
 }
 
-/** One email in the house style: a title, a line and a button. Off until SMTP_HOST is set; never throws. */
-export async function sendEmail(to: string[], subject: string, mail: { title: string; body: string; button: string; href: string }) {
+/** One email in the house style: a title, a line and a button. `label` replaces the name on top (a white-label
+ *  report). Off until SMTP_HOST is set; never throws. */
+export async function sendEmail(to: string[], subject: string, mail: { title: string; body: string; button: string; href: string; label?: string }) {
   if (!mailReady() || !to.length) return false;
   try {
-    await mailer().sendMail({ from: process.env.ALERT_FROM || process.env.SMTP_USER, to, subject, html: html(mail.title, mail.body, mail.button, mail.href) });
+    await mailer().sendMail({ from: process.env.ALERT_FROM || process.env.SMTP_USER, to, subject, html: html(mail.title, mail.body, mail.button, mail.href, mail.label) });
     return true;
   } catch (e) {
     console.error("mail:", e instanceof Error ? e.message : e);

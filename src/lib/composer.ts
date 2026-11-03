@@ -41,15 +41,23 @@ export async function rewrite(workspaceId: string, text: string, how: Rewrite, n
   ]
     .filter(Boolean)
     .join("\n");
+  const out = await ask(system, [{ type: "text", text: `${REWRITES[how]}\n\n<post>\n${text}\n</post>` }], 4000);
+  if (out === null) throw new Error("Claude can't rewrite this post");
+  return out;
+}
+
+/** One Claude call that answers with text. Null when Claude declines. */
+async function ask(system: string, content: Anthropic.Beta.BetaContentBlockParam[], maxTokens: number, effort?: "low"): Promise<string | null> {
   const res = await new Anthropic().beta.messages.create({
     model: MODEL,
-    max_tokens: 4000,
+    max_tokens: maxTokens,
     system,
-    messages: [{ role: "user", content: `${REWRITES[how]}\n\n<post>\n${text}\n</post>` }],
+    messages: [{ role: "user", content }],
+    ...(effort ? { output_config: { effort } } : {}),
     betas: ["server-side-fallback-2026-07-01"],
     ...({ fallbacks: "default" } as object),
   } as Anthropic.Beta.MessageCreateParamsNonStreaming);
-  if (res.stop_reason === "refusal") throw new Error("Claude can't rewrite this post");
+  if (res.stop_reason === "refusal") return null;
   const out = res.content
     .filter((b) => b.type === "text")
     .map((b) => (b as { text: string }).text)
@@ -57,6 +65,41 @@ export async function rewrite(workspaceId: string, text: string, how: Rewrite, n
     .trim();
   if (!out) throw new Error("No text came back, try again");
   return out;
+}
+
+// Pictures Claude can look at: these types, up to 5 MB.
+const SEES = /^image\/(jpeg|png|gif|webp)$/;
+const SEE_BYTES = 5 * 1024 * 1024;
+
+/**
+ * A caption for a picture or video in the library (bulk upload). Claude looks at pictures; for videos and large
+ * files it works from the file name and the notes.
+ */
+export async function caption(workspaceId: string, mediaId: string, notes: string, network: NetworkId | null): Promise<string> {
+  await assertCanUseAgent(workspaceId);
+  const db = adminClient();
+  const { data: m } = await db.from("media").select("path, name, mime, size").eq("id", mediaId).eq("workspace_id", workspaceId).maybeSingle();
+  if (!m) throw new Error("File not found");
+  const n = network ? networkOf(network) : null;
+  const content: Anthropic.Beta.BetaContentBlockParam[] = [];
+  if (SEES.test(m.mime as string) && Number(m.size) <= SEE_BYTES) {
+    const { data: blob } = await db.storage.from("media").download(m.path as string);
+    if (blob) content.push({ type: "image", source: { type: "base64", media_type: m.mime as "image/jpeg", data: Buffer.from(await blob.arrayBuffer()).toString("base64") } });
+  }
+  const system = [
+    "You write social media captions inside Capybaroar.",
+    "Reply with the caption only: no quotes, no notes, no preamble.",
+    "Describe only what is shown or stated in the notes. Never invent facts, numbers, prices, quotes, names or links.",
+    "Write in the language of the notes, or English when there are none. One to three short sentences.",
+    n ? `The post is for ${n.name}, which allows up to ${n.limit} characters. Stay well under it.` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const about = notes.trim().slice(0, 1000);
+  content.push({ type: "text", text: `Write a caption for this ${String(m.mime).startsWith("video/") ? "video" : "picture"}.\n<file_name>${String(m.name).slice(0, 200)}</file_name>${about ? `\n<notes>\n${about}\n</notes>` : ""}` });
+  const out = await ask(system, content, 1000, "low");
+  if (out === null) throw new Error("Claude can't write a caption for this file");
+  return n && [...out].length > n.limit ? [...out].slice(0, n.limit).join("") : out;
 }
 
 export type Snippet = { id: string; name: string; body: string };

@@ -27,6 +27,12 @@ export type Publishable = { text: string; media: MediaFile[]; settings: Record<s
 /** `note` reports something that went wrong after the post was already out (a first comment that failed). */
 export type Published = { id: string; url?: string | null; note?: string | null };
 
+/**
+ * A published post as unpublish sees it: `id` and `url` exactly as publish returned them, when it went out, and how
+ * many files and characters it had (Telegram sends an album or a long caption as several messages).
+ */
+export type Remote = { id: string; url: string | null; at: Date | null; media: number; text: string };
+
 /** One published post's results. Leave out (or null) whatever the network doesn't report. */
 export type PostStats = {
   views?: number | null;
@@ -131,6 +137,14 @@ export type Provider = {
   postStats?: (s: Secret, accountId: string, remoteId: string) => Promise<PostStats>;
   /** Comments, replies, mentions and messages for the Inbox. */
   inbox?: Inbox;
+  /**
+   * Delete a published post on the network. Missing when the network has no way to (Instagram, TikTok): people delete
+   * it in the app. A post that's already gone counts as deleted: return, or let `call` throw NotFound (a 404).
+   * Throw AuthError (reconnect) or Error (it stays, with the message shown). May return a note about what's left.
+   */
+  unpublish?: (s: Secret, accountId: string, r: Remote) => Promise<{ note?: string | null } | void>;
+  /** Why this post can't be deleted from here: an id that wasn't kept, a permission the channel wasn't given, too old. */
+  unpublishable?: (s: Secret, r: Remote) => string | null;
 };
 
 /** Plain text from a little HTML (Mastodon statuses): line breaks kept, tags dropped, entities decoded. */
@@ -149,7 +163,10 @@ export class AuthError extends Error {}
 /** A failure that a retry won't fix: the post itself is wrong for this network. */
 export class PostError extends Error {}
 
-/** fetch that turns network errors into AuthError, PostError or a plain (retryable) Error. */
+/** The network answered 404: what was asked for isn't there (a deleted post). Still a plain, retryable Error elsewhere. */
+export class NotFound extends Error {}
+
+/** fetch that turns network errors into AuthError, PostError, NotFound (404) or a plain (retryable) Error. */
 export async function call<T = Record<string, unknown>>(url: string, init: RequestInit = {}, opts: { what: string } = { what: "Request" }): Promise<T> {
   const res = await fetch(url, { ...init, signal: init.signal ?? AbortSignal.timeout(60000) });
   const text = await res.text();
@@ -164,6 +181,7 @@ export async function call<T = Record<string, unknown>>(url: string, init: Reque
   const fb = (body as { error?: { code?: number } } | null)?.error?.code;
   if (res.status === 401 || fb === 190) throw new AuthError(`${opts.what}: ${msg}`);
   if (res.status === 400 || res.status === 403 || res.status === 422) throw new PostError(`${opts.what}: ${msg}`);
+  if (res.status === 404) throw new NotFound(`${opts.what}: ${msg}`);
   throw new Error(`${opts.what}: ${msg}`);
 }
 

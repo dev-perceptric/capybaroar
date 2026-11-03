@@ -43,7 +43,7 @@
 <tr><th><code>get_post</code></th><td>One post, with its status and link on each channel</td></tr>
 <tr><th><code>create_posts</code></th><td>Up to 25 posts at once, as drafts unless asked to schedule</td></tr>
 <tr><th><code>update_post</code></th><td>Change a post that hasn't gone out</td></tr>
-<tr><th><code>delete_post</code></th><td>Delete a post</td></tr>
+<tr><th><code>delete_post</code></th><td>Delete a post from Capybaroar. With <code>everywhere: true</code>, delete it on the networks too (all its channels, or <code>channel_ids</code>)</td></tr>
 <tr><th><code>list_media</code></th><td>Files in the media library, to attach by id</td></tr>
 <tr><th><code>upload_media</code></th><td>Add a picture or video from a public link</td></tr>
 <tr><th><code>next_queue_slot</code></th><td>The next free time in the posting queue</td></tr>
@@ -63,7 +63,8 @@
 <tr><th><code>POST /posts</code></th><td>Make a post</td></tr>
 <tr><th><code>GET /posts/{id}</code></th><td>One post</td></tr>
 <tr><th><code>PATCH /posts/{id}</code></th><td>Change the fields you send</td></tr>
-<tr><th><code>DELETE /posts/{id}</code></th><td>Delete a post</td></tr>
+<tr><th><code>DELETE /posts/{id}</code></th><td>Delete a post from Capybaroar</td></tr>
+<tr><th><code>DELETE /posts/{id}?everywhere=true&amp;channels=</code></th><td>Delete a post on the networks it went out on (all, or the channel ids in <code>channels</code>, comma-separated)</td></tr>
 <tr><th><code>GET /media</code></th><td>Media library</td></tr>
 <tr><th><code>POST /media</code></th><td>Add a file from a link</td></tr>
 <tr><th><code>GET /queue</code></th><td>Next free queue time</td></tr>
@@ -98,6 +99,20 @@
 <tr><th><code>settings</code></th><td>Network settings by channel id, like a first comment, a YouTube title or a Pinterest board</td></tr>
 </tbody></table></div>
 <p>Posts get the same checks as in the app: character limits, required settings, media, plan limits, brands and approvals. In a brand that needs approval, an editor's post waits in review.</p>
+
+<p><strong>Delete a post</strong></p>
+<p>A plain delete removes the post from Capybaroar only: what already went out stays on the networks. With <code>everywhere</code>, each channel is deleted on its network and the answer lists what happened on each one. The post stays in Capybaroar with the status <code>deleted</code> once every channel is, so analytics keep its results; list_posts leaves it out. Delete it again without <code>everywhere</code> to remove the record.</p>
+<pre><code>curl -X DELETE "https://app.capybaroar.com/api/v1/posts/POST_ID?everywhere=true" \
+  -H "Authorization: Bearer cbr_..."
+
+{
+  "deleted": false,
+  "channels": [
+    { "channel_id": "...", "name": "Acme", "network": "linkedin-page", "result": "deleted", "error": null, "note": null, "url": "https://www.linkedin.com/feed/update/..." },
+    { "channel_id": "...", "name": "acme", "network": "instagram", "result": "manual", "error": "Delete it in the Instagram app", "note": null, "url": "https://www.instagram.com/p/..." }
+  ]
+}</code></pre>
+<p><code>result</code> is <code>deleted</code>, <code>failed</code> (with the error; try again), <code>manual</code> (the network can't delete from here: open <code>url</code> and delete it there; Instagram and TikTok always) or <code>skipped</code> (nothing went out on that channel). <code>deleted</code> is true once every channel is deleted.</p>
 
 <h2>Upload a file by link</h2>
 <p>Send a public link and Capybaroar downloads the file into the media library. It takes JPG, PNG, GIF, WebP, MP4 and MOV up to 250 MB, judged by the file itself. Links to private networks are refused.</p>

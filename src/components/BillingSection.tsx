@@ -6,7 +6,7 @@ import { Loader } from "./Loader";
 import { tell } from "./Dialogs";
 import { fmtDate, fmtNum } from "@/lib/format";
 
-export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean };
+export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean };
 
 export type BillingInfo = {
   plan: PlanCard["id"];
@@ -94,6 +94,7 @@ export function BillingSection({ info }: { info: BillingInfo }) {
                 <li>{limit(p.channels)} channels</li>
                 <li>{p.postsPerMonth == null ? "Unlimited posts" : `${fmtNum(p.postsPerMonth)} posts a month`}</li>
                 <li>{p.agent ? "Agent" : "No agent"}</li>
+                <li>{p.whiteLabel ? "White-label reports" : p.reports ? "Reports" : "No reports"}</li>
               </ul>
               {info.ready && info.canManage && p.id !== "free" && !current && !info.paying && higher ? (
                 <Button variant={primary ? "primary" : "ghost"} className="mt-auto" disabled={!!busy} onClick={() => run(p.id, "/api/stripe/checkout", { plan: p.id })}>

@@ -102,6 +102,25 @@ export const telegram: Provider = {
       return { ...out, note: `The text after the media wasn't sent: ${e instanceof Error ? e.message : String(e)}` };
     }
   },
+  // Telegram lets a bot delete its messages for 48 hours; after that only an admin with "Delete messages" can, in a
+  // channel or supergroup. A basic group or a private chat has no such right, so it's done in Telegram.
+  unpublishable: (s, r) => {
+    if (!/^\d+$/.test(r.id)) return "Capybaroar didn't keep this message's id";
+    const old = r.at && Date.now() - r.at.getTime() > 48 * 3600000;
+    return old && s.extra?.type !== "channel" && s.extra?.type !== "supergroup" ? "Delete it in Telegram" : null;
+  },
+  // deleteMessage for the first message. An album's other pictures and a long text's follow-up weren't kept.
+  unpublish: async (_s, chatId, r) => {
+    try {
+      await tg<boolean>("deleteMessage", { chat_id: chatId, message_id: Number(r.id) }, "Telegram delete");
+    } catch (e) {
+      if (e instanceof PostError && /message to delete not found/i.test(e.message)) return;
+      if (e instanceof PostError && /can't be deleted/i.test(e.message)) throw new PostError("Telegram won't let the bot delete this message. Delete it in Telegram.");
+      throw e;
+    }
+    const more = r.media > 1 || (r.media > 0 && [...r.text].length > CAPTION);
+    return more ? { note: "Only the first message was deleted. Delete the rest in Telegram." } : undefined;
+  },
   followers: async (_s, chatId) => {
     const n = await tg<number>("getChatMemberCount", { chat_id: chatId }, "Telegram members");
     return typeof n === "number" ? n : null;

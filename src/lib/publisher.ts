@@ -29,6 +29,8 @@ export type TargetCtx = {
   text: string;
   settings: Record<string, string>;
   mediaIds: string[];
+  /** Deleted on the network (Delete everywhere): no more results to read. */
+  deletedAt?: string | null;
 };
 
 /** A channel as the Inbox reads it: where the last read stopped and when it ran. */
@@ -68,6 +70,8 @@ export interface Store {
   inboxError(channelId: string, error: string): Promise<void>;
   /** Tells the workspace's webhooks a channel's part went out or failed for good. Optional; never stops publishing. */
   event?(type: "post.published" | "post.failed", t: TargetCtx, extra: { url?: string | null; error?: string }): Promise<void>;
+  /** Emails a scheduled report (kind "report"; rules in reportTimes.ts). Throws to retry. */
+  report?(payload: Record<string, string>): Promise<void>;
 }
 
 /** Webhooks are told after the fact: a failure to tell them never touches the post. */
@@ -112,6 +116,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     if (job.kind === "publish") await publishTarget(store, providers, job.payload.targetId);
     else if (job.kind === "stats") await collectStats(store, providers, job.payload.targetId);
     else if (job.kind === "inbox") await collectInbox(store, providers, job.payload.channelId);
+    else if (job.kind === "report") await store.report?.(job.payload);
     await store.jobDone(job.id, null);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -175,7 +180,7 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
 
 async function collectStats(store: Store, providers: (network: string) => Provider | null, targetId: string) {
   const t = await store.target(targetId);
-  if (!t?.remoteId || t.status !== "published") return;
+  if (!t?.remoteId || t.status !== "published" || t.deletedAt) return;
   const p = providers(t.network);
   if (!p?.postStats) return;
   const secret = await store.secret(t.channelId, p);

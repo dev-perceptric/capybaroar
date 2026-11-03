@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, Image as ImageIcon, Inbox, LogOut, Plug, Settings } from "lucide-react";
+import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, FileText, Image as ImageIcon, Inbox, LogOut, Plug, Settings } from "lucide-react";
 import { Avatar, Dot } from "./ui";
 import { Floating } from "./Floating";
 import { tell } from "./Dialogs";
@@ -21,6 +21,7 @@ const SECTIONS = [
       { href: "/channels", label: "Channels", icon: <Plug /> },
       { href: "/agents", label: "Agents", icon: <Bot /> },
       { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
+      { href: "/reports", label: "Reports", icon: <FileText /> },
       { href: "/media", label: "Media", icon: <ImageIcon /> },
     ],
   },

@@ -1,7 +1,7 @@
 // The MCP server: JSON-RPC over plain HTTP POST (MCP's Streamable HTTP, without sessions or streams). Every request is
 // answered on its own, so any server can take it and a restart loses nothing. Pure: it runs the tools through Ops,
 // so tests drive it with fake actions.
-import { ApiError, MAX_BATCH, days, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
+import { ApiError, MAX_BATCH, days, deleteArgs, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
 import { EVENTS } from "./hookRules";
 import type { Ops } from "./types";
 
@@ -74,9 +74,18 @@ export const TOOLS: Tool[] = [
   {
     name: "delete_post",
     title: "Delete a post",
-    description: "Delete a post from Capybaroar. A post that already went out stays on the network.",
-    inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
-    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+    description:
+      "Delete a post. Without everywhere it's removed from Capybaroar only, and a post that already went out stays on the networks. With everywhere: true it's deleted on the networks too and the record stays as deleted; the answer lists each channel's result (deleted, failed with the error, or manual with the link where it must be deleted by hand, like Instagram and TikTok). Ask the user before deleting everywhere.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        everywhere: { type: "boolean", description: "Also delete it on the networks it went out on. Default false." },
+        channel_ids: { type: "array", items: { type: "string" }, description: "With everywhere: only these channels. Default: every channel it went out on." },
+      },
+      required: ["id"],
+    },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
   },
   { name: "list_media", title: "List media", description: "The newest files in the media library, with ids to attach to posts.", inputSchema: { type: "object", properties: {} }, annotations: read },
   {
@@ -164,9 +173,13 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       const { id: postId, ...rest } = args;
       return { post: await ops.update(id(postId), postFields(rest, true)) };
     }
-    case "delete_post":
-      await ops.remove(id(args.id));
+    case "delete_post": {
+      const postId = id(args.id);
+      const d = deleteArgs(args.everywhere, args.channel_ids);
+      if (d.everywhere) return await ops.unpublish(postId, d.channelIds);
+      await ops.remove(postId);
       return { deleted: true };
+    }
     case "list_media":
       return { media: await ops.media() };
     case "upload_media": {

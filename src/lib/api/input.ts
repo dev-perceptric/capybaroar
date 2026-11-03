@@ -177,3 +177,19 @@ export function webhookInput(body: unknown, events: readonly string[]): { url: U
   for (const e of picked) if (typeof e !== "string" || !events.includes(e)) throw bad(`Unknown event "${String(e)}". Use ${events.join(", ")}`);
   return { url, events: picked as string[] };
 }
+
+/**
+ * How to delete a post. Without `everywhere` only Capybaroar's record goes (a post that went out stays on the
+ * networks). With it, the post is deleted on its channels: all of them, or the ones in `channel_ids` (a list, or the
+ * REST query's comma-separated ids). `everywhere` takes true or false, or "true"/"false" from a query string.
+ */
+export function deleteArgs(everywhereV: unknown, channelsV: unknown): { everywhere: boolean; channelIds: string[] | null } {
+  const flag = everywhereV == null || everywhereV === "" ? false : everywhereV === true || everywhereV === "true" ? true : everywhereV === false || everywhereV === "false" ? false : null;
+  if (flag === null) throw bad("everywhere must be true or false");
+  if (channelsV == null || channelsV === "") return { everywhere: flag, channelIds: null };
+  if (!flag) throw bad("channel_ids only goes with everywhere: true");
+  const list = typeof channelsV === "string" ? channelsV.split(",").map((x) => x.trim()).filter(Boolean) : channelsV;
+  const out = ids(list, "channel_ids", MAX_CHANNELS);
+  if (!out.length) throw bad("Pick at least one channel");
+  return { everywhere: true, channelIds: out };
+}

@@ -10,11 +10,18 @@ import { STATS_AFTER_MIN, runDue, runInbox, type Job, type Store, type TargetCtx
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
 import { deliverDue, emit, pruneDeliveries } from "./webhooks";
+import { queueReports, runReport } from "./reports";
+import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
+import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
-// records follower counts.
+// records follower counts. Every server runs this: jobs are claimed under a lock (and kept locked while they run),
+// and the 10-minute and hourly work goes to whichever server takes that period's turn (ops.ts).
 const WORKER = `${hostname()}:${process.pid}`;
+// Jobs claimed and still running, publish and stats apart from Inbox reads (each loop lets go of its own when it ends).
+const held = new HeldJobs();
+const heldInbox = new HeldJobs();
 
 const canRefresh = (p: Provider, s: Secret) => (p.refreshable ? p.refreshable(s) : Boolean(s.refreshToken));
 
@@ -22,6 +29,7 @@ type Row = {
   id: string;
   status: string;
   remote_id: string | null;
+  deleted_at: string | null;
   post_id: string;
   workspace_id: string;
   channel_id: string;
@@ -37,23 +45,29 @@ export const supabaseStore: Store = {
   async claim(worker, n) {
     const { data, error } = await adminClient().rpc("claim_jobs", { worker, n });
     if (error) throw new Error(error.message);
+    held.hold((data ?? []).map((j: Job) => j.id));
     return (data ?? []) as Job[];
   },
   async claimInbox(worker, n) {
     const { data, error } = await adminClient().rpc("claim_inbox_jobs", { worker, n });
     if (error) throw new Error(error.message);
+    heldInbox.hold((data ?? []).map((j: Job) => j.id));
     return (data ?? []) as Job[];
   },
   async jobDone(id, error) {
+    held.release(id);
+    heldInbox.release(id);
     await adminClient().from("jobs").update({ done_at: new Date().toISOString(), locked_at: null, last_error: error }).eq("id", id);
   },
   async jobRetry(id, runAfter, error) {
+    held.release(id);
+    heldInbox.release(id);
     await adminClient().from("jobs").update({ run_after: runAfter.toISOString(), locked_at: null, last_error: error }).eq("id", id);
   },
   async target(id) {
     const { data } = await adminClient()
       .from("post_targets")
-      .select("id, status, remote_id, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids, status), channels(network, account_id, name, status)")
+      .select("id, status, remote_id, deleted_at, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids, status), channels(network, account_id, name, status)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -73,6 +87,7 @@ export const supabaseStore: Store = {
       text: r.text ?? r.posts.text,
       settings: r.settings ?? {},
       mediaIds: r.posts.media_ids ?? [],
+      deletedAt: r.deleted_at,
     };
   },
   async publishing(t) {
@@ -220,6 +235,7 @@ export const supabaseStore: Store = {
   async inboxError(channelId, error) {
     await adminClient().from("inbox_state").upsert({ channel_id: channelId, error: error.slice(0, 500) });
   },
+  report: runReport,
 };
 
 const BATCH = 5;
@@ -238,7 +254,9 @@ export function startRunner() {
       while ((await runDue(supabaseStore, providerOf, WORKER, BATCH)) === BATCH && Date.now() < until);
     } catch (e) {
       console.error("runner:", e);
+      void trackError(e, "runner: publish");
     } finally {
+      held.clear();
       busy = false;
     }
   };
@@ -252,12 +270,19 @@ export function startRunner() {
       await runInbox(supabaseStore, providerOf, WORKER);
     } catch (e) {
       console.error("inbox:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: inbox");
     } finally {
+      heldInbox.clear();
       reading = false;
     }
   };
   setInterval(read, 15000);
-  const queueReads = () => queueInbox().catch((e) => console.error("inbox queue:", e instanceof Error ? e.message : e));
+  // One server per period: the Inbox queue at most every 9 minutes, upkeep every 55 to 60 minutes (looked at every 5).
+  const queueReads = () =>
+    onePerPeriod(opsStore, "inbox_queue", 540, 600, WORKER, queueInbox).catch((e) => {
+      console.error("inbox queue:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: inbox queue");
+    });
   setInterval(queueReads, 600000);
   setTimeout(queueReads, 45000);
   // Webhooks: their own loop, so a slow URL never holds up publishing.
@@ -270,21 +295,50 @@ export function startRunner() {
       while ((await deliverDue(10)) === 10 && Date.now() < until);
     } catch (e) {
       console.error("webhooks:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: webhooks");
     } finally {
       hooking = false;
     }
   };
   setInterval(hooks, 10000);
-  setInterval(() => pruneDeliveries().catch(() => undefined), 3600000);
-  const hourly = () => upkeep().catch((e) => console.error("upkeep:", e));
-  setInterval(hourly, 3600000);
+  const hourly = () =>
+    onePerPeriod(opsStore, "upkeep", 3300, 7200, WORKER, async () => {
+      await upkeep();
+      await cleanupOps();
+      await pruneDeliveries();
+    }).catch((e) => {
+      console.error("upkeep:", e);
+      void trackError(e, "runner: upkeep");
+    });
+  // Each report period is claimed in the database, so every machine may check: only one sends.
+  const reports = () => queueReports().catch((e) => {
+    console.error("reports:", e instanceof Error ? e.message : e);
+    void trackError(e, "runner: reports");
+  });
+  setInterval(() => {
+    hourly();
+    void reports();
+  }, 300000);
   setTimeout(hourly, 30000);
+  // Jobs still running keep their lock; the beat tells /api/health this server's runner is alive.
+  setInterval(() => void keepHeld(opsStore, held, WORKER).then(() => keepHeld(opsStore, heldInbox, WORKER)), 60000);
+  const bootedAt = new Date();
+  const alive = () => beat(bootedAt).catch((e) => console.error("beat:", e instanceof Error ? e.message : e));
+  setInterval(alive, 60000);
+  void alive();
+  // Every 30 minutes: RSS feeds and evergreen posts (src/lib/feeds.ts).
+  const content = () => import("./feeds").then((m) => m.contentUpkeep()).catch((e) => {
+      console.error("content:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: content");
+    });
+  setInterval(content, 1800000);
+  setTimeout(content, 60000);
   console.log(`runner started on ${WORKER}`);
 }
 
 /**
  * Every 10 minutes: one Inbox read for each active channel whose network has an Inbox, unless one is waiting or ran
- * in the last 9 minutes (every server runs this, so the second one to look finds the first one's reads).
+ * in the last 9 minutes (one server a period takes the turn; a server that looks later finds its reads).
  */
 export async function queueInbox() {
   const db = adminClient();

@@ -73,4 +73,24 @@ export const discord: Provider = {
     const guild = m.guild_id ?? (typeof s.extra?.guild_id === "string" ? s.extra.guild_id : null);
     return { id: m.id, url: guild ? `https://discord.com/channels/${guild}/${m.channel_id}/${m.id}` : null };
   },
+  // Without the message id (publish kept "{channel}:{time}") there is nothing to delete.
+  unpublishable: (_s, r) => (/^\d+$/.test(r.id) ? null : "Discord didn't return this message's id"),
+  // DELETE /webhooks/{id}/{token}/messages/{message.id}: 204. A 404 is either the message (10008, already deleted)
+  // or the webhook itself (10015, the channel must be connected again).
+  unpublish: async (s, _accountId, r) => {
+    const res = await fetch(`${s.accessToken.replace(/\/$/, "")}/messages/${r.id}`, { method: "DELETE", signal: AbortSignal.timeout(30000) });
+    if (res.ok) return;
+    const body = await res.text();
+    let code = 0;
+    try {
+      code = Number((JSON.parse(body) as { code?: number }).code ?? 0);
+    } catch {
+      // not JSON
+    }
+    if (res.status === 404 && code === 10008) return;
+    const msg = `Discord delete: ${res.status} ${body.slice(0, 300)}`;
+    if (res.status === 401 || (res.status === 404 && code === 10015)) throw new AuthError(msg);
+    if (res.status === 403) throw new PostError(msg);
+    throw new Error(msg);
+  },
 };

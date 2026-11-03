@@ -8,11 +8,13 @@ type Row = {
   published_at: string;
   text: string | null;
   url: string | null;
+  deleted_at: string | null;
   posts: { text: string; media_ids: string[] };
   post_metrics: Metrics | Metrics[] | null;
 };
 
-export type TopPost = { id: string; channelId: string; at: string; text: string; url: string | null; format: Format; m: Metrics | null; rate: number | null };
+/** `deleted`: deleted on the network since; its numbers stay. */
+export type TopPost = { id: string; channelId: string; at: string; text: string; url: string | null; deleted: boolean; format: Format; m: Metrics | null; rate: number | null };
 export type Format = "video" | "picture" | "text";
 export type Totals = { posts: number; views: number; engagement: number; rate: number | null; withStats: number };
 
@@ -21,7 +23,7 @@ const one = <T,>(v: T | T[] | null): T | null => (Array.isArray(v) ? (v[0] ?? nu
 /** People who saw it: reach when the network gives it, else views, else impressions. */
 const seen = (m: Metrics | null) => (m ? (m.reach ?? m.views ?? m.impressions ?? null) : null);
 
-const FULL = "id, channel_id, published_at, text, url, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
+const FULL = "id, channel_id, published_at, text, url, deleted_at, posts(text, media_ids), post_metrics(views, reach, impressions, likes, comments, shares, saves, clicks, engagement)";
 /** Enough for best times: when it went out and how it did. */
 const TIMES = "published_at, post_metrics(engagement)";
 /** One channel, a brand's channels (a list), or every channel (null). */
@@ -115,12 +117,14 @@ export async function suggestedTimes(workspaceId: string, timeZone: string) {
     .map(({ day, hour }) => ({ day, hour }));
 }
 
-export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: Channels) {
+/** The last `days` days up to now, or a fixed `span` (a report's whole days); either is compared with the same length before it. */
+export async function analytics(workspaceId: string, timeZone: string, days: number, channelId: Channels, span?: { from: Date; to: Date }) {
   const db = adminClient();
-  const now = new Date();
-  const from = new Date(now.getTime() - days * DAY);
-  const before = new Date(from.getTime() - days * DAY);
+  const now = span?.to ?? new Date();
+  const from = span?.from ?? new Date(now.getTime() - days * DAY);
+  const before = new Date(from.getTime() - (now.getTime() - from.getTime()));
   let fq = db.from("metrics").select("channel_id, day, followers").eq("workspace_id", workspaceId).gte("day", before.toISOString().slice(0, 10)).order("day");
+  if (span) fq = fq.lte("day", dateIn(now.toISOString(), timeZone));
   if (Array.isArray(channelId)) fq = fq.in("channel_id", channelId);
   else if (channelId) fq = fq.eq("channel_id", channelId);
   // Best times look at the last 90 days: on the 90-day view that's the current range itself.
@@ -141,7 +145,10 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
   };
 
   const daily = new Map<string, { posts: number; engagement: number }>();
-  for (let t = from.getTime(); t <= now.getTime(); t += DAY) daily.set(dateIn(new Date(t).toISOString(), timeZone), { posts: 0, engagement: 0 });
+  // A span's days are whole: step from noon of its first day and stop before `to`, so a daylight saving change
+  // never adds or drops one.
+  if (span) for (let t = from.getTime() + DAY / 2; t < now.getTime(); t += DAY) daily.set(dateIn(new Date(t).toISOString(), timeZone), { posts: 0, engagement: 0 });
+  else for (let t = from.getTime(); t <= now.getTime(); t += DAY) daily.set(dateIn(new Date(t).toISOString(), timeZone), { posts: 0, engagement: 0 });
   for (const r of cur) {
     const d = daily.get(dateIn(r.published_at, timeZone));
     if (!d) continue;
@@ -152,7 +159,7 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
   const top: TopPost[] = cur.map((r) => {
     const m = one(r.post_metrics);
     const s = seen(m);
-    return { id: r.id, channelId: r.channel_id, at: r.published_at, text: r.text ?? r.posts.text, url: r.url, format: formatOf(r), m, rate: m && s ? m.engagement / s : null };
+    return { id: r.id, channelId: r.channel_id, at: r.published_at, text: r.text ?? r.posts.text, url: r.deleted_at ? null : r.url, deleted: !!r.deleted_at, format: formatOf(r), m, rate: m && s ? m.engagement / s : null };
   });
 
   const formats = (["video", "picture", "text"] as Format[]).map((f) => {
@@ -160,16 +167,24 @@ export async function analytics(workspaceId: string, timeZone: string, days: num
     return { format: f, posts: top.filter((t) => t.format === f).length, avg: list.length ? list.reduce((s, t) => s + t.m!.engagement, 0) / list.length : null };
   });
 
+  const perChannel = new Map<string, Row[]>();
+  for (const r of cur) {
+    const list = perChannel.get(r.channel_id);
+    if (list) list.push(r);
+    else perChannel.set(r.channel_id, [r]);
+  }
+
   return {
     days,
     current: totals(cur),
+    byChannel: [...perChannel.entries()].map(([channelId, rows]) => ({ channelId, ...totals(rows) })),
     previous: totals(prev),
     daily: [...daily.entries()].map(([day, v]) => ({ day, ...v })),
     best,
     top: top.filter((t) => t.m).sort((a, b) => b.m!.engagement - a.m!.engagement).slice(0, 10),
     formats,
     followers: (followers ?? []) as { channel_id: string; day: string; followers: number | null }[],
-    since: from.toISOString().slice(0, 10),
+    since: span ? dateIn(from.toISOString(), timeZone) : from.toISOString().slice(0, 10),
   };
 }
 
