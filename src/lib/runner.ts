@@ -9,6 +9,7 @@ import { AuthError, type Provider, type Secret } from "./providers/types";
 import { STATS_AFTER_MIN, runDue, runInbox, type Job, type Store, type TargetCtx } from "./publisher";
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
+import { deliverDue, emit, pruneDeliveries } from "./webhooks";
 import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
@@ -109,7 +110,20 @@ export const supabaseStore: Store = {
     return data ? supabaseStore.target(targetId) : null;
   },
   async reconnect(channelId) {
-    await adminClient().from("channels").update({ status: "reconnect" }).eq("id", channelId);
+    // Webhooks hear about it once, when the channel changes, not on every try that finds it signed out.
+    const { data } = await adminClient().from("channels").update({ status: "reconnect" }).eq("id", channelId).neq("status", "reconnect").select("id, workspace_id, name, network, brand_id");
+    for (const c of data ?? []) await emit(c.workspace_id as string, "channel.reconnect", { channel_id: c.id, channel_name: c.name, network: c.network, brand_id: c.brand_id });
+  },
+  async event(type, t, extra) {
+    const { data: p } = await adminClient().from("posts").select("brand_id").eq("id", t.postId).maybeSingle();
+    await emit(t.workspaceId, type, {
+      post_id: t.postId,
+      brand_id: (p?.brand_id as string | null | undefined) ?? null,
+      channel_id: t.channelId,
+      channel_name: t.channelName,
+      network: t.network,
+      ...(type === "post.published" ? { url: extra.url ?? null } : { error: extra.error ?? null }),
+    });
   },
   settle: settlePost,
   async secret(channelId, p) {
@@ -271,10 +285,27 @@ export function startRunner() {
     });
   setInterval(queueReads, 600000);
   setTimeout(queueReads, 45000);
+  // Webhooks: their own loop, so a slow URL never holds up publishing.
+  let hooking = false;
+  const hooks = async () => {
+    if (hooking) return;
+    hooking = true;
+    try {
+      const until = Date.now() + 30000;
+      while ((await deliverDue(10)) === 10 && Date.now() < until);
+    } catch (e) {
+      console.error("webhooks:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: webhooks");
+    } finally {
+      hooking = false;
+    }
+  };
+  setInterval(hooks, 10000);
   const hourly = () =>
     onePerPeriod(opsStore, "upkeep", 3300, 7200, WORKER, async () => {
       await upkeep();
       await cleanupOps();
+      await pruneDeliveries();
     }).catch((e) => {
       console.error("upkeep:", e);
       void trackError(e, "runner: upkeep");

@@ -37,6 +37,8 @@ export type ApiUnpublish = {
   channels: { channel_id: string; name: string; network: string; result: "deleted" | "failed" | "manual" | "skipped"; error: string | null; note: string | null; url: string | null }[];
 };
 
+export type ApiWebhook = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
+
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
 
 export type ApiAnalytics = {
@@ -62,6 +64,13 @@ export interface Ops {
   media(): Promise<ApiMedia[]>;
   nextSlot(): Promise<string>;
   analytics(days: 7 | 30 | 90, channelId: string | null): Promise<ApiAnalytics>;
+  /** Download a picture or video from a public link into the media library. */
+  uploadFromLink(url: URL, alt: string | null): Promise<ApiMedia>;
+  webhooks(): Promise<ApiWebhook[]>;
+  createWebhook(url: URL, events: string[]): Promise<{ webhook: ApiWebhook; secret: string }>;
+  setWebhook(id: string, enabled: boolean): Promise<ApiWebhook>;
+  deleteWebhook(id: string): Promise<void>;
+  testWebhook(id: string): Promise<void>;
 }
 
 /** Who a key belongs to, as the actions see it. */

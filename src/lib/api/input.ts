@@ -141,6 +141,43 @@ export function days(v: unknown): 7 | 30 | 90 {
 
 export const optionalId = (v: unknown, what: string) => (v == null || v === "" ? null : id(v, what));
 
+/** A link to a file to add to the media library. */
+export function mediaLink(body: unknown): { url: URL; alt: string | null } {
+  if (!isObject(body)) throw bad("Send a JSON object");
+  for (const k of Object.keys(body)) if (k !== "url" && k !== "alt") throw bad(`Unknown field "${k}"`);
+  const url = link(body.url, ["http:", "https:"]);
+  if (body.alt !== undefined && body.alt !== null && typeof body.alt !== "string") throw bad("alt must be a string");
+  const alt = typeof body.alt === "string" && body.alt.trim() ? body.alt.trim().slice(0, 1000) : null;
+  return { url, alt };
+}
+
+/** A web address the server will call: the right scheme, no password in it, not too long. */
+export function link(v: unknown, schemes: string[], what = "url"): URL {
+  if (typeof v !== "string" || !v.trim()) throw bad(`${what} is required`);
+  if (v.length > 2000) throw bad(`${what} is too long`);
+  let u: URL;
+  try {
+    u = new URL(v.trim());
+  } catch {
+    throw bad(`${what} isn't a valid web address`);
+  }
+  if (!schemes.includes(u.protocol)) throw bad(`${what} must start with ${schemes.map((s) => `${s}//`).join(" or ")}`);
+  if (u.username || u.password) throw bad(`${what} can't have a user name or password in it`);
+  if (!u.hostname) throw bad(`${what} needs a host`);
+  return u;
+}
+
+/** A webhook to add: an https URL and the events it wants. */
+export function webhookInput(body: unknown, events: readonly string[]): { url: URL; events: string[] } {
+  if (!isObject(body)) throw bad("Send a JSON object");
+  for (const k of Object.keys(body)) if (k !== "url" && k !== "events") throw bad(`Unknown field "${k}"`);
+  const url = link(body.url, ["https:"]);
+  if (!Array.isArray(body.events) || !body.events.length) throw bad(`events must be a list of one or more of ${events.join(", ")}`);
+  const picked = [...new Set(body.events)];
+  for (const e of picked) if (typeof e !== "string" || !events.includes(e)) throw bad(`Unknown event "${String(e)}". Use ${events.join(", ")}`);
+  return { url, events: picked as string[] };
+}
+
 /**
  * How to delete a post. Without `everywhere` only Capybaroar's record goes (a post that went out stays on the
  * networks). With it, the post is deleted on its channels: all of them, or the ones in `channel_ids` (a list, or the

@@ -68,8 +68,19 @@ export interface Store {
   closeThread(channelId: string, threadId: string, before: Date): Promise<void>;
   /** Keeps why reading stopped (a missing permission) to show on the channel. */
   inboxError(channelId: string, error: string): Promise<void>;
+  /** Tells the workspace's webhooks a channel's part went out or failed for good. Optional; never stops publishing. */
+  event?(type: "post.published" | "post.failed", t: TargetCtx, extra: { url?: string | null; error?: string }): Promise<void>;
   /** Emails a scheduled report (kind "report"; rules in reportTimes.ts). Throws to retry. */
   report?(payload: Record<string, string>): Promise<void>;
+}
+
+/** Webhooks are told after the fact: a failure to tell them never touches the post. */
+async function tell(store: Store, type: "post.published" | "post.failed", t: TargetCtx, extra: { url?: string | null; error?: string }) {
+  try {
+    await store.event?.(type, t, extra);
+  } catch {
+    // the post is already saved; a missed webhook is logged by the store
+  }
 }
 
 /** The Inbox looks back at most 7 days, and 6 hours before the last read for items the network shows late. */
@@ -117,6 +128,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
         if (t) {
           await store.settle(t.postId);
           await store.alert(e instanceof AuthError ? "reconnect" : "post_failed", t, msg);
+          await tell(store, "post.failed", t, { error: msg });
         }
       }
     } else {
@@ -132,7 +144,10 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
   if (!t) return;
   // Already out (a retry after the post went through): never post twice.
   if (t.status === "published" || t.remoteId) {
-    if (t.status !== "published") await store.published(t, { id: t.remoteId! });
+    if (t.status !== "published") {
+      await store.published(t, { id: t.remoteId! });
+      await tell(store, "post.published", t, { url: null });
+    }
     await store.settle(t.postId);
     return;
   }
@@ -155,6 +170,7 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
   // The post is live. Saving that is the one step that must not fail, or a retry would post again: try hard.
   await saveHard(() => store.published(t, out));
   await store.settle(t.postId);
+  await tell(store, "post.published", t, { url: out.url ?? null });
   try {
     await store.statsLater(t);
   } catch {

@@ -10,6 +10,7 @@ import { assertCanSchedule } from "./billing";
 import { mayUseBrand } from "./brands";
 import { sendReviewMail } from "./alerts";
 import { sendsToReview } from "./publisher";
+import { emit } from "./webhooks";
 import type { Role } from "./session";
 
 /** "deleted": deleted on every channel it went out on (Delete everywhere). Kept for Analytics, off the calendar. */
@@ -165,7 +166,10 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
     if (error) throw new Error(error.message);
     if (status === "scheduled") for (const t of targets ?? []) await enqueue("publish", { postId: id, targetId: t.id }, at!);
   }
-  if (review && cur?.status !== "review") await sendReviewMail("submitted", { workspaceId, brandId, brandName: (brand?.name as string | undefined) ?? "brand", text: row.text, authorId: userId });
+  if (review && cur?.status !== "review") {
+    await sendReviewMail("submitted", { workspaceId, brandId, brandName: (brand?.name as string | undefined) ?? "brand", text: row.text, authorId: userId });
+    await emit(workspaceId, "post.in_review", { post_id: id, brand_id: brandId, publish_at: row.publish_at, text: row.text });
+  }
   return { id: id!, publishAt: at?.toISOString() ?? null, status };
 }
 
@@ -278,6 +282,7 @@ export async function approvePost(workspaceId: string, id: string, by: Reviewer)
   });
   await adminClient().from("post_comments").insert({ post_id: p.id, workspace_id: workspaceId, author: by.userId, author_name: by.name, kind: "approved", body: "" });
   await sendReviewMail("approved", { workspaceId, brandId: p.brand_id, brandName, text: p.text, authorId: p.submitted_by ?? p.created_by });
+  await emit(workspaceId, "post.approved", { post_id: p.id, brand_id: p.brand_id, approved_by: by.name });
 }
 
 /** Send a post in review back to draft, with what should change. */
@@ -292,4 +297,5 @@ export async function rejectPost(workspaceId: string, id: string, by: Reviewer, 
   const { error: e2 } = await db.from("post_comments").insert({ post_id: p.id, workspace_id: workspaceId, author: by.userId, author_name: by.name, kind: "rejected", body });
   if (e2) throw new Error(e2.message);
   await sendReviewMail("rejected", { workspaceId, brandId: p.brand_id, brandName, text: p.text, authorId: p.submitted_by ?? p.created_by, comment: body });
+  await emit(workspaceId, "post.rejected", { post_id: p.id, brand_id: p.brand_id, rejected_by: by.name, comment: body });
 }
