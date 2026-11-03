@@ -29,6 +29,8 @@ export type TargetCtx = {
   text: string;
   settings: Record<string, string>;
   mediaIds: string[];
+  /** Deleted on the network (Delete everywhere): no more results to read. */
+  deletedAt?: string | null;
 };
 
 /** A channel as the Inbox reads it: where the last read stopped and when it ran. */
@@ -162,7 +164,7 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
 
 async function collectStats(store: Store, providers: (network: string) => Provider | null, targetId: string) {
   const t = await store.target(targetId);
-  if (!t?.remoteId || t.status !== "published") return;
+  if (!t?.remoteId || t.status !== "published" || t.deletedAt) return;
   const p = providers(t.network);
   if (!p?.postStats) return;
   const secret = await store.secret(t.channelId, p);

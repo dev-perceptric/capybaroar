@@ -10,6 +10,7 @@ import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
+import { DeletePost } from "./DeletePost";
 import { TextTools, mod, toggleStyle } from "./TextTools";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
@@ -75,6 +76,9 @@ const nextAt = (day: number, hour: number) => {
 export function Composer({ channels, at, post, preset, access = { write: true, approve: false }, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; access?: Access; onClose: () => void; onSaved: () => void }) {
   const locked = !access.write || (post ? !["draft", "review", "scheduled", "failed"].includes(post.status) : false);
   const inReview = post?.status === "review";
+  // A post that went out is deleted on its networks (or only here) from its own dialog.
+  const wentOut = !!post && ["published", "partial", "deleted"].includes(post.status);
+  const [deleting, setDeleting] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   useEffect(() => {
     if (post) loadComments(post.id).then(setComments, () => setComments([]));
@@ -303,7 +307,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       const cmd = e.metaKey || e.ctrlKey;
       const box = e.target instanceof HTMLTextAreaElement && (e.target === sharedArea.current || e.target === chanArea.current) ? e.target : null;
       if (e.key === "Escape") {
-        if (e.defaultPrevented || aiOpen || editing || document.querySelector('[role="menu"],[role="listbox"]')) return;
+        if (e.defaultPrevented || aiOpen || editing || deleting || document.querySelector('[role="menu"],[role="listbox"]')) return;
         e.preventDefault();
         void requestClose();
       } else if (cmd && e.key === "Enter" && !locked) {
@@ -370,8 +374,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               <IconButton label={post.status === "published" || post.status === "partial" ? "Post again" : "Duplicate"} onClick={dup} disabled={busy}>
                 <Copy size={16} />
               </IconButton>
-              {!locked ? (
-                <IconButton label="Delete" onClick={del} disabled={busy}>
+              {!locked || wentOut ? (
+                <IconButton label="Delete" onClick={wentOut ? () => setDeleting(true) : del} disabled={busy}>
                   <Trash2 size={16} />
                 </IconButton>
               ) : null}
@@ -691,11 +695,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       <p key={t.id} className="flex flex-wrap items-center gap-2 text-[12px]">
                         {c ? <NetworkLogo id={c.network} size={12} /> : null}
                         <span className="font-medium">{c?.name ?? "Removed channel"}</span>
-                        {t.url ? (
+                        {t.url && !t.deleted_at ? (
                           <a href={t.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                             Open post
                           </a>
                         ) : null}
+                        {t.deleted_at ? <Badge>Deleted</Badge> : null}
                         {t.error ? <span className="text-danger">{t.error}</span> : null}
                         {t.note ? <span className="text-warning">{t.note}</span> : null}
                       </p>
@@ -779,6 +784,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
             </Button>
           </footer>
         ) : null}
+
+        {deleting && post ? <DeletePost postId={post.id} onClose={() => setDeleting(false)} onDone={onSaved} /> : null}
 
         {editing ? (
           <MediaEdit

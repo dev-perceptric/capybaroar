@@ -124,6 +124,9 @@ export const mastodon: Provider = {
     );
     return { id: r.id, url: r.url ?? r.uri };
   },
+  unpublish: async (s, _accountId, r) => {
+    await call(`https://${instanceOf(s)}/api/v1/statuses/${encodeURIComponent(r.id)}`, { method: "DELETE", headers: bearer(s.accessToken) }, { what: "Mastodon delete" });
+  },
   followers: async (s) => {
     const me = await call<Me>(`https://${instanceOf(s)}/api/v1/accounts/verify_credentials`, { headers: bearer(s.accessToken) }, { what: "Mastodon followers" });
     return me.followers_count ?? null;

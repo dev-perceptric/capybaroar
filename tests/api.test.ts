@@ -5,7 +5,7 @@
 // can't go over its rate limit.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ApiError, MAX_BATCH, days, postFields, range } from "../src/lib/api/input";
+import { ApiError, MAX_BATCH, days, deleteArgs, postFields, range } from "../src/lib/api/input";
 import { RateLimit } from "../src/lib/api/limit";
 import { TOOLS, VERSIONS, handleMcp } from "../src/lib/api/mcp";
 import type { ApiPost, Ops } from "../src/lib/api/types";
@@ -80,11 +80,13 @@ test("one key can't go over its rate limit, and the window resets", () => {
 
 const post = (id: string): ApiPost => ({ id, status: "draft", text: "t", publish_at: AT, brand_id: null, media_ids: [], channels: [] });
 
-function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[] } {
+function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[]; calls: string[] } {
   const created: string[] = [];
+  const calls: string[] = [];
   let n = 0;
   return {
     created,
+    calls,
     brands: async () => [{ id: A, name: "Brand", needs_approval: false }],
     channels: async () => [],
     posts: async () => [],
@@ -95,7 +97,13 @@ function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[] } {
       return post(id);
     },
     update: async (id) => post(id),
-    remove: async () => undefined,
+    remove: async (id) => {
+      calls.push(`remove:${id}`);
+    },
+    unpublish: async (id, channelIds) => {
+      calls.push(`unpublish:${id}:${channelIds ? channelIds.join(",") : "all"}`);
+      return { deleted: !channelIds, channels: [{ channel_id: B, name: "Page", network: "instagram", result: "manual", error: "Delete it in the Instagram app", note: null, url: "https://instagram.com/p/x" }] };
+    },
     media: async () => [],
     nextSlot: async () => AT,
     analytics: async () => {
@@ -179,4 +187,40 @@ test("MCP: too many posts at once is refused before any is saved", async () => {
   const r = await call(ops, "create_posts", { posts: Array.from({ length: MAX_BATCH + 1 }, () => ({ channel_ids: [A], text: "x", publish_at: AT })) });
   assert.equal(r.result.isError, true);
   assert.equal(ops.created.length, 0);
+});
+
+test("deleting: record only by default, everywhere only when asked, channels only with everywhere", () => {
+  assert.deepEqual(deleteArgs(undefined, undefined), { everywhere: false, channelIds: null });
+  assert.deepEqual(deleteArgs(null, null), { everywhere: false, channelIds: null });
+  assert.deepEqual(deleteArgs("false", ""), { everywhere: false, channelIds: null });
+  assert.deepEqual(deleteArgs(true, undefined), { everywhere: true, channelIds: null });
+  assert.deepEqual(deleteArgs("true", null), { everywhere: true, channelIds: null });
+  // REST sends a comma list, MCP a list; both are checked as ids and deduplicated.
+  assert.deepEqual(deleteArgs("true", `${A}, ${B},${A.toUpperCase()}`), { everywhere: true, channelIds: [A, B] });
+  assert.deepEqual(deleteArgs(true, [B]), { everywhere: true, channelIds: [B] });
+  throwsBad(() => deleteArgs("yes", undefined), /everywhere must be true or false/);
+  throwsBad(() => deleteArgs(1, undefined), /everywhere must be true or false/);
+  throwsBad(() => deleteArgs(false, [A]), /only goes with everywhere/);
+  throwsBad(() => deleteArgs(undefined, A), /only goes with everywhere/);
+  throwsBad(() => deleteArgs(true, ["abc"]), /channel_ids must be an id/);
+  throwsBad(() => deleteArgs(true, []), /at least one channel/);
+  throwsBad(() => deleteArgs(true, ","), /at least one channel/);
+});
+
+test("MCP: delete_post keeps removing only the record unless everywhere is true, and lists each channel's result", async () => {
+  const ops = fakeOps();
+  const plain = await call(ops, "delete_post", { id: A });
+  assert.deepEqual(JSON.parse(plain.result.content[0].text), { deleted: true });
+  const all = await call(ops, "delete_post", { id: A, everywhere: true });
+  const out = JSON.parse(all.result.content[0].text) as { deleted: boolean; channels: { result: string; url: string }[] };
+  assert.equal(out.deleted, true);
+  assert.equal(out.channels[0].result, "manual");
+  assert.equal(out.channels[0].url, "https://instagram.com/p/x");
+  await call(ops, "delete_post", { id: A, everywhere: true, channel_ids: [B] });
+  const bad = await call(ops, "delete_post", { id: A, channel_ids: [B] });
+  assert.equal(bad.result.isError, true);
+  // A refused call never reached the actions.
+  assert.deepEqual(ops.calls, [`remove:${A}`, `unpublish:${A}:all`, `unpublish:${A}:${B}`]);
+  const tool = TOOLS.find((t) => t.name === "delete_post")!;
+  assert.deepEqual(Object.keys((tool.inputSchema as { properties: object }).properties).sort(), ["channel_ids", "everywhere", "id"]);
 });

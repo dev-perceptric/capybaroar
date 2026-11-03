@@ -6,6 +6,8 @@ import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePos
 import { listMedia } from "../media";
 import { adminClient } from "../supabase/server";
 import { analytics } from "../analytics";
+import { unpublishPost } from "../unpublish";
+import { UnpublishError } from "../unpublisher";
 import { ApiError, isId } from "./input";
 import type { PostFields } from "./input";
 import type { ApiChannel, ApiCtx, ApiPost, Ops } from "./types";
@@ -48,7 +50,7 @@ export function toPost(p: PostRow): ApiPost {
     publish_at: p.publish_at,
     brand_id: p.brand_id,
     media_ids: p.media_ids ?? [],
-    channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error })),
+    channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error, deleted_at: t.deleted_at ?? null })),
   };
 }
 
@@ -136,6 +138,22 @@ export function realOps(ctx: ApiCtx): Ops {
       if (cur.status === "publishing") throw new ApiError(409, "conflict", "This post is going out right now. Try again in a minute.");
       await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
       await deletePost(ctx.workspaceId, id);
+    },
+    async unpublish(id, channelIds) {
+      const cur = await load(id);
+      const inPost = new Set(cur.post_targets.map((t) => t.channel_id));
+      const missing = (channelIds ?? []).find((c) => !inPost.has(c));
+      if (missing) throw new ApiError(400, "invalid_request", `Channel ${missing} isn't in this post`);
+      try {
+        const r = await unpublishPost(ctx.workspaceId, id, channelIds ?? "all", { role: ctx.role, brandIds: ctx.brandIds });
+        return {
+          deleted: r.postDeleted,
+          channels: r.results.map((c) => ({ channel_id: c.channelId, name: c.channelName, network: c.network, result: c.result, error: c.error, note: c.note, url: c.url })),
+        };
+      } catch (e) {
+        if (e instanceof UnpublishError) throw new ApiError(e.code === "not_found" ? 404 : e.code === "forbidden" ? 403 : 409, e.code, e.message);
+        throw e;
+      }
     },
     async media() {
       return (await listMedia(ctx.workspaceId)).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));

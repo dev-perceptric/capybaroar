@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowDownRight, ArrowUpRight, ExternalLink } from "lucide-react";
-import { Avatar } from "./ui";
+import { Avatar, Badge } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { Analytics, BestCell } from "@/lib/analytics";
@@ -197,6 +197,7 @@ export function TopPosts({ top, channels, timezone }: { top: Analytics["top"]; c
                         <ExternalLink size={13} />
                       </a>
                     ) : null}
+                    {t.deleted ? <Badge>Deleted</Badge> : null}
                   </div>
                   <p className="mt-0.5 text-[11px] text-faint">
                     {c?.name}, {fmtParts(t.at, { month: "short", day: "numeric", timeZone: timezone })}

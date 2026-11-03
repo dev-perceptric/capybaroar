@@ -46,6 +46,12 @@ type Note = {
   record: { text?: string; createdAt?: string; reply?: { root: Ref; parent: Ref } };
 };
 
+/** at://did/app.bsky.feed.post/rkey → the repo and rkey to delete. */
+const postKey = (uri: string) => {
+  const m = uri.match(/^at:\/\/([^/]+)\/app\.bsky\.feed\.post\/([^/]+)$/);
+  return m ? { repo: m[1], rkey: m[2] } : null;
+};
+
 /** at://did/app.bsky.feed.post/rkey → https://bsky.app/profile/did/post/rkey */
 const postLink = (uri: string) => {
   const m = uri.match(/^at:\/\/([^/]+)\/app\.bsky\.feed\.post\/([^/]+)$/);
@@ -97,6 +103,14 @@ export const bluesky: Provider = {
     const r = await call<{ uri: string }>(`${PDS}/com.atproto.repo.createRecord`, { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ repo: did, collection: "app.bsky.feed.post", record }) }, { what: "Bluesky post" });
     const rkey = r.uri.split("/").pop();
     return { id: r.uri, url: `https://bsky.app/profile/${sess.handle}/post/${rkey}` };
+  },
+  unpublishable: (_s, r) => (postKey(r.id) ? null : "Capybaroar didn't keep this post's id"),
+  // com.atproto.repo.deleteRecord for the post's rkey. A record that's already gone deletes fine.
+  unpublish: async (s, _did, r) => {
+    const k = postKey(r.id)!;
+    await withSession(s, (jwt) =>
+      call(`${PDS}/com.atproto.repo.deleteRecord`, { method: "POST", headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" }, body: JSON.stringify({ repo: k.repo, collection: "app.bsky.feed.post", rkey: k.rkey }) }, { what: "Bluesky delete" }),
+    );
   },
   followers: async (s, did) => {
     const sess = await session(s);

@@ -45,7 +45,12 @@ export const evergreenStore: EvergreenStore = {
   },
   async repost(row: EvergreenRow) {
     const db = adminClient();
-    const { data: p } = await db.from("posts").select("brand_id").eq("id", row.postId).maybeSingle();
+    const { data: p } = await db.from("posts").select("brand_id, status").eq("id", row.postId).maybeSingle();
+    // A post deleted on the networks stops repeating.
+    if (!p || p.status === "deleted") {
+      await db.from("evergreen").delete().eq("post_id", row.postId);
+      throw new Error("The post was deleted, so it no longer repeats");
+    }
     const actor = await memberActor(row.workspaceId, row.createdBy, (p?.brand_id as string | null) ?? null);
     if (!actor || !row.createdBy) throw new Error("The person who turned this on left the workspace");
     try {

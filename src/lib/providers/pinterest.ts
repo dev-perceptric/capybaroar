@@ -132,6 +132,9 @@ export const pinterest: Provider = {
     );
     return { id: r.id, url: `https://www.pinterest.com/pin/${r.id}/` };
   },
+  unpublish: async (s, _accountId, r) => {
+    await call(`${API}/pins/${encodeURIComponent(r.id)}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "Pinterest delete" });
+  },
   followers: async (s) => (await call<User>(`${API}/user_account`, { headers: auth(s.accessToken) }, { what: "Pinterest followers" })).follower_count ?? null,
   postStats: async (s, _accountId, remoteId) => {
     const day = (d: Date) => d.toISOString().slice(0, 10);
