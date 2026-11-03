@@ -66,6 +66,8 @@ export interface Store {
   closeThread(channelId: string, threadId: string, before: Date): Promise<void>;
   /** Keeps why reading stopped (a missing permission) to show on the channel. */
   inboxError(channelId: string, error: string): Promise<void>;
+  /** Emails a scheduled report (kind "report"; rules in reportTimes.ts). Throws to retry. */
+  report?(payload: Record<string, string>): Promise<void>;
 }
 
 /** The Inbox looks back at most 7 days, and 6 hours before the last read for items the network shows late. */
@@ -101,6 +103,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     if (job.kind === "publish") await publishTarget(store, providers, job.payload.targetId);
     else if (job.kind === "stats") await collectStats(store, providers, job.payload.targetId);
     else if (job.kind === "inbox") await collectInbox(store, providers, job.payload.channelId);
+    else if (job.kind === "report") await store.report?.(job.payload);
     await store.jobDone(job.id, null);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
