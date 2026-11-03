@@ -17,3 +17,9 @@ Schedule posts to every social channel from one calendar. Our own code on the Om
 
 ## Rule: every build includes its running cost
 - State what a feature adds to the monthly bill at Beta (50 teams) and Growth (500 teams). Mark unconfirmed prices "check".
+
+## API and MCP
+- The REST API (`/api/v1`) and the MCP server (`/api/mcp`, and `/api/mcp/<key>` for apps that take only a link) run the same actions (`src/lib/api/ops.ts`). Add a feature to both or to neither.
+- Every write goes through `savePost`, so the API keeps the app's checks: limits, settings, media, plan, brands and approvals.
+- Keys (`009_api.sql`) are stored as a hash, shown once, and act as the person who made them, checked on every request. 120 requests a minute per key.
+- Input is checked in `src/lib/api/input.ts` and the protocol in `src/lib/api/mcp.ts`, both pure and covered by `tests/api.test.ts`.

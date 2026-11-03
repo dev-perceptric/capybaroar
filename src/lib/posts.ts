@@ -88,7 +88,8 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
   }
 }
 
-async function queueTime(workspaceId: string): Promise<Date> {
+/** The next free slot of the workspace's queue. Throws when it has no slots or none is free in 8 weeks. */
+export async function queueTime(workspaceId: string): Promise<Date> {
   const db = adminClient();
   const { data: ws } = await db.from("workspaces").select("queue, timezone").eq("id", workspaceId).single();
   const slots = (ws?.queue ?? []) as Slot[];
@@ -154,6 +155,13 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   }
   if (review && cur?.status !== "review") await sendReviewMail("submitted", { workspaceId, brandId, brandName: (brand?.name as string | undefined) ?? "brand", text: row.text, authorId: userId });
   return { id: id!, publishAt: at?.toISOString() ?? null, status };
+}
+
+/** One post of this workspace, or null when there is none. */
+export async function getPost(workspaceId: string, id: string): Promise<PostRow | null> {
+  const { data, error } = await adminClient().from("posts").select(COLS).eq("id", id).eq("workspace_id", workspaceId).maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as PostRow | null) ?? null;
 }
 
 /** Throws unless this person may see the post's brand. */

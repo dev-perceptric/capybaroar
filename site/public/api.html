@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API and MCP server | Capybaroar</title>
+<meta name="description" content="Schedule posts from Claude, Cursor, ChatGPT or your own code with Capybaroar's MCP server and REST API. On every plan.">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top"><div class="wrap bar"><a class="brand" href="/"><img src="/logo.png" alt="" width="28" height="28">capybaroar</a><nav><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/api">API</a><a href="/#faq">FAQ</a><a href="https://app.capybaroar.com/login">Sign in</a><a class="btn" href="https://app.capybaroar.com/signup">Start free</a></nav></div></header>
+<main class="wrap doc">
+<p class="eyebrow">Developers</p>
+<h1>API and MCP server</h1>
+<p class="lead">Let Claude, Cursor, ChatGPT or your own code plan and schedule posts. Every plan includes both, the Free plan too.</p>
+
+<h2>1. Make a key</h2>
+<p>In the app, open <strong>Settings</strong>, then <strong>API and MCP</strong>, and press <strong>New key</strong>. The key starts with <code>cbr_</code> and shows only once. A key acts as the person who made it, with their role and brands. Delete it any time, and apps using it stop working.</p>
+
+<h2>2. Connect an AI agent (MCP)</h2>
+<p>The MCP server is at <code>https://app.capybaroar.com/api/mcp</code>. Send the key as <code>Authorization: Bearer cbr_...</code> with each request.</p>
+<p><strong>Claude Code</strong></p>
+<pre><code>claude mcp add --transport http capybaroar https://app.capybaroar.com/api/mcp --header "Authorization: Bearer cbr_..."</code></pre>
+<p><strong>Cursor</strong>, in <code>~/.cursor/mcp.json</code></p>
+<pre><code>{
+  "mcpServers": {
+    "capybaroar": {
+      "url": "https://app.capybaroar.com/api/mcp",
+      "headers": { "Authorization": "Bearer cbr_..." }
+    }
+  }
+}</code></pre>
+<p><strong>Claude, ChatGPT and other apps that take only a link.</strong> Add a custom connector with the link that holds your key: <code>https://app.capybaroar.com/api/mcp/cbr_...</code>. Settings shows it ready to copy when you make a key. Treat this link like a password.</p>
+
+<h2>Tools</h2>
+<div class="scroll"><table class="cmp">
+<thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><th><code>list_brands</code></th><td>The brands (clients) in the workspace</td></tr>
+<tr><th><code>list_channels</code></th><td>Connected channels with their character limit and the settings each network takes</td></tr>
+<tr><th><code>list_posts</code></th><td>Posts in a time range, up to 92 days</td></tr>
+<tr><th><code>get_post</code></th><td>One post, with its status and link on each channel</td></tr>
+<tr><th><code>create_posts</code></th><td>Up to 25 posts at once, as drafts unless asked to schedule</td></tr>
+<tr><th><code>update_post</code></th><td>Change a post that hasn't gone out</td></tr>
+<tr><th><code>delete_post</code></th><td>Delete a post</td></tr>
+<tr><th><code>list_media</code></th><td>Files in the media library, to attach by id</td></tr>
+<tr><th><code>next_queue_slot</code></th><td>The next free time in the posting queue</td></tr>
+<tr><th><code>get_analytics</code></th><td>Reach, engagement, best times to post and top posts</td></tr>
+</tbody></table></div>
+<p>Try asking: <em>"Write a week of LinkedIn posts about our launch, one each weekday at 9 AM, as drafts."</em></p>
+
+<h2>3. REST API</h2>
+<p>Base address <code>https://app.capybaroar.com/api/v1</code>. Send the key as <code>Authorization: Bearer cbr_...</code> and JSON bodies. Times are ISO 8601 with an offset, like <code>2026-11-05T09:00:00-05:00</code>.</p>
+<div class="scroll"><table class="cmp">
+<thead><tr><th>Request</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><th><code>GET /brands</code></th><td>Brands</td></tr>
+<tr><th><code>GET /channels?brand_id=</code></th><td>Channels, with limits and settings</td></tr>
+<tr><th><code>GET /posts?from=&amp;to=&amp;brand_id=</code></th><td>Posts in a range (the next 30 days without from and to)</td></tr>
+<tr><th><code>POST /posts</code></th><td>Make a post</td></tr>
+<tr><th><code>GET /posts/{id}</code></th><td>One post</td></tr>
+<tr><th><code>PATCH /posts/{id}</code></th><td>Change the fields you send</td></tr>
+<tr><th><code>DELETE /posts/{id}</code></th><td>Delete a post</td></tr>
+<tr><th><code>GET /media</code></th><td>Media library</td></tr>
+<tr><th><code>GET /queue</code></th><td>Next free queue time</td></tr>
+<tr><th><code>GET /analytics?days=30&amp;channel_id=</code></th><td>Results for 7, 30 or 90 days</td></tr>
+</tbody></table></div>
+
+<p><strong>Make a post</strong></p>
+<pre><code>curl https://app.capybaroar.com/api/v1/posts \
+  -H "Authorization: Bearer cbr_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "channel_ids": ["CHANNEL_ID"],
+    "text": "We just shipped the new calendar.",
+    "publish_at": "2026-11-05T09:00:00-05:00",
+    "mode": "schedule",
+    "settings": { "CHANNEL_ID": { "first_comment": "Try it: capybaroar.com" } }
+  }'</code></pre>
+<div class="scroll"><table class="cmp">
+<thead><tr><th>Field</th><th>What it is</th></tr></thead>
+<tbody>
+<tr><th><code>channel_ids</code></th><td>Channels from one brand. Required.</td></tr>
+<tr><th><code>text</code></th><td>The text every channel shares</td></tr>
+<tr><th><code>mode</code></th><td><code>draft</code> (the default), <code>schedule</code>, <code>now</code> or <code>queue</code></td></tr>
+<tr><th><code>publish_at</code></th><td>Required for <code>draft</code> and <code>schedule</code></td></tr>
+<tr><th><code>media_ids</code></th><td>Files from the media library, in order</td></tr>
+<tr><th><code>channel_text</code></th><td>Own text for some channels, by channel id</td></tr>
+<tr><th><code>settings</code></th><td>Network settings by channel id, like a first comment, a YouTube title or a Pinterest board</td></tr>
+</tbody></table></div>
+<p>Posts get the same checks as in the app: character limits, required settings, media, plan limits, brands and approvals. In a brand that needs approval, an editor's post waits in review.</p>
+
+<h2>Errors and limits</h2>
+<p>Errors come back as <code>{"error": {"code": "...", "message": "..."}}</code> with a status: 400 for a request to fix, 401 for a missing or deleted key, 404 when something isn't there, 409 when a post already went out, 429 when you go over 120 requests a minute (wait for the seconds in <code>Retry-After</code>).</p>
+</main>
+<footer><div class="wrap bar"><span>&copy; 2026 Perceptric</span><nav><a href="/api">API</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/data-deletion">Data deletion</a><a href="mailto:hello@capybaroar.com">hello@capybaroar.com</a></nav></div></footer>
+</body>
+</html>
