@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capybaroar brand kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{--shell:#f5f5f5;--panel:#fff;--ink:#171717;--gray:#737373;--faint:#a3a3a3;--line:#ebebeb;--y:#ffd202;--y-soft:#fff6c7;--y-ink:#262209;--red:#c42b1c;--green:#086444;
+    --ring:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -.5px rgba(0,0,0,.04),0 3px 3px -1.5px rgba(0,0,0,.02)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--shell);color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  main{max-width:1200px;margin:0 auto;padding:48px 40px 64px}
+  header{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:32px}
+  header h1{margin:0;font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+  header h1 span{color:var(--faint)}
+  header p{margin:8px 0 0;color:var(--gray);max-width:560px}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+  .card{background:var(--panel);border-radius:12px;box-shadow:var(--ring);padding:20px;min-width:0}
+  .c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}
+  h2{margin:0 0 4px;font-size:15px;font-weight:600}
+  .sub{margin:0 0 16px;color:var(--gray);font-size:13px}
+  .label{font-size:12px;color:var(--gray);margin-top:8px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .tile{border-radius:8px;display:flex;align-items:center;justify-content:center;height:120px;box-shadow:inset 0 0 0 1px var(--line)}
+  .tile img{max-width:80%;max-height:56%}
+  .on-white{background:#fff}.on-ink{background:var(--y-ink);box-shadow:none}.on-dark{background:#171717;box-shadow:none}.on-yellow{background:var(--y);box-shadow:none}
+  .row{display:flex;align-items:end;gap:20px;flex-wrap:wrap}
+  .space{position:relative;display:inline-block;max-width:100%;padding:33px;outline:1px dashed #e6bd00;background:#fffced}
+  .space img{display:block;height:64px;max-width:100%;object-fit:contain;background:#fff}
+  .space i{position:absolute;left:0;top:0;width:33px;height:33px;border-right:1px solid #e6bd00;border-bottom:1px solid #e6bd00}
+  .space b{position:absolute;left:4px;top:8px;font:500 11px Inter;color:#7a5c00}
+  .swatch{border-radius:8px;height:88px;display:flex;align-items:end;padding:10px 12px;font-size:12px;font-weight:500}
+  .dd{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .dd .tile{height:96px}
+  .dd .tile img{max-width:76%}
+  .verdict{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px}
+  .verdict::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--green)}
+  .verdict.no::before{background:var(--red)}
+  .stretch{transform:scaleX(1.45)}
+  .recolor{filter:hue-rotate(160deg) saturate(1.4)}
+  .px{display:flex;align-items:end;gap:16px;flex-wrap:wrap}
+  .px figure{margin:0;text-align:center}
+  .px figcaption{font-size:11px;color:var(--gray);margin-top:6px}
+  .pick{outline:2px solid var(--y);outline-offset:6px;border-radius:4px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td{padding:8px 0;border-top:1px solid var(--line);vertical-align:top}
+  td:first-child{width:38%;color:var(--gray)}
+  code{font:12px ui-monospace,Menlo,monospace;background:var(--shell);padding:1px 4px;border-radius:4px}
+  @media (max-width:800px){main{padding:24px 16px}.c8,.c6,.c4{grid-column:span 12}.tiles,.dd{grid-template-columns:repeat(2,1fr)}header{flex-direction:column;align-items:start}.space{padding:20px}.space img{height:auto;width:100%}.space i{width:20px;height:20px}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Capybaroar brand kit<br><span>One wordmark, one yellow.</span></h1>
+      <p>"capyba" in ink, "roar" in yellow with a thin ink edge, and two sound waves after the last r. Fredoka Bold, outlined, so no font is needed to draw it.</p>
+    </div>
+    <img src="svg/wordmark-light.svg" alt="Capybaroar" style="height:56px">
+  </header>
+
+  <div class="grid">
+    <section class="card c12">
+      <h2>Wordmark</h2>
+      <p class="sub">The main logo. Light on white and light grays, dark on ink and photos, one color when color isn't possible.</p>
+      <div class="tiles">
+        <div><div class="tile on-white"><img src="svg/wordmark-light.svg" alt=""></div><div class="label">wordmark-light</div></div>
+        <div><div class="tile on-ink"><img src="svg/wordmark-dark.svg" alt=""></div><div class="label">wordmark-dark</div></div>
+        <div><div class="tile on-yellow"><img src="svg/wordmark-ink.svg" alt=""></div><div class="label">wordmark-ink</div></div>
+        <div><div class="tile on-dark"><img src="svg/wordmark-white.svg" alt=""></div><div class="label">wordmark-white</div></div>
+      </div>
+    </section>
+
+    <section class="card c8">
+      <h2>Stacked and icon</h2>
+      <p class="sub">"capyba" over "roar", right-aligned so the waves end on the a. For squares: the collapsed sidebar, avatars, app icons.</p>
+      <div class="tiles">
+        <div><div class="tile on-white"><img src="svg/stacked-light.svg" alt="" style="max-height:90%"></div><div class="label">stacked-light</div></div>
+        <div><div class="tile on-ink"><img src="svg/stacked-dark.svg" alt="" style="max-height:90%"></div><div class="label">stacked-dark</div></div>
+        <div><div class="tile on-white"><img src="svg/icon.svg" alt="" style="height:88px;max-height:none"></div><div class="label">icon (ink tile)</div></div>
+        <div><div class="tile on-white"><img src="svg/icon-yellow.svg" alt="" style="height:88px;max-height:none"></div><div class="label">icon-yellow</div></div>
+      </div>
+    </section>
+
+    <section class="card c4">
+      <h2>Stacked alignment</h2>
+      <p class="sub">Right-aligned reads as one block. Picked.</p>
+      <div class="row" style="gap:10px">
+        <figure style="margin:0;text-align:center"><img class="pick" src="src/compare/stacked-right.svg" alt="" style="width:96px"><figcaption class="label">right</figcaption></figure>
+        <figure style="margin:0;text-align:center"><img src="src/compare/stacked-center.svg" alt="" style="width:96px"><figcaption class="label">center</figcaption></figure>
+        <figure style="margin:0;text-align:center"><img src="src/compare/stacked-left.svg" alt="" style="width:96px"><figcaption class="label">left</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="card c8">
+      <h2>Small sizes</h2>
+      <p class="sub">Below 48px the words can't be read, so favicons use the small icon: the yellow o of "roar" and its waves. It beat a bold "r" with waves at 16px. At actual size:</p>
+      <div class="px">
+        <figure><img src="svg/icon.svg" alt="" width="48"><figcaption>icon 48</figcaption></figure>
+        <figure><img src="svg/icon.svg" alt="" width="32"><figcaption>32</figcaption></figure>
+        <figure><img src="svg/icon.svg" alt="" width="16"><figcaption>16</figcaption></figure>
+        <span style="width:16px"></span>
+        <figure><img class="pick" src="svg/icon-small.svg" alt="" width="48"><figcaption>small 48</figcaption></figure>
+        <figure><img class="pick" src="svg/icon-small.svg" alt="" width="32"><figcaption>32</figcaption></figure>
+        <figure><img class="pick" src="svg/icon-small.svg" alt="" width="16"><figcaption>16</figcaption></figure>
+        <span style="width:16px"></span>
+        <figure><img src="src/compare/icon-small-r.svg" alt="" width="48"><figcaption>r 48</figcaption></figure>
+        <figure><img src="src/compare/icon-small-r.svg" alt="" width="32"><figcaption>32</figcaption></figure>
+        <figure><img src="src/compare/icon-small-r.svg" alt="" width="16"><figcaption>16</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="card c4">
+      <h2>Minimum sizes</h2>
+      <p class="sub">Smaller than this, use the next mark down.</p>
+      <div class="px">
+        <figure><img src="svg/wordmark-light.svg" alt="" width="80"><figcaption>wordmark 80px wide</figcaption></figure>
+        <figure><img src="svg/stacked-light.svg" alt="" width="24"><figcaption>stacked 24px</figcaption></figure>
+        <figure><img src="svg/icon-small.svg" alt="" width="16"><figcaption>icon 16px</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="card c6">
+      <h2>Clear space</h2>
+      <p class="sub">Keep the height of the "a" (the x-height) free on every side. Nothing else sits inside it.</p>
+      <div class="space"><i></i><b>a</b><img src="svg/wordmark-light.svg" alt=""></div>
+    </section>
+
+    <section class="card c6">
+      <h2>Colors</h2>
+      <p class="sub">The logo uses three. They're the app's <code>signal</code>, <code>on-signal</code> and white.</p>
+      <div class="grid" style="gap:12px">
+        <div class="swatch c4" style="background:#ffd202;color:#262209">Yellow #FFD202<br>signal</div>
+        <div class="swatch c4" style="background:#262209;color:#fff">Ink #262209<br>on-signal</div>
+        <div class="swatch c4" style="background:#fff;color:#262209;box-shadow:inset 0 0 0 1px var(--line)">White #FFFFFF</div>
+      </div>
+    </section>
+
+    <section class="card c12">
+      <h2>Do and don't</h2>
+      <p class="sub">The app never sets yellow text on white. The logo is the one exception, because "roar" carries its ink edge.</p>
+      <div class="dd">
+        <div><div class="tile on-white"><img src="svg/wordmark-light.svg" alt=""></div><div class="verdict">Light version on white</div></div>
+        <div><div class="tile on-ink"><img src="svg/wordmark-dark.svg" alt=""></div><div class="verdict">Dark version on ink or dark photos</div></div>
+        <div><div class="tile on-yellow"><img src="svg/wordmark-ink.svg" alt=""></div><div class="verdict">One-color ink on yellow</div></div>
+        <div><div class="tile on-white"><img src="svg/stacked-light.svg" alt="" style="max-height:90%"></div><div class="verdict">Stacked in square spaces</div></div>
+        <div><div class="tile on-white"><img class="recolor" src="svg/wordmark-light.svg" alt=""></div><div class="verdict no">Don't recolor "roar" or the waves</div></div>
+        <div><div class="tile on-white" style="overflow:hidden"><img class="stretch" src="svg/wordmark-light.svg" alt="" style="max-width:62%"></div><div class="verdict no">Don't stretch or squash</div></div>
+        <div><div class="tile on-white"><img src="src/compare/wordmark-no-edge.svg" alt=""></div><div class="verdict no">Don't drop the ink edge on white</div></div>
+        <div><div class="tile on-yellow"><img src="svg/wordmark-light.svg" alt=""></div><div class="verdict no">Don't put the yellow "roar" on yellow</div></div>
+      </div>
+    </section>
+
+    <section class="card c6">
+      <h2>Type</h2>
+      <p class="sub">Fredoka is for the logo only, and only as the outlined drawing. Everything else is Inter.</p>
+      <table>
+        <tr><td>Logo</td><td>Fredoka Bold (700, width 100), tracking -0.025em, lowercase. SIL Open Font License.</td></tr>
+        <tr><td>App, site, emails</td><td>Inter, 13px in the app</td></tr>
+        <tr><td>Never</td><td>Typing "capybaroar" in Fredoka as live text, or setting other words in Fredoka</td></tr>
+      </table>
+    </section>
+
+    <section class="card c6">
+      <h2>Files</h2>
+      <p class="sub">In <code>brand/</code>. Rebuild with <code>npm run brand</code>.</p>
+      <table>
+        <tr><td>svg/</td><td>wordmark and stacked in light, dark, ink, white; icon, icon-yellow, icon-small</td></tr>
+        <tr><td>png/</td><td>every lockup at 1x, 2x, 4x; icons at 1024, 512, 192, 180, 48, 32, 16; og.png</td></tr>
+        <tr><td>favicon.ico</td><td>small icon at 16, 32 and 48</td></tr>
+        <tr><td>src/</td><td>Fredoka, build.py, render.mjs, the OG templates</td></tr>
+      </table>
+    </section>
+  </div>
+</main>
+</body>
+</html>
