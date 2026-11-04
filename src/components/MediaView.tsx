@@ -2,8 +2,8 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Upload } from "lucide-react";
-import { Button, IconButton } from "./ui";
+import { Image as ImageIcon, Trash2, Upload } from "lucide-react";
+import { Button, ErrorNote, IconButton, Page } from "./ui";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { askConfirm } from "./Dialogs";
@@ -56,44 +56,43 @@ export function MediaView({ files }: { files: File[] }) {
   };
   const button = (
     <Button onClick={pick} disabled={busy}>
-      {busy ? <Loader /> : <Upload size={14} />}
+      {busy ? <Loader /> : <Upload />}
       Upload
     </Button>
   );
   return (
-    <div onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), send(e.dataTransfer.files))}>
-      <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => send(e.target.files)} />
-      {error ? <p className="mb-4 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
-      {files.length ? (
-        <>
-          <div className="mb-4 flex justify-end">{button}</div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <Page icon={<ImageIcon />} title="Media" count={files.length || undefined} actions={files.length ? button : undefined}>
+      <div className="min-h-full" onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), send(e.dataTransfer.files))}>
+        <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => send(e.target.files)} />
+        <ErrorNote message={error} className="mb-4" />
+        {files.length ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {files.map((f) => (
-              <figure key={f.id} className="group overflow-hidden rounded-lg border border-frame">
-                <div className="relative aspect-square bg-pressed">
+              <figure key={f.id} className="group overflow-hidden rounded-lg bg-panel shadow-card transition-shadow duration-[var(--duration-fast)] hover:shadow-hover">
+                <div className="relative aspect-square bg-paper">
                   {f.mime.startsWith("video/") ? (
                     <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls preload="metadata" />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={f.thumb ?? ""} alt={f.name} loading="lazy" decoding="async" className="size-full object-cover" />
                   )}
-                  <span className="absolute top-1 right-1 hidden bg-panel group-hover:block">
-                    <IconButton label="Delete" onClick={() => del(f)}>
-                      <Trash2 size={16} />
+                  <span className="absolute top-2 right-2 hidden group-focus-within:block group-hover:block">
+                    <IconButton label="Delete" variant="ghost" align="end" onClick={() => del(f)}>
+                      <Trash2 />
                     </IconButton>
                   </span>
                 </div>
-                <figcaption className="flex items-center gap-2 border-t border-line px-2 py-1.5 text-[12px]">
+                <figcaption className="flex items-center gap-2 border-t border-line px-3 py-2 text-[12px]">
                   <span className="min-w-0 flex-1 truncate">{f.name}</span>
                   <span className="text-faint tabular-nums">{mb(f.size)}</span>
                 </figcaption>
               </figure>
             ))}
           </div>
-        </>
-      ) : (
-        <ToolIntro drawing="files" title="Add your first file" lead="Pictures and videos you upload here are ready for any post." action={button} />
-      )}
-    </div>
+        ) : (
+          <ToolIntro drawing="files" title="Add your first file" lead="Pictures and videos you upload here are ready for any post." action={button} />
+        )}
+      </div>
+    </Page>
   );
 }

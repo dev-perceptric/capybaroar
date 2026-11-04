@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { FileText } from "lucide-react";
-import { Page } from "@/components/ui";
+import { LinkButton, Page } from "@/components/ui";
 import { ToolIntro } from "@/components/ToolIntro";
 import { ReportsView } from "@/components/ReportsView";
 import { canManage, teamCtx } from "@/lib/session";
@@ -20,13 +19,7 @@ export default async function ReportsPage() {
           drawing="dashboards"
           title="Reports for your clients"
           lead="Each brand's results as a link and a PDF, emailed every week or month. Reports come with Pro and Agency."
-          action={
-            canManage(ctx.role) ? (
-              <Link href="/settings?tab=billing" className="inline-flex h-8 items-center rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover">
-                Upgrade
-              </Link>
-            ) : undefined
-          }
+          action={canManage(ctx.role) ? <LinkButton href="/settings?tab=billing">Upgrade</LinkButton> : undefined}
         />
       </Page>
     );

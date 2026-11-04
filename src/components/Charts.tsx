@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowDownRight, ArrowUpRight, ExternalLink } from "lucide-react";
-import { Avatar, Badge } from "./ui";
+import { Avatar, Badge, StatCards } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { Analytics, BestCell } from "@/lib/analytics";
@@ -17,14 +17,14 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const hourShort = (h: number) => (h === 0 ? "12a" : h < 12 ? `${h}a` : h === 12 ? "12p" : `${h - 12}p`);
 const hourLong = (h: number) => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`);
 const dayLabel = (day: string) => fmtParts(`${day}T12:00:00`, { month: "short", day: "numeric" });
-const INK = "bg-[var(--chart,var(--text-primary))]";
+const CARD = "rounded-lg bg-panel shadow-card";
 
 export function Section({ title, note, className = "", children }: { title: string; note?: string; className?: string; children: React.ReactNode }) {
   return (
     <section className={`mt-8 ${className}`}>
-      <div className="mb-2 flex items-baseline gap-2">
-        <p className="label-mono">{title}</p>
-        {note ? <span className="text-[11px] text-faint">{note}</span> : null}
+      <div className="mb-2.5 flex items-baseline gap-2">
+        <h2 className="text-[14px] font-semibold tracking-[-0.01em]">{title}</h2>
+        {note ? <span className="text-[12px] text-faint">{note}</span> : null}
       </div>
       {children}
     </section>
@@ -33,37 +33,37 @@ export function Section({ title, note, className = "", children }: { title: stri
 
 /** Posts out, reach, engagements and rate, each against the period before. */
 export function Tiles({ data }: { data: Analytics }) {
+  const stats = data.current.withStats > 0;
   return (
-    <div className="grid grid-cols-2 overflow-hidden rounded-lg border border-frame md:grid-cols-4">
-      <Tile label="Posts out" value={num(data.current.posts)} cur={data.current.posts} prev={data.previous.posts} />
-      <Tile label="Reach" value={data.current.withStats ? num(data.current.views) : "None yet"} cur={data.current.views} prev={data.previous.views} show={data.current.withStats > 0} />
-      <Tile label="Engagements" value={data.current.withStats ? num(data.current.engagement) : "None yet"} cur={data.current.engagement} prev={data.previous.engagement} show={data.current.withStats > 0} />
-      <Tile label="Engagement rate" value={data.current.rate != null ? pct(data.current.rate) : "None yet"} cur={data.current.rate ?? 0} prev={data.previous.rate ?? 0} show={data.current.rate != null && data.previous.rate != null} ratio />
-    </div>
+    <StatCards
+      cards={[
+        { label: "Posts out", value: num(data.current.posts), note: <Delta cur={data.current.posts} prev={data.previous.posts} /> },
+        { label: "Reach", value: stats ? num(data.current.views) : "None yet", note: <Delta cur={data.current.views} prev={data.previous.views} show={stats} /> },
+        { label: "Engagements", value: stats ? num(data.current.engagement) : "None yet", note: <Delta cur={data.current.engagement} prev={data.previous.engagement} show={stats} /> },
+        {
+          label: "Engagement rate",
+          value: data.current.rate != null ? pct(data.current.rate) : "None yet",
+          note: <Delta cur={data.current.rate ?? 0} prev={data.previous.rate ?? 0} show={data.current.rate != null && data.previous.rate != null} ratio />,
+        },
+      ]}
+    />
   );
 }
 
-function Tile({ label, value, cur, prev, show = true, ratio = false }: { label: string; value: string; cur: number; prev: number; show?: boolean; ratio?: boolean }) {
+function Delta({ cur, prev, show = true, ratio = false }: { cur: number; prev: number; show?: boolean; ratio?: boolean }) {
   const delta = show && prev > 0 ? (cur - prev) / prev : null;
+  if (delta == null) return null;
   return (
-    <div className="border-line p-4 not-last:border-r max-md:[&:nth-child(2)]:border-r-0 max-md:[&:nth-child(-n+2)]:border-b">
-      <p className="text-[12px] text-muted">{label}</p>
-      <p className="mt-1 text-[26px] leading-tight font-[350] tabular-nums">{value}</p>
-      <p className="mt-1 h-4 text-[11px] tabular-nums">
-        {delta != null ? (
-          <span className={`inline-flex items-center gap-0.5 ${delta >= 0 ? "text-success" : "text-danger"}`}>
-            {delta >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-            {ratio ? `${((cur - prev) * 100).toFixed(1)} pts` : pct(Math.abs(delta))}
-            <span className="ml-1 text-faint">vs previous</span>
-          </span>
-        ) : null}
-      </p>
-    </div>
+    <span className={`inline-flex items-center gap-0.5 ${delta >= 0 ? "text-success" : "text-danger"}`}>
+      {delta >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+      {ratio ? `${((cur - prev) * 100).toFixed(1)} pts` : pct(Math.abs(delta))}
+      <span className="ml-1 text-faint">vs previous</span>
+    </span>
   );
 }
 
 function Num({ v }: { v: number | null | undefined }) {
-  return <td className="px-3 py-2 text-right tabular-nums">{v != null ? num(v) : <span className="text-faint">–</span>}</td>;
+  return <td className="px-4 py-2.5 text-right tabular-nums">{v != null ? num(v) : <span className="text-faint">–</span>}</td>;
 }
 
 /** One series (engagements per day), so one color and no legend. Hover shows the day. */
@@ -72,18 +72,18 @@ export function Bars({ daily }: { daily: { day: string; posts: number; engagemen
   const max = Math.max(1, ...daily.map((d) => d.engagement));
   const h = hover != null ? daily[hover] : null;
   return (
-    <figure className="relative rounded-lg border border-frame px-3 pt-8 pb-2">
+    <figure className={`relative px-4 pt-9 pb-3 ${CARD}`}>
       {h ? (
-        <figcaption className="pointer-events-none absolute top-2 right-3 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-pop">
+        <figcaption className="pointer-events-none absolute top-2.5 right-3 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-menu">
           {dayLabel(h.day)}: {num(h.engagement)} engagements, {h.posts} post{h.posts === 1 ? "" : "s"}
         </figcaption>
       ) : (
-        <figcaption className="absolute top-2 right-3 text-[11px] text-faint tabular-nums">Max {num(max)}</figcaption>
+        <figcaption className="absolute top-3 right-4 text-[11px] text-faint tabular-nums">Max {num(max)}</figcaption>
       )}
       <div className="flex h-36 items-end gap-[2px]" onMouseLeave={() => setHover(null)} role="img" aria-label="Engagements by day">
         {daily.map((d, i) => (
           <div key={d.day} className="flex h-full min-w-0 flex-1 items-end" onMouseEnter={() => setHover(i)}>
-            <div className={`w-full rounded-t-xs ${hover === i ? "bg-signal" : d.engagement ? INK : "bg-line-light"}`} style={{ height: d.engagement ? `${Math.max(3, (d.engagement / max) * 100)}%` : "2px" }} />
+            <div className={`w-full rounded-t-xs ${hover === i ? "bg-signal" : d.engagement ? "bg-chart" : "bg-line"}`} style={{ height: d.engagement ? `${Math.max(3, (d.engagement / max) * 100)}%` : "2px" }} />
           </div>
         ))}
       </div>
@@ -102,11 +102,11 @@ export function Heatmap({ cells }: { cells: BestCell[] }) {
   const max = Math.max(0, ...cells.map((c) => c.engagement));
   const order = [1, 2, 3, 4, 5, 6, 0];
   const step = (v: number) => (max ? Math.min(4, Math.floor((v / max) * 5)) : 0);
-  const shade = ["bg-[#e5e5e5]", "bg-[#bdbdbd]", "bg-[#8a8a8a]", "bg-[#4d4d4d]", "bg-ink"];
+  const shade = ["bg-chart/10", "bg-chart/30", "bg-chart/50", "bg-chart/75", "bg-chart"];
   const best = [...cells].filter((c) => c.posts >= 2).sort((a, b) => b.engagement - a.engagement)[0];
   return (
-    <figure className="rounded-lg border border-frame p-3">
-      <figcaption className="mb-2 h-4 text-[11px] tabular-nums">
+    <figure className={`p-4 ${CARD}`}>
+      <figcaption className="mb-2.5 h-4 text-[12px] tabular-nums">
         {hover ? (
           <span>
             {DAYS[hover.day]} {hourLong(hover.hour)}: {num(hover.engagement)} avg engagements over {hover.posts} post{hover.posts === 1 ? "" : "s"}
@@ -125,7 +125,7 @@ export function Heatmap({ cells }: { cells: BestCell[] }) {
             <span className="flex items-center text-[10px] text-faint">{DAYS[d]}</span>
             {Array.from({ length: 24 }, (_, h) => {
               const c = map.get(`${d}:${h}`);
-              return <div key={h} onMouseEnter={() => setHover(c ?? null)} className={`aspect-square ${c ? shade[step(c.engagement)] : "border border-line-light"} ${c && best && c.day === best.day && c.hour === best.hour ? "outline outline-2 outline-signal-strong" : ""}`} />;
+              return <div key={h} onMouseEnter={() => setHover(c ?? null)} className={`aspect-square rounded-[2px] ${c ? shade[step(c.engagement)] : "bg-paper shadow-track"} ${c && best && c.day === best.day && c.hour === best.hour ? "outline outline-2 outline-signal-strong" : ""}`} />;
             })}
           </div>
         ))}
@@ -143,9 +143,9 @@ export function Heatmap({ cells }: { cells: BestCell[] }) {
 /** Posts and average engagements by format: video, picture, text. */
 export function Formats({ formats }: { formats: Analytics["formats"] }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-frame">
+    <div className={`divide-y divide-line overflow-hidden ${CARD}`}>
       {formats.map((f) => (
-        <div key={f.format} className="flex items-center gap-3 border-b border-line px-3 py-2.5 last:border-b-0">
+        <div key={f.format} className="flex min-h-12 items-center gap-3 px-4 py-2.5">
           <span className="w-20 text-[13px] font-medium capitalize">{f.format}</span>
           <span className="flex-1 text-[12px] text-muted tabular-nums">
             {num(f.posts)} post{f.posts === 1 ? "" : "s"}
@@ -157,11 +157,11 @@ export function Formats({ formats }: { formats: Analytics["formats"] }) {
   );
 }
 
-const TH = "px-3 py-2 text-right font-medium";
-const HEAD = "border-b border-line text-left text-[11px] tracking-[0.04em] text-faint uppercase";
+const TH = "h-10 px-4 text-right font-medium";
+const HEAD = "border-b border-line text-left text-[12px] text-muted";
 
 function NoResults() {
-  return <p className="rounded-lg border border-dashed border-line-strong px-4 py-8 text-center text-[13px] text-muted">No results in this period yet</p>;
+  return <p className="rounded-lg border border-dashed border-line-strong px-4 py-10 text-center text-[13px] text-muted">No results in this period yet</p>;
 }
 
 /** The posts with the most engagements. */
@@ -169,11 +169,11 @@ export function TopPosts({ top, channels, timezone }: { top: Analytics["top"]; c
   if (!top.length) return <NoResults />;
   const byId = new Map(channels.map((c) => [c.id, c]));
   return (
-    <div className="overflow-x-auto rounded-lg border border-frame">
+    <div className={`overflow-x-auto ${CARD}`}>
       <table className="w-full min-w-[720px] text-[13px] print:min-w-0">
         <thead>
           <tr className={HEAD}>
-            <th className="px-3 py-2 font-medium">Post</th>
+            <th className="h-10 px-4 font-medium">Post</th>
             <th className={TH}>Reach</th>
             <th className={TH}>Likes</th>
             <th className={TH}>Comments</th>
@@ -187,8 +187,8 @@ export function TopPosts({ top, channels, timezone }: { top: Analytics["top"]; c
             const c = byId.get(t.channelId);
             const reach = t.m?.reach ?? t.m?.views ?? t.m?.impressions;
             return (
-              <tr key={t.id} className="border-b border-line-light last:border-b-0 hover:bg-hover">
-                <td className="max-w-[360px] px-3 py-2 print:max-w-[240px]">
+              <tr key={t.id} className="border-b border-line last:border-b-0 hover:bg-hover">
+                <td className="max-w-[360px] px-4 py-2.5 print:max-w-[240px]">
                   <div className="flex items-center gap-2">
                     {c ? <NetworkLogo id={c.network} size={14} /> : null}
                     <span className="min-w-0 truncate">{t.text || "No text"}</span>
@@ -207,8 +207,8 @@ export function TopPosts({ top, channels, timezone }: { top: Analytics["top"]; c
                 <Num v={t.m?.likes} />
                 <Num v={t.m?.comments} />
                 <Num v={t.m?.shares} />
-                <td className="px-3 py-2 text-right font-semibold tabular-nums">{num(t.m?.engagement ?? 0)}</td>
-                <td className="px-3 py-2 text-right tabular-nums">{t.rate != null ? pct(t.rate) : ""}</td>
+                <td className="px-4 py-2.5 text-right font-semibold tabular-nums">{num(t.m?.engagement ?? 0)}</td>
+                <td className="px-4 py-2.5 text-right tabular-nums">{t.rate != null ? pct(t.rate) : ""}</td>
               </tr>
             );
           })}
@@ -227,14 +227,14 @@ export function Followers({ data, channels }: { data: Analytics; channels: Chann
         const last = points.at(-1)?.value;
         const first = points.find((p) => p.day >= data.since)?.value ?? points[0]?.value;
         return (
-          <div key={c.id} className="rounded-lg border border-frame p-3 break-inside-avoid">
+          <div key={c.id} className={`p-4 break-inside-avoid ${CARD}`}>
             <div className="flex items-center gap-2">
               <ChannelFace c={c} />
               <NetworkLogo id={c.network} size={14} />
               <h3 className="min-w-0 flex-1 truncate text-[13px] font-medium">{c.name}</h3>
             </div>
             <p className="mt-2 flex items-baseline gap-2">
-              <span className="text-[24px] font-[350] tabular-nums">{last != null ? num(last) : "None yet"}</span>
+              <span className="text-[24px] leading-none font-semibold tracking-[-0.03em] tabular-nums">{last != null ? num(last) : "None yet"}</span>
               {last != null && first != null && points.length > 1 ? (
                 <span className={`text-[12px] tabular-nums ${last - first >= 0 ? "text-success" : "text-danger"}`}>
                   {last - first >= 0 ? "+" : ""}
@@ -264,11 +264,11 @@ export function ChannelTable({ data, channels }: { data: Analytics; channels: Ch
   const by = new Map(data.byChannel.map((r) => [r.channelId, r]));
   if (!channels.length) return <NoResults />;
   return (
-    <div className="overflow-x-auto rounded-lg border border-frame">
+    <div className={`overflow-x-auto ${CARD}`}>
       <table className="w-full min-w-[560px] text-[13px] print:min-w-0">
         <thead>
           <tr className={HEAD}>
-            <th className="px-3 py-2 font-medium">Channel</th>
+            <th className="h-10 px-4 font-medium">Channel</th>
             <th className={TH}>Posts</th>
             <th className={TH}>Reach</th>
             <th className={TH}>Engagements</th>
@@ -279,17 +279,17 @@ export function ChannelTable({ data, channels }: { data: Analytics; channels: Ch
           {channels.map((c) => {
             const r = by.get(c.id);
             return (
-              <tr key={c.id} className="border-b border-line-light last:border-b-0">
-                <td className="px-3 py-2">
+              <tr key={c.id} className="border-b border-line last:border-b-0">
+                <td className="px-4 py-2.5">
                   <div className="flex min-w-0 items-center gap-2">
                     <NetworkLogo id={c.network} size={14} />
                     <span className="min-w-0 truncate">{c.name}</span>
                   </div>
                 </td>
-                <td className="px-3 py-2 text-right tabular-nums">{num(r?.posts ?? 0)}</td>
+                <td className="px-4 py-2.5 text-right tabular-nums">{num(r?.posts ?? 0)}</td>
                 <Num v={r?.withStats ? r.views : null} />
                 <Num v={r?.withStats ? r.engagement : null} />
-                <td className="px-3 py-2 text-right tabular-nums">{r?.rate != null ? pct(r.rate) : <span className="text-faint">–</span>}</td>
+                <td className="px-4 py-2.5 text-right tabular-nums">{r?.rate != null ? pct(r.rate) : <span className="text-faint">–</span>}</td>
               </tr>
             );
           })}
@@ -329,7 +329,7 @@ function Line({ points, label }: { points: { day: string; value: number }[]; lab
         {h ? <circle cx={x(hover!)} cy={y(h.value)} r="4" fill="var(--yolk-9)" stroke="var(--text-primary)" strokeWidth="2" vectorEffect="non-scaling-stroke" /> : null}
       </svg>
       {h ? (
-        <figcaption className="pointer-events-none absolute top-0 right-0 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-pop">
+        <figcaption className="pointer-events-none absolute top-0 right-0 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-menu">
           {dayLabel(h.day)}: {num(h.value)}
         </figcaption>
       ) : null}

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink, FileText, Pencil, Plus, Send, Trash2 } from "lucide-react";
-import { Badge, Button, Checkbox, CopyButton, Dot, Field, IconButton, Input, Page, Segmented, TextArea } from "./ui";
+import { Badge, Button, Checkbox, CopyButton, Dot, Field, IconButton, IconLink, Input, Page, Row, Rows, Segmented, TextArea } from "./ui";
 import { Modal } from "./Overlay";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -37,49 +37,51 @@ export function ReportsView({ reports, brands, brand, allBrands, whiteLabel, ima
   const brandOf = (id: string | null) => brands.find((b) => b.id === id) ?? null;
   const add = (
     <Button onClick={() => setEditing("new")}>
-      <Plus size={14} /> New report
+      <Plus /> New report
     </Button>
   );
   return (
     <Page icon={<FileText />} title="Reports" count={reports.length || undefined} actions={reports.length ? add : undefined}>
       {reports.length ? (
-        <div className="mx-auto w-full max-w-[960px] overflow-hidden rounded-lg border border-frame">
+        <Rows className="mx-auto w-full max-w-[960px]" label="Reports">
           {reports.map((r) => {
             const b = brandOf(r.brandId);
             return (
-              <div key={r.id} className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-3 py-2 last:border-b-0">
-                {b ? <Dot tone={b.color} /> : <span className="size-2 rounded-full border border-line-strong" />}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-medium">{r.name}</p>
-                  <p className="truncate text-[11px] text-faint">
+              <Row
+                key={r.id}
+                lead={<span className="flex size-4 items-center justify-center">{b ? <Dot tone={b.color} /> : <span className="size-2 rounded-full border border-line-strong" />}</span>}
+                title={r.name}
+                sub={
+                  <span className="block truncate">
                     {b?.name ?? "All brands"}, {RANGES.find((x) => x.value === r.range)?.label.toLowerCase()}
                     {r.lastSentAt ? `, sent ${fmtDate(r.lastSentAt)}` : ""}
-                  </p>
-                </div>
+                  </span>
+                }
+              >
                 {r.schedule !== "none" ? <Badge>{r.schedule === "weekly" ? "Mondays, 9 AM" : "1st of the month, 9 AM"}</Badge> : null}
                 <span className="flex items-center">
                   {r.url ? (
                     <>
-                      <IconButton label="Open" onClick={() => window.open(r.url!, "_blank", "noopener")}>
-                        <ExternalLink size={16} />
-                      </IconButton>
+                      <IconLink href={r.url} label="Open">
+                        <ExternalLink />
+                      </IconLink>
                       <CopyButton text={r.url} label="Copy link" />
                     </>
                   ) : null}
                   <IconButton label="Send now" disabled={busy || !r.sendTo.length} onClick={() => run(() => sendNow(r.id), "Couldn't send the report")}>
-                    <Send size={16} />
+                    <Send />
                   </IconButton>
                   <IconButton label="Edit" disabled={busy} onClick={() => setEditing(r)}>
-                    <Pencil size={16} />
+                    <Pencil />
                   </IconButton>
-                  <IconButton label="Delete" disabled={busy} onClick={() => del(r)}>
-                    <Trash2 size={16} />
+                  <IconButton label="Delete" align="end" disabled={busy} onClick={() => del(r)}>
+                    <Trash2 />
                   </IconButton>
                 </span>
-              </div>
+              </Row>
             );
           })}
-        </div>
+        </Rows>
       ) : (
         <ToolIntro drawing="dashboards" title="Make your first report" lead="A brand's results as a link to share or a PDF, emailed every week or month if you like." action={add} />
       )}
@@ -124,7 +126,7 @@ function ReportDialog({ report, brands, brand, allBrands, whiteLabel, images, on
       onClose={onClose}
       footer={
         <>
-          <Button type="button" variant="ghost" onClick={onClose}>
+          <Button type="button" variant="plain" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" form="report-form" disabled={busy || !draft.name.trim() || !draft.sections.length}>
@@ -157,13 +159,13 @@ function ReportDialog({ report, brands, brand, allBrands, whiteLabel, images, on
         ) : null}
         <Field label="Range">
           <div>
-            <Segmented value={draft.range} onChange={(v) => set("range", v)} options={RANGES} />
+            <Segmented label="Range" value={draft.range} onChange={(v) => set("range", v)} options={RANGES} />
           </div>
         </Field>
         <Field label="Sections">
-          <div className="grid overflow-hidden rounded-lg border border-line sm:grid-cols-2">
+          <div className="grid gap-x-3 rounded-lg bg-paper px-1 py-1 shadow-track sm:grid-cols-2">
             {SECTIONS.map((s) => (
-              <label key={s.key} className="flex h-9 items-center gap-2 border-b border-line-light px-3 text-[13px]">
+              <label key={s.key} className="flex h-9 cursor-pointer items-center gap-2 rounded-sm px-2.5 text-[13px] hover:bg-hover">
                 <Checkbox checked={draft.sections.includes(s.key)} onChange={(on) => toggle(s.key, on)} />
                 {s.label}
               </label>
@@ -177,7 +179,7 @@ function ReportDialog({ report, brands, brand, allBrands, whiteLabel, images, on
         ) : null}
         <Field label="Email">
           <div>
-            <Segmented value={draft.schedule} onChange={(v) => set("schedule", v)} options={SCHEDULES} />
+            <Segmented label="Email" value={draft.schedule} onChange={(v) => set("schedule", v)} options={SCHEDULES} />
           </div>
         </Field>
         <Field label="Send to">
@@ -200,7 +202,7 @@ function ReportDialog({ report, brands, brand, allBrands, whiteLabel, images, on
             </Field>
             <Field label="Color">
               <div className="flex items-center gap-2">
-                <span className="size-8 shrink-0 rounded-md border border-frame" style={/^#[0-9a-fA-F]{6}$/.test(accent) ? { background: accent } : undefined} />
+                <span className="size-9 shrink-0 rounded-md bg-paper shadow-input" style={/^#[0-9a-fA-F]{6}$/.test(accent) ? { background: accent } : undefined} />
                 <Input value={draft.accent ?? ""} maxLength={7} onChange={(e) => set("accent", e.target.value || null)} placeholder="#1F6FEB" aria-label="Color" className="max-w-40" />
               </div>
             </Field>
@@ -220,7 +222,7 @@ function LogoChoice({ on, label, onClick, children }: { on: boolean; label: stri
       aria-label={label}
       aria-pressed={on}
       onClick={onClick}
-      className={`flex size-14 items-center justify-center overflow-hidden rounded-md bg-panel p-1 transition-shadow ${on ? "shadow-focus" : "shadow-chip hover:bg-canvas"}`}
+      className={`flex size-14 items-center justify-center overflow-hidden rounded-lg bg-panel p-1 transition-shadow ${on ? "shadow-focus" : "shadow-chip hover:shadow-pill"}`}
     >
       {children}
     </button>

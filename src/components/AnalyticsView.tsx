@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Segmented } from "./ui";
+import { Chip, Segmented } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
 import { Bars, Followers, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
 import type { Channel } from "@/lib/channels";
@@ -21,13 +21,14 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
   const noStats = data.current.posts > 0 && data.current.withStats === 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-5 pt-5 pb-10">
+    <div className="mx-auto w-full max-w-[1200px] p-4 pb-10 md:p-6 md:pb-12">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-[22px] leading-none font-semibold tracking-[-0.03em]">
           Last {data.days} days <span className="text-faint">since {fmtParts(`${data.since}T12:00:00`, { month: "short", day: "numeric" })}</span>
         </h2>
         <span className="flex-1" />
         <Segmented
+          label="Period"
           value={String(data.days)}
           onChange={(v) => go("days", v)}
           options={[
@@ -37,7 +38,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
           ]}
         />
       </div>
-      <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="-mx-4 mt-4 flex gap-1.5 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:px-0.5">
         <Chip on={!channel} onClick={() => go("channel", null)}>
           All channels
         </Chip>
@@ -58,7 +59,7 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
         <Bars daily={data.daily} />
       </Section>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="grid gap-x-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <Section title="Best time to post" note={timezone.replace(/_/g, " ")}>
           <Heatmap cells={data.best} />
         </Section>
@@ -75,13 +76,5 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
         <Followers data={data} channels={shown} />
       </Section>
     </div>
-  );
-}
-
-function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button type="button" aria-pressed={on} onClick={onClick} className={`flex h-8 shrink-0 items-center gap-2 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}>
-      {children}
-    </button>
   );
 }

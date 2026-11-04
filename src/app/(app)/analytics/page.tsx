@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { BarChart3 } from "lucide-react";
-import { Page } from "@/components/ui";
+import { LinkButton, Page } from "@/components/ui";
 import { ToolIntro } from "@/components/ToolIntro";
 import { AnalyticsView } from "@/components/AnalyticsView";
 import { listChannels } from "@/lib/channels";
@@ -21,11 +20,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           drawing="dashboards"
           title="See how your posts do"
           lead="Reach, engagement and followers for every channel, and the best times to post."
-          action={
-            <Link href="/channels" className="inline-flex h-8 items-center rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover">
-              Connect a channel
-            </Link>
-          }
+          action={<LinkButton href="/channels">Connect a channel</LinkButton>}
         />
       </Page>
     );
