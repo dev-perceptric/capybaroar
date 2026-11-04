@@ -9,8 +9,9 @@ import { Check, ChevronsUpDown } from "./Icons";
 export type Option<T extends string | number> = { value: T; label: string; hint?: string; dot?: string };
 
 /**
- * The app's own dropdown, so menus look the same on every computer. The menu opens in a layer above the
- * page, so tables and scrolling panels never cut it off.
+ * The app's own dropdown, so menus look the same on every computer. The button has the input look (or a pill with
+ * `size="sm"`, for filters); `className` sets its width (full by default). The menu opens in a layer above the page,
+ * so tables and scrolling panels never cut it off.
  */
 export function Select<T extends string | number>({
   value,
@@ -23,6 +24,7 @@ export function Select<T extends string | number>({
   onClose,
   disabled = false,
   lead,
+  size = "md",
 }: {
   value: T;
   options: Option<T>[];
@@ -35,6 +37,8 @@ export function Select<T extends string | number>({
   disabled?: boolean;
   /** A gray word before the value in the button, for filters: "Status All". */
   lead?: string;
+  /** `sm`: a 32px pill on a soft ring, for filter bars. */
+  size?: "sm" | "md";
 }) {
   const [open, setOpen] = useState(autoOpen);
   const [active, setActive] = useState(0);
@@ -54,7 +58,7 @@ export function Select<T extends string | number>({
     if (!open || !button.current) return;
     const place = () => {
       const r = button.current!.getBoundingClientRect();
-      const height = Math.min(280, options.length * 32 + 8);
+      const height = Math.min(280, options.length * 32 + 12);
       const up = r.bottom + height + 8 > window.innerHeight && r.top > height + 8;
       setPos({ left: r.left, top: up ? r.top - height - 4 : r.bottom + 4, width: Math.max(r.width, 160), up });
     };
@@ -121,7 +125,7 @@ export function Select<T extends string | number>({
             }
           }
         }}
-        className={`inline-flex items-center justify-between gap-2 text-left ${className}`}
+        className={`inline-flex min-w-0 items-center justify-between gap-2 bg-panel text-left text-[13px] text-ink outline-none transition-shadow duration-[var(--duration-fast)] focus-visible:shadow-focus disabled:pointer-events-none disabled:bg-paper disabled:text-muted disabled:shadow-none ${size === "sm" ? "h-8 rounded-full px-3 text-[12.5px] shadow-chip hover:shadow-pill" : "h-9 rounded-md px-3 shadow-input hover:shadow-input-hover"} aria-expanded:shadow-focus ${className || "w-full"}`}
       >
         <span className={`truncate ${current ? "" : "text-faint"}`}>
           {lead ? <span className="mr-1.5 font-normal text-muted">{lead}</span> : null}
@@ -137,7 +141,7 @@ export function Select<T extends string | number>({
               role="listbox"
               aria-label={ariaLabel}
               style={{ position: "fixed", left: pos.left, top: pos.top, minWidth: pos.width, maxHeight: 280 }}
-              className="z-[100] overflow-y-auto rounded-lg border border-frame bg-panel p-1 text-[13px] shadow-pop"
+              className="z-[100] overflow-y-auto rounded-lg bg-panel p-1.5 text-[13px] shadow-menu"
             >
               {options.map((o, i) => (
                 <li
@@ -148,12 +152,12 @@ export function Select<T extends string | number>({
                   onMouseEnter={() => setActive(i)}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => pickAt(i)}
-                  className={`flex h-8 cursor-pointer items-center gap-2 rounded-md px-2 whitespace-nowrap ${i === active ? "bg-hover" : ""}`}
+                  className={`flex h-8 cursor-pointer items-center gap-2 rounded-sm px-2.5 whitespace-nowrap ${i === active ? "bg-hover" : ""} ${o.value === value ? "font-medium" : ""}`}
                 >
                   {o.dot ? <span className="size-2 shrink-0 rounded-full" style={{ background: o.dot }} /> : null}
                   <span className="flex-1">{o.label}</span>
                   {o.hint ? <span className="font-mono text-[11px] text-faint tabular-nums">{o.hint}</span> : null}
-                  {o.value === value ? <Check size={13} className="text-brand" /> : <span className="w-[13px]" />}
+                  {o.value === value ? <Check size={13} className="shrink-0 text-ink" /> : <span className="w-[13px] shrink-0" />}
                 </li>
               ))}
             </ul>,

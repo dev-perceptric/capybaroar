@@ -1,7 +1,7 @@
 "use client";
 
-// The four-square loader (docs/brand.md) and the burst for big moments.
-export function Loader({ size = 6, className = "text-brand" }: { size?: number; className?: string }) {
+// The four-square loader (docs/brand.md), in the color of the text around it, and the burst for big moments.
+export function Loader({ size = 6, className = "" }: { size?: number; className?: string }) {
   return (
     <span className={`loader ${className}`} style={{ "--l": `${size}px` } as React.CSSProperties} aria-hidden="true">
       <i />

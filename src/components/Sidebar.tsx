@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, FileText, Image as ImageIcon, Inbox, LogOut, Plug, Settings } from "lucide-react";
 import { Avatar, Dot } from "./ui";
@@ -12,36 +12,36 @@ import { switchBrand, switchWorkspace } from "@/app/(app)/actions";
 import type { Brand } from "@/lib/brands";
 import type { Role } from "@/lib/session";
 
-const SECTIONS = [
-  {
-    label: "Workspace",
-    items: [
-      { href: "/calendar", label: "Calendar", icon: <CalendarDays />, client: true },
-      { href: "/inbox", label: "Inbox", icon: <Inbox /> },
-      { href: "/channels", label: "Channels", icon: <Plug /> },
-      { href: "/agents", label: "Agents", icon: <Bot /> },
-      { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
-      { href: "/reports", label: "Reports", icon: <FileText /> },
-      { href: "/media", label: "Media", icon: <ImageIcon /> },
-    ],
-  },
+const ITEMS = [
+  { href: "/calendar", label: "Calendar", icon: <CalendarDays />, client: true },
+  { href: "/inbox", label: "Inbox", icon: <Inbox /> },
+  { href: "/channels", label: "Channels", icon: <Plug /> },
+  { href: "/agents", label: "Agents", icon: <Bot /> },
+  { href: "/analytics", label: "Analytics", icon: <BarChart3 /> },
+  { href: "/reports", label: "Reports", icon: <FileText /> },
+  { href: "/media", label: "Media", icon: <ImageIcon /> },
 ];
 
-// Sidebar links: dark gray labels on the white sidebar, the open page a soft gray fill with a medium label and its
-// icon on a small yellow square.
-const item = "group flex h-8 shrink-0 items-center gap-2 rounded-md px-2 text-[13px] whitespace-nowrap transition-colors duration-[var(--duration-instant)] [&_svg]:size-4";
-const itemOn = "bg-hover font-medium text-ink shadow-[inset_0_0_0_1px_var(--border-light)]";
-const itemOff = "text-ink/85 hover:bg-hover hover:text-ink";
+// Sidebar links sit on the gray shell, like Claritia's rail: no group titles, the open page a white chip on a soft ring
+// with a medium label and its icon on a small yellow square. Settings is at the bottom, above the account.
+const item = "group flex h-8 shrink-0 items-center gap-2 rounded-md px-2 text-[13px] whitespace-nowrap transition-[background-color,box-shadow,color] duration-[var(--duration-instant)] [&_svg]:size-4";
+const itemOn = "bg-panel font-medium text-ink shadow-chip";
+const itemOff = "text-body hover:bg-hover hover:text-ink";
 
 function NavLink({ href, label, icon, count }: { href: string; label: string; icon: React.ReactNode; count?: number }) {
   const path = usePathname();
   const on = path === href || path.startsWith(`${href}/`);
+  const ref = useRef<HTMLAnchorElement>(null);
+  // On a phone the links are one row that scrolls sideways: keep the open page's link in view.
+  useEffect(() => {
+    if (on && window.matchMedia("(max-width: 767px)").matches) ref.current?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [on]);
   return (
-    <Link href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
+    <Link ref={ref} href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
       <span className={`-ml-0.5 flex size-5 shrink-0 items-center justify-center rounded-xs [&_svg]:size-3.5 ${on ? "bg-signal text-on-signal [&_svg]:stroke-[2.25]" : "text-muted group-hover:text-ink"}`}>{icon}</span>
       {label}
       {count ? (
-        <span aria-label={`${count} open`} className="ml-auto inline-flex h-4 min-w-4 items-center justify-center rounded-xs bg-signal px-1 text-[11px] leading-none font-medium text-on-signal tabular-nums">
+        <span aria-label={`${count} open`} className="ml-auto inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-signal px-1.5 text-[11px] leading-none font-medium text-on-signal tabular-nums">
           {count > 99 ? "99+" : count}
         </span>
       ) : null}
@@ -54,42 +54,38 @@ export type Switcher = { role: Role; brands: Brand[]; brand: string | null; work
 export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name: string; email: string; workspace: string; switcher: Switcher; inbox?: number }) {
   const settings = switcher.role === "owner" || switcher.role === "admin";
   return (
-    <aside className="flex shrink-0 flex-col border-b border-frame bg-panel md:w-[232px] md:rounded-lg md:border md:shadow-card">
-      <div className="flex h-12 items-center gap-2 px-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" width={24} height={24} className="size-6 rounded-sm" />
-        <span className="min-w-0 flex-1 truncate text-[13px] font-semibold" title={workspace}>
-          {workspace}
-        </span>
+    <aside className="flex shrink-0 flex-col gap-2 border-b border-line px-3 pt-2.5 pb-2 md:w-[240px] md:gap-3 md:border-b-0 md:pt-4 md:pb-3">
+      {/* On a phone the name and the brand share one row; on wider screens the brand sits under the name. */}
+      <div className="flex items-center gap-2 md:flex-col md:items-stretch md:gap-3">
+        <div className="flex h-9 min-w-0 flex-1 items-center gap-2 px-1 md:flex-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" width={24} height={24} className="size-6 shrink-0 rounded-sm" />
+          <span className="min-w-0 flex-1 truncate text-[13px] font-semibold" title={workspace}>
+            {workspace}
+          </span>
+        </div>
+        <BrandSwitcher s={switcher} />
       </div>
-      <BrandSwitcher s={switcher} />
-      <nav className="flex gap-1 overflow-x-auto px-2 pb-2 md:min-h-0 md:flex-1 md:flex-col md:gap-0.5 md:overflow-y-auto md:pt-1 md:pb-3">
-        {SECTIONS.map((sec) => (
-          <div key={sec.label} className="contents">
-            <p className="label-mono mt-3 hidden h-6 items-center px-2 md:flex">{sec.label}</p>
-            {sec.items
-              .filter((n) => switcher.role !== "client" || n.client)
-              .map((n) => (
-                <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} count={n.href === "/inbox" ? inbox : undefined} />
-              ))}
-          </div>
+      <nav aria-label="Main" className="-mx-3 flex gap-1 overflow-x-auto px-3 pb-0.5 [scrollbar-width:none] md:mx-0 md:min-h-0 md:flex-1 md:flex-col md:gap-0.5 md:overflow-y-auto md:px-0 md:pt-2 md:pb-0">
+        {ITEMS.filter((n) => switcher.role !== "client" || n.client).map((n) => (
+          <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} count={n.href === "/inbox" ? inbox : undefined} />
         ))}
         {settings ? (
-          <span className="md:hidden">
+          <span className="contents md:hidden">
             <NavLink href="/settings" label="Settings" icon={<Settings />} />
           </span>
         ) : null}
       </nav>
-      <div className="hidden border-t border-line p-2 md:block">
+      <div className="hidden flex-col gap-2 md:flex">
         {settings ? <NavLink href="/settings" label="Settings" icon={<Settings />} /> : null}
-        <div className={`${settings ? "mt-2 border-t border-line" : ""} flex items-center gap-2 px-2 pt-2.5 pb-1`}>
-          <Avatar label={name} size={24} />
+        <div className="flex items-center gap-2 border-t border-line px-1 pt-3">
+          <Avatar label={name} size={28} />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold">{name}</p>
+            <p className="truncate text-[13px] font-medium">{name}</p>
             <p className="truncate text-[11px] text-faint">{email}</p>
           </div>
           <form action={signOut}>
-            <button type="submit" className="flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-hover hover:text-ink" title="Sign out" aria-label="Sign out">
+            <button type="submit" className="flex size-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink" title="Sign out" aria-label="Sign out">
               <LogOut size={15} />
             </button>
           </form>
@@ -99,8 +95,8 @@ export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name:
   );
 }
 
-const MENU = "min-w-56 rounded-lg border border-frame bg-panel p-1 text-[13px] shadow-pop";
-const ROW = "flex h-8 w-full items-center gap-2 rounded-md px-2 text-left hover:bg-hover";
+const MENU = "min-w-56 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu";
+const ROW = "flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover";
 
 /** The brand every screen shows, and the workspace when there are several. */
 function BrandSwitcher({ s }: { s: Switcher }) {
@@ -120,7 +116,7 @@ function BrandSwitcher({ s }: { s: Switcher }) {
     });
   };
   return (
-    <div className="px-2 pt-1 md:pt-1">
+    <div className="w-[48%] max-w-56 shrink-0 md:w-full md:max-w-none">
       <button
         ref={button}
         type="button"
@@ -128,7 +124,7 @@ function BrandSwitcher({ s }: { s: Switcher }) {
         aria-expanded={open}
         disabled={busy}
         onClick={() => setOpen(!open)}
-        className="flex h-8 w-full items-center gap-2 rounded-md bg-panel px-2.5 text-left text-[13px] font-medium shadow-input transition-colors hover:bg-canvas disabled:opacity-60"
+        className="flex h-9 w-full items-center gap-2 rounded-md bg-panel px-3 text-left text-[13px] font-medium shadow-chip transition-shadow hover:shadow-pill aria-expanded:shadow-focus disabled:opacity-60"
       >
         {current ? <Dot tone={current.color} /> : <span className="size-2 rounded-full border border-line-strong" />}
         <span className="min-w-0 flex-1 truncate">{current?.name ?? "All brands"}</span>
@@ -151,7 +147,7 @@ function BrandSwitcher({ s }: { s: Switcher }) {
             </button>
           ))}
           {manager ? (
-            <Link href="/settings#brands" role="menuitem" className={`${ROW} mt-1 text-muted`} onClick={() => setOpen(false)}>
+            <Link href="/settings?tab=brands" role="menuitem" className={`${ROW} mt-1 text-muted`} onClick={() => setOpen(false)}>
               Manage brands
             </Link>
           ) : null}

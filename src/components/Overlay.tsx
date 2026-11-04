@@ -77,16 +77,16 @@ export function Modal({ title, onClose, children, footer, wide = false }: { titl
         aria-label={title}
         tabIndex={-1}
         onMouseDown={(e) => e.stopPropagation()}
-        className={`w-full overflow-hidden rounded-2xl border border-frame bg-panel shadow-modal outline-none ${wide ? "max-w-2xl" : "max-w-md"}`}
+        className={`w-full overflow-hidden rounded-2xl bg-panel shadow-modal outline-none ${wide ? "max-w-2xl" : "max-w-md"}`}
       >
-        <div className="flex h-12 items-center border-b border-line pr-2 pl-5">
-          <h2 className="flex-1 truncate text-[15px] font-medium">{title}</h2>
+        <div className="flex min-h-14 items-center gap-2 border-b border-line py-2 pr-3 pl-5">
+          <h2 className="min-w-0 flex-1 truncate text-[16px] font-semibold tracking-[-0.02em]">{title}</h2>
           <IconButton label="Close" align="end" onClick={onClose}>
             <X size={15} />
           </IconButton>
         </div>
-        <div className="space-y-3 px-5 py-4">{children}</div>
-        {footer ? <div className="flex justify-end gap-2 border-t border-line bg-canvas px-5 py-3">{footer}</div> : null}
+        <div className="flex flex-col gap-4 px-5 py-5">{children}</div>
+        {footer ? <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line bg-paper px-5 py-3">{footer}</div> : null}
       </div>
     </div>
   );
@@ -114,11 +114,11 @@ export function Sheet({ open, onClose, side = "right", label, title, over = fals
         role={over ? "dialog" : undefined}
         aria-modal={(over && !peek) || undefined}
         tabIndex={-1}
-        className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] w-full flex-col rounded-t-2xl border-t border-frame bg-panel shadow-pop outline-none md:inset-x-auto md:inset-y-0 md:max-h-none md:max-w-[92vw] md:rounded-none md:border-t-0 ${wide ? "md:w-[640px]" : "md:w-[480px]"} ${side === "right" ? "md:right-0 md:border-l" : "md:left-0 md:border-r"} ${over ? "" : "lg:static lg:z-auto lg:max-w-none lg:shadow-none"}`}
+        className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-panel shadow-modal outline-none md:inset-x-auto md:inset-y-2 md:max-h-none md:max-w-[calc(100vw-1rem)] md:rounded-2xl ${wide ? "md:w-[640px]" : "md:w-[480px]"} ${side === "right" ? "md:right-2" : "md:left-2"} ${over ? "" : "lg:static lg:z-auto lg:max-w-none lg:rounded-none lg:border-l lg:border-line lg:shadow-none"}`}
       >
         {title ? (
-          <div className="flex h-12 shrink-0 items-center border-b border-line pr-2 pl-4">
-            <h2 className="min-w-0 flex-1 truncate text-[13px] font-medium">{title}</h2>
+          <div className="flex min-h-14 shrink-0 items-center gap-2 border-b border-line py-2 pr-3 pl-5">
+            <h2 className="min-w-0 flex-1 truncate text-[16px] font-semibold tracking-[-0.02em]">{title}</h2>
             <IconButton label="Close" align="end" onClick={onClose}>
               <X size={15} />
             </IconButton>

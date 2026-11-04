@@ -1,5 +1,6 @@
 import { siBluesky, siDiscord, siFacebook, siGoogle, siInstagram, siMastodon, siPinterest, siReddit, siTelegram, siThreads, siTiktok, siX, siYoutube } from "simple-icons";
 import { networkOf, type NetworkId } from "@/lib/networks";
+import { Avatar } from "./ui";
 
 type Icon = { path: string; hex: string };
 
@@ -38,5 +39,22 @@ export function NetworkLogo({ id, size = 16 }: { id: NetworkId; size?: number })
     <svg width={size} height={size} viewBox="0 0 24 24" role="img" aria-label={name} className="shrink-0">
       <path d={icon.path} fill={`#${icon.hex}`} />
     </svg>
+  );
+}
+
+/** A channel's picture (or its initials) with its network's logo in the corner. */
+export function ChannelFace({ channel, size = 32, badge = Math.max(11, Math.round(size * 0.44)) }: { channel: { name: string; avatar: string | null; network: NetworkId }; size?: number; badge?: number }) {
+  return (
+    <span className="relative inline-flex shrink-0" style={{ width: size, height: size }}>
+      {channel.avatar ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={channel.avatar} alt="" style={{ width: size, height: size }} className="rounded-full object-cover" />
+      ) : (
+        <Avatar label={channel.name} size={size} />
+      )}
+      <span className="absolute -right-1 -bottom-1 flex rounded-xs bg-panel">
+        <NetworkLogo id={channel.network} size={badge} />
+      </span>
+    </span>
   );
 }

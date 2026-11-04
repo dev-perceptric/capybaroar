@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 /*
- * Capybaroar's look: the calm style shared with Omniscient and Claritia (Omniscient's docs/brand.md). A light gray
- * shell, white panels lifted by soft ring shadows, Inter at a 13px base, a 4px grid, corners that grow with the size of
- * the thing (6px tags, 8px buttons and inputs, 12px cards, 16px dialogs). Yellow is the one accent, Zite's palette:
- * the logo, focus, the open sidebar item, today, picked things, about 5% of a screen. Yellow is always a fill with ink
- * on it, never yellow text or icons on white. The one primary action is dark gray. Other hues only mean status or
- * object type.
+ * Capybaroar's look: the calm style shared with Claritia and Omniscient (Claritia's docs/brand.md, version 4). A light
+ * gray shell with the sidebar on it and the page as one white raised panel: a white header bar, then a paper work area
+ * where white cards sit on soft ring shadows. Inter at a 13px base, a 4px grid. Buttons, chips and switches are pills;
+ * tags 6px, inputs 8px, cards 12px, dialogs 16px. Yellow is the one accent, Zite's palette: the logo, focus, the open
+ * sidebar item, today, picked things, about 5% of a screen. Yellow is always a fill with ink on it, never yellow text
+ * or icons on white. The one primary action is dark gray. Other hues only mean status or object type.
  * The raw tokens keep Twenty's names; the Tailwind names (ink, panel, line, brand...) map onto them so every screen
  * reads the same tokens. Dark mode: data-theme="dark" on <html> swaps the tokens, not the components.
  */
@@ -24,9 +24,9 @@
   --yolk-3: #fff6c7; --yolk-9: #ffd202; --yolk-10: #e6bd00; --on-yolk: #262209;
   /* Surfaces: a gray shell, white panels, a near-white canvas, gray fills for hover and pressed */
   --bg-primary: #ffffff; --bg-secondary: #fafafa; --bg-tertiary: #f5f5f5; --bg-quaternary: #ededed; --bg-shell: #f5f5f5;
-  --bg-inverted: #333333; --bg-danger: #fde8e8; --overlay: rgba(15, 15, 15, 0.28);
+  --bg-inverted: #333333; --bg-danger: #fde8e8; --overlay: rgba(15, 15, 15, 0.28); --hover: rgba(15, 15, 15, 0.04);
   /* Text */
-  --text-primary: #171717; --text-secondary: #737373; --text-tertiary: #a3a3a3; --text-light: #c4c4c4;
+  --text-primary: #171717; --text-body: #333333; --text-secondary: #737373; --text-tertiary: #a3a3a3; --text-light: #c4c4c4;
   --text-extra-light: #dcdcdc; --text-inverted: #ffffff; --text-on-accent: #ffffff; --text-danger: #b91c1c;
   /* Lines: a soft ring around panels, gray hairlines inside them */
   --border-frame: #e5e5e5; --border-strong: #d4d4d4; --border-medium: #ebebeb; --border-light: #f2f2f2; --border-blue: #e6bd00; --border-danger: #f5c2c2;
@@ -54,6 +54,10 @@
   --sh-menu: 0 12px 32px -6px rgba(0,0,0,.12), 0 0 0 1px rgba(111,107,107,.1), 0 1px 3px rgba(63,70,75,.1);
   --sh-modal: 0 0 0 1px rgba(0,0,0,.04), 0 1px 1px -.5px rgba(0,0,0,.04), 0 6px 6px -3px rgba(0,0,0,.04), 0 12px 12px -6px rgba(0,0,0,.03), 0 24px 48px -16px rgba(0,0,0,.18);
   --sh-input: 0 0 0 1px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.16);
+  --sh-input-hover: 0 0 0 1px rgba(0,0,0,.18), 0 1px 3px rgba(0,0,0,.16);
+  --sh-pill: 0 1px 2px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.08);
+  --sh-picked: 0 0 0 1px #e6bd00;
+  --sh-track: inset 0 0 0 1px #ebebeb;
   --sh-focus: 0 0 0 1px #e6bd00, 0 1px 3px rgba(0,0,0,.16), 0 0 0 3px rgba(255,210,2,.35);
   --sh-error: 0 0 0 1px rgba(220,38,38,.6), 0 1px 3px rgba(0,0,0,.16), 0 0 0 3px rgba(220,38,38,.12);
   --shadow-light: var(--sh-chip);
@@ -70,8 +74,8 @@
   --signal-10: #e6bd00; --signal-11: #ffe674; --on-signal: #262209;
   --yolk-3: #2e2a0c; --yolk-9: #ffd202; --yolk-10: #e6bd00; --on-yolk: #262209;
   --bg-primary: #1f1f1d; --bg-secondary: #1a1a18; --bg-tertiary: #272725; --bg-quaternary: #2e2e2b; --bg-shell: #161614;
-  --bg-inverted: #f5f5f0; --bg-danger: #3d1a14; --overlay: rgba(0, 0, 0, 0.55);
-  --text-primary: #e8e8e3; --text-secondary: #9a9a95; --text-tertiary: #6b6b67; --text-light: #52524e;
+  --bg-inverted: #f5f5f0; --bg-danger: #3d1a14; --overlay: rgba(0, 0, 0, 0.55); --hover: rgba(255, 255, 255, 0.05);
+  --text-primary: #e8e8e3; --text-body: #d9d9d4; --text-secondary: #9a9a95; --text-tertiary: #6b6b67; --text-light: #52524e;
   --text-extra-light: #3d3d39; --text-inverted: #171717; --text-on-accent: #171717; --text-danger: #f87171;
   --border-frame: #333331; --border-strong: #3d3d39; --border-medium: #2c2c29; --border-light: #252523; --border-blue: #ffd202; --border-danger: #5c2419;
   --status-success: #5fc79a; --status-error: #f87171; --status-warning: #fdba74; --status-info: #f5f5f0;
@@ -90,6 +94,10 @@
   --sh-menu: 0 12px 32px -6px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
   --sh-modal: 0 24px 48px -12px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1);
   --sh-input: 0 0 0 1px rgba(255,255,255,.14), 0 1px 3px rgba(0,0,0,.5);
+  --sh-input-hover: 0 0 0 1px rgba(255,255,255,.24), 0 1px 3px rgba(0,0,0,.5);
+  --sh-pill: 0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.1);
+  --sh-picked: 0 0 0 1px #ffd202;
+  --sh-track: inset 0 0 0 1px #2c2c29;
   --sh-focus: 0 0 0 1px #ffd202, 0 0 0 3px rgba(255,210,2,.3);
   --sh-error: 0 0 0 1px rgba(248,113,113,.7), 0 0 0 3px rgba(248,113,113,.18);
   --shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);
@@ -100,8 +108,9 @@
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
   --icon-sm: 14px; --icon-md: 16px; --icon-lg: 20px; --icon-xl: 24px;
   --duration-instant: 120ms; --duration-fast: 150ms; --duration-normal: 280ms; --duration-slow: 560ms;
+  --duration-quick: 150ms; --duration-calm: 280ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1); --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); --ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --sidebar-width: 232px; --side-panel-width: 500px; --header-height: 48px; --row-height: 32px;
+  --sidebar-width: 240px; --side-panel-width: 500px; --header-height: 48px; --row-height: 32px;
 }
 
 /* Tailwind names on the tokens. `inline` keeps the var() so dark mode swaps at runtime. */
@@ -131,7 +140,8 @@
 
   /* Text */
   --color-ink: var(--text-primary);
-  --color-body: var(--text-primary);
+  --color-text: var(--text-primary);
+  --color-body: var(--text-body);
   --color-muted: var(--text-secondary);
   --color-faint: var(--text-tertiary);
   --color-light: var(--text-light);
@@ -140,9 +150,15 @@
   /* Surfaces and borders */
   --color-panel: var(--bg-primary);
   --color-canvas: var(--bg-secondary);
+  /* Claritia's names: the white card, the paper work area, the gray shell and gray tags */
+  --color-card: var(--bg-primary);
+  --color-paper: var(--bg-secondary);
+  --color-paper-deep: var(--bg-shell);
+  --color-chip: var(--bg-quaternary);
   --color-side: var(--bg-shell);
   --color-shell: var(--bg-shell);
-  --color-hover: var(--bg-tertiary);
+  /* See-through, so hover reads the same on white, on paper and on the gray shell */
+  --color-hover: var(--hover);
   --color-pressed: var(--bg-quaternary);
   --color-solid: var(--bg-inverted);
   --color-line: var(--border-medium);
@@ -161,6 +177,8 @@
   --color-brand-line: var(--border-blue);
   --color-brand-flash: var(--accent-flash);
   --color-fire: var(--orange-9);
+  /* The main series in a chart: a white-label report's accent when its page sets --chart, else ink */
+  --color-chart: var(--chart, var(--text-primary));
 
   /* Yellow for the signal, Zite's palette: the logo, focus, the open item, today and picked things. Always a fill with
      ink on it (on-signal); signal-ink is the one gold for small text. */
@@ -195,9 +213,23 @@
   --color-yellow: var(--yellow-11);
   --color-yellow-soft: var(--yellow-3);
   --color-gray-soft: var(--gray-3);
+  --color-blue: var(--blue-11);
+  --color-blue-soft: var(--blue-3);
 
-  /* Corners grow with the size of the thing: tags and small chips 4 to 6px, buttons and inputs 8px, cards and
-     menus 12px, dialogs 16px. rounded-full stays for faces, dots, switches and radio buttons. */
+  /* Solid tones for dots and status edges (a brand's dot, a post's edge on the calendar) */
+  --color-tone-gray: var(--gray-9);
+  --color-tone-blue: var(--blue-9);
+  --color-tone-violet: var(--purple-9);
+  --color-tone-green: var(--green-9);
+  --color-tone-amber: var(--orange-9);
+  --color-tone-red: var(--red-9);
+  --color-tone-turquoise: var(--turquoise-9);
+  --color-tone-sky: var(--sky-9);
+  --color-tone-pink: var(--pink-9);
+  --color-tone-yellow: var(--yellow-9);
+
+  /* Corners grow with the size of the thing: tags 6px, inputs and tabs 8px, cards and menus 12px, dialogs 16px.
+     Buttons, chips, switches and segmented controls are pills (rounded-full), like Claritia's. */
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius: 6px;
@@ -207,20 +239,27 @@
   --radius-2xl: 16px;
   --radius-3xl: 20px;
 
-  /* Shadows: a ring and soft layers for raised things (card), chips and filters (chip), outline buttons and inputs
-     (outline, input), the primary button (primary), the yellow button (signal), menus (pop) and dialogs (modal). */
+  /* Shadows: a ring and soft layers for raised things (card or rest), chips and tabs (chip, pill on hover), outline
+     buttons and inputs (outline, input), the primary button (primary), the yellow button (signal), a picked chip's
+     yellow ring (picked), menus (pop or menu) and dialogs (modal). */
   --shadow-xs: var(--sh-chip);
   --shadow-sm: var(--sh-chip);
   --shadow-chip: var(--sh-chip);
+  --shadow-pill: var(--sh-pill);
   --shadow-card: var(--sh-rest);
+  --shadow-rest: var(--sh-rest);
   --shadow-hover: var(--sh-hover);
   --shadow-outline: var(--sh-outline);
   --shadow-input: var(--sh-input);
+  --shadow-input-hover: var(--sh-input-hover);
+  --shadow-picked: var(--sh-picked);
+  --shadow-track: var(--sh-track);
   --shadow-focus: var(--sh-focus);
   --shadow-error: var(--sh-error);
   --shadow-primary: var(--sh-primary);
   --shadow-signal: var(--sh-signal);
   --shadow-pop: var(--sh-menu);
+  --shadow-menu: var(--sh-menu);
   --shadow-modal: var(--sh-modal);
 }
 
@@ -412,14 +451,13 @@ input[type="checkbox"].toggle:checked::after {
 .loader > i:nth-child(3) { animation-delay: 0.45s; }
 @keyframes loader-blink { 50% { opacity: 0.2; } }
 
-/* Skeleton bars while a list loads: a soft gray shimmer. */
+/* Skeleton bars while a list loads: soft gray that breathes (opacity only, no gradient). */
 .bone {
   border-radius: var(--radius-xs);
-  background: linear-gradient(90deg, var(--border-light) 30%, var(--accent-3) 50%, var(--border-light) 70%);
-  background-size: 200% 100%;
-  animation: bone 1.1s linear infinite;
+  background: var(--bg-quaternary);
+  animation: bone 1.6s ease-in-out infinite;
 }
-@keyframes bone { to { background-position: -200% 0; } }
+@keyframes bone { 50% { opacity: 0.55; } }
 
 /* Things arriving: rows, panels, menus. */
 .rise { animation: rise var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
@@ -467,9 +505,13 @@ input[type="checkbox"].toggle:checked::after {
 .quarters .on:nth-child(4) { animation-delay: 180ms; }
 @keyframes quarter { from { opacity: 0; transform: scale(0.4); } }
 
-/* The open row in a list takes the palest yellow. */
+/* The open row in a list takes the palest yellow, with a yellow edge on its left. */
 tr.row-sel > td {
   background: var(--signal-1);
+}
+.row-on {
+  background: var(--signal-1);
+  box-shadow: inset 2px 0 0 var(--signal-9);
 }
 
 /* Big moments only (a list launched, a person added to a campaign): small squares burst out. */
@@ -610,4 +652,5 @@ tr.row-sel > td {
   .report { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .report-section + .report-section { break-before: page; }
   .report figure, .report tr, .report .break-inside-avoid { break-inside: avoid; }
+  .report .shadow-card { box-shadow: none; border: 1px solid var(--border-medium); }
 }

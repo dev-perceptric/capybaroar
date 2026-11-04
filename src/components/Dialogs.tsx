@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { dialogIn, dialogOut, fadeIn, fadeOut } from "@/lib/motion";
-import { Button } from "./ui";
+import { Button, inputClass } from "./ui";
 
 // The app's own pop-up questions, in place of the browser's prompt, confirm and alert boxes.
 // Call askText, askConfirm or tell from anywhere; <DialogHost /> (mounted once) shows them.
@@ -71,7 +71,7 @@ export function DialogHost() {
   return (
     <div
       ref={layer}
-      className="fixed inset-0 z-[90] grid place-items-center bg-scrim px-4"
+      className="fixed inset-0 z-[90] flex items-start justify-center bg-scrim px-4 pt-[15vh]"
       onMouseDown={() => void finish(false)}
       onKeyDown={(e) => e.key === "Escape" && void finish(false)}
     >
@@ -80,7 +80,7 @@ export function DialogHost() {
         role="dialog"
         aria-modal="true"
         aria-label={req.title}
-        className="flex w-[400px] max-w-full flex-col gap-4 rounded-2xl border border-frame bg-panel p-6 shadow-modal"
+        className="flex w-[440px] max-w-full flex-col gap-5 rounded-2xl bg-panel p-6 shadow-modal"
         onMouseDown={(e) => e.stopPropagation()}
         onSubmit={(e) => {
           e.preventDefault();
@@ -88,8 +88,8 @@ export function DialogHost() {
         }}
       >
         <div className="flex flex-col gap-3">
-          <h2 className="text-[16px] font-medium">{req.title}</h2>
-          {"body" in req && req.body ? <p className="whitespace-pre-line text-[13px] text-muted">{req.body}</p> : null}
+          <h2 className="text-[20px] leading-tight font-semibold tracking-[-0.02em] text-balance">{req.title}</h2>
+          {"body" in req && req.body ? <p className="max-h-64 overflow-auto text-[13px] leading-relaxed whitespace-pre-line text-muted">{req.body}</p> : null}
           {req.kind === "text" ? (
             <input
               autoFocus
@@ -97,13 +97,13 @@ export function DialogHost() {
               onChange={(e) => setText(e.target.value)}
               placeholder={req.placeholder}
               maxLength={120}
-              className="h-8 w-full rounded-md bg-panel px-2.5 text-[13px] shadow-input outline-none transition-shadow focus:shadow-focus"
+              className={inputClass}
             />
           ) : null}
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           {req.kind !== "tell" ? (
-            <Button type="button" variant="ghost" onClick={() => void finish(false)}>
+            <Button type="button" variant="plain" onClick={() => void finish(false)}>
               Cancel
             </Button>
           ) : null}
@@ -111,7 +111,7 @@ export function DialogHost() {
             type="submit"
             autoFocus={req.kind !== "text"}
             disabled={req.kind === "text" && !text.trim()}
-            variant={req.kind === "confirm" && req.danger ? "danger" : "primary"}
+            variant={req.kind === "confirm" && req.danger ? "destroy" : "primary"}
           >
             {req.kind === "tell" ? "OK" : req.ok}
           </Button>

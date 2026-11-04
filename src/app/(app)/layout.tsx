@@ -6,7 +6,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const ctx = await getBrandCtx();
   const inbox = ctx.role === "client" ? 0 : await openCount(ctx.workspaceId, ctx.scope);
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-shell md:flex-row md:gap-2 md:p-2">
+    <div className="flex h-dvh flex-col overflow-hidden bg-shell md:flex-row">
       <Sidebar
         name={ctx.name}
         email={ctx.email}
@@ -14,8 +14,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         inbox={inbox}
         switcher={{ role: ctx.role, brands: ctx.brands, brand: ctx.brand?.id ?? null, workspaces: ctx.workspaces, workspaceId: ctx.workspaceId }}
       />
-      {/* Keyed by brand and workspace, so a switch starts every page fresh instead of keeping the last brand's lists. */}
-      <main key={`${ctx.workspaceId}:${ctx.brand?.id ?? "all"}`} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-panel md:rounded-lg md:border md:border-frame md:shadow-card">{children}</main>
+      {/* The page: one white panel on the gray shell, 8px from its edges. Keyed by brand and workspace, so a switch
+          starts every page fresh instead of keeping the last brand's lists. */}
+      <main key={`${ctx.workspaceId}:${ctx.brand?.id ?? "all"}`} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-paper md:my-2 md:mr-2 md:rounded-lg md:shadow-card">{children}</main>
     </div>
   );
 }
