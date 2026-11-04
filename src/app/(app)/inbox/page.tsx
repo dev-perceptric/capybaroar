@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Inbox } from "lucide-react";
-import { Page } from "@/components/ui";
+import { LinkButton, Page } from "@/components/ui";
 import { ToolIntro } from "@/components/ToolIntro";
 import { InboxView } from "@/components/InboxView";
 import { listChannels } from "@/lib/channels";
@@ -27,13 +26,7 @@ export default async function InboxPage() {
           drawing="inbox"
           title="Answer comments and messages"
           lead="Comments, replies, mentions and messages from your channels, in one place."
-          action={
-            reading.length ? undefined : (
-              <Link href="/channels" className="inline-flex h-8 items-center rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover">
-                Connect a channel
-              </Link>
-            )
-          }
+          action={reading.length ? undefined : <LinkButton href="/channels">Connect a channel</LinkButton>}
         />
       </Page>
     );

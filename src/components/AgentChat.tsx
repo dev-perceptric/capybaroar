@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUp, CalendarCheck, Plus } from "lucide-react";
-import { IconButton } from "./ui";
+import { IconButton, LinkButton, bareArea, boxClass } from "./ui";
 import { Loader } from "./Loader";
 import { send } from "@/app/(app)/agents/actions";
 
@@ -40,14 +40,14 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
 
   const empty = !messages.length && !pending;
   return (
-    <div className="flex h-full min-h-0">
+    <div className="flex h-full min-h-0 bg-panel">
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 overflow-y-auto">
           {empty ? (
-            <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+            <div className="rise flex h-full flex-col items-center justify-center px-6 text-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="" width={88} height={88} className="size-22 rounded-2xl" />
-              <h2 className="mt-6 text-[24px] font-semibold tracking-[-0.035em] text-balance">
+              <img src="/logo.png" alt="" width={80} height={80} className="size-20 rounded-2xl shadow-card" />
+              <h2 className="mt-6 max-w-md text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
                 Plan a week of posts. <span className="text-faint">The agent writes and schedules them.</span>
               </h2>
             </div>
@@ -73,9 +73,10 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
             e.preventDefault();
             submit();
           }}
-          className="mx-auto mb-6 w-full max-w-[720px] rounded-lg bg-panel px-3 pt-2 pb-2 shadow-input transition-shadow focus-within:shadow-focus"
+          className={`mx-auto mb-4 w-[calc(100%-2rem)] max-w-[720px] md:mb-6 ${boxClass}`}
         >
           <textarea
+            aria-label="Message"
             rows={3}
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -86,10 +87,14 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
               }
             }}
             placeholder="Write 5 LinkedIn posts about our launch, one each weekday at 9 AM"
-            className="w-full resize-none bg-transparent text-[13px] outline-none placeholder:text-faint"
+            className={bareArea}
           />
-          <div className="flex items-center gap-2">
-            {error ? <p className="text-[12px] text-danger">{error}</p> : null}
+          <div className="flex items-center gap-2 px-2 pb-2">
+            {error ? (
+              <p role="alert" className="pl-1 text-[12px] text-danger">
+                {error}
+              </p>
+            ) : null}
             <span className="flex-1" />
             <IconButton label="Send" variant="primary" type="submit" disabled={!text.trim() || busy}>
               <ArrowUp size={16} />
@@ -97,19 +102,18 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
           </div>
         </form>
       </div>
-      <aside className="hidden w-64 shrink-0 flex-col border-l border-line p-2 lg:flex">
-        <Link href="/agents" className="mb-2 flex h-8 items-center gap-2 rounded-md bg-panel px-2 text-[13px] font-medium shadow-outline hover:bg-canvas">
-          <Plus size={14} /> New chat
-        </Link>
-        <p className="label-mono flex h-6 items-center px-2">
-          Chats
-        </p>
+      <aside className="hidden w-64 shrink-0 flex-col gap-0.5 border-l border-line bg-paper p-3 lg:flex">
+        <LinkButton href="/agents" variant="ghost" className="mb-3 w-full">
+          <Plus /> New chat
+        </LinkButton>
+        <p className="label-mono flex h-6 items-center px-2">Chats</p>
         {chats.length ? (
           chats.map((c) => (
             <Link
               key={c.id}
               href={`/agents?chat=${c.id}`}
-              className={`flex h-8 items-center truncate rounded-md px-2 text-[13px] ${c.id === chatId ? "bg-hover font-medium text-ink shadow-[inset_0_0_0_1px_var(--border-light)]" : "text-ink/85 hover:bg-hover"}`}
+              aria-current={c.id === chatId ? "page" : undefined}
+              className={`flex h-8 shrink-0 items-center truncate rounded-md px-2 text-[13px] transition-colors ${c.id === chatId ? "bg-panel font-medium text-ink shadow-chip" : "text-body hover:bg-hover hover:text-ink"}`}
             >
               <span className="truncate">{c.title}</span>
             </Link>
@@ -125,10 +129,10 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
 function Bubble({ m }: { m: Shown }) {
   if (m.role === "tool")
     return (
-      <Link href="/calendar" className="flex w-fit items-center gap-2 rounded-md bg-signal-soft px-2 py-1 text-[12px] font-medium shadow-[0_0_0_1px_var(--signal-10)]">
+      <Link href="/calendar" className="inline-flex h-7 w-fit items-center gap-1.5 rounded-full bg-signal-soft px-3 text-[12px] font-medium text-ink shadow-picked">
         <CalendarCheck size={14} /> {m.text}
       </Link>
     );
-  if (m.role === "user") return <p className="ml-auto max-w-[80%] rounded-lg bg-hover px-3 py-2 text-[13px] whitespace-pre-wrap">{m.text}</p>;
+  if (m.role === "user") return <p className="ml-auto max-w-[80%] rounded-lg bg-paper px-3 py-2 text-[13px] whitespace-pre-wrap shadow-track">{m.text}</p>;
   return <p className="max-w-[90%] text-[13px] leading-relaxed whitespace-pre-wrap">{m.text}</p>;
 }
