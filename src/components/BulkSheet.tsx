@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Download, FileUp, ImagePlus, Sparkles, X } from "lucide-react";
-import { Badge, Button, Field, IconButton, Input, Segmented, TextArea, inputClass, type Tone } from "./ui";
+import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, Th, inputLook, type Tone } from "./ui";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
@@ -71,10 +71,12 @@ export function BulkSheet({ channels, onClose, onSaved }: { channels: Channel[];
   const work = { busy, setBusy, onSaved: () => setSaved(true) };
   return (
     <div ref={shell} className="fixed inset-0 z-[80] flex bg-scrim md:p-4" role="dialog" aria-modal="true" aria-label="Bulk">
-      <div ref={card} className="relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-frame bg-panel shadow-modal">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line px-4">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Bulk</h2>
+      <div ref={card} className="relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl bg-panel shadow-modal">
+        <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-line py-2 pr-3 pl-5">
+          <h2 className="text-[16px] font-semibold tracking-[-0.02em]">Bulk</h2>
           <Segmented<Tab>
+            label="Import from"
+            size="sm"
             value={tab}
             onChange={(t) => !busy && setTab(t)}
             options={[
@@ -97,15 +99,19 @@ type Work = { busy: boolean; setBusy: (b: boolean) => void; onSaved: () => void 
 
 function Footer({ note, busy, onDrafts, onSchedule, ready, scheduleCount }: { note: React.ReactNode; busy: boolean; onDrafts: () => void; onSchedule: () => void; ready: number; scheduleCount: number }) {
   return (
-    <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line bg-canvas px-4 py-3">
-      <span className="min-w-0 flex-1 text-[12px] text-muted">{note}</span>
-      <Button variant="ghost" disabled={busy || !ready} onClick={onDrafts}>
-        Save {ready} as drafts
-      </Button>
-      <Button disabled={busy || !scheduleCount} onClick={onSchedule}>
-        {busy ? <Loader /> : null}
-        Schedule {scheduleCount}
-      </Button>
+    <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line bg-paper px-4 py-3">
+      <span role="status" className="min-w-0 flex-1 text-[12px] text-muted">
+        {note}
+      </span>
+      <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+        <Button variant="ghost" disabled={busy || !ready} onClick={onDrafts}>
+          Save {ready} as drafts
+        </Button>
+        <Button disabled={busy || !scheduleCount} onClick={onSchedule}>
+          {busy ? <Loader /> : null}
+          Schedule {scheduleCount}
+        </Button>
+      </div>
     </footer>
   );
 }
@@ -180,33 +186,37 @@ function CsvTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } & 
         {picker}
         <ToolIntro
           drawing="records"
-          title="Import posts from a CSV file"
+          title={"Import posts\nfrom a CSV file"}
           lead="One row is one post, with the columns date, time, channels, text, media URL and first comment."
           action={
             <>
               <Button onClick={() => input.current?.click()}>
-                <FileUp size={14} /> Choose file
+                <FileUp /> Choose file
               </Button>
               <Button variant="ghost" onClick={template}>
-                <Download size={14} /> Template
+                <Download /> Template
               </Button>
             </>
           }
         />
-        {fileError ? <p className="pb-6 text-center text-[13px] text-danger">{fileError}</p> : null}
+        {fileError ? (
+          <p role="alert" className="pb-6 text-center text-[13px] text-danger">
+            {fileError}
+          </p>
+        ) : null}
       </div>
     );
   const errors = rows.filter((r) => r.errors.length).length;
   return (
     <>
       {picker}
-      <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line px-4 py-2.5">
+      <div className="flex min-h-12 shrink-0 flex-wrap items-center gap-3 border-b border-line px-5 py-2">
         <span className="min-w-0 truncate text-[13px] font-medium">{file.name}</span>
         <span className="text-[12px] text-muted tabular-nums">{rows.length} rows</span>
         {errors ? <Badge tone="red">{errors} with errors</Badge> : null}
         <span className="flex-1" />
-        <Button variant="ghost" onClick={replace} disabled={busy}>
-          <FileUp size={14} /> Choose another file
+        <Button variant="ghost" size="sm" onClick={replace} disabled={busy}>
+          <FileUp /> Choose another file
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto">
@@ -215,11 +225,9 @@ function CsvTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } & 
         ) : (
           <table className="w-full min-w-[880px] border-collapse text-left">
             <thead>
-              <tr className="text-[12px] text-muted">
+              <tr>
                 {["Row", "When", "Channels", "Text", "Media", ""].map((h) => (
-                  <th key={h} className="sticky top-0 z-10 h-8 border-b border-line bg-panel px-3 font-medium">
-                    {h}
-                  </th>
+                  <Th key={h}>{h}</Th>
                 ))}
               </tr>
             </thead>
@@ -415,7 +423,7 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
           lead="Each file becomes its own post, spread over your queue or one a day."
           action={
             <Button onClick={() => input.current?.click()}>
-              <ImagePlus size={14} /> Choose files
+              <ImagePlus /> Choose files
             </Button>
           }
         />
@@ -425,22 +433,16 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
     <>
       {picker}
       <div className="grid min-h-0 flex-1 lg:grid-cols-[320px_minmax(0,1fr)]" {...drop}>
-        <aside className="flex flex-col gap-5 overflow-y-auto border-b border-line p-4 lg:border-r lg:border-b-0">
+        <aside className="flex flex-col gap-5 overflow-y-auto border-b border-line bg-paper p-5 lg:border-r lg:border-b-0">
           <Field label="Channels">
             <div className="flex flex-wrap gap-1.5">
               {channels.map((c) => {
                 const on = picked.includes(c.id);
                 return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => setPicked((p) => (on ? p.filter((x) => x !== c.id) : [...p, c.id]))}
-                    className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
-                  >
+                  <Chip key={c.id} on={on} onClick={() => setPicked((p) => (on ? p.filter((x) => x !== c.id) : [...p, c.id]))}>
                     <NetworkLogo id={c.network} size={14} />
                     <span className="max-w-36 truncate">{c.name}</span>
-                  </button>
+                  </Chip>
                 );
               })}
             </div>
@@ -448,6 +450,8 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
           <Field label="When">
             <div className="flex flex-wrap items-center gap-2">
               <Segmented<"queue" | "daily">
+                label="When"
+                size="sm"
                 value={how}
                 onChange={setHow}
                 options={[
@@ -455,7 +459,7 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
                   { value: "daily", label: "One a day" },
                 ]}
               />
-              {how === "daily" ? <input type="time" aria-label="Time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass.replace("w-full", "w-28")} /> : null}
+              {how === "daily" ? <input type="time" aria-label="Time" value={time} onChange={(e) => setTime(e.target.value)} className={`${inputLook} w-28`} /> : null}
             </div>
             {timesError ? <p className="text-[12px] text-danger">{timesError}</p> : null}
           </Field>
@@ -463,20 +467,20 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
             <div className="flex flex-col gap-2">
               <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes for Claude" maxLength={1000} />
               <Button variant="ghost" onClick={() => void captions()} disabled={busy || !ready.some((i) => !i.text.trim())}>
-                <Sparkles size={14} /> Write captions
+                <Sparkles /> Write captions
               </Button>
             </div>
           </Field>
           <Button variant="ghost" onClick={() => input.current?.click()} disabled={busy || items.length >= 100}>
-            <ImagePlus size={14} /> Add files
+            <ImagePlus /> Add files
           </Button>
         </aside>
         <div className="min-h-0 overflow-y-auto">
           {items.map((it) => {
             const at = it.result ? null : timeOf(it.key);
             return (
-              <div key={it.key} className="flex gap-3 border-b border-line-light px-4 py-3">
-                <span className="size-16 shrink-0 overflow-hidden rounded-md bg-pressed">
+              <div key={it.key} className="flex gap-3 border-b border-line px-5 py-3">
+                <span className="size-16 shrink-0 overflow-hidden rounded-lg bg-paper shadow-chip">
                   {it.mime.startsWith("video/") ? (
                     <video src={it.preview} muted preload="metadata" className="size-full object-cover" />
                   ) : (

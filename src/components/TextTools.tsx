@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AtSign, Bold, Bookmark, Hash, Italic, Link2, Redo2, Trash2, Undo2, WandSparkles } from "lucide-react";
-import { IconButton } from "./ui";
+import { Chip, IconButton } from "./ui";
 import { Floating } from "./Floating";
 import { Loader } from "./Loader";
 import { askConfirm, askText } from "./Dialogs";
@@ -80,10 +80,11 @@ const AI: { how: string; label: string }[] = [
   { how: "fix", label: "Fix spelling and grammar" },
 ];
 
-const MENU = "min-w-60 rounded-lg border border-frame bg-panel p-1 text-[13px] shadow-pop";
-const ROW = "flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-hover disabled:text-faint";
+const MENU = "min-w-60 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu";
+const ROW = "flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover disabled:text-faint";
 
-/** The bar over a post's text: undo, formatting, hashtags, mentions, short links, snippets and Claude. */
+/** The bar over a post's text, inside the text's box (`boxClass`): undo, formatting, hashtags, mentions, short links,
+ *  snippets and Claude. */
 export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area: Area; network: string | null; onError: (m: string) => void; aiOpen: boolean; setAiOpen: (v: boolean) => void }) {
   const aiBtn = useRef<HTMLSpanElement>(null);
   const snipBtn = useRef<HTMLSpanElement>(null);
@@ -180,7 +181,7 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 border border-b-0 border-line-strong bg-canvas px-1 py-1">
+    <div className="flex flex-wrap items-center gap-0.5 border-b border-line bg-paper px-1.5 py-1">
       <IconButton label={`Undo (${k}Z)`} onMouseDown={(e) => e.preventDefault()} onClick={() => exec("undo")}>
         <Undo2 />
       </IconButton>
@@ -211,18 +212,11 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
       </span>
       <span className="flex-1" />
       <span ref={aiBtn} className="inline-flex">
-        <button
-          type="button"
-          aria-expanded={aiOpen}
-          disabled={working === "ai"}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setAiOpen(!aiOpen)}
-          className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium ${aiOpen ? "border-transparent bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "border-transparent bg-panel shadow-outline hover:bg-canvas"}`}
-        >
+        <Chip size="sm" on={aiOpen} aria-expanded={aiOpen} disabled={working === "ai"} onMouseDown={(e) => e.preventDefault()} onClick={() => setAiOpen(!aiOpen)} className="font-medium">
           {working === "ai" ? <Loader /> : <WandSparkles size={14} />}
           Rewrite
-          <span className="text-[11px] text-muted">{k}J</span>
-        </button>
+          <span className="text-[11px] font-normal text-muted">{k}J</span>
+        </Chip>
       </span>
 
       {aiOpen ? (
@@ -243,18 +237,18 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
             </div>
           ) : (
             snips.map((s) => (
-              <div key={s.id} className="group/snip flex items-center hover:bg-hover">
-                <button type="button" role="menuitem" title={s.body} className="flex min-w-0 flex-1 flex-col px-3 py-1.5 text-left" onMouseDown={(e) => e.preventDefault()} onClick={() => (setSnipOpen(false), insertAtCursor(s.body))}>
+              <div key={s.id} className="group/snip flex items-center rounded-sm hover:bg-hover">
+                <button type="button" role="menuitem" title={s.body} className="flex min-w-0 flex-1 flex-col px-2.5 py-1.5 text-left" onMouseDown={(e) => e.preventDefault()} onClick={() => (setSnipOpen(false), insertAtCursor(s.body))}>
                   <span className="truncate font-medium">{s.name}</span>
                   <span className="truncate text-[12px] text-muted">{s.body}</span>
                 </button>
-                <IconButton label="Delete snippet" className="mr-1 opacity-0 group-hover/snip:opacity-100" onClick={() => delSnip(s)}>
+                <IconButton label="Delete snippet" className="mr-0.5 opacity-0 group-focus-within/snip:opacity-100 group-hover/snip:opacity-100" onClick={() => delSnip(s)}>
                   <Trash2 />
                 </IconButton>
               </div>
             ))
           )}
-          <div className="my-1 border-t border-line" />
+          <div className="my-1 -mx-1.5 border-t border-line" />
           <button type="button" role="menuitem" className={ROW} onMouseDown={(e) => e.preventDefault()} onClick={saveSnip}>
             Save selection as snippet
           </button>

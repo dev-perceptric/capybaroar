@@ -4,10 +4,10 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
-import { Avatar, Badge, Button, Field, IconButton, Input, Segmented, TextArea, inputClass } from "./ui";
+import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
-import { NetworkLogo } from "./NetworkLogo";
+import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
@@ -331,7 +331,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     <div ref={shell} className="fixed inset-0 z-[80] flex bg-scrim md:p-4" role="dialog" aria-modal="true" aria-label={post ? "Edit post" : "New post"}>
       <div
         ref={card}
-        className="relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-frame bg-panel shadow-modal"
+        className="relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl bg-panel shadow-modal"
         onDragOver={(e) => {
           if (locked || !e.dataTransfer.types.includes("Files")) return;
           e.preventDefault();
@@ -347,8 +347,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           void upload(e.dataTransfer.files);
         }}
       >
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line px-4">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">{post ? (locked ? "Post" : "Edit post") : "New post"}</h2>
+        <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-line py-2 pr-3 pl-5">
+          <h2 className="text-[16px] font-semibold tracking-[-0.02em]">{post ? (locked ? "Post" : "Edit post") : "New post"}</h2>
           {inReview ? <Badge tone="violet">In review</Badge> : null}
           {locked && error ? <span className="min-w-0 truncate text-[12px] text-danger">{error}</span> : null}
           {picked.length ? (
@@ -387,14 +387,16 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         </header>
 
         {restorable ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-signal-pale px-4 py-2 text-[12px]">
+          <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-line bg-signal-pale px-5 py-2 text-[13px]">
             <History size={14} />
             <span>Unsaved changes from {new Date(restorable.savedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</span>
             <span className="flex-1" />
-            <Button variant="ghost" onClick={discardLocal}>
+            <Button variant="ghost" size="sm" onClick={discardLocal}>
               Discard
             </Button>
-            <Button onClick={restore}>Restore</Button>
+            <Button size="sm" onClick={restore}>
+              Restore
+            </Button>
           </div>
         ) : null}
 
@@ -404,56 +406,51 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
             <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5 px-5 py-5">
               <Field label="Channels">
                 {channels.length ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {channels.map((c) => {
-                      const on = Boolean(targets[c.id]);
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          aria-pressed={on}
-                          disabled={locked}
-                          title={`${c.name}, ${networkOf(c.network).name}`}
-                          onClick={() => toggle(c)}
-                          className={`flex h-10 items-center gap-2 rounded-md pr-3 pl-1.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"} ${c.status === "reconnect" ? "opacity-50" : ""}`}
-                        >
-                          <span className="relative">
-                            <Face c={c} size={26} />
-                            <span className="absolute -right-1 -bottom-1 flex rounded-full bg-panel">
-                              <NetworkLogo id={c.network} size={12} />
-                            </span>
-                          </span>
-                          <span className="max-w-32 truncate">{c.name}</span>
-                        </button>
-                      );
-                    })}
+                  <div className="flex flex-wrap gap-2">
+                    {channels.map((c) => (
+                      <Chip
+                        key={c.id}
+                        size="lg"
+                        on={Boolean(targets[c.id])}
+                        disabled={locked}
+                        title={`${c.name}, ${networkOf(c.network).name}`}
+                        onClick={() => toggle(c)}
+                        className={c.status === "reconnect" ? "opacity-60" : ""}
+                      >
+                        <ChannelFace channel={c} size={28} badge={12} />
+                        <span className="max-w-32 truncate">{c.name}</span>
+                      </Chip>
+                    ))}
                   </div>
                 ) : (
-                  <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-md border border-dashed border-line-strong px-3 text-[13px] text-muted hover:border-ink/40 hover:text-ink">
+                  <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-full border border-dashed border-line-strong px-4 text-[13px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
                     Connect a channel
                   </Link>
                 )}
               </Field>
 
               {picked.length ? (
-                <div role="tablist" aria-label="Edit for" className="flex flex-wrap gap-1 border-b border-line pb-2">
-                  <TabButton on={!active} onClick={() => setTab("all")} label="All channels">
+                <div role="tablist" aria-label="Edit for" className="flex flex-wrap gap-1.5 border-t border-line pt-4">
+                  <Chip size="sm" role="tab" aria-selected={!active} title="All channels" on={!active} onClick={() => setTab("all")}>
                     <Layers size={14} /> All
-                  </TabButton>
+                  </Chip>
                   {picked.map((c) => (
-                    <TabButton
+                    <Chip
                       key={c.id}
+                      size="sm"
+                      role="tab"
+                      aria-selected={active?.id === c.id}
+                      title={c.name}
                       on={active?.id === c.id}
                       onClick={() => {
                         setTab(c.id);
                         setView(c.id);
                       }}
-                      label={c.name}
                     >
                       <NetworkLogo id={c.network} size={14} />
                       <span className="max-w-28 truncate">{c.name}</span>
                       {targets[c.id].text != null ? <Type size={11} className="text-muted" aria-label="Own text" /> : null}
-                    </TabButton>
+                    </Chip>
                   ))}
                 </div>
               ) : null}
@@ -464,15 +461,15 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     label={`Text for ${active.name}`}
                     aside={
                       targets[active.id].text != null && !locked ? (
-                        <button type="button" onClick={() => patch(active.id, { text: null })} className="text-[12px] text-muted underline underline-offset-2 hover:text-ink">
+                        <Button variant="plain" size="sm" className="-my-1" onClick={() => patch(active.id, { text: null })}>
                           Use shared text
-                        </button>
+                        </Button>
                       ) : null
                     }
                   >
-                    <div>
+                    <div className={boxClass}>
                       {!locked ? <TextTools area={chanArea} network={active.network} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
-                      <TextArea ref={chanArea} rows={11} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className="block text-[14px] leading-relaxed" />
+                      <textarea ref={chanArea} rows={11} aria-label={`Text for ${active.name}`} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
                     </div>
                   </Field>
                   <Counter c={active} text={textOf(active)} />
@@ -480,10 +477,11 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               ) : (
                 <>
                   <Field label="Text">
-                    <div>
+                    <div className={boxClass}>
                     {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
-                    <TextArea
+                    <textarea
                       ref={sharedArea}
+                      aria-label="Text"
                       rows={12}
                       value={text}
                       readOnly={locked}
@@ -495,7 +493,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                         }
                       }}
                       placeholder="What do you want to share?"
-                      className="block text-[14px] leading-relaxed"
+                      className={`${bareArea} resize-y text-[14px] leading-relaxed`}
                     />
                     </div>
                   </Field>
@@ -511,7 +509,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
               {/* Media */}
               <div className="flex flex-col gap-2">
-                <p className="text-[12px] font-medium text-muted">Media</p>
+                <p className="text-[12.5px] font-medium text-body">Media</p>
                 <div className="flex flex-wrap gap-2">
                   {files.map((m, i) => (
                     <div
@@ -547,19 +545,19 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       className={`group/thumb relative ${files.length > 1 && !locked ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === m.id ? "opacity-40" : ""}`}
                     >
                       <Thumb m={m} />
-                      {files.length > 1 ? <span className="absolute top-1 left-1 flex size-5 items-center justify-center rounded-xs bg-panel text-[10px] font-semibold tabular-nums shadow-chip">{i + 1}</span> : null}
+                      {files.length > 1 ? <span className="absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-panel text-[10px] font-semibold tabular-nums shadow-chip">{i + 1}</span> : null}
                       {!locked ? (
                         <>
-                          <span className="absolute top-1 right-1 hidden gap-1 group-hover/thumb:flex">
-                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-sm bg-panel shadow-chip hover:bg-hover">
+                          <span className="absolute top-1.5 right-1.5 hidden gap-1 group-focus-within/thumb:flex group-hover/thumb:flex">
+                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
                               {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
                             </button>
-                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-sm bg-panel shadow-chip hover:bg-hover">
+                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
                               <X size={13} />
                             </button>
                           </span>
                           {!m.mime.startsWith("video/") ? (
-                            <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1 bottom-1 rounded-xs bg-panel px-1 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
+                            <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1.5 bottom-1.5 h-5 rounded-full bg-panel px-1.5 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
                               {m.alt ? "Alt text" : "Add alt"}
                             </button>
                           ) : null}
@@ -568,13 +566,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     </div>
                   ))}
                   {uploading.map((u) => (
-                    <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 rounded-lg border p-2 text-center text-[11px] ${u.error ? "border-danger text-danger" : "border-dashed border-line-strong text-muted"}`}>
+                    <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 rounded-lg p-2 text-center text-[11px] ${u.error ? "bg-danger-soft text-danger" : "border border-dashed border-line-strong text-muted"}`}>
                       {u.error ? (
                         <>
                           <span className="line-clamp-3">{u.error}</span>
-                          <button type="button" onClick={() => setUploading((all) => all.filter((x) => x.key !== u.key))} className="underline">
+                          <Button variant="plain" size="sm" onClick={() => setUploading((all) => all.filter((x) => x.key !== u.key))}>
                             Dismiss
-                          </button>
+                          </Button>
                         </>
                       ) : (
                         <>
@@ -592,14 +590,14 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     >
                       <Upload size={18} />
                       Upload
-                      <span className="text-[10px] text-faint">or drop files</span>
                     </button>
                   ) : null}
                   {!locked ? (
                     <button
                       type="button"
                       onClick={() => setPicking(picking === "media" ? null : "media")}
-                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg border text-[12px] transition-colors ${picking === "media" ? "border-signal-strong bg-signal-soft text-ink" : "border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
+                      aria-pressed={picking === "media"}
+                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "media" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
                     >
                       <ImagePlus size={18} />
                       From library
@@ -608,12 +606,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 </div>
                 <input ref={fileInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
                 {picking ? (
-                  <div className="rounded-lg border border-frame p-2">
+                  <div className="rounded-lg bg-paper p-3 shadow-track">
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="text-[12px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
-                      <button type="button" onClick={() => setPicking(null)} className="text-[12px] text-muted underline underline-offset-2 hover:text-ink">
+                      <span className="text-[13px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
+                      <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
                         Done
-                      </button>
+                      </Button>
                     </div>
                     {library === null ? (
                       <Loader />
@@ -638,7 +636,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                               >
                                 <Thumb m={m} small />
                                 {on ? (
-                                  <span className="absolute top-1 right-1 flex size-5 items-center justify-center rounded-xs bg-signal text-on-signal">
+                                  <span className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-signal text-on-signal">
                                     <Check size={12} />
                                   </span>
                                 ) : null}
@@ -667,13 +665,11 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                         onPickCover={() => setPicking({ cover: active.id })}
                       />
                     ))
-                : picked.some((c) => (networkOf(c.network).fields ?? []).length) && !locked ? (
-                    <p className="text-[12px] text-muted">Open the channel tab for its own settings, like first comment or format.</p>
-                  ) : null}
+                : null}
 
               {comments.length ? (
-                <div className="flex flex-col gap-2 border-t border-line pt-3">
-                  <p className="text-[12px] font-medium text-muted">Approval</p>
+                <div className="flex flex-col gap-2 border-t border-line pt-4">
+                  <p className="text-[12.5px] font-medium text-body">Approval</p>
                   {comments.map((c) => (
                     <div key={c.id} className="flex flex-col gap-0.5 text-[12px]">
                       <span className="flex flex-wrap items-center gap-2">
@@ -688,7 +684,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               ) : null}
 
               {post?.post_targets.some((t) => t.error || t.url || t.note) ? (
-                <div className="flex flex-col gap-1 border-t border-line pt-3">
+                <div className="flex flex-col gap-1.5 border-t border-line pt-4">
                   {post.post_targets.map((t) => {
                     const c = channels.find((x) => x.id === t.channel_id);
                     return (
@@ -712,8 +708,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           </div>
 
           {/* Preview */}
-          <aside className="hidden min-h-0 flex-col border-l border-line bg-hover/60 lg:flex">
-            <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line bg-panel px-4 py-2.5">
+          <aside className="hidden min-h-0 flex-col border-l border-line bg-paper lg:flex">
+            <div className="flex min-h-14 shrink-0 flex-wrap items-center gap-2 border-b border-line bg-panel px-4 py-2.5">
               <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto">
                 {picked.map((c) => (
                   <button
@@ -722,13 +718,15 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     title={c.name}
                     aria-pressed={shown?.id === c.id}
                     onClick={() => setView(c.id)}
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-md transition-[background-color,box-shadow] ${shown?.id === c.id ? "bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow] ${shown?.id === c.id ? "bg-signal-soft shadow-picked" : "bg-panel shadow-chip hover:shadow-pill"}`}
                   >
                     <NetworkLogo id={c.network} size={16} />
                   </button>
                 ))}
               </div>
               <Segmented
+                label="Preview on"
+                size="sm"
                 value={device}
                 onChange={(v) => setDevice(v as "mobile" | "desktop")}
                 options={[
@@ -752,36 +750,36 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         </div>
 
         {!locked ? (
-          <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line px-4 py-3">
-            <input type="datetime-local" aria-label="Publish time" value={when} onChange={(e) => setWhen(e.target.value)} className={inputClass.replace("w-full", "w-[210px]")} />
-            {best.map((b) => {
-              const at = nextAt(b.day, b.hour);
-              return (
-                <button
-                  key={`${b.day}${b.hour}`}
-                  type="button"
-                  title="One of your best times, from your results"
-                  onClick={() => setWhen(localValue(at))}
-                  className={`h-8 rounded-md px-2 text-[11px] font-medium transition-[background-color,box-shadow] ${when === localValue(at) ? "bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
-                >
-                  {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
-                </button>
-              );
-            })}
-            <span className="min-w-0 flex-1 truncate text-[12px]">{error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : null}</span>
-            <Button variant="ghost" disabled={busy} onClick={() => submit("draft")} title={`${mod()}S`}>
-              Save draft
-            </Button>
-            <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("queue")}>
-              Add to queue
-            </Button>
-            <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("now")} title={`${mod()}Shift+Enter`}>
-              Post now
-            </Button>
-            <Button disabled={busy || !ready} onClick={() => submit("schedule")} title={`${mod()}Enter`}>
-              {busy ? <Loader /> : null}
-              Schedule
-            </Button>
+          <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t border-line bg-paper px-4 py-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              <input type="datetime-local" aria-label="Publish time" value={when} onChange={(e) => setWhen(e.target.value)} className={`${inputLook} w-[210px] max-w-full`} />
+              {best.map((b) => {
+                const at = nextAt(b.day, b.hour);
+                return (
+                  <Chip key={`${b.day}${b.hour}`} size="sm" title="One of your best times" on={when === localValue(at)} onClick={() => setWhen(localValue(at))}>
+                    {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
+                  </Chip>
+                );
+              })}
+            </div>
+            <span role={error ? "alert" : undefined} className="min-w-0 flex-1 truncate text-[12px]">
+              {error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : null}
+            </span>
+            <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+              <Button variant="ghost" disabled={busy} onClick={() => submit("draft")} title={`${mod()}S`}>
+                Save draft
+              </Button>
+              <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("queue")}>
+                Add to queue
+              </Button>
+              <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("now")} title={`${mod()}Shift+Enter`}>
+                Post now
+              </Button>
+              <Button disabled={busy || !ready} onClick={() => submit("schedule")} title={`${mod()}Enter`}>
+                {busy ? <Loader /> : null}
+                Schedule
+              </Button>
+            </div>
           </footer>
         ) : null}
 
@@ -801,30 +799,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
         {dragging ? (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-signal-strong bg-signal-pale/90">
-            <span className="flex items-center gap-2 rounded-lg bg-panel px-4 py-3 text-[14px] font-semibold shadow-pop">
+            <span className="flex items-center gap-2 rounded-full bg-panel px-5 py-3 text-[14px] font-semibold shadow-menu">
               <Upload size={18} /> Drop pictures or videos to add them
             </span>
           </div>
         ) : null}
       </div>
     </div>
-  );
-}
-
-function Face({ c, size }: { c: Channel; size: number }) {
-  return c.avatar ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={c.avatar} alt="" style={{ width: size, height: size }} className="rounded-full object-cover" />
-  ) : (
-    <Avatar label={c.name} size={size} />
-  );
-}
-
-function TabButton({ on, onClick, label, children }: { on: boolean; onClick: () => void; label: string; children: React.ReactNode }) {
-  return (
-    <button type="button" role="tab" aria-selected={on} title={label} onClick={onClick} className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}>
-      {children}
-    </button>
   );
 }
 
@@ -882,7 +863,7 @@ function SettingField({ f, value, locked, onChange, cover, onPickCover }: { f: N
 
 function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
   return (
-    <span className={`relative block shrink-0 overflow-hidden rounded-md border border-line ${small ? "size-20" : "size-28"}`} title={m.name}>
+    <span className={`relative block shrink-0 overflow-hidden rounded-lg bg-paper shadow-chip ${small ? "size-20" : "size-28"}`} title={m.name}>
       {m.mime.startsWith("video/") ? (
         <video src={m.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
       ) : (

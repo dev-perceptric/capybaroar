@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./Overlay";
-import { Button } from "./ui";
+import { Button, Chip } from "./ui";
 import { Loader } from "./Loader";
 import { trim } from "@/app/(app)/calendar/actions";
 
@@ -78,8 +78,12 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
       wide
       footer={
         <>
-          {error ? <span className="mr-auto text-[12px] text-danger">{error}</span> : null}
-          <Button variant="ghost" onClick={onClose}>
+          {error ? (
+            <span role="alert" className="mr-auto text-[12px] text-danger">
+              {error}
+            </span>
+          ) : null}
+          <Button variant="plain" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={save} disabled={busy || !box}>
@@ -90,20 +94,14 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
       }
     >
       <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1.5">
           {RATIOS.map((r) => (
-            <button
-              key={r.label}
-              type="button"
-              aria-pressed={ratio === r.value}
-              onClick={() => (setRatio(r.value), setPos({ x: 0.5, y: 0.5 }))}
-              className={`h-8 rounded-md border px-2.5 text-[12px] font-medium ${ratio === r.value ? "border-transparent bg-signal-soft shadow-[0_0_0_1px_var(--signal-10)]" : "border-transparent bg-panel shadow-chip hover:bg-canvas"}`}
-            >
+            <Chip key={r.label} size="sm" on={ratio === r.value} onClick={() => (setRatio(r.value), setPos({ x: 0.5, y: 0.5 }))} className="font-medium">
               {r.label}
-            </button>
+            </Chip>
           ))}
         </div>
-        <div className="flex justify-center bg-canvas p-3">
+        <div className="flex justify-center rounded-lg bg-paper p-3 shadow-track">
           <div
             className="relative touch-none select-none"
             onPointerDown={(e) => {
@@ -125,7 +123,7 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
             <img ref={img} src={m.thumb ?? ""} crossOrigin="anonymous" alt="" draggable={false} onLoad={(e) => setSize({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })} className="block max-h-[56vh] max-w-full" />
             {box && size ? (
               <div
-                className="absolute cursor-move border-2 border-signal shadow-[0_0_0_1px_rgba(0,0,0,.5)]"
+                className="absolute cursor-move border-2 border-signal"
                 style={{ left: `${(box.x / size.w) * 100}%`, top: `${(box.y / size.h) * 100}%`, width: `${(box.w / size.w) * 100}%`, height: `${(box.h / size.h) * 100}%`, boxShadow: "0 0 0 9999px rgb(0 0 0 / 0.5)" }}
               />
             ) : null}
@@ -133,7 +131,7 @@ function Crop({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
         </div>
         <label className="flex items-center gap-3 text-[12px] text-muted">
           Zoom
-          <input type="range" min={1} max={4} step={0.01} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-[var(--color-ink)]" />
+          <input type="range" min={1} max={4} step={0.01} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-ink" />
           {box ? (
             <span className="w-24 text-right tabular-nums">
               {Math.round(box.w)} × {Math.round(box.h)}
@@ -189,8 +187,12 @@ function Trim({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
       wide
       footer={
         <>
-          {error ? <span className="mr-auto text-[12px] text-danger">{error}</span> : null}
-          <Button variant="ghost" onClick={onClose}>
+          {error ? (
+            <span role="alert" className="mr-auto text-[12px] text-danger">
+              {error}
+            </span>
+          ) : null}
+          <Button variant="plain" onClick={onClose}>
             Cancel
           </Button>
           <Button onClick={save} disabled={busy || !len}>
@@ -201,7 +203,7 @@ function Trim({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
       }
     >
       <div className="flex flex-col gap-3">
-        <div className="flex justify-center bg-ink">
+        <div className="flex justify-center overflow-hidden rounded-lg bg-ink">
           <video
             ref={video}
             src={m.thumb ?? undefined}
@@ -217,17 +219,17 @@ function Trim({ m, onClose, onDone }: { m: Media; onClose: () => void; onDone: (
         </div>
         {len ? (
           <div className="flex flex-col gap-2 text-[12px]">
-            <div className="relative h-2 bg-line">
-              <div className="absolute inset-y-0 rounded-xs bg-signal/80 shadow-[0_0_0_1px_var(--signal-10)]" style={{ left: `${(range[0] / len) * 100}%`, width: `${((range[1] - range[0]) / len) * 100}%` }} />
+            <div className="relative h-2 rounded-full bg-line">
+              <div className="absolute inset-y-0 rounded-full bg-signal shadow-picked" style={{ left: `${(range[0] / len) * 100}%`, width: `${((range[1] - range[0]) / len) * 100}%` }} />
             </div>
             <label className="flex items-center gap-3 text-muted">
               <span className="w-10">Start</span>
-              <input type="range" min={0} max={len} step={0.1} value={range[0]} onChange={(e) => set(0, Number(e.target.value))} className="flex-1 accent-[var(--color-ink)]" />
+              <input type="range" min={0} max={len} step={0.1} value={range[0]} onChange={(e) => set(0, Number(e.target.value))} className="flex-1 accent-ink" />
               <span className="w-14 text-right text-ink tabular-nums">{time(range[0])}</span>
             </label>
             <label className="flex items-center gap-3 text-muted">
               <span className="w-10">End</span>
-              <input type="range" min={0} max={len} step={0.1} value={range[1]} onChange={(e) => set(1, Number(e.target.value))} className="flex-1 accent-[var(--color-ink)]" />
+              <input type="range" min={0} max={len} step={0.1} value={range[1]} onChange={(e) => set(1, Number(e.target.value))} className="flex-1 accent-ink" />
               <span className="w-14 text-right text-ink tabular-nums">{time(range[1])}</span>
             </label>
             <span className="text-muted tabular-nums">Length {time(range[1] - range[0])}</span>

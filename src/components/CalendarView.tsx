@@ -7,8 +7,8 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Layers, Plus } from "lucide-react";
-import { Avatar, Badge, Button, Page, Segmented } from "@/components/ui";
-import { NetworkLogo } from "@/components/NetworkLogo";
+import { Badge, Button, Chip, Empty, Page, Segmented } from "@/components/ui";
+import { ChannelFace, NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
 import { loadPosts, move } from "@/app/(app)/calendar/actions";
@@ -168,34 +168,35 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
         access.write ? (
           <>
             <Button variant="ghost" onClick={() => setBulk(true)}>
-              <Layers size={14} /> Bulk
+              <Layers /> Bulk
             </Button>
             <Button onClick={() => setCompose({})}>
-              <Plus size={14} /> New post
+              <Plus /> New post
             </Button>
           </>
         ) : null
       }
     >
-      <div className="flex min-h-full flex-col" style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
+      <div className={`flex min-h-full flex-col ${mode === "list" ? "" : "bg-panel"}`} style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
         <div ref={head} data-cal-sticky className="sticky top-0 left-0 z-30 border-b border-line bg-panel">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 pt-4 pb-3">
             <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
               {lead} <span className="text-faint">{tail}</span>
             </h2>
-            <div className="flex h-8 items-stretch overflow-hidden rounded-md bg-panel shadow-outline">
-              <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-8 items-center justify-center hover:bg-canvas">
+            <div className="flex h-[34px] items-stretch overflow-hidden rounded-full bg-panel shadow-outline">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-9 items-center justify-center pl-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
                 <ChevronLeft size={16} />
               </button>
-              <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3 text-[12px] font-medium hover:bg-canvas">
+              <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3.5 text-[13px] font-medium transition-colors hover:bg-paper">
                 Today
               </button>
-              <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-8 items-center justify-center hover:bg-canvas">
+              <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-9 items-center justify-center pr-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
                 <ChevronRight size={16} />
               </button>
             </div>
             <span className="flex-1" />
             <Segmented<Mode>
+              label="View"
               value={mode}
               onChange={setMode}
               options={[
@@ -205,18 +206,21 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               ]}
             />
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto px-5 pb-3">
-            <FilterChip on={channel === "all"} onClick={() => setChannel("all")} count={inRange.length}>
+          <div className="flex items-center gap-1.5 overflow-x-auto px-5 pt-0.5 pb-3 [scrollbar-width:none]">
+            <Chip on={channel === "all"} onClick={() => setChannel("all")}>
               All channels
-            </FilterChip>
+              <span className={`tabular-nums ${channel === "all" ? "text-ink/60" : "text-faint"}`}>{inRange.length}</span>
+            </Chip>
             {channels.map((c) => (
-              <FilterChip key={c.id} on={channel === c.id} onClick={() => setChannel(c.id)} count={counts.get(c.id) ?? 0} warn={c.status === "reconnect"}>
-                <ChannelFace c={c} size={18} badge={11} />
+              <Chip key={c.id} on={channel === c.id} onClick={() => setChannel(c.id)} className="pl-1.5">
+                <ChannelFace channel={c} size={20} badge={11} />
                 <span className="max-w-40 truncate">{c.name}</span>
-              </FilterChip>
+                {c.status === "reconnect" ? <AlertTriangle size={12} className="text-danger" aria-label="Needs reconnecting" /> : null}
+                <span className={`tabular-nums ${channel === c.id ? "text-ink/60" : "text-faint"}`}>{counts.get(c.id) ?? 0}</span>
+              </Chip>
             ))}
             {access.write ? (
-              <Link href="/channels" className="flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-dashed border-line-strong px-2.5 text-[12px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
+              <Link href="/channels" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-dashed border-line-strong px-3 text-[12.5px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
                 <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}
               </Link>
             ) : null}
@@ -273,38 +277,6 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   );
 }
 
-function FilterChip({ on, onClick, count, warn, children }: { on: boolean; onClick: () => void; count: number; warn?: boolean; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={`flex h-8 shrink-0 items-center gap-2 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium text-ink shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel text-ink/85 shadow-chip hover:bg-canvas"}`}
-    >
-      {children}
-      {warn ? <AlertTriangle size={12} className="text-danger" aria-label="Needs reconnecting" /> : null}
-      <span className={`tabular-nums ${on ? "text-ink/60" : "text-faint"}`}>{count}</span>
-    </button>
-  );
-}
-
-/** A channel's picture with its network's logo in the corner. */
-function ChannelFace({ c, size, badge }: { c: Channel; size: number; badge: number }) {
-  return (
-    <span className="relative shrink-0" style={{ width: size, height: size }}>
-      {c.avatar ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={c.avatar} alt="" style={{ width: size, height: size }} className="rounded-full object-cover" />
-      ) : (
-        <Avatar label={c.name} size={size} />
-      )}
-      <span className="absolute -right-1 -bottom-1 flex bg-panel">
-        <NetworkLogo id={c.network} size={badge} />
-      </span>
-    </span>
-  );
-}
-
 /** The channels a post goes to, as overlapping round discs: the channel's picture, or its network's logo. */
 function Faces({ post, byId, size = 18 }: { post: PostRow; byId: Map<string, Channel>; size?: number }) {
   const list = post.post_targets.map((t) => byId.get(t.channel_id)).filter((c): c is Channel => Boolean(c));
@@ -338,7 +310,7 @@ function Faces({ post, byId, size = 18 }: { post: PostRow; byId: Map<string, Cha
 // Status reads on the card's left edge, with an icon for the two that need noticing.
 const BAR: Record<PostRow["status"], string> = {
   draft: "bg-line-strong",
-  review: "bg-[var(--purple-9)]",
+  review: "bg-tone-violet",
   scheduled: "bg-ink",
   publishing: "bg-yolk",
   published: "bg-yolk",
@@ -440,7 +412,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
             <div key={d.toISOString()} className="flex items-end gap-2 border-l border-line px-3 pt-3 pb-2.5">
               <span className={`flex h-8 min-w-8 items-center justify-center px-1 text-[20px] leading-none tabular-nums ${today ? "rounded-md bg-signal font-semibold text-on-signal" : isWeekend(d) ? "font-[350] text-muted" : "font-[350]"}`}>{d.getDate()}</span>
               <span className="mb-0.5 flex flex-col leading-tight">
-                <span className={`text-[11px] font-medium tracking-[0.06em] uppercase ${today ? "text-ink" : "text-muted"}`}>{d.toLocaleDateString("en-US", { weekday: "short" })}</span>
+                <span className={`text-[12px] font-medium ${today ? "text-ink" : "text-muted"}`}>{d.toLocaleDateString("en-US", { weekday: "short" })}</span>
                 <span className="text-[11px] text-faint tabular-nums">{n ? `${n} post${n === 1 ? "" : "s"}` : "\u00a0"}</span>
               </span>
             </div>
@@ -511,7 +483,7 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
     <div className="min-w-[840px] px-6 pt-4 pb-6">
       <div className="sticky top-[var(--cal-head,0px)] z-20 grid grid-cols-7 rounded-t-lg border-x border-t border-b border-line bg-panel">
         {days.slice(0, 7).map((d) => (
-          <div key={d.getDay()} className={`border-l border-line px-3 py-2 text-[11px] font-medium tracking-[0.06em] uppercase first:border-l-0 ${isWeekend(d) ? "text-faint" : "text-muted"}`}>
+          <div key={d.getDay()} className={`border-l border-line px-3 py-2 text-[12px] font-medium first:border-l-0 ${isWeekend(d) ? "text-faint" : "text-muted"}`}>
             {d.toLocaleDateString("en-US", { weekday: "short" })}
           </div>
         ))}
@@ -577,24 +549,24 @@ const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In r
 const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red", deleted: "gray" };
 
 function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void }) {
-  if (!posts.length) return <p className="px-6 py-16 text-center text-[13px] text-muted">No posts in these 4 weeks</p>;
+  if (!posts.length) return <Empty compact drawing="timeline" title="No posts in these 4 weeks" />;
   const days = new Map<string, PostRow[]>();
   for (const p of [...posts].sort((a, b) => a.publish_at!.localeCompare(b.publish_at!))) {
     const k = new Date(p.publish_at!).toDateString();
     days.set(k, [...(days.get(k) ?? []), p]);
   }
   return (
-    <div className="mx-auto w-full max-w-[880px] px-5 py-6">
+    <div className="mx-auto w-full max-w-[880px] px-4 py-6 md:px-6">
       {[...days.entries()].map(([day, list]) => {
         const d = new Date(day);
         return (
           <section key={day} className="mb-8">
-            <h3 className="mb-3 text-[16px] font-semibold tracking-[-0.02em]">
+            <h3 className="mb-2.5 text-[16px] font-semibold tracking-[-0.02em]">
               {d.toLocaleDateString("en-US", { weekday: "long" })} <span className="text-faint">{d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}</span>
             </h3>
-            <div className="overflow-hidden rounded-lg border border-frame">
+            <div className="divide-y divide-line overflow-hidden rounded-lg bg-panel shadow-card">
               {list.map((p) => (
-                <button key={p.id} type="button" onClick={() => onOpen(p)} className="relative flex w-full items-center gap-4 border-b border-line py-3 pr-3 pl-4 text-left last:border-b-0 hover:bg-hover">
+                <button key={p.id} type="button" onClick={() => onOpen(p)} className="relative flex min-h-14 w-full items-center gap-4 py-3 pr-4 pl-5 text-left transition-colors hover:bg-hover">
                   <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[p.status]}`} />
                   <span className="w-16 shrink-0 text-[13px] font-semibold tabular-nums">{clock(new Date(p.publish_at!))}</span>
                   <Faces post={p} byId={byId} size={20} />

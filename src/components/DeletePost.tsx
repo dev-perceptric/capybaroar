@@ -58,14 +58,18 @@ export function DeletePost({ postId, onClose, onDone }: { postId: string; onClos
       onClose={close}
       footer={
         <>
-          {error ? <span className="mr-auto min-w-0 truncate self-center text-[12px] text-danger">{error}</span> : null}
+          {error ? (
+            <span role="alert" className="mr-auto min-w-0 truncate self-center text-[12px] text-danger">
+              {error}
+            </span>
+          ) : null}
           <Button variant="ghost" disabled={busy || !items} onClick={recordOnly}>
             Remove from Capybaroar only
           </Button>
           {results ? (
             <Button onClick={onDone}>Done</Button>
           ) : (
-            <Button variant="danger" disabled={busy || !picked.size} onClick={everywhere}>
+            <Button variant="destroy" disabled={busy || !picked.size} onClick={everywhere}>
               {busy ? <Loader /> : null}
               Delete everywhere
             </Button>
@@ -78,7 +82,7 @@ export function DeletePost({ postId, onClose, onDone }: { postId: string; onClos
           <Loader />
         </div>
       ) : (
-        <ul className="-mx-1 flex flex-col">
+        <ul className="flex flex-col divide-y divide-line rounded-lg bg-paper px-1 shadow-track">
           {items.map((i) => {
             const r = results?.get(i.channelId);
             const can = !i.deleted && !i.reason && !results;
@@ -86,7 +90,7 @@ export function DeletePost({ postId, onClose, onDone }: { postId: string; onClos
             const gone = r ? r.result === "deleted" : i.deleted;
             const why = r?.result === "manual" ? r.error : r ? null : i.reason;
             return (
-              <li key={i.channelId} className="flex min-h-10 items-start gap-2.5 rounded-sm px-1 py-2">
+              <li key={i.channelId} className="flex min-h-11 items-start gap-2.5 px-2 py-2.5">
                 <span className="mt-0.5 flex size-4 shrink-0 items-center">
                   {can ? (
                     <Checkbox
