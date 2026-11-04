@@ -20,7 +20,7 @@ export function BioCard({ view, frame = false }: { view: BioView; frame?: boolea
                 key={`${i}:${l.href}`}
                 href={l.href}
                 rel="noopener"
-                className="flex min-h-12 w-full items-center justify-center rounded-md bg-panel px-4 py-3 text-center text-[14px] font-medium text-ink shadow-outline transition-[background-color,transform] duration-[var(--duration-fast)] hover:bg-canvas active:scale-[0.98]"
+                className="flex min-h-12 w-full items-center justify-center rounded-full bg-panel px-5 py-3 text-center text-[14px] font-medium text-ink shadow-outline transition-[background-color,box-shadow,transform] duration-[var(--duration-fast)] hover:bg-paper hover:shadow-hover active:scale-[0.98]"
               >
                 {l.label}
               </a>
@@ -32,7 +32,7 @@ export function BioCard({ view, frame = false }: { view: BioView; frame?: boolea
             <p className="label-mono mb-2 text-center">Latest posts</p>
             <div className="grid grid-cols-2 gap-2.5">
               {view.posts.map((p, i) => (
-                <a key={`${i}:${p.url}`} href={p.url} rel="noopener" className="group flex aspect-square flex-col overflow-hidden rounded-lg border border-frame bg-panel transition-colors hover:bg-canvas">
+                <a key={`${i}:${p.url}`} href={p.url} rel="noopener" className="group flex aspect-square flex-col overflow-hidden rounded-lg bg-panel shadow-card transition-shadow duration-[var(--duration-fast)] hover:shadow-hover">
                   {p.thumb ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={p.thumb} alt={p.text.slice(0, 120)} loading="lazy" decoding="async" className="size-full object-cover" />

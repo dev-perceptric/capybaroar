@@ -3,11 +3,12 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw, Trash2 } from "lucide-react";
-import { Avatar, Badge, Button, Field, IconButton, Input } from "./ui";
+import { Badge, Button, ErrorNote, Field, IconButton, Input, Row, Rows } from "./ui";
 import { Modal } from "./Overlay";
-import { NetworkLogo } from "./NetworkLogo";
+import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, tell } from "./Dialogs";
 import { Select } from "./Select";
+import { Loader } from "./Loader";
 import { OFFERED, networkOf, type NetworkId } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import { connectWithForm, removeChannel, setChannelBrand } from "@/app/(app)/channels/actions";
@@ -39,80 +40,66 @@ export function ChannelsView({ channels, ready, asks, error, brands = [] }: { ch
       router.refresh();
     });
   return (
-    <div className="mx-auto w-full max-w-[960px]">
-      {error ? <p className="mb-4 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[13px] text-danger">{error}</p> : null}
+    <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8">
+      {error ? <ErrorNote message={error} /> : null}
       {channels.length ? (
-        <section className="mb-8">
-          <p className="label-mono mb-2">
-            Connected
-          </p>
-          <div className="overflow-hidden rounded-lg border border-frame">
+        <section className="flex flex-col gap-2">
+          <p className="label-mono">Connected</p>
+          <Rows label="Connected">
             {channels.map((c) => (
-              <div key={c.id} className="flex h-14 items-center gap-3 border-b border-line px-3 last:border-b-0">
-                <span className="relative">
-                  {c.avatar ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={c.avatar} alt="" className="size-8 rounded-full object-cover" />
-                  ) : (
-                    <Avatar label={c.name} size={32} />
-                  )}
-                  <span className="absolute -right-1 -bottom-1 bg-panel">
-                    <NetworkLogo id={c.network} size={14} />
-                  </span>
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-medium">{c.name}</p>
-                  <p className="truncate text-[11px] text-faint">
+              <Row
+                key={c.id}
+                lead={<ChannelFace channel={c} size={32} badge={14} />}
+                title={c.name}
+                sub={
+                  <span className="block truncate">
                     {networkOf(c.network).name}
                     {c.username ? `, @${c.username}` : ""}
-                  </p>
-                </div>
-                {brands.length ? (
-                  <div className="w-40">
-                    <Select ariaLabel="Brand" value={c.brand_id ?? ""} placeholder="No brand" onChange={(v) => move(c, v)} options={brands.map((b) => ({ value: b.id, label: b.name }))} />
-                  </div>
-                ) : null}
+                  </span>
+                }
+              >
+                {brands.length ? <Select size="sm" ariaLabel="Brand" className="w-40" value={c.brand_id ?? ""} placeholder="No brand" onChange={(v) => move(c, v)} options={brands.map((b) => ({ value: b.id, label: b.name }))} /> : null}
                 {c.status === "reconnect" ? (
                   <>
                     <Badge tone="red">Reconnect</Badge>
                     <IconButton label="Reconnect" onClick={() => connect(c.network)}>
-                      <RefreshCw size={16} />
+                      <RefreshCw />
                     </IconButton>
                   </>
                 ) : null}
-                <IconButton label="Remove" onClick={() => del(c)}>
-                  <Trash2 size={16} />
+                <IconButton label="Remove" align="end" onClick={() => del(c)}>
+                  <Trash2 />
                 </IconButton>
-              </div>
+              </Row>
             ))}
-          </div>
+          </Rows>
         </section>
       ) : (
-        <h2 className="mb-6 text-[20px] font-semibold tracking-[-0.025em] text-balance">
+        <h2 className="text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
           Connect a channel. <span className="text-faint">Post to it from the calendar.</span>
         </h2>
       )}
-      <p className="label-mono mb-2">
-        Add
-      </p>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {OFFERED.map((n) => {
-          const on = ready.includes(n.id);
-          return (
-            <div key={n.id} className="flex h-16 items-center gap-3 rounded-lg border border-frame bg-panel px-4">
-              <NetworkLogo id={n.id} size={22} />
-              <span className="flex-1 text-[13px] font-medium">{n.name}</span>
-              {on ? (
-                <Button variant="ghost" onClick={() => connect(n.id)}>
-                  Connect
-                </Button>
-              ) : (
-                <Badge>Soon</Badge>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <section className="flex flex-col gap-2">
+        <p className="label-mono">Add</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {OFFERED.map((n) => {
+            const on = ready.includes(n.id);
+            return (
+              <div key={n.id} className="flex h-16 items-center gap-3 rounded-lg bg-panel px-4 shadow-card">
+                <NetworkLogo id={n.id} size={22} />
+                <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{n.name}</span>
+                {on ? (
+                  <Button variant="ghost" size="sm" onClick={() => connect(n.id)}>
+                    Connect
+                  </Button>
+                ) : (
+                  <Badge>Soon</Badge>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
       {asking && asks[asking] ? (
         <AskDialog
           network={asking}
@@ -145,15 +132,16 @@ function AskDialog({ network, ask, onClose, onDone }: { network: NetworkId; ask:
   };
   return (
     <Modal title={`Connect ${networkOf(network).name}`} onClose={onClose}>
-      <form action={submit} className="flex flex-col gap-3">
-        {ask.fields.map((f) => (
+      <form action={submit} className="flex flex-col gap-4">
+        {ask.fields.map((f, i) => (
           <Field key={f.key} label={f.label}>
-            <Input name={f.key} type={f.secret ? "password" : "text"} placeholder={f.placeholder} required autoComplete="off" />
+            <Input name={f.key} type={f.secret ? "password" : "text"} placeholder={f.placeholder} required autoComplete="off" autoFocus={i === 0} />
           </Field>
         ))}
         {error ? <p className="text-[12px] text-danger">{error}</p> : null}
         <div className="flex justify-end">
           <Button type="submit" disabled={busy}>
+            {busy ? <Loader /> : null}
             Connect
           </Button>
         </div>

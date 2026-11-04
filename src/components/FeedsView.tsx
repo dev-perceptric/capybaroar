@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, Rss, Trash2 } from "lucide-react";
-import { Badge, Button, Field, IconButton, Input, Segmented, Switch, timeAgo } from "./ui";
+import { Badge, Button, CardHead, Chip, Field, IconButton, Input, Panel, Row, Segmented, Switch, timeAgo } from "./ui";
 import { Modal } from "./Overlay";
 import { Select } from "./Select";
 import { ToolIntro } from "./ToolIntro";
@@ -36,54 +36,65 @@ export function FeedsView({ feeds, channels, brands, brandId }: { feeds: FeedRow
       router.refresh();
     });
   };
-  const add = (
-    <Button onClick={() => setEditing("new")} disabled={!channels.length}>
-      <Plus size={14} /> Add feed
+  const add = (size: "sm" | "md") => (
+    <Button size={size} onClick={() => setEditing("new")} disabled={!channels.length}>
+      <Plus /> Add feed
     </Button>
   );
   return (
     <div className="mx-auto w-full max-w-[960px]">
       {feeds.length ? (
-        <>
-          <div className="mb-3 flex items-center">
-            <p className="label-mono flex-1">Feeds</p>
-            {add}
-          </div>
-          <div className="overflow-hidden rounded-lg border border-frame">
+        <Panel className="overflow-hidden">
+          <CardHead label="Feeds" count={feeds.length}>
+            {add("sm")}
+          </CardHead>
+          <div className="divide-y divide-line">
             {feeds.map((f) => (
-              <div key={f.id} className="flex min-h-14 items-center gap-3 border-b border-line px-3 py-2 last:border-b-0">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-hover text-muted">
-                  <Rss size={16} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-medium">{f.title || f.url}</p>
-                  <p className="truncate text-[11px] text-faint">
-                    {f.url}
-                    {f.fetched_at ? `, read ${timeAgo(f.fetched_at)}` : ""}
-                  </p>
-                  {f.error ? <p className="truncate text-[11px] text-danger">{f.error}</p> : null}
-                </div>
-                <span className="hidden items-center gap-1 sm:flex">
-                  {f.channel_ids.map((id) => byId.get(id)).filter((c): c is Channel => !!c).slice(0, 5).map((c) => (
-                    <span key={c.id} title={c.name} className="flex">
-                      <NetworkLogo id={c.network} size={16} />
+              <Row
+                key={f.id}
+                lead={
+                  <span className="flex size-8 items-center justify-center rounded-md bg-paper text-muted shadow-track">
+                    <Rss size={15} />
+                  </span>
+                }
+                title={f.title || f.url}
+                sub={
+                  <>
+                    <span className="block truncate">
+                      {f.url}
+                      {f.fetched_at ? `, read ${timeAgo(f.fetched_at)}` : ""}
                     </span>
-                  ))}
+                    {f.error ? <span className="block truncate text-danger">{f.error}</span> : null}
+                  </>
+                }
+              >
+                <span className="mr-1 hidden items-center gap-1 sm:flex">
+                  {f.channel_ids
+                    .map((id) => byId.get(id))
+                    .filter((c): c is Channel => !!c)
+                    .slice(0, 5)
+                    .map((c) => (
+                      <span key={c.id} title={c.name} className="flex">
+                        <NetworkLogo id={c.network} size={16} />
+                      </span>
+                    ))}
                 </span>
                 <Badge tone={f.mode === "queue" ? "yellow" : "gray"}>{f.mode === "queue" ? "Queue" : "Drafts"}</Badge>
-                <Switch on={f.active} label="Active" onChange={(v) => toggle(f, v)} />
+                <span className="mx-1 flex">
+                  <Switch on={f.active} label="Active" onChange={(v) => toggle(f, v)} />
+                </span>
                 <IconButton label="Edit" onClick={() => setEditing(f)}>
-                  <Pencil size={16} />
+                  <Pencil />
                 </IconButton>
-                <IconButton label="Remove" onClick={() => del(f)}>
-                  <Trash2 size={16} />
+                <IconButton label="Remove" align="end" onClick={() => del(f)}>
+                  <Trash2 />
                 </IconButton>
-              </div>
+              </Row>
             ))}
           </div>
-        </>
+        </Panel>
       ) : (
-        <ToolIntro drawing="timeline" title="Add your first feed" lead="New items from a blog or news feed become drafts or queued posts, every 30 minutes." action={add} />
+        <ToolIntro drawing="timeline" title="Add your first feed" lead="New items from a blog or news feed become drafts or queued posts, every 30 minutes." action={add("md")} />
       )}
       {editing ? (
         <FeedDialog
@@ -141,21 +152,12 @@ function FeedDialog({ feed, channels, brands, brandId, onClose, onDone }: { feed
       </Field>
       <Field label="Channels">
         <div className="flex flex-wrap gap-1.5">
-          {mine.map((c) => {
-            const on = picked.includes(c.id);
-            return (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={on}
-                onClick={() => flip(c.id)}
-                className={`flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[12px] transition-[background-color,box-shadow] ${on ? "bg-signal-soft font-medium shadow-[0_0_0_1px_var(--signal-10)]" : "bg-panel shadow-chip hover:bg-canvas"}`}
-              >
-                <NetworkLogo id={c.network} size={14} />
-                <span className="max-w-40 truncate">{c.name}</span>
-              </button>
-            );
-          })}
+          {mine.map((c) => (
+            <Chip key={c.id} on={picked.includes(c.id)} onClick={() => flip(c.id)}>
+              <NetworkLogo id={c.network} size={14} />
+              <span className="max-w-40 truncate">{c.name}</span>
+            </Chip>
+          ))}
           {!mine.length ? <span className="text-[12px] text-muted">Connect a channel that posts text first</span> : null}
         </div>
       </Field>
@@ -164,9 +166,9 @@ function FeedDialog({ feed, channels, brands, brandId, onClose, onDone }: { feed
         aside={
           <span className="flex gap-1">
             {["{title}", "{link}", "{summary}"].map((t) => (
-              <button key={t} type="button" onClick={() => setTemplate((v) => `${v}${v && !v.endsWith(" ") ? " " : ""}${t}`)} className="rounded-xs bg-hover px-1.5 font-mono text-[11px] text-muted hover:text-ink">
+              <Chip key={t} size="sm" className="font-mono" onClick={() => setTemplate((v) => `${v}${v && !v.endsWith(" ") ? " " : ""}${t}`)}>
                 {t}
-              </button>
+              </Chip>
             ))}
           </span>
         }
@@ -175,6 +177,7 @@ function FeedDialog({ feed, channels, brands, brandId, onClose, onDone }: { feed
       </Field>
       <Field label="New items">
         <Segmented<"draft" | "queue">
+          label="New items"
           value={mode}
           onChange={setMode}
           options={[
