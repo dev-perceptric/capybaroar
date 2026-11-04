@@ -136,6 +136,7 @@ export function BioEditor({
       if (!r.page) return setError(r.error ?? "Couldn't make the page");
       const { blocks, appearance } = applyTemplate(t, social);
       setDraft({ ...(draft ?? draftOf(r.page)), blocks, appearance });
+      setError("");
       setAiBefore(null);
       setTab("blocks");
     });
@@ -156,6 +157,7 @@ export function BioEditor({
       // Building again over a draft keeps the page from before the first one to go back to.
       setAiBefore((b) => b ?? before);
       setDraft({ ...before, title: d.title, bio: d.bio, appearance: d.appearance, blocks: d.blocks });
+      setError("");
       setBuilding(false);
       setTab("blocks");
     })();
@@ -264,6 +266,7 @@ export function BioEditor({
               <DraftBar
                 onKeep={() => setAiBefore(null)}
                 onDiscard={() => {
+                  setError("");
                   setDraft(aiBefore);
                   setAiBefore(null);
                 }}
