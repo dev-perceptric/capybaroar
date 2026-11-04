@@ -4,13 +4,14 @@ import { getBrandCtx, homeBrand } from "@/lib/brands";
 import { adminClient } from "@/lib/supabase/server";
 import { providerOf } from "@/lib/providers";
 import { redirectFor } from "@/lib/channels";
+import { isPaused } from "@/lib/networks";
 
 // Start connecting a channel: remember who asked (and what they typed, like a Mastodon server), then send them
 // to the network's sign-in.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ network: string }> }) {
   const { network } = await params;
   const p = providerOf(network);
-  if (!p?.oauth?.configured()) return NextResponse.json({ error: "This network isn't set up" }, { status: 404 });
+  if (!p?.oauth?.configured() || isPaused(network)) return NextResponse.json({ error: "This network isn't set up" }, { status: 404 });
   const ctx = await getBrandCtx();
   if (ctx.role === "client") return NextResponse.json({ error: "Clients can't connect channels" }, { status: 403 });
   const input: Record<string, string> = {};

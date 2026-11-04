@@ -143,3 +143,9 @@ export const NETWORKS: Network[] = [
 ];
 
 export const networkOf = (id: NetworkId) => NETWORKS.find((n) => n.id === id)!;
+
+/** Networks switched off for now: hidden from Channels and Welcome, and they can't be connected. Remove an id to bring it back. */
+export const PAUSED: NetworkId[] = ["reddit", "telegram", "gbp"];
+export const isPaused = (id: string) => (PAUSED as string[]).includes(id);
+/** The networks people can connect. */
+export const OFFERED = NETWORKS.filter((n) => !isPaused(n.id));

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
+import { isPaused } from "@/lib/networks";
 import { managerCtx, writerCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { saveAccounts } from "@/lib/channels";
@@ -14,7 +15,7 @@ export async function connectWithForm(network: string, values: Record<string, st
   const ctx = await getBrandCtx();
   if (ctx.role === "client") return { error: "Clients can't connect channels" };
   const p = providerOf(network);
-  if (!p?.form?.configured()) return { error: "This network isn't set up" };
+  if (!p?.form?.configured() || isPaused(network)) return { error: "This network isn't set up" };
   for (const f of p.form.fields) if (!values[f.key]?.trim()) return { error: `Enter ${f.label.toLowerCase()}` };
   try {
     const accounts = await p.form.connect(Object.fromEntries(p.form.fields.map((f) => [f.key, values[f.key].trim()])));

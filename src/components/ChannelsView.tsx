@@ -8,7 +8,7 @@ import { Modal } from "./Overlay";
 import { NetworkLogo } from "./NetworkLogo";
 import { askConfirm, tell } from "./Dialogs";
 import { Select } from "./Select";
-import { NETWORKS, networkOf, type NetworkId } from "@/lib/networks";
+import { OFFERED, networkOf, type NetworkId } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import { connectWithForm, removeChannel, setChannelBrand } from "@/app/(app)/channels/actions";
 
@@ -96,7 +96,7 @@ export function ChannelsView({ channels, ready, asks, error, brands = [] }: { ch
         Add
       </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {NETWORKS.map((n) => {
+        {OFFERED.map((n) => {
           const on = ready.includes(n.id);
           return (
             <div key={n.id} className="flex h-16 items-center gap-3 rounded-lg border border-frame bg-panel px-4">

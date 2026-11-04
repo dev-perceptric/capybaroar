@@ -5,7 +5,7 @@ import { listChannels } from "@/lib/channels";
 import { teamCtx } from "@/lib/session";
 import { getBrandCtx } from "@/lib/brands";
 import { PROVIDERS, isReady } from "@/lib/providers";
-import { NETWORKS } from "@/lib/networks";
+import { OFFERED } from "@/lib/networks";
 
 const primary = "inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-3 text-[13px] font-medium text-white shadow-primary hover:bg-brand-hover";
 
@@ -14,9 +14,9 @@ export default async function WelcomePage() {
   const ctx = await getBrandCtx();
   const channels = await listChannels(ctx.workspaceId, ctx.scope);
   const step = channels.length ? 2 : 1;
-  const ready = NETWORKS.filter((n) => isReady(PROVIDERS[n.id]));
+  const ready = OFFERED.filter((n) => isReady(PROVIDERS[n.id]));
   // Sign-in networks go straight to the network; ones that ask something first (a form, a server) open on Channels.
-  const href = (id: (typeof NETWORKS)[number]["id"]) => {
+  const href = (id: (typeof OFFERED)[number]["id"]) => {
     const p = PROVIDERS[id];
     return p.form || p.oauth?.asks?.length ? "/channels" : `/api/channels/${id}/connect`;
   };
