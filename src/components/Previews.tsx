@@ -2,6 +2,7 @@
 
 // Realistic previews of a post on each network, on a phone or in a desktop browser. These copy each network's
 // own look on purpose (rounded corners, their icons and spacing), so they sit inside a device frame and nowhere else.
+import { useState } from "react";
 import { Bookmark, ChevronDown, Globe, Heart, MessageCircle, MoreHorizontal, Music2, Play, Repeat2, Send, Share, ThumbsUp } from "lucide-react";
 import { Avatar } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
@@ -25,10 +26,17 @@ function Face({ c, size = 36 }: { c: Channel; size?: number }) {
   );
 }
 
-function Visual({ m, className = "" }: { m: PreviewMedia; className?: string }) {
+/**
+ * One picture or video. With `fit`, it keeps its own shape like the network does, held between the network's
+ * tallest and widest shapes (width / height); until it loads it shows as a square.
+ */
+function Visual({ m, className = "", fit }: { m: PreviewMedia; className?: string; fit?: [number, number] }) {
+  const [ratio, setRatio] = useState<number | null>(null);
+  const measured = (w: number, h: number) => fit && w > 0 && h > 0 && setRatio(Math.min(fit[1], Math.max(fit[0], w / h)));
+  const style = fit ? { aspectRatio: String(ratio ?? 1) } : undefined;
   return isVideo(m) ? (
-    <div className={`relative bg-black ${className}`}>
-      <video src={m.thumb ?? undefined} className="size-full object-cover" muted playsInline preload="metadata" />
+    <div className={`relative bg-black ${className}`} style={style}>
+      <video src={m.thumb ?? undefined} className="size-full object-cover" muted playsInline preload="metadata" onLoadedMetadata={(e) => measured(e.currentTarget.videoWidth, e.currentTarget.videoHeight)} />
       <span className="absolute inset-0 flex items-center justify-center">
         <span className="flex size-12 items-center justify-center rounded-full bg-black/50 text-white">
           <Play size={22} fill="currentColor" />
@@ -37,13 +45,16 @@ function Visual({ m, className = "" }: { m: PreviewMedia; className?: string }) 
     </div>
   ) : (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={m.thumb ?? ""} alt={m.alt ?? ""} className={`bg-neutral-100 object-cover ${className}`} />
+    <img src={m.thumb ?? ""} alt={m.alt ?? ""} style={style} onLoad={(e) => measured(e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} className={`bg-neutral-100 object-cover ${className}`} />
   );
 }
 
+/** Feed posts show between 4:5 (tall) and 1.91:1 (wide), like Instagram, Facebook and LinkedIn do. */
+const FEED: [number, number] = [0.8, 1.91];
+
 function Grid({ media, rounded = "" }: { media: PreviewMedia[]; rounded?: string }) {
   if (!media.length) return null;
-  if (media.length === 1) return <Visual m={media[0]} className={`aspect-[4/5] max-h-[520px] w-full ${rounded}`} />;
+  if (media.length === 1) return <Visual m={media[0]} fit={FEED} className={`max-h-[520px] w-full ${rounded}`} />;
   return (
     <div className={`grid grid-cols-2 gap-0.5 overflow-hidden ${rounded}`}>
       {media.slice(0, 4).map((m, i) => (
@@ -119,7 +130,7 @@ function Instagram({ channel: c, text, media, settings }: PreviewProps) {
       </div>
       {media.length ? (
         <div className="relative">
-          <Visual m={media[0]} className="aspect-[4/5] w-full" />
+          <Visual m={media[0]} fit={FEED} className="w-full" />
           {media.length > 1 ? <span className="absolute top-3 right-3 rounded-full bg-black/70 px-2 py-0.5 text-[11px] text-white">1/{media.length}</span> : null}
         </div>
       ) : (

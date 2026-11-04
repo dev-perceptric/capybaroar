@@ -7,6 +7,7 @@ import { ArrowUp, CalendarCheck, Plus } from "lucide-react";
 import { IconButton, LinkButton, bareArea, boxClass } from "./ui";
 import { Loader } from "./Loader";
 import { send } from "@/app/(app)/agents/actions";
+import { Markdown } from "./Markdown";
 
 export type Shown = { key: string; role: "user" | "assistant" | "tool"; text: string };
 
@@ -134,5 +135,5 @@ function Bubble({ m }: { m: Shown }) {
       </Link>
     );
   if (m.role === "user") return <p className="ml-auto max-w-[80%] rounded-lg bg-paper px-3 py-2 text-[13px] whitespace-pre-wrap shadow-track">{m.text}</p>;
-  return <p className="max-w-[90%] text-[13px] leading-relaxed whitespace-pre-wrap">{m.text}</p>;
+  return <Markdown text={m.text} className="max-w-[90%] text-[13px] leading-relaxed" />;
 }
