@@ -14,15 +14,15 @@ export type ReviewPost = { id: string; when: string | null; media: PreviewMedia[
 /** A brand's posts waiting for approval, as they will look, with Approve and Reject. Opened from a review link. */
 export function ReviewBoard({ token, brand, posts }: { token: string; brand: string; posts: ReviewPost[] }) {
   return (
-    <div className="min-h-dvh bg-panel">
-      <header className="flex h-14 items-center gap-3 border-b border-line bg-panel px-4">
+    <div className="min-h-dvh bg-paper">
+      <header className="sticky top-0 z-10 flex min-h-[52px] items-center gap-2.5 border-b border-line bg-panel px-4 py-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="" width={24} height={24} className="size-6 rounded-sm" />
-        <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold">
-          {brand} <span className="text-faint">{posts.length ? `${posts.length} to review` : ""}</span>
+        <h1 className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.01em]">
+          {brand} <span className="text-faint tabular-nums">{posts.length ? `${posts.length} to review` : ""}</span>
         </h1>
       </header>
-      <main className="mx-auto flex w-full max-w-[960px] flex-col gap-8 px-4 py-8">
+      <main className="mx-auto flex w-full max-w-[960px] flex-col gap-6 px-4 py-6 md:py-8">
         {posts.length ? posts.map((p) => <ReviewItem key={p.id} token={token} post={p} />) : <Empty title="Nothing to review" drawing="search" />}
       </main>
     </div>
@@ -43,7 +43,7 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
     });
   };
   return (
-    <section className="grid overflow-hidden rounded-lg border border-frame bg-panel shadow-card md:grid-cols-[minmax(0,1fr)_360px]">
+    <section className="grid overflow-hidden rounded-lg bg-panel shadow-card md:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-4 p-5">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="violet">In review</Badge>
@@ -51,7 +51,7 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {post.targets.map((x) => (
-            <span key={x.channel.id} className="flex h-7 items-center gap-1.5 rounded-md bg-panel px-2 text-[12px] shadow-chip">
+            <span key={x.channel.id} className="flex h-7 items-center gap-1.5 rounded-full bg-panel px-2.5 text-[12px] shadow-chip">
               <NetworkLogo id={x.channel.network} size={14} />
               <span className="max-w-40 truncate">{x.channel.name}</span>
             </span>
@@ -59,7 +59,11 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
         </div>
         <p className="text-[13px] leading-relaxed whitespace-pre-line">{t?.text}</p>
         <span className="flex-1" />
-        {error ? <p className="text-[12px] text-danger">{error}</p> : null}
+        {error ? (
+          <p role="alert" className="text-[12px] text-danger">
+            {error}
+          </p>
+        ) : null}
         <div className="flex gap-2">
           <Button variant="ghost" disabled={busy} onClick={() => run(false)}>
             Reject
@@ -70,8 +74,8 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-line bg-hover/60 p-4 md:border-t-0 md:border-l">
-        {post.targets.length > 1 ? <Segmented value={view} onChange={setView} options={post.targets.map((x) => ({ value: x.channel.id, label: x.channel.name, icon: <NetworkLogo id={x.channel.network} size={14} /> }))} /> : null}
+      <div className="flex flex-col items-center gap-3 border-t border-line bg-paper p-4 md:border-t-0 md:border-l">
+        {post.targets.length > 1 ? <Segmented label="Preview" size="sm" value={view} onChange={setView} options={post.targets.map((x) => ({ value: x.channel.id, label: x.channel.name, icon: <NetworkLogo id={x.channel.network} size={14} /> }))} /> : null}
         {t ? <Phone channel={t.channel} text={t.text} media={post.media} settings={t.settings} /> : null}
       </div>
     </section>

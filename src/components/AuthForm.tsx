@@ -10,18 +10,20 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(mode === "login" ? signIn : signUp, {});
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-panel px-4">
-      <div className="w-full max-w-[380px] rounded-2xl border border-frame bg-panel p-6 shadow-card">
+    <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
+      <div className="w-full max-w-[400px] rounded-2xl bg-panel p-7 shadow-hover">
         <div className="flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={72} height={72} className="size-18" />
           <p className="mt-2 text-[13px] font-semibold tracking-[0.18em]">CAPYBAROAR</p>
-          <h1 className="mt-6 text-[20px] font-semibold tracking-[-0.025em] text-balance">
+          <h1 className="mt-6 text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
             Every post, every channel. <span className="text-faint">One calendar.</span>
           </h1>
         </div>
         {state.sent ? (
-          <p className="mt-6 rounded-lg bg-signal-soft p-3 text-[13px] shadow-[0_0_0_1px_var(--signal-10)]">Check your email for a link to finish signing up.</p>
+          <p role="status" className="mt-6 rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
+            Check your email for a link to finish signing up.
+          </p>
         ) : (
           <>
             {process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" ? (
@@ -41,7 +43,7 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
             ) : (
               <div className="mt-6" />
             )}
-            <form action={action} className="flex flex-col gap-3">
+            <form action={action} className="flex flex-col gap-4">
               {next ? <input type="hidden" name="next" value={next} /> : null}
               {mode === "signup" ? (
                 <>
@@ -59,7 +61,11 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
               <Field label="Password">
                 <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
               </Field>
-              {state.error ? <p className="text-[12px] text-danger">{state.error}</p> : null}
+              {state.error ? (
+                <p role="alert" className="text-[12px] text-danger">
+                  {state.error}
+                </p>
+              ) : null}
               <Button type="submit" disabled={busy} className="mt-1 w-full justify-center">
                 {busy ? <Loader /> : null}
                 {mode === "login" ? "Sign in" : "Create account"}

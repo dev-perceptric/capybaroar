@@ -10,21 +10,25 @@ export function InviteCard({ title, line, token, mismatch, children }: { title: 
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-panel px-4">
-      <div className="w-full max-w-[380px] rounded-2xl border border-frame bg-panel p-6 shadow-card">
+    <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
+      <div className="w-full max-w-[400px] rounded-2xl bg-panel p-7 shadow-hover">
         <div className="flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width={72} height={72} className="size-18" />
           <p className="mt-2 text-[13px] font-semibold tracking-[0.18em]">CAPYBAROAR</p>
-          <h1 className="mt-6 text-[20px] font-semibold tracking-[-0.025em] text-balance">{title}</h1>
+          <h1 className="mt-6 text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">{title}</h1>
           {line ? <p className="mt-2 text-[13px] text-muted">{line}</p> : null}
         </div>
         {mismatch ? (
-          <p className="mt-6 rounded-lg border border-danger-line bg-danger-soft px-3 py-2 text-[12px] text-danger">
+          <p role="alert" className="mt-6 rounded-lg bg-danger-soft px-3.5 py-2.5 text-[13px] text-danger">
             This invite is for {mismatch.invited}. You are signed in as {mismatch.signedIn}.
           </p>
         ) : null}
-        {error ? <p className="mt-6 text-[12px] text-danger">{error}</p> : null}
+        {error ? (
+          <p role="alert" className="mt-6 text-[12px] text-danger">
+            {error}
+          </p>
+        ) : null}
         <div className="mt-6 flex flex-col gap-2 [&>*]:w-full">
           {token && mismatch ? (
             <Button disabled={busy} onClick={() => start(() => signOutTo(token))}>

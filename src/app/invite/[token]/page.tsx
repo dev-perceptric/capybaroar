@@ -1,10 +1,9 @@
-import Link from "next/link";
 import { userClient } from "@/lib/supabase/server";
 import { inviteByToken } from "@/lib/team";
 import { InviteCard } from "@/components/InviteCard";
+import { LinkButton } from "@/components/ui";
 
 const ROLE = { owner: "an owner", admin: "an admin", editor: "an editor", client: "a client" } as const;
-const link = "inline-flex h-8 items-center justify-center rounded-md px-3 text-[13px] font-medium";
 
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -14,9 +13,9 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   if (!invite || invite.state !== "open")
     return (
       <InviteCard title={!invite ? "This invite was withdrawn" : invite.state === "expired" ? "This invite has expired" : "This invite was already used"} line={invite?.state === "expired" ? "Ask for a new one." : undefined}>
-        <Link href="/calendar" className={`${link} bg-panel shadow-outline hover:bg-canvas`}>
+        <LinkButton href="/calendar" variant="ghost">
           Open Capybaroar
-        </Link>
+        </LinkButton>
       </InviteCard>
     );
   const title = `Join ${invite.workspaceName}`;
@@ -24,12 +23,10 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   if (!email)
     return (
       <InviteCard title={title} line={line}>
-        <Link href={`/signup?next=${next}&email=${encodeURIComponent(invite.email)}`} className={`${link} bg-brand text-white shadow-primary hover:bg-brand-hover`}>
-          Create an account
-        </Link>
-        <Link href={`/login?next=${next}&email=${encodeURIComponent(invite.email)}`} className={`${link} bg-panel shadow-outline hover:bg-canvas`}>
+        <LinkButton href={`/signup?next=${next}&email=${encodeURIComponent(invite.email)}`}>Create an account</LinkButton>
+        <LinkButton href={`/login?next=${next}&email=${encodeURIComponent(invite.email)}`} variant="ghost">
           Sign in
-        </Link>
+        </LinkButton>
       </InviteCard>
     );
   return <InviteCard title={title} line={line} token={token} mismatch={email.toLowerCase() !== invite.email.toLowerCase() ? { invited: invite.email, signedIn: email } : undefined} />;
