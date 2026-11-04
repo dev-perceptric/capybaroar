@@ -3,6 +3,7 @@
 import { Download } from "lucide-react";
 import { Button, Empty } from "./ui";
 import { Bars, ChannelTable, Followers, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
+import { Logo } from "./Logo";
 import type { ReportView as Report } from "@/lib/reports";
 import type { SectionKey } from "@/lib/reportTimes";
 
@@ -53,8 +54,7 @@ export function ReportView({ report: r }: { report: Report }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={r.white.logo} alt={r.workspace} className="max-h-14 max-w-40 shrink-0 object-contain" />
           ) : !r.white ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src="/logo.png" alt="" width={40} height={40} className="size-10 shrink-0 rounded-sm" />
+            <Logo className="mt-1 h-6 w-auto" />
           ) : null}
         </header>
         {blocks.map((b) => (
@@ -64,8 +64,7 @@ export function ReportView({ report: r }: { report: Report }) {
         ))}
         {r.white ? null : (
           <footer className="mt-10 flex items-center gap-2 border-t border-line pt-4 text-[11px] text-faint">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" width={16} height={16} className="size-4 rounded-xs" />
+            <Logo variant="icon" small title="" className="size-4" />
             Made with Capybaroar
           </footer>
         )}

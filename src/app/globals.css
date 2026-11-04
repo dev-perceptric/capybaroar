@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* The sidebar collapsed to icons: data-rail="collapsed" on <html>, on a computer only (Sidebar.tsx). */
+@custom-variant rail {
+  @media (width >= 48rem) {
+    &:where([data-rail="collapsed"] *) {
+      @slot;
+    }
+  }
+}
+
 /*
  * Capybaroar's look: the calm style shared with Claritia and Omniscient (Claritia's docs/brand.md, version 4). A light
  * gray shell with the sidebar on it and the page as one white raised panel: a white header bar, then a paper work area

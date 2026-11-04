@@ -18,9 +18,16 @@ const mailer = () =>
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-function html(title: string, body: string, button: string, href: string, label = "Capybaroar") {
+// The wordmark, hosted with the homepage (site/public/brand, from brand/): mail apps don't draw SVG.
+const LOGO = "https://capybaroar.com/brand/wordmark-light@2x.png";
+
+/** An email: Capybaroar's logo on top, or the workspace's name in white-label reports. */
+function html(title: string, body: string, button: string, href: string, label?: string) {
+  const head = label
+    ? `<p style="font-size:13px;font-weight:600;letter-spacing:.18em">${esc(label.toUpperCase())}</p>`
+    : `<p><img src="${LOGO}" width="136" height="24" alt="Capybaroar" style="display:block;border:0;width:136px;height:auto"></p>`;
   return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;color:#0A0A0A;max-width:520px">
-<p style="font-size:13px;font-weight:600;letter-spacing:.18em">${esc(label.toUpperCase())}</p>
+${head}
 <h1 style="font-size:20px;font-weight:600">${esc(title)}</h1>
 <p style="font-size:14px;color:#737373;line-height:1.5;white-space:pre-line">${esc(body)}</p>
 <p><a href="${href}" style="display:inline-block;background:#FFE100;color:#0A0A0A;border:1px solid #0A0A0A;padding:10px 16px;text-decoration:none;font-weight:600;font-size:13px">${esc(button)}</a></p>

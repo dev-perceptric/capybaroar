@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { Button, Field, Input } from "./ui";
 import { Loader } from "./Loader";
+import { Logo } from "./Logo";
 import { signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
 
 export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next?: string; email?: string }) {
@@ -13,9 +14,7 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
     <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
       <div className="w-full max-w-[400px] rounded-2xl bg-panel p-7 shadow-hover">
         <div className="flex flex-col items-center text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" width={72} height={72} className="size-18" />
-          <p className="mt-2 text-[13px] font-semibold tracking-[0.18em]">CAPYBAROAR</p>
+          <Logo className="h-9 w-auto" />
           <h1 className="mt-6 text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
             Every post, every channel. <span className="text-faint">One calendar.</span>
           </h1>

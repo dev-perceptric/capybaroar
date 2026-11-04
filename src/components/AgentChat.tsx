@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowUp, CalendarCheck, Plus } from "lucide-react";
 import { IconButton, LinkButton, bareArea, boxClass } from "./ui";
 import { Loader } from "./Loader";
+import { Logo } from "./Logo";
 import { send } from "@/app/(app)/agents/actions";
 import { Markdown } from "./Markdown";
 
@@ -46,8 +47,7 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
         <div className="min-h-0 flex-1 overflow-y-auto">
           {empty ? (
             <div className="rise flex h-full flex-col items-center justify-center px-6 text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="" width={80} height={80} className="size-20 rounded-2xl shadow-card" />
+              <Logo variant="icon" className="size-20" />
               <h2 className="mt-6 max-w-md text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
                 Plan a week of posts. <span className="text-faint">The agent writes and schedules them.</span>
               </h2>

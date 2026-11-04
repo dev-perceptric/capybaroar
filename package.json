@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "tsx --test tests/*.test.ts",
+    "brand": "python3 brand/src/build.py && node brand/src/render.mjs"
   },
   "engines": {
     "node": ">=22"

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Badge, Button, Empty, Segmented } from "./ui";
 import { Loader } from "./Loader";
+import { Logo } from "./Logo";
 import { NetworkLogo } from "./NetworkLogo";
 import { askText } from "./Dialogs";
 import { Phone, type PreviewMedia } from "./Previews";
@@ -16,8 +17,7 @@ export function ReviewBoard({ token, brand, posts }: { token: string; brand: str
   return (
     <div className="min-h-dvh bg-paper">
       <header className="sticky top-0 z-10 flex min-h-[52px] items-center gap-2.5 border-b border-line bg-panel px-4 py-2">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" width={24} height={24} className="size-6 rounded-sm" />
+        <Logo variant="icon" small className="size-6" />
         <h1 className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.01em]">
           {brand} <span className="text-faint tabular-nums">{posts.length ? `${posts.length} to review` : ""}</span>
         </h1>

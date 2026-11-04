@@ -19,7 +19,8 @@ export const viewport: Viewport = { themeColor: "#ffffff" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" className={`h-full ${inter.variable} ${mono.variable}`}>
+    // The app layout's RailScript may mark <html> collapsed before React hydrates it.
+    <html lang="en" data-theme="light" suppressHydrationWarning className={`h-full ${inter.variable} ${mono.variable}`}>
       <body className="min-h-full font-sans antialiased">
         {children}
         <DialogHost />

@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components/Sidebar";
+import { RailScript, Sidebar } from "@/components/Sidebar";
 import { getBrandCtx } from "@/lib/brands";
 import { openCount } from "@/lib/inbox";
 
@@ -7,6 +7,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const inbox = ctx.role === "client" ? 0 : await openCount(ctx.workspaceId, ctx.scope);
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-shell md:flex-row">
+      <RailScript />
       <Sidebar
         name={ctx.name}
         email={ctx.email}

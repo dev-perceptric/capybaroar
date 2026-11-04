@@ -2,6 +2,7 @@ import { Mail, Play } from "lucide-react";
 import { themeOf, themeVars } from "@/lib/bioThemes";
 import type { BioView, ViewBlock } from "@/lib/bioBlocks";
 import { SocialIcon } from "./BioIcons";
+import { Logo } from "./Logo";
 
 // The link-in-bio page itself: one column, phone first. Drawn by the public page (/b/<slug>) and by the editor's
 // preview from the same view, so the preview is the page. Its colors come from the page's theme (src/lib/bioThemes.ts)
@@ -41,8 +42,7 @@ export function BioCard({ view, frame = false }: { view: BioView; frame?: boolea
         ) : null}
         {view.badge ? (
           <a href="https://capybaroar.com/?ref=bio" className="mt-12 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] text-[var(--bio-muted)] transition-colors hover:bg-[var(--bio-hover)] hover:text-[var(--bio-ink)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" width={16} height={16} className="size-4 rounded-xs" />
+            <Logo variant="icon" small title="" className="size-4" />
             Made with Capybaroar
           </a>
         ) : null}
