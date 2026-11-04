@@ -7,10 +7,11 @@ export type PlanId = "free" | "pro" | "agency";
 /** Every plan's price and limits. Change the numbers here. null means unlimited. */
 /** members counts the team (owners, admins, editors); clients who only approve don't take a seat. */
 /** reports: saved reports with share links and scheduled emails; whiteLabel: the agency's logo and color on them. */
-export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean }> = {
-  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false, reports: false, whiteLabel: false },
-  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true, reports: true, whiteLabel: false },
-  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true, reports: true, whiteLabel: true },
+/** bioBadgeOff: link-in-bio pages may turn off "Made with Capybaroar" (on Free it always shows). */
+export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean; bioBadgeOff: boolean }> = {
+  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false, reports: false, whiteLabel: false, bioBadgeOff: false },
+  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true, reports: true, whiteLabel: false, bioBadgeOff: true },
+  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true, reports: true, whiteLabel: true, bioBadgeOff: true },
 };
 
 export const TRIAL_DAYS = 14;

@@ -127,9 +127,13 @@ export async function deleteSnippet(workspaceId: string, id: string) {
 }
 
 const ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
-const code = () => Array.from(crypto.getRandomValues(new Uint8Array(7)), (b) => ALPHA[b % ALPHA.length]).join("");
+/** A new short-link code: 7 letters and numbers, without look-alikes. */
+export const linkCode = () => Array.from(crypto.getRandomValues(new Uint8Array(7)), (b) => ALPHA[b % ALPHA.length]).join("");
 
-/** A short link on our own domain that counts clicks. The same long link in a workspace reuses its code. */
+/**
+ * A short link on our own domain that counts clicks. The same long link in a workspace reuses its code, except a
+ * link-in-bio page's own links (page_id set), whose clicks count for that page only.
+ */
 export async function shorten(workspaceId: string, url: string): Promise<string> {
   let u: URL;
   try {
@@ -141,10 +145,13 @@ export async function shorten(workspaceId: string, url: string): Promise<string>
   const long = u.toString();
   if (long.startsWith(`${appUrl()}/l/`)) return long;
   const db = adminClient();
-  const { data: found } = await db.from("links").select("code").eq("workspace_id", workspaceId).eq("url", long).limit(1).maybeSingle();
+  const same = () => db.from("links").select("code").eq("workspace_id", workspaceId).eq("url", long);
+  const first = await same().is("page_id", null).limit(1).maybeSingle();
+  // A database without 014 yet has no page links to leave out.
+  const found = first.error ? (await same().limit(1).maybeSingle()).data : first.data;
   if (found) return `${appUrl()}/l/${found.code}`;
   for (let i = 0; i < 4; i++) {
-    const c = code();
+    const c = linkCode();
     const { error } = await db.from("links").insert({ code: c, workspace_id: workspaceId, url: long });
     if (!error) return `${appUrl()}/l/${c}`;
     if (error.code !== "23505") throw new Error(error.message);
@@ -152,10 +159,18 @@ export async function shorten(workspaceId: string, url: string): Promise<string>
   throw new Error("Couldn't make a short link, try again");
 }
 
-export async function resolveLink(c: string): Promise<string | null> {
+/**
+ * Count a click and say where the short link goes. A click by a person on a link-in-bio page's link also counts for
+ * that page and block (link_open, 014); crawlers and link previews only add to the link's own total, as before.
+ */
+export async function resolveLink(c: string, human = true): Promise<string | null> {
   if (!/^[A-Za-z0-9]{6,12}$/.test(c)) return null;
-  const { data } = await adminClient().rpc("link_click", { p_code: c });
-  return typeof data === "string" ? data : null;
+  const db = adminClient();
+  const { data, error } = await db.rpc("link_open", { p_code: c, p_human: human });
+  if (!error) return typeof data === "string" ? data : null;
+  // A database without 014 yet: count the click the old way.
+  const { data: old } = await db.rpc("link_click", { p_code: c });
+  return typeof old === "string" ? old : null;
 }
 
 const run = promisify(execFile);

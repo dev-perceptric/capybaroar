@@ -66,30 +66,36 @@ function Num({ v }: { v: number | null | undefined }) {
   return <td className="px-4 py-2.5 text-right tabular-nums">{v != null ? num(v) : <span className="text-faint">–</span>}</td>;
 }
 
-/** One series (engagements per day), so one color and no legend. Hover shows the day. */
+/** Engagements per day, with the posts that went out each day on hover. */
 export function Bars({ daily }: { daily: { day: string; posts: number; engagement: number }[] }) {
+  return <DayBars label="Engagements by day" unit="engagements" days={daily.map((d) => ({ day: d.day, value: d.engagement, note: `${d.posts} post${d.posts === 1 ? "" : "s"}` }))} />;
+}
+
+/** One series by day, so one color and no legend. Hover shows the day. */
+export function DayBars({ days, label, unit }: { days: { day: string; value: number; note?: string }[]; label: string; unit: string }) {
   const [hover, setHover] = useState<number | null>(null);
-  const max = Math.max(1, ...daily.map((d) => d.engagement));
-  const h = hover != null ? daily[hover] : null;
+  const max = Math.max(1, ...days.map((d) => d.value));
+  const h = hover != null ? days[hover] : null;
   return (
     <figure className={`relative px-4 pt-9 pb-3 ${CARD}`}>
       {h ? (
         <figcaption className="pointer-events-none absolute top-2.5 right-3 rounded-md bg-panel px-2 py-0.5 text-[11px] tabular-nums shadow-menu">
-          {dayLabel(h.day)}: {num(h.engagement)} engagements, {h.posts} post{h.posts === 1 ? "" : "s"}
+          {dayLabel(h.day)}: {num(h.value)} {unit}
+          {h.note ? `, ${h.note}` : ""}
         </figcaption>
       ) : (
         <figcaption className="absolute top-3 right-4 text-[11px] text-faint tabular-nums">Max {num(max)}</figcaption>
       )}
-      <div className="flex h-36 items-end gap-[2px]" onMouseLeave={() => setHover(null)} role="img" aria-label="Engagements by day">
-        {daily.map((d, i) => (
+      <div className="flex h-36 items-end gap-[2px]" onMouseLeave={() => setHover(null)} role="img" aria-label={label}>
+        {days.map((d, i) => (
           <div key={d.day} className="flex h-full min-w-0 flex-1 items-end" onMouseEnter={() => setHover(i)}>
-            <div className={`w-full rounded-t-xs ${hover === i ? "bg-signal" : d.engagement ? "bg-chart" : "bg-line"}`} style={{ height: d.engagement ? `${Math.max(3, (d.engagement / max) * 100)}%` : "2px" }} />
+            <div className={`w-full rounded-t-xs ${hover === i ? "bg-signal" : d.value ? "bg-chart" : "bg-line"}`} style={{ height: d.value ? `${Math.max(3, (d.value / max) * 100)}%` : "2px" }} />
           </div>
         ))}
       </div>
       <div className="mt-1.5 flex justify-between text-[10px] text-faint tabular-nums">
-        <span>{daily[0] ? dayLabel(daily[0].day) : ""}</span>
-        <span>{daily.length ? dayLabel(daily.at(-1)!.day) : ""}</span>
+        <span>{days[0] ? dayLabel(days[0].day) : ""}</span>
+        <span>{days.length ? dayLabel(days.at(-1)!.day) : ""}</span>
       </div>
     </figure>
   );
@@ -160,8 +166,8 @@ export function Formats({ formats }: { formats: Analytics["formats"] }) {
 const TH = "h-10 px-4 text-right font-medium";
 const HEAD = "border-b border-line text-left text-[12px] text-muted";
 
-function NoResults() {
-  return <p className="rounded-lg border border-dashed border-line-strong px-4 py-10 text-center text-[13px] text-muted">No results in this period yet</p>;
+export function NoResults({ text = "No results in this period yet" }: { text?: string }) {
+  return <p className="rounded-lg border border-dashed border-line-strong px-4 py-10 text-center text-[13px] text-muted">{text}</p>;
 }
 
 /** The posts with the most engagements. */

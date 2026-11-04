@@ -6,7 +6,6 @@ import { TabNav } from "./ui";
 const TABS = [
   { value: "/channels", label: "Channels" },
   { value: "/channels/feeds", label: "Feeds" },
-  { value: "/channels/bio", label: "Link in bio" },
 ];
 
 /** The Channels page's tabs, each its own address. */
