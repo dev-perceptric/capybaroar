@@ -6,6 +6,7 @@ import { writerCtx } from "@/lib/session";
 import { mayUseBrand } from "@/lib/brands";
 import { adminClient } from "@/lib/supabase/server";
 import { bioStats, createBioPage, deleteBioPage, saveBioPage, slugTaken, type BioDraft, type BioNumbers, type BioPage } from "@/lib/bio";
+import { buildBioDraft, type BuildAnswer } from "@/lib/bioBuild";
 
 const fail = (e: unknown) => {
   unstable_rethrow(e);
@@ -67,6 +68,16 @@ export async function loadBioStats(brandId: string, days: number): Promise<{ err
   try {
     const { ctx } = await brandCtx(brandId);
     return { stats: await bioStats(ctx.workspaceId, brandId, [7, 30, 90].includes(days) ? days : 30) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** A page draft from Claude (Build with AI). Nothing is saved: the editor shows it to keep or discard. */
+export async function buildBio(brandId: string, input: { about: string; website: string; include: string[] }): Promise<{ error?: string; draft?: BuildAnswer }> {
+  try {
+    const { ctx, brand } = await brandCtx(brandId);
+    return { draft: await buildBioDraft(ctx.workspaceId, brand, input) };
   } catch (e) {
     return fail(e);
   }

@@ -12,7 +12,10 @@ import {
   POST_COUNTS,
   SOCIALS,
   httpUrl,
+  isPlaceholder,
+  isPlaceholderEmail,
   newBlockId,
+  placeholdersIn,
   scheduleState,
   socialHref,
   socialOf,
@@ -77,7 +80,7 @@ function fresh(type: BlockType, social: SocialItem[]): Block {
 function summary(b: Block): { title: string; sub: string } {
   switch (b.type) {
     case "link":
-      return { title: b.label || BLOCK_NAMES.link, sub: b.url ? host(b.url) : "" };
+      return { title: b.label || BLOCK_NAMES.link, sub: b.url && !isPlaceholder(b.url) ? host(b.url) : "" };
     case "header":
       return { title: b.text || BLOCK_NAMES.header, sub: BLOCK_NAMES.header };
     case "text":
@@ -87,9 +90,9 @@ function summary(b: Block): { title: string; sub: string } {
     case "posts":
       return { title: BLOCK_NAMES.posts, sub: `${b.count} posts` };
     case "video":
-      return { title: b.title || BLOCK_NAMES.video, sub: b.url ? host(b.url) : "" };
+      return { title: b.title || BLOCK_NAMES.video, sub: b.url && !isPlaceholder(b.url) ? host(b.url) : "" };
     case "email":
-      return { title: b.label || BLOCK_NAMES.email, sub: b.email };
+      return { title: b.label || BLOCK_NAMES.email, sub: isPlaceholderEmail(b.email) ? "" : b.email };
   }
 }
 
@@ -100,6 +103,7 @@ export function BioBlocks({
   posts,
   social,
   pick,
+  tools,
 }: {
   blocks: Block[];
   setBlocks: (fn: (b: Block[]) => Block[]) => void;
@@ -107,6 +111,8 @@ export function BioBlocks({
   posts: EditorPost[];
   social: SocialItem[];
   pick: PickPicture;
+  /** Buttons at the right of the bar (Templates, Build with AI). */
+  tools?: React.ReactNode;
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -173,7 +179,7 @@ export function BioBlocks({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span ref={addButton} className="inline-flex">
           <Button variant="ghost" onClick={() => setAdding(!adding)} disabled={blocks.length >= MAX_BLOCKS} aria-haspopup="menu" aria-expanded={adding}>
             <Plus /> Add block
@@ -192,6 +198,7 @@ export function BioBlocks({
             ))}
           </Floating>
         ) : null}
+        {tools ? <div className="ml-auto flex flex-wrap items-center gap-2">{tools}</div> : null}
       </div>
       {blocks.length ? (
         <ul ref={list} className="flex flex-col gap-2" aria-label="Blocks">
@@ -199,7 +206,8 @@ export function BioBlocks({
             const s = summary(b);
             const state = scheduleState(b, now);
             const isOpen = open === b.id;
-            const tag = b.hidden ? <Badge>Hidden</Badge> : state === "waiting" ? <Badge tone="amber">Scheduled</Badge> : state === "ended" ? <Badge>Ended</Badge> : state === "live" ? <Badge tone="green">Live</Badge> : null;
+            const waiting = placeholdersIn(b).length > 0;
+            const tag = waiting ? <Badge tone="amber">{b.type === "email" ? "Add your email" : "Add your link"}</Badge> : b.hidden ? <Badge>Hidden</Badge> : state === "waiting" ? <Badge tone="amber">Scheduled</Badge> : state === "ended" ? <Badge>Ended</Badge> : state === "live" ? <Badge tone="green">Live</Badge> : null;
             return (
               <li key={b.id} data-block={b.id} className={`rounded-lg bg-panel transition-shadow duration-[var(--duration-fast)] ${dragging === b.id ? "relative z-10 shadow-hover" : "shadow-card"}`}>
                 <div className="flex min-h-14 items-center gap-1.5 py-2 pr-2 pl-1">
@@ -265,6 +273,12 @@ export function Picture({ id, images, title, pick, onChange }: { id: string | nu
 function BlockFields({ b, update, images, posts, pick }: { b: Block; update: (p: Partial<Block>) => void; images: Img[]; posts: EditorPost[]; pick: PickPicture }) {
   // Links typed without https:// get it when the box is left, so the preview and the save agree.
   const tidy = (v: string) => httpUrl(v) ?? v.trim();
+  // A placeholder (from a template or the AI builder) shows as an empty box until something is typed over it.
+  const shown = (url: string) => (isPlaceholder(url) ? "" : url);
+  const leave = (was: string, typed: string, set: (url: string) => void) => {
+    if (!typed.trim() && isPlaceholder(was)) return;
+    set(tidy(typed));
+  };
   switch (b.type) {
     case "link":
       return (
@@ -273,7 +287,7 @@ function BlockFields({ b, update, images, posts, pick }: { b: Block; update: (p:
             <Input aria-label="Label" value={b.label} maxLength={80} onChange={(e) => update({ label: e.target.value })} />
           </Field>
           <Field label="Link">
-            <Input aria-label="Link" value={b.url} inputMode="url" placeholder="https://" onChange={(e) => update({ url: e.target.value })} onBlur={(e) => update({ url: tidy(e.target.value) })} />
+            <Input aria-label="Link" value={shown(b.url)} inputMode="url" placeholder={isPlaceholder(b.url) ? "Add your link" : "https://"} aria-invalid={isPlaceholder(b.url) || undefined} className="aria-invalid:bg-signal-pale" onChange={(e) => update({ url: e.target.value })} onBlur={(e) => leave(b.url, e.target.value, (url) => update({ url }))} />
           </Field>
           <Field label="Picture">
             <Picture id={b.thumb} images={images} title="Choose a picture" pick={pick} onChange={(thumb) => update({ thumb })} />
@@ -344,7 +358,7 @@ function BlockFields({ b, update, images, posts, pick }: { b: Block; update: (p:
       return (
         <>
           <Field label="YouTube or TikTok link">
-            <Input aria-label="YouTube or TikTok link" value={b.url} inputMode="url" placeholder="https://" onChange={(e) => update({ url: e.target.value })} onBlur={(e) => update({ url: tidy(e.target.value) })} />
+            <Input aria-label="YouTube or TikTok link" value={shown(b.url)} inputMode="url" placeholder={isPlaceholder(b.url) ? "Add your link" : "https://"} aria-invalid={isPlaceholder(b.url) || undefined} className="aria-invalid:bg-signal-pale" onChange={(e) => update({ url: e.target.value })} onBlur={(e) => leave(b.url, e.target.value, (url) => update({ url }))} />
           </Field>
           <Field label="Title">
             <Input aria-label="Title" value={b.title} maxLength={80} onChange={(e) => update({ title: e.target.value })} />
@@ -361,7 +375,7 @@ function BlockFields({ b, update, images, posts, pick }: { b: Block; update: (p:
             <Input aria-label="Label" value={b.label} maxLength={80} onChange={(e) => update({ label: e.target.value })} />
           </Field>
           <Field label="Email">
-            <Input aria-label="Email" type="email" value={b.email} maxLength={254} onChange={(e) => update({ email: e.target.value })} />
+            <Input aria-label="Email" type="email" value={isPlaceholderEmail(b.email) ? "" : b.email} placeholder={isPlaceholderEmail(b.email) ? "Add your email" : undefined} aria-invalid={isPlaceholderEmail(b.email) || undefined} className="aria-invalid:bg-signal-pale" maxLength={254} onChange={(e) => update({ email: e.target.value })} />
           </Field>
           <Field label="Subject">
             <Input aria-label="Subject" value={b.subject ?? ""} maxLength={120} onChange={(e) => update({ subject: e.target.value })} />
@@ -389,11 +403,12 @@ function SocialFields({ items, onChange }: { items: SocialItem[]; onChange: (ite
             </span>
             <Input
               aria-label={`${s?.name} handle or link`}
-              placeholder={it.network === "spotify" ? "https://" : "@handle or link"}
-              value={it.url}
+              placeholder={isPlaceholder(it.url) ? "Add your link" : it.network === "spotify" ? "https://" : "@handle or link"}
+              aria-invalid={isPlaceholder(it.url) || undefined}
+              value={isPlaceholder(it.url) ? "" : it.url}
               onChange={(e) => set(i, e.target.value)}
-              onBlur={(e) => set(i, socialHref(it.network, e.target.value) ?? e.target.value.trim())}
-              className="min-w-0 flex-1"
+              onBlur={(e) => (e.target.value.trim() || !isPlaceholder(it.url) ? set(i, socialHref(it.network, e.target.value) ?? e.target.value.trim()) : undefined)}
+              className="min-w-0 flex-1 aria-invalid:bg-signal-pale"
             />
             <IconButton label={`Remove ${s?.name}`} align="end" onClick={() => onChange(items.filter((_, j) => j !== i))}>
               <X />

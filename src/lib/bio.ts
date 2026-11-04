@@ -16,6 +16,7 @@ import {
   httpUrl,
   liveBlocks,
   newBlockId,
+  placeholderProblem,
   postItem,
   profileUrl,
   readAppearance,
@@ -180,6 +181,8 @@ export async function saveBioPage(workspaceId: string, brandId: string, draft: B
   if (seoTitle.length > 70) throw new Error("Search titles are up to 70 characters");
   if (seoDescription.length > 200) throw new Error("Descriptions are up to 200 characters");
   let blocks = cleanBlocks(draft.blocks);
+  const waiting = placeholderProblem(blocks);
+  if (waiting) throw new Error(waiting);
   const appearance = readAppearance(draft.appearance);
   const avatar = draft.avatarMediaId || null;
   const share = draft.shareMediaId || null;

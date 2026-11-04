@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Download, ExternalLink, Link2, Trash2 } from "lucide-react";
+import { Download, ExternalLink, LayoutTemplate, Link2, Sparkles, Trash2 } from "lucide-react";
 import { Badge, Button, CardHead, CopyButton, ErrorNote, Field, IconLink, Input, Panel, Segmented, Switch, TabNav, TextArea, Page as UiPage } from "./ui";
 import { Modal } from "./Overlay";
 import { Select } from "./Select";
@@ -12,9 +12,12 @@ import { askConfirm } from "./Dialogs";
 import { BioCard } from "./BioCard";
 import { BioBlocks, Picture, type EditorPost, type Img } from "./BioBlocks";
 import { BioStats } from "./BioStats";
+import { BuildForm, DraftBar, TemplateGallery, previewResolver } from "./BioTemplates";
 import { BIO_THEMES } from "@/lib/bioThemes";
-import { buildView, draftOf, httpUrl, slugProblem, videoSource, youtubeThumb, type Appearance, type BioDraft, type BioPage, type Block, type SocialItem } from "@/lib/bioBlocks";
-import { checkSlug, createBio, removeBio, saveBio } from "@/app/(app)/bio/actions";
+import { buildView, draftOf, placeholderProblem, slugProblem, videoSource, type Appearance, type BioDraft, type BioPage, type Block, type SocialItem } from "@/lib/bioBlocks";
+import { applyTemplate, type BioTemplate } from "@/lib/bioTemplates";
+import type { BuildInput } from "@/lib/bioAi";
+import { buildBio, checkSlug, createBio, removeBio, saveBio } from "@/app/(app)/bio/actions";
 
 export type BioTab = "blocks" | "appearance" | "analytics" | "settings";
 const TABS: { value: BioTab; label: string }[] = [
@@ -60,6 +63,8 @@ export function BioEditor({
   posts,
   social,
   badgeOff,
+  agent,
+  canUpgrade,
   tab: firstTab,
 }: {
   brand: { id: string; name: string };
@@ -70,6 +75,9 @@ export function BioEditor({
   posts: EditorPost[];
   social: SocialItem[];
   badgeOff: boolean;
+  /** The plan includes the agent (Build with AI); `canUpgrade`: this person can change the plan. */
+  agent: boolean;
+  canUpgrade: boolean;
   tab: BioTab;
 }) {
   const router = useRouter();
@@ -79,6 +87,12 @@ export function BioEditor({
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   const [picking, setPicking] = useState<{ title: string; onPick: (id: string) => void } | null>(null);
+  const [gallery, setGallery] = useState(false);
+  const [building, setBuilding] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState("");
+  // The page as it was before Claude's draft, while the draft waits to be kept or discarded.
+  const [aiBefore, setAiBefore] = useState<BioDraft | null>(null);
 
   const dirty = !!saved && !!draft && JSON.stringify(draft) !== JSON.stringify(draftOf(saved));
 
@@ -95,12 +109,7 @@ export function BioEditor({
     return buildView(
       { title: draft.title.trim(), bio: draft.bio.trim(), avatar: thumbOf(draft.avatarMediaId), appearance: draft.appearance, badge: badgeOff ? draft.badge : true, blocks: draft.blocks.filter(drawable) },
       new Date(),
-      {
-        media: (id) => thumbOf(id),
-        link: (url) => httpUrl(url) ?? "#",
-        posts: (b) => posts.map((p) => ({ href: httpUrl(b.links[p.id]) ?? p.url, thumb: p.thumb, alt: p.text })),
-        video: (_b, src) => (src.kind === "youtube" ? youtubeThumb(src.id) : null),
-      },
+      previewResolver(posts, thumbOf),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, posts, images, badgeOff]);
@@ -109,6 +118,64 @@ export function BioEditor({
     brands.length > 1 ? (
       <Select size="sm" lead="Brand" ariaLabel="Brand" className="w-56 max-w-full" value={brand.id} onChange={(v) => router.push(`/bio?brand=${v}`)} options={brands.map((b) => ({ value: b.id, label: b.name }))} />
     ) : null;
+
+  /** The brand's page, made now when there isn't one yet. */
+  const ensurePage = async (): Promise<{ page?: BioPage; error?: string }> => {
+    if (saved) return { page: saved };
+    const r = await ask(() => createBio(brand.id));
+    if (r.error || !("page" in r) || !r.page) return { error: r.error ?? "Couldn't make the page" };
+    setSaved(r.page);
+    return { page: r.page };
+  };
+  const pickTemplate = async (t: BioTemplate) => {
+    if (draft?.blocks.length && !(await askConfirm("Use this template?", { body: "It replaces the page's blocks and look.", ok: "Use template" }))) return;
+    setGallery(false);
+    start(async () => {
+      setError("");
+      const r = await ensurePage();
+      if (!r.page) return setError(r.error ?? "Couldn't make the page");
+      const { blocks, appearance } = applyTemplate(t, social);
+      setDraft({ ...(draft ?? draftOf(r.page)), blocks, appearance });
+      setAiBefore(null);
+      setTab("blocks");
+    });
+  };
+  const build = (input: BuildInput) => {
+    setAiError("");
+    setAiBusy(true);
+    void (async () => {
+      const made = await ensurePage();
+      const r = made.page ? await ask(() => buildBio(brand.id, input)) : { error: made.error ?? "Couldn't make the page" };
+      setAiBusy(false);
+      if (!made.page || r.error || !("draft" in r) || !r.draft) {
+        if (made.page && !draft) setDraft(draftOf(made.page));
+        return setAiError(r.error ?? "Couldn't build the page");
+      }
+      const d = r.draft;
+      const before = draft ?? draftOf(made.page);
+      // Building again over a draft keeps the page from before the first one to go back to.
+      setAiBefore((b) => b ?? before);
+      setDraft({ ...before, title: d.title, bio: d.bio, appearance: d.appearance, blocks: d.blocks });
+      setBuilding(false);
+      setTab("blocks");
+    })();
+  };
+  const tools = (
+    <>
+      <Button variant="ghost" onClick={() => setGallery(true)} disabled={busy || aiBusy}>
+        <LayoutTemplate /> Templates
+      </Button>
+      <Button variant="ghost" onClick={() => setBuilding(true)} disabled={busy || aiBusy}>
+        <Sparkles /> Build with AI
+      </Button>
+    </>
+  );
+  const overlays = (
+    <>
+      {gallery ? <TemplateGallery title={draft?.title.trim() || brand.name} bio={draft?.bio.trim() ?? ""} avatar={thumbOf(draft?.avatarMediaId)} social={social} posts={posts} onPick={(t) => void pickTemplate(t)} onClose={() => setGallery(false)} /> : null}
+      {building ? <BuildForm agent={agent} canUpgrade={canUpgrade} busy={aiBusy} error={aiError} onBuild={build} onClose={() => (aiBusy ? undefined : setBuilding(false))} /> : null}
+    </>
+  );
 
   if (!saved || !draft || !view) {
     const create = () =>
@@ -128,12 +195,16 @@ export function BioEditor({
           title={"Link in bio\none page for every profile"}
           lead="Links, posts and videos on one page at your own address, with every visit and click counted."
           action={
-            <Button onClick={create} disabled={busy}>
-              {busy ? <Loader /> : null}
-              Create page
-            </Button>
+            <>
+              <Button onClick={create} disabled={busy || aiBusy}>
+                {busy ? <Loader /> : null}
+                Create page
+              </Button>
+              {tools}
+            </>
           }
         />
+        {overlays}
       </Page>
     );
   }
@@ -144,6 +215,8 @@ export function BioEditor({
   const live = `${base}${saved.slug}`;
 
   const save = () => {
+    const waiting = placeholderProblem(draft.blocks);
+    if (waiting) return setError(waiting);
     const sent = draft;
     start(async () => {
       setError("");
@@ -174,7 +247,7 @@ export function BioEditor({
           <IconLink href={live} label="Open page">
             <ExternalLink />
           </IconLink>
-          <Button onClick={save} disabled={!dirty || busy}>
+          <Button onClick={save} disabled={!dirty || busy || !!aiBefore}>
             {busy ? <Loader /> : null}
             Save
           </Button>
@@ -187,8 +260,17 @@ export function BioEditor({
         <div className="mx-auto grid w-full max-w-[1120px] gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-4">
             <ErrorNote message={error} />
+            {aiBefore ? (
+              <DraftBar
+                onKeep={() => setAiBefore(null)}
+                onDiscard={() => {
+                  setDraft(aiBefore);
+                  setAiBefore(null);
+                }}
+              />
+            ) : null}
             {tab === "blocks" ? (
-              <BioBlocks blocks={draft.blocks} setBlocks={setBlocks} images={images} posts={posts} social={social} pick={pick} />
+              <BioBlocks blocks={draft.blocks} setBlocks={setBlocks} images={images} posts={posts} social={social} pick={pick} tools={tools} />
             ) : tab === "appearance" ? (
               <AppearanceTab draft={draft} patch={patch} images={images} pick={pick} />
             ) : (
@@ -228,6 +310,7 @@ export function BioEditor({
           )}
         </Modal>
       ) : null}
+      {overlays}
     </Page>
   );
 }

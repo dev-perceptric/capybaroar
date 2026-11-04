@@ -556,5 +556,63 @@ export function buildView(p: { title: string; bio: string; avatar: string | null
   return { title: p.title, bio: p.bio, avatar: p.avatar, appearance: p.appearance, blocks, badge: p.badge };
 }
 
+// Placeholders: what templates (src/lib/bioTemplates.ts) and the AI builder leave for people to fill in. example.com
+// is reserved for examples (RFC 2606), so no real link points there; a video waits on YouTube's empty id. They pass
+// the block checks, so a draft draws, but a page holding one can't be saved.
+
+export const PLACEHOLDER_VIDEO = "https://www.youtube.com/watch?v=00000000000";
+export const PLACEHOLDER_EMAIL = "hello@example.com";
+
+/** A link to fill in, named after its label: "Book a table" becomes https://example.com/book-a-table. */
+export const placeholderUrl = (label: string) => {
+  const s = label.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40).replace(/-+$/, "");
+  return `https://example.com/${s || "link"}`;
+};
+
+const exampleHost = (host: string) => /(^|\.)example\.(com|org|net)$/i.test(host);
+
+export function isPlaceholder(url: string | null | undefined): boolean {
+  let u: URL;
+  try {
+    u = new URL(String(url ?? ""));
+  } catch {
+    return false;
+  }
+  if (exampleHost(u.hostname)) return true;
+  const v = videoSource(u.toString());
+  return v?.kind === "youtube" && /^0{11}$/.test(v.id);
+}
+
+export const isPlaceholderEmail = (email: string | null | undefined) => exampleHost(String(email ?? "").split("@")[1] ?? "");
+
+/** What in a block still waits for the person: its link, its email, or each social network left as a placeholder. */
+export function placeholdersIn(b: Block): string[] {
+  switch (b.type) {
+    case "link":
+    case "video":
+      return isPlaceholder(b.url) ? ["link"] : [];
+    case "email":
+      return isPlaceholderEmail(b.email) ? ["email"] : [];
+    case "social":
+      return b.items.filter((i) => isPlaceholder(i.url)).map((i) => socialOf(i.network)?.name ?? i.network);
+    default:
+      return [];
+  }
+}
+
+/** Why a page can't be saved yet because of placeholders, or null. Names the first few blocks. */
+export function placeholderProblem(blocks: Block[]): string | null {
+  const named: string[] = [];
+  for (const [i, b] of blocks.entries()) {
+    const left = placeholdersIn(b);
+    if (!left.length) continue;
+    const label = b.type === "link" || b.type === "email" ? b.label : b.type === "video" ? b.title : "";
+    named.push(b.type === "social" ? `${BLOCK_NAMES.social} (${left.join(", ")})` : label ? `"${label}"` : `${BLOCK_NAMES[b.type]} ${i + 1}`);
+  }
+  if (!named.length) return null;
+  const list = named.length > 3 ? `${named.slice(0, 3).join(", ")} and ${named.length - 3} more` : named.join(", ");
+  return `Add your own links before saving: ${list}`;
+}
+
 /** Every media id a page shows (its avatar and share picture come from their own columns). */
 export const blockMedia = (blocks: Block[]) => blocks.flatMap((b) => ((b.type === "link" || b.type === "video") && b.thumb ? [b.thumb] : []));

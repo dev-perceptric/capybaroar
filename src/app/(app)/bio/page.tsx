@@ -4,6 +4,7 @@ import { getBrandCtx, homeBrand } from "@/lib/brands";
 import { bioUrl, getBioPage, latestPosts, socialDefaults } from "@/lib/bio";
 import { listMedia, mediaThumbs } from "@/lib/media";
 import { PLANS, effectivePlan, getBilling } from "@/lib/billing";
+import { canManage } from "@/lib/session";
 
 const TABS: BioTab[] = ["blocks", "appearance", "analytics", "settings"];
 
@@ -33,6 +34,8 @@ export default async function BioEditorPage({ searchParams }: { searchParams: Pr
       posts={posts.map((p) => ({ id: p.id, text: p.text, url: p.url, thumb: thumbs.find((t) => t.id === p.mediaId)?.thumb ?? null }))}
       social={social}
       badgeOff={PLANS[effectivePlan(billing)].bioBadgeOff}
+      agent={PLANS[effectivePlan(billing)].agent}
+      canUpgrade={canManage(b.role)}
       tab={TABS.find((t) => t === q.tab) ?? "blocks"}
     />
   );
