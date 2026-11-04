@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, useTransition } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { Button, CardHead, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
@@ -56,6 +56,11 @@ export function SettingsView({ name, timezone, queue, billing, team, api }: { na
   // An older link with a hash (#brands) opens that pane. Read in the browser only.
   const fromHash = known(useSyncExternalStore(noSub, () => window.location.hash.slice(1), () => ""));
   const tab: Tab = picked ?? fromQuery ?? fromHash ?? "general";
+  // On a phone the panes are one row of tabs that scrolls sideways: keep the open one in view.
+  const nav = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) nav.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [tab]);
   const pick = (t: Tab) => {
     setPicked(t);
     window.history.replaceState(null, "", `/settings?tab=${t}`);
@@ -63,7 +68,7 @@ export function SettingsView({ name, timezone, queue, billing, team, api }: { na
 
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-5 md:flex-row md:gap-10">
-      <nav aria-label="Settings" className="-mx-4 flex shrink-0 gap-1 overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] md:sticky md:top-0 md:mx-0 md:w-48 md:flex-col md:gap-4 md:self-start md:overflow-visible md:px-0">
+      <nav ref={nav} aria-label="Settings" className="-mx-4 flex shrink-0 gap-1 overflow-x-auto px-4 pb-0.5 [scrollbar-width:none] md:sticky md:top-0 md:mx-0 md:w-48 md:flex-col md:gap-4 md:self-start md:overflow-visible md:px-0">
         {groups.map((g) => (
           <div key={g.label} className="contents md:flex md:flex-col md:gap-0.5">
             <span className="label-mono hidden px-3 pb-1 md:block">{g.label}</span>
