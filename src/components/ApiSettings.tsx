@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, KeyRound, Plus, Send, Trash2, Webhook } from "lucide-react";
-import { Badge, Button, Checkbox, CopyButton, Field, IconButton, Input, Switch, timeAgo } from "./ui";
+import { Badge, Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
 import { Modal } from "./Overlay";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { fmtDate } from "@/lib/format";
@@ -21,16 +21,6 @@ const EVENT_LABEL: Record<string, string> = {
   "post.rejected": "A post was sent back",
   "channel.reconnect": "A channel needs reconnecting",
 };
-
-function Line({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex min-h-11 items-center gap-3 border-b border-line px-3 py-1.5 last:border-b-0">
-      <span className="w-24 shrink-0 text-[12px] text-muted">{label}</span>
-      <code className="min-w-0 flex-1 font-mono text-[12px] wrap-anywhere">{value}</code>
-      <CopyButton text={value} label={`Copy ${label}`} />
-    </div>
-  );
-}
 
 /** Keys for the REST API and the MCP server. A key acts as the person who made it. */
 export function ApiSection({ api }: { api: ApiInfo }) {
@@ -57,54 +47,61 @@ export function ApiSection({ api }: { api: ApiInfo }) {
     });
   };
   return (
-    <section id="api" className="mt-10 flex scroll-mt-6 flex-col gap-4 border-t border-line pt-8">
-      <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-[15px] font-medium">API and MCP</h2>
-          <p className="text-[12px] text-muted">Keys for apps and AI agents that work in this workspace</p>
-        </div>
-        <a href={api.docs} target="_blank" rel="noreferrer" className="inline-flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-hover hover:text-ink" aria-label="Docs" title="Docs">
-          <BookOpen size={16} />
-        </a>
-        <Button variant="ghost" onClick={add} disabled={busy}>
-          <Plus />
-          New key
-        </Button>
-      </div>
-      <div className="overflow-hidden rounded-lg border border-frame">
-        <Line label="MCP server" value={mcp} />
-        <Line label="REST API" value={`${api.base}/api/v1`} />
-      </div>
-      {api.keys.length ? (
-        <div className="overflow-hidden rounded-lg border border-frame">
-          {api.keys.map((k) => (
-            <div key={k.id} className="flex min-h-12 items-center gap-3 border-b border-line px-3 py-2 last:border-b-0">
-              <KeyRound size={15} className="shrink-0 text-muted" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium wrap-break-word">{k.name}</p>
-                <p className="text-[12px] text-muted">
-                  <span className="font-mono">{k.prefix}…</span> made {fmtDate(k.created_at)}, {k.last_used_at ? `used ${timeAgo(k.last_used_at)}` : "not used yet"}
-                </p>
-              </div>
-              <IconButton label="Delete key" align="end" onClick={() => del(k)} disabled={busy}>
-                <Trash2 />
-              </IconButton>
-            </div>
-          ))}
-        </div>
-      ) : null}
+    <>
+      <PaneHead title="API and MCP" line="Keys for apps and AI agents that work in this workspace">
+        <LinkButton href={api.docs} external variant="ghost" size="sm">
+          <BookOpen /> Docs
+        </LinkButton>
+      </PaneHead>
+      <Rows label="Addresses">
+        <CopyField label="MCP server" value={mcp} />
+        <CopyField label="REST API" value={`${api.base}/api/v1`} />
+      </Rows>
+      <Panel className="overflow-hidden">
+        <CardHead label="Keys" count={api.keys.length}>
+          <Button variant="ghost" size="sm" onClick={add} disabled={busy}>
+            <Plus /> New key
+          </Button>
+        </CardHead>
+        {api.keys.length ? (
+          <div className="divide-y divide-line">
+            {api.keys.map((k) => (
+              <Row
+                key={k.id}
+                lead={
+                  <span className="flex size-8 items-center justify-center rounded-md bg-paper text-muted shadow-track">
+                    <KeyRound size={15} />
+                  </span>
+                }
+                title={k.name}
+                sub={
+                  <span className="block truncate">
+                    <span className="font-mono">{k.prefix}…</span> made {fmtDate(k.created_at)}, {k.last_used_at ? `used ${timeAgo(k.last_used_at)}` : "not used yet"}
+                  </span>
+                }
+              >
+                <IconButton label="Delete key" align="end" onClick={() => del(k)} disabled={busy}>
+                  <Trash2 />
+                </IconButton>
+              </Row>
+            ))}
+          </div>
+        ) : (
+          <p className="px-4 py-6 text-center text-[13px] text-muted">No keys yet</p>
+        )}
+      </Panel>
       {api.hooks ? <Webhooks hooks={api.hooks} /> : null}
       {made ? (
         <Modal title="Your new key" wide onClose={() => setMade(null)} footer={<Button onClick={() => setMade(null)}>Done</Button>}>
           <p className="text-[13px] text-muted">It shows only once. Keep it somewhere safe.</p>
-          <div className="overflow-hidden rounded-lg border border-frame">
-            <Line label="Key" value={made} />
-            <Line label="MCP link" value={`${mcp}/${made}`} />
-            <Line label="Claude Code" value={`claude mcp add --transport http capybaroar ${mcp} --header "Authorization: Bearer ${made}"`} />
-          </div>
+          <Rows>
+            <CopyField label="Key" value={made} />
+            <CopyField label="MCP link" value={`${mcp}/${made}`} />
+            <CopyField label="Claude Code" value={`claude mcp add --transport http capybaroar ${mcp} --header "Authorization: Bearer ${made}"`} />
+          </Rows>
         </Modal>
       ) : null}
-    </section>
+    </>
   );
 }
 
@@ -140,47 +137,58 @@ function Webhooks({ hooks }: { hooks: Hook[] }) {
   const last = (h: Hook) =>
     h.last_error ? h.last_error : h.last_delivered_at ? `Answered ${h.last_status ?? 200}, ${timeAgo(h.last_delivered_at)}` : "Nothing sent yet";
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <h3 className="flex-1 text-[13px] font-medium">Webhooks</h3>
-        <Button variant="ghost" onClick={() => setAdding(true)} disabled={busy}>
-          <Plus />
-          Add webhook
+    <Panel className="overflow-hidden">
+      <CardHead label="Webhooks" count={hooks.length}>
+        <Button variant="ghost" size="sm" onClick={() => setAdding(true)} disabled={busy}>
+          <Plus /> Add webhook
         </Button>
-      </div>
+      </CardHead>
       {hooks.length ? (
-        <div className="overflow-hidden rounded-lg border border-frame">
+        <div className="divide-y divide-line">
           {hooks.map((h) => (
-            <div key={h.id} className="flex min-h-12 items-start gap-3 border-b border-line px-3 py-2.5 last:border-b-0">
-              <Webhook size={15} className="mt-0.5 shrink-0 text-muted" />
-              <div className="min-w-0 flex-1">
-                <p className="font-mono text-[12px] wrap-anywhere">{h.url}</p>
-                <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                  {h.enabled ? null : <Badge tone="red">Off</Badge>}
-                  {h.events.map((e) => (
-                    <Badge key={e}>{e}</Badge>
-                  ))}
-                </div>
-                <p className={`mt-1 text-[12px] ${h.last_error ? "text-danger" : "text-muted"}`}>{last(h)}</p>
-              </div>
-              <Switch on={h.enabled} label={h.enabled ? "Turn off" : "Turn on"} disabled={busy} onChange={(on) => run(() => saveWebhookOn(h.id, on), "Couldn't change the webhook")} />
+            <Row
+              key={h.id}
+              top
+              lead={
+                <span className="flex size-8 items-center justify-center rounded-md bg-paper text-muted shadow-track">
+                  <Webhook size={15} />
+                </span>
+              }
+              title={<span className="font-mono text-[12px] font-normal wrap-anywhere whitespace-normal">{h.url}</span>}
+              sub={
+                <>
+                  <span className="mt-1.5 flex flex-wrap items-center gap-1">
+                    {h.enabled ? null : <Badge tone="red">Off</Badge>}
+                    {h.events.map((e) => (
+                      <Badge key={e}>{e}</Badge>
+                    ))}
+                  </span>
+                  <span className={`mt-1 block ${h.last_error ? "text-danger" : ""}`}>{last(h)}</span>
+                </>
+              }
+            >
+              <span className="mx-1 flex">
+                <Switch on={h.enabled} label={h.enabled ? "Turn off" : "Turn on"} disabled={busy} onChange={(on) => run(() => saveWebhookOn(h.id, on), "Couldn't change the webhook")} />
+              </span>
               <IconButton label="Send a test" align="end" disabled={busy} onClick={() => run(() => sendTestWebhook(h.id), "Couldn't send the test", "Test sent")}>
                 <Send />
               </IconButton>
               <IconButton label="Delete webhook" align="end" disabled={busy} onClick={() => del(h)}>
                 <Trash2 />
               </IconButton>
-            </div>
+            </Row>
           ))}
         </div>
-      ) : null}
+      ) : (
+        <p className="px-4 py-6 text-center text-[13px] text-muted">No webhooks yet</p>
+      )}
       {adding ? (
         <Modal
           title="Add webhook"
           onClose={() => setAdding(false)}
           footer={
             <>
-              <Button variant="ghost" onClick={() => setAdding(false)}>
+              <Button variant="plain" onClick={() => setAdding(false)}>
                 Cancel
               </Button>
               <Button onClick={add} disabled={busy || !url.trim() || !events.length}>
@@ -193,9 +201,9 @@ function Webhooks({ hooks }: { hooks: Hook[] }) {
             <Input autoFocus value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://" inputMode="url" />
           </Field>
           <Field label="Events">
-            <div className="flex flex-col gap-2 pt-0.5">
+            <div className="flex flex-col rounded-lg bg-paper p-1 shadow-track">
               {EVENTS.map((e) => (
-                <label key={e} className="flex cursor-pointer items-center gap-2 text-[13px]">
+                <label key={e} className="flex h-9 cursor-pointer items-center gap-2 rounded-sm px-2.5 text-[13px] hover:bg-hover">
                   <Checkbox checked={events.includes(e)} onChange={(on) => setEvents((x) => (on ? [...x, e] : x.filter((y) => y !== e)))} />
                   <span className="flex-1">{EVENT_LABEL[e]}</span>
                   <code className="font-mono text-[11px] text-faint">{e}</code>
@@ -209,11 +217,11 @@ function Webhooks({ hooks }: { hooks: Hook[] }) {
       {secret ? (
         <Modal title="Webhook added" onClose={() => setSecret(null)} footer={<Button onClick={() => setSecret(null)}>Done</Button>}>
           <p className="text-[13px] text-muted">The signing secret shows only once.</p>
-          <div className="overflow-hidden rounded-lg border border-frame">
-            <Line label="Secret" value={secret} />
-          </div>
+          <Rows>
+            <CopyField label="Secret" value={secret} />
+          </Rows>
         </Modal>
       ) : null}
-    </div>
+    </Panel>
   );
 }
