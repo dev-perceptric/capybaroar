@@ -1,5 +1,5 @@
 /* Capybaroar's site, shared by every page: the calm style of the app (Omniscient and Claritia's look), with Zite's
-   yellows as the one accent. White pages, raised white cards with a soft ring, 8px buttons, 12px cards, 16px big
+   yellows as the one accent. White pages, raised white cards with a soft ring, pill buttons and chips, 12px cards, 16px big
    frames, a dark gray primary. Yellow is always a fill with ink on it. Homepage sections live in home.css. */
 :root{
   --ink:#171717;--ink-2:#525252;--gray:#737373;--faint:#a3a3a3;--head-2:#8a8a8a;--line:#ebebeb;--frame:#e5e5e5;--canvas:#fafafa;--shell:#f5f5f5;--panel:#fff;
@@ -9,6 +9,7 @@
   --sh-rest:0 4px 4px -12px rgba(0,0,0,.02),0 12px 12px -6px rgba(0,0,0,.02),0 6px 6px -3px rgba(0,0,0,.02),0 3px 3px -1.5px rgba(0,0,0,.02),0 1px 1px -.5px rgba(0,0,0,.04),0 0 0 1px rgba(0,0,0,.06);
   --sh-lift:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -.5px rgba(0,0,0,.04),0 6px 6px -3px rgba(0,0,0,.04),0 12px 12px -6px rgba(0,0,0,.03),0 32px 64px -24px rgba(0,0,0,.16);
   --sh-chip:0 1px 2px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.06);
+  --sh-pill:0 1px 2px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.08);
   --sh-outline:0 0 0 1px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.16);
   --sh-primary:0 0 0 1px rgba(0,0,0,.8),0 1px 3px rgba(0,0,0,.4),1px 4px 8px rgba(0,0,0,.12);
   --sh-menu:0 12px 32px -6px rgba(0,0,0,.12),0 0 0 1px rgba(111,107,107,.1),0 1px 3px rgba(63,70,75,.1);
@@ -31,13 +32,13 @@ a{color:inherit}
 .wrap{width:100%;max-width:calc(var(--max) + var(--gutter) * 2);margin:0 auto;padding:0 var(--gutter)}
 .ico{width:16px;height:16px;flex:none}
 
-/* Buttons: one dark gray primary, white ghosts, 8px corners */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border:0;border-radius:8px;font:500 15px/1 var(--font);text-decoration:none;white-space:nowrap;cursor:pointer;background:var(--brand);color:#fff;box-shadow:var(--sh-primary);transition:background-color var(--fast),transform var(--fast)}
+/* Buttons: pills, like the app. One dark gray primary, white ghosts */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border:0;border-radius:999px;font:500 15px/1 var(--font);text-decoration:none;white-space:nowrap;cursor:pointer;background:var(--brand);color:#fff;box-shadow:var(--sh-primary);transition:background-color var(--fast),transform var(--fast)}
 .btn:hover{background:var(--brand-h)}
 .btn:active{transform:scale(.97)}
-.btn.ghost{background:var(--panel);color:var(--ink);box-shadow:var(--sh-outline)}
+.btn.ghost{background:var(--panel);color:var(--ink);box-shadow:var(--sh-pill)}
 .btn.ghost:hover{background:var(--canvas)}
-.btn.sm{height:34px;padding:0 14px;font-size:14px}
+.btn.sm{height:34px;padding:0 16px;font-size:14px}
 .btn .ico{width:16px;height:16px}
 
 /* A state or a label: a 6px tag, soft fill, deep text */
@@ -52,11 +53,11 @@ a{color:inherit}
 .logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;letter-spacing:-.01em;text-decoration:none;color:var(--ink)}
 .logo img{width:30px;height:30px}
 .nav-links{display:flex;align-items:center;gap:4px;margin:0 auto}
-.nav-links a,.nav-login{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;transition:background-color var(--fast),color var(--fast)}
+.nav-links a,.nav-login{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;transition:background-color var(--fast),color var(--fast)}
 .nav-links a:hover,.nav-login:hover{background:var(--shell);color:var(--ink)}
 .nav-end{display:flex;align-items:center;gap:6px}
 .nav-menu{display:none;position:relative}
-.nav-menu summary{display:flex;align-items:center;justify-content:center;width:38px;height:34px;border-radius:8px;cursor:pointer;list-style:none;box-shadow:var(--sh-outline);background:var(--panel)}
+.nav-menu summary{display:flex;align-items:center;justify-content:center;width:38px;height:34px;border-radius:999px;cursor:pointer;list-style:none;box-shadow:var(--sh-pill);background:var(--panel)}
 .nav-menu summary::-webkit-details-marker{display:none}
 .nav-menu summary .ico{width:18px;height:18px}
 .nav-sheet{position:absolute;right:0;top:44px;display:flex;flex-direction:column;min-width:200px;padding:6px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-menu)}
