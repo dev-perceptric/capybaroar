@@ -27,7 +27,7 @@ ch('facebook', slug='/facebook-post-scheduler', name='Facebook', h1='Facebook Po
         ('Can I post to a personal Facebook profile?', 'No. Facebook only lets apps post to Pages, so Capybaroar connects to the Pages you manage.'),
         ('Can I add a first comment?', 'Yes. Write it in the composer and Capybaroar posts it as a comment right after the post goes live. It is a good place for links.'),
         ('Can I answer Facebook comments and messages?', 'Yes. Comments and Messenger messages land in the Capybaroar inbox. You can reply, like and hide comments from there.'),
-        ('Is the Facebook scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Facebook scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('instagram', slug='/instagram-post-scheduler', name='Instagram', h1='Instagram Post Scheduler', dim='to schedule posts, Reels and Stories',
    title='Instagram Post Scheduler: Schedule Instagram Posts, Reels and Stories | Capybaroar',
@@ -43,7 +43,7 @@ ch('instagram', slug='/instagram-post-scheduler', name='Instagram', h1='Instagra
         ('Can I schedule carousels?', 'Yes. Add up to 10 pictures or videos to one post and they publish as a carousel.'),
         ('Do I need a business account?', 'You need an Instagram professional account (Business or Creator) linked to a Facebook Page. Switching is free in the Instagram app.'),
         ('Can I add a first comment?', 'Yes. Capybaroar posts it right after the post goes live, which keeps hashtags out of your caption.'),
-        ('Is the Instagram scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Instagram scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('linkedin', slug='/linkedin-post-scheduler', name='LinkedIn', h1='LinkedIn Post Scheduler', dim='for profiles and company Pages',
    title='LinkedIn Post Scheduler for Profiles and Company Pages | Capybaroar',
@@ -59,7 +59,7 @@ ch('linkedin', slug='/linkedin-post-scheduler', name='LinkedIn', h1='LinkedIn Po
         ('Can I add a first comment?', 'Yes. Write it in the composer and it is posted right after your post goes live.'),
         ('Can I answer LinkedIn comments?', 'Yes, for company Pages. Comments on your Page posts land in the inbox, where you can reply and like.'),
         ('What can I attach?', 'Pictures, or one video. LinkedIn does not mix a video with pictures in one post.'),
-        ('Is the LinkedIn scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the LinkedIn scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('tiktok', slug='/tiktok-scheduler', name='TikTok', h1='TikTok Scheduler', dim='to schedule TikTok videos',
    title='TikTok Scheduler: Schedule TikTok Videos That Post on Their Own | Capybaroar',
@@ -75,7 +75,7 @@ ch('tiktok', slug='/tiktok-scheduler', name='TikTok', h1='TikTok Scheduler', dim
         ('Can I turn comments off?', 'Yes. Set comments to on or off for each video.'),
         ('Can I schedule TikTok photo posts?', 'Not yet. Each TikTok post is one video.'),
         ('Can I answer TikTok comments in Capybaroar?', 'Not yet. TikTok is for posting and results for now.'),
-        ('Is the TikTok scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the TikTok scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('youtube', slug='/youtube-video-scheduler', name='YouTube', h1='YouTube Video Scheduler', dim='to schedule YouTube uploads',
    title='YouTube Video Scheduler: Schedule YouTube Uploads | Capybaroar',
@@ -91,7 +91,7 @@ ch('youtube', slug='/youtube-video-scheduler', name='YouTube', h1='YouTube Video
         ('Can I upload as unlisted or private?', 'Yes. Pick public, unlisted or private for each video.'),
         ('Can I answer YouTube comments?', 'Yes. Comments land in the inbox, where you can reply and hide them. A hidden YouTube comment cannot be shown again.'),
         ('How long can descriptions be?', 'Up to 5,000 characters. Titles are up to 100.'),
-        ('Is the YouTube scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the YouTube scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('x', slug='/x-post-scheduler', name='X', h1='X (Twitter) Post Scheduler', dim='to schedule posts on X',
    title='X (Twitter) Post Scheduler: Schedule Tweets and Posts on X | Capybaroar',
@@ -107,7 +107,7 @@ ch('x', slug='/x-post-scheduler', name='X', h1='X (Twitter) Post Scheduler', dim
         ('Can I post longer than 280 characters?', 'Not yet. Capybaroar keeps X posts to 280 characters.'),
         ('Can I schedule a thread of posts?', 'Not yet. Each scheduled X post is a single post.'),
         ('Can I answer replies and mentions?', 'Yes. They land in the inbox, where you can reply, like and hide them.'),
-        ('Is the X scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the X scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('threads', slug='/threads-scheduler', name='Threads', h1='Threads Scheduler', dim='to schedule Threads posts',
    title='Threads Scheduler: Schedule Posts on Threads | Capybaroar',
@@ -123,7 +123,7 @@ ch('threads', slug='/threads-scheduler', name='Threads', h1='Threads Scheduler',
         ('Do I need an Instagram account?', 'You sign in with your Threads account. Capybaroar connects to it directly.'),
         ('Can I answer Threads replies?', 'Yes. Replies land in the inbox, where you can answer and hide them.'),
         ('Can I post the same thing to Instagram and Threads?', 'Yes. Pick both channels in the composer and give each one its own text if you like.'),
-        ('Is the Threads scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Threads scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('pinterest', slug='/pinterest-pin-scheduler', name='Pinterest', h1='Pinterest Pin Scheduler', dim='to schedule Pins to any board',
    title='Pinterest Pin Scheduler: Schedule Pins to Any Board | Capybaroar',
@@ -139,7 +139,7 @@ ch('pinterest', slug='/pinterest-pin-scheduler', name='Pinterest', h1='Pinterest
         ('Can I schedule video Pins?', 'Yes. Each Pin takes one picture or one video.'),
         ('How long can titles and descriptions be?', 'Titles are up to 100 characters and descriptions up to 500.'),
         ('Can I see how my Pins do?', 'Yes. Analytics shows the numbers for each Pin next to your other channels.'),
-        ('Is the Pinterest scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Pinterest scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('bluesky', slug='/bluesky-scheduler', name='Bluesky', h1='Bluesky Scheduler', dim='to schedule Bluesky posts',
    title='Bluesky Scheduler: Schedule Posts on Bluesky | Capybaroar',
@@ -155,7 +155,7 @@ ch('bluesky', slug='/bluesky-scheduler', name='Bluesky', h1='Bluesky Scheduler',
         ('Can I schedule Bluesky videos?', 'Not yet. Bluesky posts take text and pictures for now.'),
         ('Can I answer replies?', 'Yes. Replies and mentions land in the inbox, where you can answer and like them.'),
         ('How long can a post be?', 'Up to 300 characters.'),
-        ('Is the Bluesky scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Bluesky scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('mastodon', slug='/mastodon-scheduler', name='Mastodon', h1='Mastodon Scheduler', dim='to schedule posts on any server',
    title='Mastodon Scheduler: Schedule Posts on Any Mastodon Server | Capybaroar',
@@ -171,7 +171,7 @@ ch('mastodon', slug='/mastodon-scheduler', name='Mastodon', h1='Mastodon Schedul
         ('Can I add a content warning?', 'Yes. Write it in the composer and your post is hidden behind it.'),
         ('Can I answer mentions and direct messages?', 'Yes. Both land in the inbox, where you can reply and favorite.'),
         ('How long can a post be?', 'Up to 500 characters, with up to 4 pictures or videos.'),
-        ('Is the Mastodon scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Mastodon scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('discord', slug='/discord-message-scheduler', name='Discord', h1='Discord Message Scheduler', dim='to schedule messages to any channel',
    title='Discord Message Scheduler: Schedule Announcements to Any Channel | Capybaroar',
@@ -187,7 +187,7 @@ ch('discord', slug='/discord-message-scheduler', name='Discord', h1='Discord Mes
         ('Can I post to several channels?', 'Yes. Add a webhook for each channel and pick them in the composer.'),
         ('Can I attach files?', 'Yes. Add up to 10 pictures or videos to a message.'),
         ('Can I delete a message later?', 'Yes. Delete the post in Capybaroar and it is removed from Discord too.'),
-        ('Is the Discord scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Pro and Agency have unlimited posts.')])
+        ('Is the Discord scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ORDER = ['instagram', 'facebook', 'tiktok', 'linkedin', 'youtube', 'x', 'threads', 'pinterest', 'bluesky', 'mastodon', 'discord']
 LOGO = {'linkedin': 'linkedin'}
@@ -332,7 +332,7 @@ for cid in ORDER:
             items.append('Like comments from the inbox')
         elif ib.get('Hide'):
             items.append('Hide comments from the inbox')
-        items.append('Suggested replies on Pro and Agency')
+        items.append('Suggested replies on every paid plan')
         if c.get('inbox_note'):
             items.append(c['inbox_note'])
         rows.append(zrow('i-inbox', 'Inbox', f'Answer {n}', 'without opening the app.', f'People\'s comments on your {n} posts land in the Capybaroar inbox, next to every other channel.', items, inbox_card(c), more=('/social-media-inbox', 'More about the inbox')))
@@ -415,7 +415,7 @@ def simple(slug, title, desc, tag_icon, tag, h1a, h1b, lead, empty_t, empty_l):
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=2">
+<link rel="stylesheet" href="/home.css?v=6">
 </head>
 <body>
 {sprites}<a class="skip" href="#main">Skip to content</a>

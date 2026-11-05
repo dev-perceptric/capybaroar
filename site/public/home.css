@@ -375,7 +375,9 @@ h1 span.dim,h2 span{color:var(--head-2)}
 .c-call.done .spin{display:none}
 
 /* ---------- Pricing ---------- */
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+.more-plans{display:flex;justify-content:center;margin-top:24px}
+@media (min-width:761px) and (max-width:1080px){.plans{grid-template-columns:repeat(2,1fr)}}
 .plan{display:flex;flex-direction:column;gap:20px;padding:28px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
 .plan.on{background:var(--y-1);box-shadow:0 0 0 1px var(--y-h),0 12px 24px -12px rgba(122,92,0,.16)}
 .plan-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -383,8 +385,23 @@ h1 span.dim,h2 span{color:var(--head-2)}
 .price{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.035em}
 .price small{margin-left:6px;font-size:15px;font-weight:400;letter-spacing:0;color:var(--gray)}
 .plan .btn{width:100%}
-.plan .checks{padding-top:20px;border-top:1px solid var(--line)}
+.plan .checks{gap:9px;font-size:14px;padding-top:20px;border-top:1px solid var(--line)}
 .plan.on .checks{border-top-color:var(--y-6)}
+.plan .checks b{font-weight:600;color:var(--ink)}
+.plan-line{margin-top:-12px;font-size:14px;color:var(--gray)}
+.yearly{margin-top:-12px;font-size:13px;color:var(--gray)}
+.plus{margin-bottom:-12px;font-size:14px;font-weight:600;color:var(--ink)}
+.pfeats .fx{position:relative;display:inline}
+.pfeats .nw{white-space:nowrap}
+.tip{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin:-2px 0 0 4px;padding:0;border:0;border-radius:999px;background:none;color:var(--faint);vertical-align:middle;cursor:help;transition:color var(--fast)}
+.tip svg{width:15px;height:15px}
+.tip:hover,.tip:focus-visible,.tip-on .tip{color:var(--ink)}
+.tip:focus-visible{outline:2px solid var(--y-h);outline-offset:1px}
+.tip-box{position:absolute;left:0;bottom:calc(100% + 8px);z-index:20;width:max-content;max-width:min(260px,72vw);padding:8px 10px;border-radius:8px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:400;line-height:1.45;white-space:normal;opacity:0;visibility:hidden;transform:translateY(2px);transition:opacity var(--fast),transform var(--fast),visibility var(--fast);pointer-events:none}
+.fx:has(.tip:hover)>.tip-box,.fx:has(.tip:focus-visible)>.tip-box,.tip-on>.fx>.tip-box{opacity:1;visibility:visible;transform:none}
+.sub{list-style:none;display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.sub li{position:relative;padding-left:14px;font-size:13px;color:var(--gray)}
+.sub li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:999px;border:1.25px solid var(--faint);background:none}
 
 
 /* ---------- FAQ + closing (from the live site) ---------- */
@@ -1012,25 +1029,3 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .promo-x{top:50%;right:6px;transform:translateY(-50%)}
   body.has-promo .t-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
-/* Pricing page */
-.pr-plans{margin-top:48px}
-.plan-line{margin-top:-10px;font-size:14.5px;color:var(--gray)}
-.pr-every{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.pr-every li{display:flex;gap:14px;padding:20px 22px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
-.pr-every .ic{flex:none}
-.pr-every h3{margin-bottom:4px;font-size:16px}
-.pr-every p{font-size:14.5px;color:var(--gray)}
-.pr-table{max-width:1000px;margin:0 auto}
-.pr-table .cmp{min-width:620px}
-.pr-table thead th{position:sticky;top:0;background:var(--panel);font-size:15px;font-weight:600;color:var(--ink);text-align:center}
-.pr-table thead th:first-child{text-align:left}
-.pr-table td{text-align:center;font-variant-numeric:tabular-nums}
-.pr-table tbody th{font-weight:400;color:var(--ink-2)}
-.pr-table tr.grp th{padding-top:22px;font-size:13px;font-weight:600;color:var(--gray);background:var(--canvas)}
-.pr-table td:nth-child(3){background:var(--y-1)}
-.pr-credits{max-width:860px;margin:0 auto}
-.pr-credits td{text-align:right;font-variant-numeric:tabular-nums}
-.pr-credits thead th:not(:first-child){text-align:right}
-@media (max-width:1080px){.pr-every{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){.pr-every{grid-template-columns:1fr}}
-.pr-plans .plan-line{min-height:3em}

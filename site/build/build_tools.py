@@ -110,4 +110,13 @@ add = ''.join(f'  <url><loc>https://capybaroar.com{T[k]["slug"]}</loc></url>\n' 
 sm = sm.replace('  <url><loc>https://capybaroar.com/tools</loc></url>\n', '  <url><loc>https://capybaroar.com/tools</loc></url>\n' + add)
 open(P + 'sitemap.xml', 'w').write(sm)
 print('tools built:', len(ORDER))
-exec(open(os.path.join(HERE, 'build_pricing.py')).read())
+
+# ---------- pricing ----------
+# /pricing is written by hand (pricing.html). The builder only refreshes its nav and footer.
+pp = open(P + 'pricing.html').read()
+open(P + 'pricing.html', 'w').write(renav(pp))
+sm = open(P + 'sitemap.xml').read()
+if '/pricing<' not in sm:
+    sm = sm.replace('  <url><loc>https://capybaroar.com/</loc></url>\n', '  <url><loc>https://capybaroar.com/</loc></url>\n  <url><loc>https://capybaroar.com/pricing</loc></url>\n', 1)
+    open(P + 'sitemap.xml', 'w').write(sm)
+print('pricing nav refreshed')

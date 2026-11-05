@@ -1,7 +1,7 @@
 import { AgentChat, type Shown } from "@/components/AgentChat";
 import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
-import { aiReady, creditsOf, generationsOf } from "@/lib/generations";
+import { aiReady, aiCreditsOf, generationsOf } from "@/lib/generations";
 import { modelOf } from "@/lib/genRules";
 import { mediaThumbs } from "@/lib/media";
 import { actionLabel, attachedNames } from "@/lib/agentTools";
@@ -28,7 +28,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   const [{ data: mine }, open, credits] = await Promise.all([
     chat ? db.from("agent_chats").select("id, title").eq("id", chat).eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).maybeSingle() : Promise.resolve({ data: null }),
     chat ? db.from("agent_messages").select("id, role, content").eq("chat_id", chat).order("id") : null,
-    ai ? creditsOf(ctx.workspaceId).catch(() => null) : null,
+    aiCreditsOf(ctx.workspaceId).catch(() => null),
   ]);
   let shown: Shown[] = [];
   if (mine) {
@@ -64,5 +64,5 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
       }),
     );
   }
-  return <AgentChat chatId={mine ? (chat ?? null) : null} title={(mine?.title as string | undefined) ?? null} messages={shown} ai={ai} credits={credits?.left ?? null} />;
+  return <AgentChat chatId={mine ? (chat ?? null) : null} title={(mine?.title as string | undefined) ?? null} messages={shown} ai={ai} credits={credits && credits.total + credits.left > 0 ? credits.left : null} />;
 }

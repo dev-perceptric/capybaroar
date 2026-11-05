@@ -34,7 +34,7 @@ export default async function BioEditorPage({ searchParams }: { searchParams: Pr
       posts={posts.map((p) => ({ id: p.id, text: p.text, url: p.url, thumb: thumbs.find((t) => t.id === p.mediaId)?.thumb ?? null }))}
       social={social}
       badgeOff={PLANS[effectivePlan(billing)].bioBadgeOff}
-      agent={PLANS[effectivePlan(billing)].agent}
+      agent={PLANS[effectivePlan(billing)].ai}
       canUpgrade={canManage(b.role)}
       tab={TABS.find((t) => t === q.tab) ?? "blocks"}
     />

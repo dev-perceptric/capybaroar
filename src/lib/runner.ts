@@ -14,6 +14,7 @@ import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
 import { aiReady, runGenerations } from "./generations";
+import { runAutoTopUps, sweepHolds } from "./credits";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
@@ -317,11 +318,31 @@ export function startRunner() {
     }
   };
   setInterval(make, 4000);
+  // Automatic credit top-ups: each request is claimed by one server (credits.ts).
+  let topping = false;
+  const topUps = async () => {
+    if (topping) return;
+    topping = true;
+    try {
+      await runAutoTopUps();
+    } catch (e) {
+      console.error("auto top-ups:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: auto top-ups");
+    } finally {
+      topping = false;
+    }
+  };
+  setInterval(topUps, 30000);
   const hourly = () =>
     onePerPeriod(opsStore, "upkeep", 3300, 7200, WORKER, async () => {
       await upkeep();
       await cleanupOps();
       await pruneDeliveries();
+      // Holds a stopped server left behind are settled or given back.
+      await sweepHolds().catch((e) => {
+        console.error("credits sweep:", e instanceof Error ? e.message : e);
+        void trackError(e, "runner: credits sweep");
+      });
     }).catch((e) => {
       console.error("upkeep:", e);
       void trackError(e, "runner: upkeep");

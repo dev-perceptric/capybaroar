@@ -77,7 +77,7 @@ export async function loadBioStats(brandId: string, days: number): Promise<{ err
 export async function buildBio(brandId: string, input: { about: string; website: string; include: string[] }): Promise<{ error?: string; draft?: BuildAnswer }> {
   try {
     const { ctx, brand } = await brandCtx(brandId);
-    return { draft: await buildBioDraft(ctx.workspaceId, brand, input) };
+    return { draft: await buildBioDraft(ctx.workspaceId, ctx.userId, brand, input) };
   } catch (e) {
     return fail(e);
   }

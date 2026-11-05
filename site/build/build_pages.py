@@ -309,7 +309,7 @@ def page(slug, key, title, desc, body, faqs):
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=2">
+<link rel="stylesheet" href="/home.css?v=6">
 <script type="application/ld+json">{json.dumps(ld, separators=(',', ':'))}</script>
 </head>
 <body>
@@ -469,13 +469,13 @@ sched_faq = [
     ('Which networks can I schedule to?', 'LinkedIn profiles and Pages, Facebook Pages, Instagram, Threads, TikTok, YouTube, X, Pinterest, Bluesky, Mastodon and Discord.'),
     ('Can I schedule Instagram Reels and Stories?', 'Yes. Pick Post, Reel or Story in the composer. Reels can have their own cover. Facebook Reels work too.'),
     ('Can I schedule YouTube videos and TikToks?', 'Yes. YouTube gets its title, tags, visibility and thumbnail. TikTok gets who can watch and whether comments are on.'),
-    ('How many posts can I schedule?', 'Free has 30 scheduled posts a month on 3 channels. Pro and Agency have unlimited posts.'),
+    ('How many posts can I schedule?', 'Free has 30 scheduled posts a month on 3 channels. Creator, Pro and Agency have unlimited posts.'),
     ('What is a posting queue?', 'A set of times you want to post each day. When you add a post to the queue, it takes the next free time.'),
     ('Can I upload many posts at once?', 'Yes. Upload a CSV file or a batch of pictures and videos. Each picture can get its own caption.'),
     ('Can my team and clients approve posts?', 'Yes. Turn on approvals for a brand and posts wait for a yes. Clients can approve from a review link without an account.'),
 ]
 open(P + 'social-media-scheduler.html', 'w').write(page('/social-media-scheduler', 'sched', 'Social media scheduler for 12 networks | Capybaroar',
-     'Schedule posts to Instagram, TikTok, LinkedIn, YouTube, X and 7 more networks from one calendar. Queue times, bulk upload and an agent that plans your week. Free plan.',
+     'Schedule posts to Instagram, TikTok, LinkedIn, YouTube, X and 7 more networks from one calendar. Queue times, bulk upload and an agent that plans your week. Free plan available.',
      sched_body, sched_faq))
 
 # =====================================================================================================
@@ -522,7 +522,7 @@ inbox_body += tour([
     zrow('i-inbox', 'One list', 'Every comment.', 'One list.', 'See what people say on every channel without opening each app. Filter by network or brand to focus.',
          ['Comments, replies and mentions together', 'Messages from Instagram, Facebook and Mastodon', 'Filter by network, channel or brand', 'Search every thread'], ZVIS['z-inbox']),
     zrow('i-spark', 'Suggested replies', 'Start from a draft.', 'Send it in your words.', 'Ask for a reply and get a draft that fits the thread. Change a word or two and send it.',
-         ['Replies that read the whole thread', 'Edit before anything goes out', 'Works on every inbox network', 'Comes with Pro and Agency'], reply_mock(), flip=True),
+         ['Replies that read the whole thread', 'Edit before anything goes out', 'Works on every inbox network', 'Comes with every paid plan'], reply_mock(), flip=True),
     zrow('i-shield', 'Moderation', 'Keep threads clean.', 'Show some love.', 'Like good comments and hide spam where the network allows it, right from the inbox.',
          ['Like on Facebook, X, LinkedIn Pages, Bluesky and Mastodon', 'Hide on Facebook, Instagram, Threads, YouTube and X', 'Hidden comments stay out of the list', 'Every action goes through the network\'s API'], mod_mock()),
     zrow('i-check-circle', 'Stay on top', 'Mark it done.', 'Keep the list short.', 'Done threads leave your open list. A count in the sidebar shows when something new comes in.',
@@ -536,12 +536,12 @@ inbox_faq = [
     ('Which networks does the inbox cover?', 'Facebook, Instagram, Threads, YouTube, X, LinkedIn Pages, Bluesky and Mastodon. LinkedIn profiles, TikTok, Pinterest and Discord are for posting only.'),
     ('Does it include direct messages?', 'Yes, for Instagram, Facebook and Mastodon. The other networks bring comments, replies and mentions.'),
     ('Can I reply from Capybaroar?', 'Yes. Your reply goes out on the network as your account, in the same thread.'),
-    ('What are suggested replies?', 'A draft reply that reads the thread. You edit it and press Send. Suggested replies come with Pro and Agency.'),
+    ('What are suggested replies?', 'A draft reply that reads the thread. You edit it and press Send. Suggested replies come with every paid plan.'),
     ('Can my team share the inbox?', 'Yes. Everyone in the workspace sees the same threads, and each brand sees its own channels.'),
     ('Is the inbox on the Free plan?', 'Yes. Free includes the inbox for your 3 channels.'),
 ]
 open(P + 'social-media-inbox.html', 'w').write(page('/social-media-inbox', 'inbox', 'Social media inbox for comments and messages | Capybaroar',
-     'Answer comments, mentions and messages from Instagram, Facebook, X, YouTube, Threads and more in one inbox. Suggested replies, like and hide, mark done. Free plan.',
+     'Answer comments, mentions and messages from Instagram, Facebook, X, YouTube, Threads and more in one inbox. Suggested replies, like and hide, mark done. Free plan available.',
      inbox_body, inbox_faq))
 
 # =====================================================================================================
@@ -603,7 +603,7 @@ ana_faq = [
     ('Is analytics on the Free plan?', 'Yes. Free includes analytics for your 3 channels. Reports come with Pro and Agency.'),
 ]
 open(P + 'social-media-analytics.html', 'w').write(page('/social-media-analytics', 'ana', 'Social media analytics and reports | Capybaroar',
-     'See reach, engagement and followers for every channel side by side. Best times to post, top posts and reports you can share by link, PDF or email. Free plan.',
+     'See reach, engagement and followers for every channel side by side. Best times to post, top posts and reports you can share by link, PDF or email. Free plan available.',
      ana_body, ana_faq))
 
 # =====================================================================================================
@@ -648,13 +648,13 @@ bio_body += tour([
     zrow('i-clock', 'Scheduled links', 'Links that start', 'and stop on their own.', 'Give a link a start and end time. It goes live for your launch and leaves when the sale ends.',
          ['Start and end dates for any link', 'Scheduled, Live and Ended at a glance', 'Plan a launch weeks ahead', 'No late-night page edits'], sched_links_mock(), flip=True),
     zrow('i-spark', 'Look', 'Make it yours.', 'Start from a template.', 'Pick a theme and a template, then set the title, description and picture people see when the link is shared.',
-         ['Themes and templates to start from', 'Your own share title and picture', 'Search settings for your page', 'On Pro, the agent builds a first page from your website'], themes_mock()),
+         ['Themes and templates to start from', 'Your own share title and picture', 'Search settings for your page', 'On paid plans, the agent builds a first page from your website'], themes_mock()),
     zrow('i-chart', 'Numbers', 'See what people tap.', 'And where they come from.', 'Views and clicks for every block, and the sites and apps that send visitors to your page.',
          ['Views and clicks by day', 'Top links and videos', 'Where your visitors come from', 'Counted privately, without tracking cookies'], sources_mock(), flip=True),
 ])
 bio_body += CLOSE.format(a='One link for everything', b='you share.')
 bio_faq = [
-    ('Is link in bio free?', 'Yes. Every plan includes link in bio pages. On Free, pages show a small "Made with Capybaroar" badge. Pro and Agency can turn it off.'),
+    ('Is link in bio free?', 'Yes. Every plan includes link in bio pages. On Free, pages show a small "Made with Capybaroar" badge. Paid plans turn it off.'),
     ('What can I put on my page?', 'Links, text, social icons, videos, your latest posts and an email button. Drag blocks into any order.'),
     ('Does it work with Instagram and TikTok?', 'Yes. Put your page link in your Instagram, TikTok or any other bio. You can see how many visitors each one sends.'),
     ('Can I schedule a link?', 'Yes. Give any link a start and end time, and it shows only between them.'),
@@ -726,7 +726,7 @@ mcp_body += CLOSE.format(a='Your AI,', b='now on social.')
 mcp_faq = [
     ('What is MCP?', 'MCP (Model Context Protocol) is an open standard that lets AI apps use tools. Capybaroar\'s MCP server gives your AI the same actions you have in the app.'),
     ('Which AI apps work with Capybaroar?', 'Claude, ChatGPT, Cursor, Claude Code and any other app that supports remote MCP servers. Apps that take only a link use your MCP link with the key inside it.'),
-    ('Is MCP on every plan?', 'Yes. The MCP server and the REST API come with every plan, Free too. Making pictures and videos uses AI credits, which come with Pro and Agency.'),
+    ('Is MCP on every plan?', 'Yes. The MCP server and the REST API come with every plan, Free too. Making pictures and videos uses AI credits, which come with every paid plan.'),
     ('Will my AI post without asking me?', 'It saves drafts unless you ask it to schedule. If a brand needs approval, posts wait for a yes from an owner, an admin or the client.'),
     ('Is my MCP link safe?', 'Treat it like a password. It acts as you. If it leaks, delete the key in Settings, then API and MCP, and make a new one.'),
     ('Does ChatGPT need a paid plan?', 'Yes. ChatGPT adds custom connectors in Developer mode, which needs a paid ChatGPT plan.'),

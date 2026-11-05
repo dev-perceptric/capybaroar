@@ -7,6 +7,7 @@ import { createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLi
 import { createInvite, removeMember, revokeInvite, setMemberBrands, setMemberRole } from "@/lib/team";
 import { adminClient } from "@/lib/supabase/server";
 import { createApiKey, deleteApiKey } from "@/lib/api/keys";
+import { assertCanUseApprovals } from "@/lib/billing";
 import { createWebhook, deleteWebhook, setWebhookOn, testWebhook } from "@/lib/webhooks";
 import { webhookInput } from "@/lib/api/input";
 import { EVENTS } from "@/lib/api/hookRules";
@@ -65,7 +66,10 @@ export async function removeBrand(id: string) {
   return manage((ctx) => deleteBrand(ctx.workspaceId, id));
 }
 export async function saveApproval(id: string, on: boolean) {
-  return manage((ctx) => setApproval(ctx.workspaceId, id, on));
+  return manage(async (ctx) => {
+    if (on) await assertCanUseApprovals(ctx.workspaceId);
+    await setApproval(ctx.workspaceId, id, on);
+  });
 }
 export async function removeReviewLink(brandId: string) {
   return manage((ctx) => revokeReviewLink(ctx.workspaceId, brandId));
@@ -73,7 +77,10 @@ export async function removeReviewLink(brandId: string) {
 
 export async function newReviewLink(brandId: string): Promise<{ error?: string; url?: string }> {
   let url = "";
-  const r = await manage(async (ctx) => (url = await createReviewLink(ctx.workspaceId, brandId, ctx.userId)));
+  const r = await manage(async (ctx) => {
+    await assertCanUseApprovals(ctx.workspaceId);
+    url = await createReviewLink(ctx.workspaceId, brandId, ctx.userId);
+  });
   return r.error ? r : { url };
 }
 
@@ -81,7 +88,11 @@ export async function newReviewLink(brandId: string): Promise<{ error?: string; 
 
 export async function invite(email: string, role: Role, brandIds: string[] | null): Promise<{ error?: string; link?: string; emailed?: boolean }> {
   let out: { link: string; emailed: boolean } | null = null;
-  const r = await manage(async (ctx) => (out = await createInvite(ctx, { email, role, brandIds })));
+  const r = await manage(async (ctx) => {
+    // Clients only approve posts, so inviting one comes with approvals.
+    if (role === "client") await assertCanUseApprovals(ctx.workspaceId);
+    out = await createInvite(ctx, { email, role, brandIds });
+  });
   return r.error ? r : out!;
 }
 
@@ -89,7 +100,10 @@ export async function withdrawInvite(id: string) {
   return manage((ctx) => revokeInvite(ctx.workspaceId, id));
 }
 export async function saveMemberRole(userId: string, role: Role) {
-  return manage((ctx) => setMemberRole(ctx, userId, role));
+  return manage(async (ctx) => {
+    if (role === "client") await assertCanUseApprovals(ctx.workspaceId);
+    await setMemberRole(ctx, userId, role);
+  });
 }
 export async function saveMemberBrands(userId: string, brandIds: string[] | null) {
   return manage((ctx) => setMemberBrands(ctx, userId, brandIds));
@@ -172,4 +186,16 @@ export async function sendTestWebhook(id: string): Promise<{ error?: string }> {
     unstable_rethrow(e);
     return { error: e instanceof Error ? e.message : String(e) };
   }
+}
+
+// Credits
+
+export async function saveAutoTopUp(pack: number | null, max: number): Promise<{ error?: string }> {
+  const { setAutoTopUp } = await import("@/lib/credits");
+  return manage((ctx) => setAutoTopUp(ctx.workspaceId, pack, max));
+}
+
+export async function saveBrandLimit(brandId: string, limit: number | null): Promise<{ error?: string }> {
+  const { setBrandLimit } = await import("@/lib/credits");
+  return manage((ctx) => setBrandLimit(ctx.workspaceId, brandId, limit));
 }

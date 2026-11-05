@@ -7,7 +7,8 @@ primary_region = "iad"
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
+  # Link-in-bio pages live here too, so one machine stays up and a visitor never waits for a start.
+  min_machines_running = 1
 
 [[vm]]
   size = "shared-cpu-1x"

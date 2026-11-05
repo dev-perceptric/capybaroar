@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { bioUrl, publicBio, recordView } from "@/lib/bio";
@@ -33,13 +33,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateViewport({ params }: Props): Promise<Viewport> {
   const data = await publicBio((await params).slug);
-  return { themeColor: themeOf(data?.page.appearance.theme).bg };
+  return { themeColor: themeOf(data?.page.appearance.theme).base };
 }
 
 export default async function BioPublicPage({ params }: Props) {
-  const data = await publicBio((await params).slug);
-  if (!data) notFound();
+  const { slug } = await params;
   const h = await headers();
+  // Pages live on capybaroar.com once BIO_URL is set: an old app link moves there. Visits the site passes on carry
+  // X-Capy-Bio and are served here.
+  if (process.env.BIO_URL && !h.get("x-capy-bio")) permanentRedirect(bioUrl(slug));
+  const data = await publicBio(slug);
+  if (!data) notFound();
   // Browsers that load a page ahead of a click (speculation, prefetch) haven't visited yet.
   const ahead = /prefetch|prerender/i.test(`${h.get("sec-purpose") ?? ""} ${h.get("purpose") ?? ""}`);
   if (!ahead) {

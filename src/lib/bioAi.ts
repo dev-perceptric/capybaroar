@@ -16,6 +16,7 @@ import {
   isPlaceholder,
   newBlockId,
   placeholderUrl,
+  FILLS,
   readAppearance,
   videoSource,
   type Appearance,
@@ -23,7 +24,7 @@ import {
   type BlockType,
   type SocialItem,
 } from "./bioBlocks";
-import { BIO_THEMES } from "./bioThemes";
+import { BIO_FONTS, BIO_THEMES } from "./bioThemes";
 import { BIO_TEMPLATES, catalogText } from "./bioTemplates";
 
 export const INCLUDES = [
@@ -157,12 +158,13 @@ export function answerSchema() {
       appearance: {
         type: "object",
         additionalProperties: false,
-        required: ["theme", "shape", "fill", "size"],
+        required: ["theme", "shape", "fill", "size", "font"],
         properties: {
           theme: { type: "string", enum: BIO_THEMES.map((t) => t.id) },
           shape: { type: "string", enum: ["pill", "rounded", "square"] },
-          fill: { type: "string", enum: ["solid", "outline"] },
+          fill: { type: "string", enum: FILLS, description: "solid, outline, hard (a thick ring with a hard shadow, playful) or glass (frosted, for gradient and dark themes)" },
           size: { type: "string", enum: ["normal", "large"] },
+          font: { type: "string", enum: BIO_FONTS.map((f) => f.id), description: "inter (clean), serif (editorial), grotesk (geometric), mono, rounded (friendly), display (bold)" },
         },
       },
       blocks: {
@@ -186,6 +188,7 @@ export function answerSchema() {
 
 export const SYSTEM = `You build link-in-bio pages inside Capybaroar, a social media scheduling tool.
 Pick the template that fits the brand best, then adapt its blocks to the brand: keep, drop, reorder and relabel them.
+Pick a look that feels like the brand: its colors and mood (playful, premium, calm, bold). Start from the template's look and change the theme, font and fill when the brand calls for it. Glass suits gradient and dark themes; hard suits flat bright themes.
 Block types: link (label, url), header (text, a short section title), text (text, up to 500 characters), social (the brand's profile icons, filled in by the app), posts (the brand's latest posts, filled in by the app), video (label as title, url of a YouTube or TikTok video), email (label, email). Leave fields a block doesn't use as "".
 Rules:
 - Never invent a URL. Use a URL only when it appears exactly in the context below (website links, videos, channels, posts). For anything else use https://example.com/ and a short name, like https://example.com/menu, so the person adds their own.
