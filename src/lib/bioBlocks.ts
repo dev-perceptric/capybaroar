@@ -446,6 +446,9 @@ export const RESERVED = new Set([
   "about", "account", "admin", "administrator", "api", "app", "apps", "auth", "billing", "bio", "blog", "contact", "dashboard", "docs",
   "help", "home", "invite", "login", "logout", "mail", "me", "media", "null", "official", "page", "pages", "privacy", "review", "root",
   "security", "settings", "signin", "signup", "static", "status", "support", "system", "team", "terms", "undefined", "verify", "www",
+  // Pages on capybaroar.com, where link-in-bio pages live too, now or soon.
+  "affiliates", "brand", "careers", "changelog", "compare", "cookies", "customers", "data-deletion", "features", "guides", "img",
+  "index", "integrations", "learn", "legal", "partners", "press", "pricing", "robots", "sitemap", "templates", "tools",
 ]);
 
 /** Why an address can't be used, or null. The page's current address always stays usable. */
