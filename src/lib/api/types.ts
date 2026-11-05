@@ -1,6 +1,7 @@
 // What the API and the MCP server return, and the one set of actions both run (Ops). The REST routes and the MCP
 // tools are two doors to the same actions, so they can't drift apart.
 import type { Mode, PostFields } from "./input";
+import type { GenRequest } from "../genRules";
 
 export type ApiBrand = { id: string; name: string; needs_approval: boolean };
 
@@ -41,6 +42,9 @@ export type ApiWebhook = { id: string; url: string; events: string[]; enabled: b
 
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
 
+/** An AI picture or video. status: queued and running are still being made; media is set once it's done. */
+export type ApiGeneration = { id: string; kind: "image" | "video"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; created_at: string };
+
 export type ApiAnalytics = {
   days: number;
   since: string;
@@ -66,6 +70,9 @@ export interface Ops {
   analytics(days: 7 | 30 | 90, channelId: string | null): Promise<ApiAnalytics>;
   /** Download a picture or video from a public link into the media library. */
   uploadFromLink(url: URL, alt: string | null): Promise<ApiMedia>;
+  /** Start an AI picture or video. It lands in the media library when it's done (get_generation). */
+  generate(r: GenRequest): Promise<ApiGeneration>;
+  generation(id: string): Promise<ApiGeneration>;
   webhooks(): Promise<ApiWebhook[]>;
   createWebhook(url: URL, events: string[]): Promise<{ webhook: ApiWebhook; secret: string }>;
   setWebhook(id: string, enabled: boolean): Promise<ApiWebhook>;

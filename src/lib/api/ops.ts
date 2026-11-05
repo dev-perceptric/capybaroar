@@ -6,13 +6,14 @@ import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePos
 import { listMedia, mediaThumbs } from "../media";
 import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
 import { uploadFromLink } from "./upload";
+import { getGeneration, startGeneration, type Generation } from "../generations";
 import { adminClient } from "../supabase/server";
 import { analytics } from "../analytics";
 import { unpublishPost } from "../unpublish";
 import { UnpublishError } from "../unpublisher";
 import { ApiError, isId } from "./input";
 import type { PostFields } from "./input";
-import type { ApiChannel, ApiCtx, ApiPost, Ops } from "./types";
+import type { ApiChannel, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
 
 // The API's actions on the real workspace. Every write goes through savePost, the same checks the calendar runs:
 // character limits, required settings, media, plan limits, brands and approvals.
@@ -119,6 +120,23 @@ export function realOps(ctx: ApiCtx): Ops {
     }));
   };
 
+  const oneMedia = async (mediaId: string): Promise<ApiMedia | null> => {
+    const { data } = await adminClient().from("media").select("id, name, mime, size, alt, created_at").eq("id", mediaId).eq("workspace_id", ctx.workspaceId).maybeSingle();
+    if (!data) return null;
+    const [m] = await mediaThumbs(ctx.workspaceId, [mediaId]);
+    return { id: mediaId, name: data.name as string, mime: data.mime as string, size: data.size as number, alt: (data.alt as string | null) ?? null, created_at: data.created_at as string, preview_url: m?.thumb ?? null };
+  };
+  const toGeneration = async (g: Generation): Promise<ApiGeneration> => ({
+    id: g.id,
+    kind: g.kind,
+    model: g.model,
+    prompt: g.prompt,
+    status: g.status,
+    error: g.error,
+    media: g.media_id ? await oneMedia(g.media_id) : null,
+    created_at: g.created_at,
+  });
+
   return {
     async brands() {
       return (await listBrands(ctx.workspaceId)).filter((b) => mayUseBrand(ctx, b.id)).map((b) => ({ id: b.id, name: b.name, needs_approval: b.needs_approval }));
@@ -151,10 +169,13 @@ export function realOps(ctx: ApiCtx): Ops {
       await deletePost(ctx.workspaceId, id);
     },
     async uploadFromLink(url, alt) {
-      const id = await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt);
-      const [m] = await mediaThumbs(ctx.workspaceId, [id]);
-      const { data } = await adminClient().from("media").select("id, name, mime, size, alt, created_at").eq("id", id).single();
-      return { id, name: data!.name as string, mime: data!.mime as string, size: data!.size as number, alt: (data!.alt as string | null) ?? null, created_at: data!.created_at as string, preview_url: m?.thumb ?? null };
+      return (await oneMedia(await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt)))!;
+    },
+    async generate(r) {
+      return toGeneration(await startGeneration(ctx.workspaceId, ctx.userId, r));
+    },
+    async generation(genId) {
+      return toGeneration(await getGeneration(ctx.workspaceId, genId));
     },
     async webhooks() {
       manager();

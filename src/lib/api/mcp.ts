@@ -1,7 +1,8 @@
 // The MCP server: JSON-RPC over plain HTTP POST (MCP's Streamable HTTP, without sessions or streams). Every request is
 // answered on its own, so any server can take it and a restart loses nothing. Pure: it runs the tools through Ops,
 // so tests drive it with fake actions.
-import { ApiError, MAX_BATCH, days, deleteArgs, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
+import { ApiError, MAX_BATCH, days, deleteArgs, generationInput, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
+import { ASPECTS, MAX_PROMPT, SECONDS, modelsFor } from "../genRules";
 import { EVENTS } from "./hookRules";
 import type { Ops } from "./types";
 
@@ -95,6 +96,26 @@ export const TOOLS: Tool[] = [
     inputSchema: { type: "object", properties: { url: { type: "string", description: "A public http or https link to the file" }, alt: { type: "string", description: "Alt text for people who can't see it" } }, required: ["url"] },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   },
+  {
+    name: "generate_media",
+    title: "Make an AI picture or video",
+    description:
+      "Make a picture or a short video from a description, with fal.ai models. It takes seconds for a picture and a few minutes for a video: call get_generation until status is done, then attach media.id with media_ids. A video can start from a picture in the library (source_media_id). Counts against the plan's AI pictures or seconds of AI video a month.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        kind: { type: "string", enum: ["image", "video"] },
+        prompt: { type: "string", maxLength: MAX_PROMPT, description: "What to make: the subject, setting, style and, for videos, what moves." },
+        model: { type: "string", enum: [...modelsFor("image"), ...modelsFor("video")].map((m) => m.id), description: `Pictures: ${modelsFor("image").map((m) => m.id).join(" (default), ")}. Videos: ${modelsFor("video").map((m) => m.id).join(" (default), ")}.` },
+        aspect: { type: "string", enum: ASPECTS, description: "1:1 (default), 9:16 for stories and reels, 16:9 for wide. A video from a picture keeps the picture's shape." },
+        seconds: { type: "number", enum: [...SECONDS], description: "Video length, 5 (default) or 10" },
+        source_media_id: { type: "string", description: "Videos only: a JPG, PNG or WebP picture id from list_media to start from" },
+      },
+      required: ["kind", "prompt"],
+    },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+  },
+  { name: "get_generation", title: "Check an AI picture or video", description: "Where a generate_media request is: queued, running, done (with media to attach) or failed (with the error).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: read },
   { name: "next_queue_slot", title: "Next queue slot", description: "The next free time slot in the workspace's posting queue.", inputSchema: { type: "object", properties: {} }, annotations: read },
   {
     name: "get_analytics",
@@ -186,6 +207,10 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       const m = mediaLink(args);
       return { media: await ops.uploadFromLink(m.url, m.alt) };
     }
+    case "generate_media":
+      return { generation: await ops.generate(generationInput(args)) };
+    case "get_generation":
+      return { generation: await ops.generation(id(args.id)) };
     case "list_webhooks":
       return { webhooks: await ops.webhooks() };
     case "create_webhook": {

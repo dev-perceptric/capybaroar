@@ -13,6 +13,7 @@ import { deliverDue, emit, pruneDeliveries } from "./webhooks";
 import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
+import { aiReady, runGenerations } from "./generations";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
@@ -301,6 +302,21 @@ export function startRunner() {
     }
   };
   setInterval(hooks, 10000);
+  // AI pictures and videos: their own loop, so a video that takes minutes never holds up publishing.
+  let making = false;
+  const make = async () => {
+    if (making || !aiReady()) return;
+    making = true;
+    try {
+      await runGenerations();
+    } catch (e) {
+      console.error("generations:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: generations");
+    } finally {
+      making = false;
+    }
+  };
+  setInterval(make, 4000);
   const hourly = () =>
     onePerPeriod(opsStore, "upkeep", 3300, 7200, WORKER, async () => {
       await upkeep();

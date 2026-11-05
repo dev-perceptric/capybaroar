@@ -20,6 +20,18 @@ const bad = (m: string) => new ApiError(400, "invalid_request", m);
 export async function uploadFromLink(workspaceId: string, userId: string, url: URL, alt: string | null): Promise<string> {
   if (running >= AT_ONCE) throw new ApiError(503, "busy", "Other uploads are running. Try again in a minute.");
   running++;
+  try {
+    return await linkToMedia(workspaceId, userId, url, { alt });
+  } finally {
+    running--;
+  }
+}
+
+/**
+ * Downloads a link into the media library and returns the file's id. With `place`, the file goes to that fixed path
+ * (from its real type) and saving the same file again returns the first copy, so a retry never adds a second file.
+ */
+export async function linkToMedia(workspaceId: string, userId: string | null, url: URL, opts: { alt: string | null; place?: (mime: string) => { path: string; name: string } }): Promise<string> {
   const dir = await mkdtemp(join(tmpdir(), "link-"));
   try {
     let res;
@@ -71,19 +83,28 @@ export async function uploadFromLink(workspaceId: string, userId: string, url: U
     await fh.close();
     const mime = sniffMime(head);
     if (!mime || !ALLOWED.test(mime)) throw bad("The link isn't a JPG, PNG, GIF, WebP, MP4 or MOV file");
-    const name = nameFromUrl(res.url, mime);
-    const path = `${workspaceId}/${crypto.randomUUID()}-${name}`;
+    const fixed = opts.place?.(mime);
+    const name = fixed?.name ?? nameFromUrl(res.url, mime);
+    const path = fixed ? `${workspaceId}/${fixed.path}` : `${workspaceId}/${crypto.randomUUID()}-${name}`;
     const db = adminClient();
-    const up = await db.storage.from("media").upload(path, createReadStream(file), { contentType: mime, duplex: "half" });
+    if (fixed) {
+      const { data: had } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
+      if (had) return had.id as string;
+    }
+    const up = await db.storage.from("media").upload(path, createReadStream(file), { contentType: mime, duplex: "half", upsert: !!fixed });
     if (up.error) throw new ApiError(503, "unavailable", `Couldn't save the file: ${up.error.message}`);
-    const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime, size, alt, created_by: userId }).select("id").single();
+    const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime, size, alt: opts.alt, created_by: userId }).select("id").single();
     if (error) {
+      // Another try saved it first: that copy is the one.
+      if (fixed && error.code === "23505") {
+        const { data: first } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
+        if (first) return first.id as string;
+      }
       await db.storage.from("media").remove([path]);
       throw new ApiError(503, "unavailable", `Couldn't save the file: ${error.message}`);
     }
     return data.id as string;
   } finally {
-    running--;
     await rm(dir, { recursive: true, force: true });
   }
 }
