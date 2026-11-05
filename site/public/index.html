@@ -491,59 +491,64 @@
 <section id="mcp" aria-labelledby="mcp-title">
 <div class="wrap">
 <header class="head">
-<p class="tag"><svg class="ico"><use href="#i-bot"/></svg>MCP and API</p>
-<h2 id="mcp-title">Work from your own AI. <span>Keep your workflows.</span></h2>
-<p>Claude, ChatGPT, Cursor or your own code can plan and schedule posts through our MCP server and REST API. Every plan has it, Free too.</p>
+<p class="tag"><svg class="ico"><use href="#i-bot"/></svg>MCP</p>
+<h2 id="mcp-title">Use Capybaroar from your AI. <span>Set up in two minutes.</span></h2>
+<p>Connect once, then ask Claude, ChatGPT or Cursor to plan and post for you. Every plan has it, Free too.</p>
 </header>
-<div class="mcp-clients" id="mcp-clients" aria-hidden="true">
-<span class="pill" data-c="0"><svg><use href="#a-claude"/></svg>Claude</span>
-<span class="pill" data-c="1"><svg><use href="#a-chatgpt"/></svg>ChatGPT</span>
-<span class="pill" data-c="2"><svg><use href="#a-cursor"/></svg>Cursor</span>
-<span class="pill" data-c="3"><svg><use href="#a-code"/></svg>Claude Code</span>
+<div class="g-apps" role="tablist" aria-label="Your AI app">
+<button type="button" role="tab" class="pill" id="g-t0" aria-controls="g-p0" aria-selected="true"><svg aria-hidden="true"><use href="#a-claude"/></svg>Claude</button>
+<button type="button" role="tab" class="pill" id="g-t1" aria-controls="g-p1" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#a-chatgpt"/></svg>ChatGPT</button>
+<button type="button" role="tab" class="pill" id="g-t2" aria-controls="g-p2" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#a-cursor"/></svg>Cursor</button>
+<button type="button" role="tab" class="pill" id="g-t3" aria-controls="g-p3" aria-selected="false" tabindex="-1"><svg aria-hidden="true"><use href="#a-code"/></svg>Claude Code</button>
 </div>
-<div class="mcp" id="mcp-demo" aria-hidden="true">
-<div class="win">
-<div class="win-h"><svg id="c-logo"><use href="#a-claude"/></svg><span id="c-name">Claude</span><span class="sub">Connected to Capybaroar</span></div>
+<div class="guide">
+<ol class="g-steps">
+<li class="g-step"><span class="g-n">1</span><div class="g-b">
+<h3>Copy your link from Capybaroar</h3>
+<p>Open <b>Settings</b>, then <b>API and MCP</b>, and press <b>New key</b>. Copy the <b>MCP link</b>.</p>
+<div class="g-field">https://app.capybaroar.com/api/mcp/cbr_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
+<p class="g-note">Keep it private. Anyone with the link can post as you.</p>
+<a class="btn sm" href="https://app.capybaroar.com/settings?tab=api">Get my link<svg class="ico"><use href="#i-arrow"/></svg></a>
+</div></li>
+<li class="g-step"><span class="g-n">2</span><div class="g-b">
+<h3>Add it to <span id="g-app">Claude</span></h3>
+<div class="g-pane" role="tabpanel" id="g-p0" aria-labelledby="g-t0"><ol class="g-sub"><li>Open <b>Settings</b>, then <b>Connectors</b></li><li>Press <b>Add custom connector</b></li><li>Name it <b>Capybaroar</b> and paste your link</li><li>Press <b>Add</b>, then start a new chat</li></ol></div>
+<div class="g-pane" role="tabpanel" id="g-p1" aria-labelledby="g-t1" hidden><ol class="g-sub"><li>Open <b>Settings</b>, then <b>Apps and Connectors</b></li><li>Under <b>Advanced</b>, turn on <b>Developer mode</b></li><li>Press <b>Create</b>, name it <b>Capybaroar</b> and paste your link</li><li>In a new chat, open <b>+</b> and pick <b>Capybaroar</b></li></ol><p class="g-note">Needs a paid ChatGPT plan.</p></div>
+<div class="g-pane" role="tabpanel" id="g-p2" aria-labelledby="g-t2" hidden><ol class="g-sub"><li>Open <b>Cursor Settings</b>, then <b>MCP</b></li><li>Press <b>Add new MCP server</b> and paste this, with your link in place of the example</li></ol><div class="g-code"><pre>{
+  &quot;mcpServers&quot;: {
+    &quot;capybaroar&quot;: {
+      &quot;url&quot;: &quot;https://app.capybaroar.com/api/mcp/cbr_your_key&quot;
+    }
+  }
+}</pre><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></div></div>
+<div class="g-pane" role="tabpanel" id="g-p3" aria-labelledby="g-t3" hidden><ol class="g-sub"><li>Paste this into your terminal, with your link in place of the example</li><li>Run <b>claude</b> and ask away</li></ol><div class="g-code"><pre>claude mcp add --transport http capybaroar https://app.capybaroar.com/api/mcp/cbr_your_key</pre><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></div></div>
+</div></li>
+<li class="g-step"><span class="g-n">3</span><div class="g-b">
+<h3>Copy a prompt into your AI</h3>
+<ul class="g-prompts">
+<li><p><small>Plan a week</small>Use Capybaroar. Look at my channels and recent posts, then write a week of posts about [your topic]. Save them as drafts at my next queue times.</p><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></li>
+<li><p><small>Reuse an article</small>Use Capybaroar. Turn this article into a LinkedIn post and an X post, and save both as drafts: [link]</p><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></li>
+<li><p><small>Check results</small>Use Capybaroar. Show my results for the last 30 days and tell me which posts did best.</p><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></li>
+<li><p><small>See my week</small>Use Capybaroar. List everything scheduled for this week.</p><button class="g-copy" type="button"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button></li>
+</ul>
+</div></li>
+</ol>
+<div class="win g-demo" id="mcp-demo" aria-hidden="true">
+<div class="win-h"><svg id="c-logo"><use href="#a-claude"/></svg><span id="c-name">Claude</span><span class="sub">Capybaroar connected</span></div>
 <div class="c-body">
-<div class="bub me" id="c-ask" style="max-width:90%"></div>
+<div class="bub me" id="c-ask" style="max-width:92%"></div>
 <div class="c-call pop" id="c1"><code>list_channels</code><span class="r"><span class="spin"><i></i><i></i><i></i><i></i></span><span class="ok"><svg><use href="#i-check"/></svg></span><span>4 channels</span></span></div>
 <div class="c-call pop" id="c2"><code>next_queue_slot</code><span class="r"><span class="spin"><i></i><i></i><i></i><i></i></span><span class="ok"><svg><use href="#i-check"/></svg></span><span>Mon 9:00 AM</span></span></div>
 <div class="c-call pop" id="c3"><code>create_posts</code><span class="r"><span class="spin"><i></i><i></i><i></i><i></i></span><span class="ok"><svg><use href="#i-check"/></svg></span><span>5 drafts</span></span></div>
-<div class="bub pop" id="c-done">Done. 5 drafts are on your Capybaroar calendar, Monday to Friday at 9 AM. Check them and hit Schedule.</div>
-</div>
-</div>
-<div class="wire"><svg viewBox="0 0 120 40" preserveAspectRatio="none"><path d="M0 20H120"/></svg><span class="pk" id="pk"></span><span class="lab">MCP</span></div>
-<div class="win">
-<div class="win-h"><svg class="logo-mark" style="width:96px;height:17px;border-radius:0"><use href="#logo"/></svg><span class="sub">Next week</span></div>
-<div class="k-cal" id="k-cal">
-<div class="k-day"><small>Mon</small><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Launch week</p><span class="badge">Draft</span></div><div class="ev old"><span class="lg"><svg><use href="#n-instagram"/></svg></span><p>Morning bake</p><span class="badge green">Scheduled</span></div></div>
-<div class="k-day"><small>Tue</small><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Why sourdough</p><span class="badge">Draft</span></div><div class="ev old"><span class="lg"><svg><use href="#n-tiktok"/></svg></span><p>Shaping video</p><span class="badge green">Scheduled</span></div></div>
-<div class="k-day"><small>Wed</small><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Meet the team</p><span class="badge">Draft</span></div><div class="ev old"><span class="lg"><svg><use href="#n-instagram"/></svg></span><p>Rye is back</p><span class="badge green">Scheduled</span></div></div>
-<div class="k-day"><small>Thu</small><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Pre-orders</p><span class="badge">Draft</span></div><div class="ev old"><span class="lg"><svg><use href="#n-youtube"/></svg></span><p>Oven tour</p><span class="badge green">Scheduled</span></div></div>
-<div class="k-day"><small>Fri</small><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Launch day</p><span class="badge">Draft</span></div><div class="ev old"><span class="lg"><svg><use href="#n-bluesky"/></svg></span><p>Weekend hours</p><span class="badge green">Scheduled</span></div></div>
+<div class="g-drafts"><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Mon</p><span class="badge">Draft</span></div><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Tue</p><span class="badge">Draft</span></div><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Wed</p><span class="badge">Draft</span></div><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Thu</p><span class="badge">Draft</span></div><div class="ev new pop"><span class="lg"><svg><use href="#n-linkedin"/></svg></span><p>Fri</p><span class="badge">Draft</span></div></div>
+<div class="bub pop" id="c-done">Done. 5 drafts are on your Capybaroar calendar, Monday to Friday at 9 AM. Check them and press Schedule.</div>
 </div>
 </div>
 </div>
-<div class="mcp-under">
-<div class="code-card">
-<button class="copy" type="button" id="copy"><svg class="ico"><use href="#i-copy"/></svg><span>Copy</span></button>
-<pre id="cmd"><code><span class="c-dim">$</span> claude mcp add --transport http capybaroar \
-    https://app.capybaroar.com/api/mcp \
-    --header "Authorization: Bearer cbr_..."</code></pre>
-</div>
-<div class="tools-card">
-<h3>Tools your AI can use</h3>
-<ul class="tools"><li>list_channels</li><li>create_posts</li><li>update_post</li><li>upload_media</li><li>next_queue_slot</li><li>get_analytics</li><li>delete_post</li><li>create_webhook</li></ul>
-</div>
-</div>
-<ul class="mcp-points">
-<li><svg class="ico"><use href="#i-shield"/></svg><div><h3>You keep the final say</h3><p>Your AI saves drafts unless you ask it to schedule. Brands with approvals still wait for a yes.</p></div></li>
-<li><svg class="ico"><use href="#i-repeat"/></svg><div><h3>Fits the tools you run</h3><p>Use the REST API and webhooks to send posts in and get events out when a post goes live.</p></div></li>
-</ul>
+<p class="g-dev">Building your own app? Read the <a href="/api">API docs</a>.</p>
 </div>
 </section>
 
-<!-- FAQ -->
 <section id="pricing" class="band-gray" aria-labelledby="pricing-title">
 <div class="wrap">
 <header class="head">
@@ -902,34 +907,43 @@ S.bio = function(onEnd){
   var k = 0; setInterval(function(){ ts.forEach(function(t){ off(t, 'lit'); }); on(ts[k % ts.length], 'lit'); k++; }, 900);
 })();
 
-/* ---------- MCP ---------- */
+/* ---------- MCP guide ---------- */
 (function(){
-  var root = $('#mcp-demo'), chips = $$('#mcp-clients .pill'), logo = $('#c-logo use'), name = $('#c-name'), ask = $('#c-ask'), calls = [$('#c1'), $('#c2'), $('#c3')], done = $('#c-done'), pk = $('#pk'), evs = $$('#k-cal .ev');
-  var clients = [['a-claude','Claude'],['a-chatgpt','ChatGPT'],['a-cursor','Cursor'],['a-code','Claude Code']], ci = 0;
-  function client(n){ ci = n; chips.forEach(function(c, k){ c.classList.toggle('pick', k === n); }); logo.setAttribute('href', '#' + clients[n][0]); name.textContent = clients[n][1]; }
-  function ping(){ off(pk, 'go'); void pk.offsetWidth; on(pk, 'go'); }
-  function reset(){ ask.textContent = ''; calls.forEach(function(c){ off(c, 'in'); off(c, 'done'); }); off(done, 'in'); evs.forEach(function(e){ off(e, 'in'); }); off(pk, 'go'); }
-  client(0);
+  var tabs = $$('.g-apps [role=tab]'), appName = $('#g-app'), logo = $('#c-logo use'), name = $('#c-name');
+  var root = $('#mcp-demo'), ask = $('#c-ask'), calls = [$('#c1'), $('#c2'), $('#c3')], done = $('#c-done'), evs = $$('.g-drafts .ev', root);
+  var apps = [['a-claude','Claude'],['a-chatgpt','ChatGPT'],['a-cursor','Cursor'],['a-code','Claude Code']];
+  function reset(){ ask.textContent = ''; calls.forEach(function(c){ off(c, 'in'); off(c, 'done'); }); off(done, 'in'); evs.forEach(function(e){ off(e, 'in'); }); }
   var sc = Scene({ reset: reset, steps: function(s){ var out = [
-    [400, function(){ s.type(ask, 'Write a week of LinkedIn posts about our sourdough launch. One each weekday at 9 AM, as drafts.', 50); }],
-    [2300, function(){ on(calls[0], 'in'); ping(); }], [800, function(){ on(calls[0], 'done'); }],
-    [300, function(){ on(calls[1], 'in'); ping(); }], [700, function(){ on(calls[1], 'done'); }],
-    [300, function(){ on(calls[2], 'in'); ping(); }]
+    [400, function(){ s.type(ask, 'Use Capybaroar. Look at my channels and recent posts, then write a week of posts about our sourdough launch. Save them as drafts at my next queue times.', 55); }],
+    [2900, function(){ on(calls[0], 'in'); }], [800, function(){ on(calls[0], 'done'); }],
+    [300, function(){ on(calls[1], 'in'); }], [700, function(){ on(calls[1], 'done'); }],
+    [300, function(){ on(calls[2], 'in'); }]
   ];
-    evs.forEach(function(e, k){ out.push([k ? 160 : 700, function(){ on(e, 'in'); }]); });
+    evs.forEach(function(e, k){ out.push([k ? 140 : 700, function(){ on(e, 'in'); }]); });
     out.push([300, function(){ on(calls[2], 'done'); }]);
     out.push([400, function(){ on(done, 'in'); }]);
-    out.push([3200, function(){ client((ci + 1) % clients.length); }]);
+    out.push([4500, function(){}]);
     return out; } });
   whenSeen(root, sc);
-  chips.forEach(function(c, k){ c.style.cursor = 'pointer'; c.addEventListener('click', function(){ client(k); sc.stop(); sc.start(); }); });
-  var btn = $('#copy');
-  btn.addEventListener('click', function(){
-    var text = 'claude mcp add --transport http capybaroar https://app.capybaroar.com/api/mcp --header "Authorization: Bearer cbr_..."';
-    var label = $('span', btn);
-    var done = function(){ label.textContent = 'Copied'; setTimeout(function(){ label.textContent = 'Copy'; }, 1600); };
-    var fallback = function(){ var r = document.createRange(); r.selectNodeContents($('#cmd')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); label.textContent = 'Selected'; setTimeout(function(){ label.textContent = 'Copy'; }, 1600); };
-    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  function pick(n, focus){
+    tabs.forEach(function(t, k){ var o = k === n; t.setAttribute('aria-selected', o); t.tabIndex = o ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !o; });
+    appName.textContent = apps[n][1]; logo.setAttribute('href', '#' + apps[n][0]); name.textContent = apps[n][1];
+    if (focus) tabs[n].focus();
+  }
+  tabs.forEach(function(t, k){
+    t.addEventListener('click', function(){ pick(k); sc.stop(); sc.start(); });
+    t.addEventListener('keydown', function(e){ var j = e.key === 'ArrowRight' ? k + 1 : e.key === 'ArrowLeft' ? k - 1 : null; if (j === null) return; e.preventDefault(); pick((j + tabs.length) % tabs.length, true); });
+  });
+  $$('.g-copy').forEach(function(b){
+    b.addEventListener('click', function(){
+      var src = b.parentNode.querySelector('pre') || b.parentNode.querySelector('p');
+      var small = src.querySelector('small');
+      var text = small ? src.textContent.slice(small.textContent.length) : src.textContent;
+      var label = $('span', b);
+      var flash = function(t){ label.textContent = t; setTimeout(function(){ label.textContent = 'Copy'; }, 1600); };
+      var fallback = function(){ var r = document.createRange(); r.selectNodeContents(src); var s = getSelection(); s.removeAllRanges(); s.addRange(r); flash('Selected'); };
+      try { navigator.clipboard.writeText(text).then(function(){ flash('Copied'); }, fallback); } catch (e) { fallback(); }
+    });
   });
 })();
 })();
