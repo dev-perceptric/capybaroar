@@ -10,9 +10,15 @@ import { Logo } from "./Logo";
 import { send } from "@/app/(app)/agents/actions";
 import { Markdown } from "./Markdown";
 
-export type Shown = { key: string; role: "user" | "assistant" | "tool"; text: string };
+export type Shown = {
+  key: string;
+  role: "user" | "assistant" | "tool" | "media";
+  text: string;
+  /** A picture or video the agent made (role "media"). */
+  media?: { kind: "image" | "video"; status: "queued" | "running" | "done" | "failed"; error: string | null; thumb: string | null; mime: string | null };
+};
 
-export function AgentChat({ chats, chatId, messages }: { chats: { id: string; title: string }[]; chatId: string | null; messages: Shown[] }) {
+export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id: string; title: string }[]; chatId: string | null; messages: Shown[]; ai?: boolean }) {
   const [text, setText] = useState("");
   const [pending, setPending] = useState("");
   const [error, setError] = useState("");
@@ -22,6 +28,13 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
   useEffect(() => {
     end.current?.scrollIntoView({ block: "end" });
   }, [messages.length, pending]);
+  // Videos still being made: look again every 5 seconds until they're in.
+  const making = messages.some((m) => m.media && (m.media.status === "queued" || m.media.status === "running"));
+  useEffect(() => {
+    if (!making || busy) return;
+    const t = setInterval(() => router.refresh(), 5000);
+    return () => clearInterval(t);
+  }, [making, busy, router]);
 
   const submit = () => {
     const t = text.trim();
@@ -49,7 +62,7 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
             <div className="rise flex h-full flex-col items-center justify-center px-6 text-center">
               <Logo variant="icon" className="size-20" />
               <h2 className="mt-6 max-w-md text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
-                Plan a week of posts. <span className="text-faint">The agent writes and schedules them.</span>
+                Plan a week of posts. <span className="text-faint">{ai ? "The agent writes them and makes their pictures and videos." : "The agent writes and schedules them."}</span>
               </h2>
             </div>
           ) : (
@@ -87,7 +100,7 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
                 submit();
               }
             }}
-            placeholder="Write 5 LinkedIn posts about our launch, one each weekday at 9 AM"
+            placeholder={ai ? "Write 5 Instagram posts about our launch with a picture for each, one each weekday at 9 AM" : "Write 5 LinkedIn posts about our launch, one each weekday at 9 AM"}
             className={bareArea}
           />
           <div className="flex items-center gap-2 px-2 pb-2">
@@ -128,6 +141,27 @@ export function AgentChat({ chats, chatId, messages }: { chats: { id: string; ti
 }
 
 function Bubble({ m }: { m: Shown }) {
+  if (m.role === "media" && m.media) {
+    const f = m.media;
+    if (f.status === "failed") return <p className="w-fit max-w-[80%] rounded-lg bg-danger-soft px-3 py-2 text-[12px] text-danger">{f.error ?? "Couldn't make it"}</p>;
+    if (f.status !== "done" || !f.thumb)
+      return (
+        <div className="flex size-40 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line-strong text-[12px] text-muted">
+          <Loader />
+          {f.kind === "image" ? "Picture" : "Video"}
+        </div>
+      );
+    return (
+      <Link href="/media" className="block w-fit overflow-hidden rounded-lg bg-paper shadow-card transition-shadow hover:shadow-hover" title={m.text}>
+        {f.mime?.startsWith("video/") ? (
+          <video src={f.thumb} className="max-h-72 max-w-72" muted controls preload="metadata" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={f.thumb} alt={m.text} loading="lazy" decoding="async" className="max-h-72 max-w-72 object-contain" />
+        )}
+      </Link>
+    );
+  }
   if (m.role === "tool")
     return (
       <Link href="/calendar" className="inline-flex h-7 w-fit items-center gap-1.5 rounded-full bg-signal-soft px-3 text-[12px] font-medium text-ink shadow-picked">

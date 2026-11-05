@@ -103,7 +103,12 @@ export const genStore: GenStore = {
   },
   submitted: (id, r, checkAfter) => update(id, { request_id: r.requestId, status_url: r.statusUrl, response_url: r.responseUrl, status: "running", tries: 0, check_after: iso(checkAfter), locked_at: null, locked_by: null }),
   later: (id, checkAfter, tries) => update(id, { check_after: iso(checkAfter), tries, locked_at: null, locked_by: null }),
-  done: (id, mediaId) => update(id, { status: "done", media_id: mediaId, error: null, finished_at: iso(Date.now()), locked_at: null, locked_by: null }),
+  async done(id, mediaId) {
+    await update(id, { status: "done", media_id: mediaId, error: null, finished_at: iso(Date.now()), locked_at: null, locked_by: null });
+    // A draft the agent saved while this was being made gets its file now. The request is already done, so a
+    // hiccup here is logged and never makes it run again.
+    await attach(id).catch((e) => console.error("attach generation:", e instanceof Error ? e.message : e));
+  },
   failed: (id, error) => update(id, { status: "failed", error: error.slice(0, 500), finished_at: iso(Date.now()), locked_at: null, locked_by: null }),
   async saveFile(row, url) {
     try {
@@ -120,6 +125,34 @@ export const genStore: GenStore = {
     }
   },
 };
+
+/** Adds a finished request's file to the draft it belongs to (attach_generation in 022). Safe to repeat. */
+async function attach(id: string) {
+  for (let i = 0; ; i++) {
+    const { error } = await adminClient().rpc("attach_generation", { g: id });
+    if (!error) return;
+    if (i >= 2) throw new Error(error.message);
+    await new Promise((r) => setTimeout(r, 500 * 3 ** i));
+  }
+}
+
+/** Ties requests to a draft: each file is added to it when it's done, and at once for those already done. */
+export async function attachToPost(workspaceId: string, ids: string[], postId: string) {
+  if (!ids.length) return;
+  const { error } = await adminClient().from("generations").update({ post_id: postId }).eq("workspace_id", workspaceId).in("id", ids);
+  if (error) throw new Error(error.message);
+  for (const id of ids) await attach(id);
+}
+
+/** Waits up to `ms` for a request to finish (pictures take seconds), looking every 2 seconds. */
+export async function waitForGeneration(workspaceId: string, id: string, ms: number): Promise<Generation> {
+  const until = Date.now() + ms;
+  for (;;) {
+    const g = await getGeneration(workspaceId, id);
+    if (g.status === "done" || g.status === "failed" || Date.now() + 2000 > until) return g;
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+}
 
 /** The runner's loop: every few seconds, one step for each request that's due. */
 export const runGenerations = () => run(genStore, falApi, WORKER);

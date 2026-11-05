@@ -3,8 +3,19 @@ import { Page } from "@/components/ui";
 import { AgentChat, type Shown } from "@/components/AgentChat";
 import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
+import { aiReady, generationsOf } from "@/lib/generations";
+import { mediaThumbs } from "@/lib/media";
 
-type Block = { type: string; text?: string; name?: string; input?: { posts?: unknown[] } };
+type Block = { type: string; id?: string; text?: string; name?: string; input?: { posts?: unknown[]; kind?: string }; tool_use_id?: string; content?: unknown };
+
+const genIdOf = (content: unknown): string | null => {
+  try {
+    const v = JSON.parse(typeof content === "string" ? content : "");
+    return typeof v?.generation_id === "string" ? v.generation_id : null;
+  } catch {
+    return null;
+  }
+};
 
 export default async function AgentsPage({ searchParams }: { searchParams: Promise<{ chat?: string }> }) {
   const ctx = await teamCtx();
@@ -17,19 +28,33 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   ]);
   let shown: Shown[] = [];
   if (chat && chats?.some((c) => c.id === chat)) {
-    const rows = open?.data;
-    shown = (rows ?? []).flatMap((r) => {
-      const blocks = (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[];
-      return blocks.flatMap((b, i): Shown[] => {
-        if (b.type === "text" && b.text?.trim()) return [{ key: `${r.id}-${i}`, role: r.role as "user" | "assistant", text: b.text }];
-        if (b.type === "tool_use" && b.name === "save_posts") return [{ key: `${r.id}-${i}`, role: "tool", text: `Saved ${b.input?.posts?.length ?? 0} post${b.input?.posts?.length === 1 ? "" : "s"}` }];
+    const rows = (open?.data ?? []).map((r) => ({ ...r, blocks: (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[] }));
+    // Pictures and videos the agent made: each generate_media call's answer names its request.
+    const genOf = new Map<string, string>();
+    for (const r of rows) for (const b of r.blocks) if (b.type === "tool_result" && b.tool_use_id) {
+      const g = genIdOf(b.content);
+      if (g) genOf.set(b.tool_use_id, g);
+    }
+    const gens = new Map((await generationsOf(ctx.workspaceId, [...new Set(genOf.values())])).map((g) => [g.id, g]));
+    const thumbs = new Map((await mediaThumbs(ctx.workspaceId, [...gens.values()].map((g) => g.media_id).filter((x): x is string => !!x))).map((m) => [m.id, m]));
+    shown = rows.flatMap((r) =>
+      r.blocks.flatMap((b, i): Shown[] => {
+        const key = `${r.id}-${i}`;
+        if (b.type === "text" && b.text?.trim()) return [{ key, role: r.role as "user" | "assistant", text: b.text }];
+        if (b.type === "tool_use" && b.name === "save_posts") return [{ key, role: "tool", text: `Saved ${b.input?.posts?.length ?? 0} post${b.input?.posts?.length === 1 ? "" : "s"}` }];
+        if (b.type === "tool_use" && b.name === "generate_media" && b.id) {
+          const g = gens.get(genOf.get(b.id) ?? "");
+          if (!g) return [];
+          const m = g.media_id ? thumbs.get(g.media_id) : undefined;
+          return [{ key, role: "media", text: g.prompt, media: { kind: g.kind, status: g.status, error: g.error, thumb: m?.thumb ?? null, mime: m?.mime ?? null } }];
+        }
         return [];
-      });
-    });
+      }),
+    );
   }
   return (
     <Page icon={<Bot />} title="Agents" flush>
-      <AgentChat chats={(chats ?? []) as { id: string; title: string }[]} chatId={chat ?? null} messages={shown} />
+      <AgentChat chats={(chats ?? []) as { id: string; title: string }[]} chatId={chat ?? null} messages={shown} ai={aiReady()} />
     </Page>
   );
 }
