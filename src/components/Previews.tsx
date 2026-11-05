@@ -162,6 +162,7 @@ function Instagram({ channel: c, text, media, settings }: PreviewProps) {
 
 function Facebook({ channel: c, text, media, settings }: PreviewProps) {
   if (settings.format === "reel") return <TikTokLike c={c} text={text} media={media} label="Facebook" />;
+  if (settings.format === "story") return <Instagram channel={c} text={text} media={media} settings={settings} />;
   return (
     <div className="bg-white text-[15px] text-[#050505]">
       <div className="flex items-center gap-2.5 px-4 pt-3">
@@ -379,7 +380,7 @@ function Generic({ channel: c, text, media }: PreviewProps) {
 
 /** Full-screen, video-first formats fill the phone; feeds sit in a feed. */
 const fullBleed = (p: PreviewProps) =>
-  p.channel.network === "tiktok" || (p.channel.network === "instagram" && ["reel", "story"].includes(p.settings.format)) || (p.channel.network === "facebook" && p.settings.format === "reel");
+  p.channel.network === "tiktok" || (p.channel.network === "instagram" && ["reel", "story"].includes(p.settings.format)) || (p.channel.network === "facebook" && ["reel", "story"].includes(p.settings.format));
 
 export function NetworkPost(p: PreviewProps) {
   switch (p.channel.network) {

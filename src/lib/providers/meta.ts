@@ -43,7 +43,28 @@ async function pages(token: string, fields: string) {
   return out;
 }
 
+/**
+ * Page Stories (Page Stories API): one picture or one video, no caption. A video goes start, upload by URL to rupload,
+ * finish; a picture is uploaded unpublished to /photos, then published with /photo_stories. Both answer
+ * { success, post_id }. The id is kept as "story:{post_id}" so stats and delete know it's a Story.
+ */
+export const FB_STORY = "story:";
+async function facebookStory(token: string, pageId: string, m: MediaFile): Promise<Published> {
+  let r: { success?: boolean; post_id?: string | number };
+  if (isVideo(m)) {
+    const start = await call<{ video_id: string; upload_url: string }>(G(`${pageId}/video_stories`), { method: "POST", body: form({ upload_phase: "start", access_token: token }) }, { what: "Facebook Story" });
+    await call(start.upload_url, { method: "POST", headers: { Authorization: `OAuth ${token}`, file_url: m.url } }, { what: "Facebook Story upload" });
+    r = await call(G(`${pageId}/video_stories`), { method: "POST", body: form({ upload_phase: "finish", video_id: start.video_id, access_token: token }) }, { what: "Facebook Story" });
+  } else {
+    const photo = await call<{ id: string }>(G(`${pageId}/photos`), { method: "POST", body: form({ url: m.url, published: "false", access_token: token }) }, { what: "Facebook Story photo" });
+    r = await call(G(`${pageId}/photo_stories`), { method: "POST", body: form({ photo_id: photo.id, access_token: token }) }, { what: "Facebook Story" });
+  }
+  if (!r.success || r.post_id === undefined || r.post_id === null) throw new PostError("Facebook didn't publish the Story");
+  return { id: `${FB_STORY}${r.post_id}`, url: null };
+}
+
 async function facebookPost(token: string, pageId: string, p: Publishable): Promise<Published> {
+  if (p.settings.format === "story") return facebookStory(token, pageId, p.media[0]);
   const videos = p.media.filter(isVideo);
   if (p.settings.format === "reel") {
     // Reels: start, upload by URL to rupload, then finish to publish.
@@ -293,13 +314,15 @@ export const facebook: Provider = {
   check: (p) => {
     const videos = p.media.filter(isVideo);
     if (p.settings.format === "reel") return videos.length === 1 && p.media.length === 1 ? null : "A Facebook Reel is one video";
+    if (p.settings.format === "story") return p.media.length === 1 ? null : "A Facebook Story is one picture or video";
     return videos.length > 1 || (videos.length && p.media.length > 1) ? "Facebook takes one video, or pictures only" : null;
   },
   publish: async (s, pageId, p) => {
     const token = s.accessToken;
     const out = await facebookPost(token, pageId, p);
     // The post is live: from here on, problems go in the note, never a throw (a retry would post twice).
-    const comment = p.settings.first_comment?.trim();
+    // Stories take no comments.
+    const comment = p.settings.format === "story" ? "" : p.settings.first_comment?.trim();
     if (comment) {
       try {
         await call(G(`${out.id}/comments`), { method: "POST", body: form({ message: comment, access_token: token }) }, { what: "Facebook first comment" });
@@ -311,12 +334,15 @@ export const facebook: Provider = {
   },
   // DELETE /{post-id} with the Page token (pages_manage_posts). Feed and photo posts are "{page}_{post}", videos and
   // Reels a video id; both delete the same way. Verify: a post that's gone answers 400 "does not exist", not 404, so it
-  // shows as failed with Meta's message.
+  // shows as failed with Meta's message. Verify: a Story deletes by its post_id the same way (the Stories API
+  // documents publishing and listing only).
   unpublish: async (s, _pageId, r) => {
-    await call(G(`${r.id}?${qs({ access_token: s.accessToken })}`), { method: "DELETE" }, { what: "Facebook delete" });
+    const id = r.id.startsWith(FB_STORY) ? r.id.slice(FB_STORY.length) : r.id;
+    await call(G(`${id}?${qs({ access_token: s.accessToken })}`), { method: "DELETE" }, { what: "Facebook delete" });
   },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
-  postStats: (s, _pageId, remoteId) => stats(() => facebookStats(s.accessToken, remoteId)),
+  // Stories have no documented insights in the Stories API: no numbers rather than a failing call.
+  postStats: (s, _pageId, remoteId) => (remoteId.startsWith(FB_STORY) ? Promise.resolve({}) : stats(() => facebookStats(s.accessToken, remoteId))),
   inbox: {
     fetch: facebookInbox,
     reply: async (s, _pageId, to, text) => {
