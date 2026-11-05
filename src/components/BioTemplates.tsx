@@ -8,7 +8,7 @@ import { Loader } from "./Loader";
 import { BioCard } from "./BioCard";
 import type { EditorPost } from "./BioBlocks";
 import { buildView, httpUrl, isPlaceholder, youtubeThumb, type BioView, type Resolver, type SocialItem } from "@/lib/bioBlocks";
-import { BIO_TEMPLATES, applyTemplate, type BioTemplate } from "@/lib/bioTemplates";
+import { BIO_TEMPLATES, TEMPLATE_GROUPS, applyTemplate, type BioTemplate, type TemplateGroup } from "@/lib/bioTemplates";
 import { INCLUDES, type BuildInput, type IncludeId } from "@/lib/bioAi";
 
 // Templates and Build with AI for the link-in-bio editor: the gallery of templates (each drawn by BioCard, small), the
@@ -58,10 +58,20 @@ export function TemplateGallery({
     const r = previewResolver(posts, () => null, true);
     return BIO_TEMPLATES.map((t) => ({ t, view: buildView({ title, bio, avatar, appearance: t.appearance, badge: false, blocks: applyTemplate(t, social, now).blocks }, now, r) }));
   }, [title, bio, avatar, social, posts]);
+  const [group, setGroup] = useState<TemplateGroup | "all">("all");
+  const shown = group === "all" ? cards : cards.filter((c) => c.t.group === group);
   return (
     <Modal title="Templates" onClose={onClose} wide>
-      <ul className="-m-1 grid max-h-[64vh] grid-cols-2 gap-3 overflow-y-auto p-1 sm:grid-cols-3" aria-label="Templates">
-        {cards.map(({ t, view }) => (
+      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Kind of page">
+        {[{ id: "all" as const, name: "All" }, ...TEMPLATE_GROUPS].map((g) => (
+          <Chip key={g.id} size="sm" role="tab" aria-selected={group === g.id} on={group === g.id} onClick={() => setGroup(g.id)}>
+            {g.name}
+            <span className="text-muted tabular-nums">{g.id === "all" ? cards.length : cards.filter((c) => c.t.group === g.id).length}</span>
+          </Chip>
+        ))}
+      </div>
+      <ul className="-m-1 grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto p-1 sm:grid-cols-3" aria-label="Templates">
+        {shown.map(({ t, view }) => (
           <li key={t.id} className="relative flex flex-col rounded-lg bg-panel p-1.5 shadow-chip transition-shadow duration-[var(--duration-fast)] focus-within:shadow-focus hover:shadow-pill">
             <MiniPage view={view} />
             <div className="min-w-0 px-1.5 pt-2 pb-1">

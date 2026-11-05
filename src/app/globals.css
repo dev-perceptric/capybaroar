@@ -471,6 +471,10 @@ input[type="checkbox"].toggle:checked::after {
 /* Things arriving: rows, panels, menus. */
 .rise { animation: rise var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+/* Link in bio: the avatar, title and blocks rise in one after another (BioCard sets --d). */
+.bio-rise { animation: bio-rise 520ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes bio-rise { from { opacity: 0; transform: translateY(10px) scale(.985); } }
+@media (prefers-reduced-motion: reduce) { .bio-rise { animation: none; } }
 .slide-in { animation: slide-in var(--duration-normal) var(--ease-out) both; animation-delay: var(--d, 0ms); }
 @keyframes slide-in { from { opacity: 0; transform: translateX(14px); } }
 /* A row that just arrived flashes pale yellow and fades to normal. */

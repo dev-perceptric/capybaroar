@@ -13,7 +13,7 @@ import { BioCard } from "./BioCard";
 import { BioBlocks, Picture, type EditorPost, type Img } from "./BioBlocks";
 import { BioStats } from "./BioStats";
 import { BuildForm, DraftBar, TemplateGallery, previewResolver } from "./BioTemplates";
-import { BIO_THEMES } from "@/lib/bioThemes";
+import { BIO_FONTS, BIO_THEMES, type BioTheme } from "@/lib/bioThemes";
 import { buildView, draftOf, placeholderProblem, slugProblem, videoSource, type Appearance, type BioDraft, type BioPage, type Block, type SocialItem } from "@/lib/bioBlocks";
 import { applyTemplate, type BioTemplate } from "@/lib/bioTemplates";
 import type { BuildInput } from "@/lib/bioAi";
@@ -348,25 +348,40 @@ function AppearanceTab({ draft, patch, images, pick }: { draft: BioDraft; patch:
       </Panel>
       <Panel>
         <CardHead label="Theme" />
-        <div role="radiogroup" aria-label="Theme" className="grid grid-cols-3 gap-2.5 p-4 sm:grid-cols-4 xl:grid-cols-7">
-          {BIO_THEMES.map((t) => {
-            const on = a.theme === t.id;
+        <div className="flex flex-col gap-3 p-4">
+          {[
+            { label: "Calm", list: BIO_THEMES.filter((t) => !t.bold) },
+            { label: "Bold", list: BIO_THEMES.filter((t) => t.bold) },
+          ].map((g) => (
+            <div key={g.label} className="flex flex-col gap-2">
+              <p className="label-mono">{g.label}</p>
+              <div role="radiogroup" aria-label={`${g.label} themes`} className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 xl:grid-cols-6">
+                {g.list.map((t) => (
+                  <ThemeSwatch key={t.id} t={t} on={a.theme === t.id} onPick={() => look({ theme: t.id })} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+      <Panel>
+        <CardHead label="Font" />
+        <div role="radiogroup" aria-label="Font" className="grid grid-cols-3 gap-2.5 p-4 sm:grid-cols-6">
+          {BIO_FONTS.map((f) => {
+            const on = a.font === f.id;
             return (
               <button
-                key={t.id}
+                key={f.id}
                 type="button"
                 role="radio"
                 aria-checked={on}
-                onClick={() => look({ theme: t.id })}
-                className={`flex flex-col gap-1.5 rounded-lg p-1.5 text-left transition-[background-color,box-shadow] duration-[var(--duration-fast)] ${on ? "bg-signal-soft shadow-picked" : "bg-panel shadow-chip hover:shadow-pill"}`}
+                onClick={() => look({ font: f.id })}
+                className={`flex flex-col items-center gap-1 rounded-lg px-2 pt-2.5 pb-2 transition-[background-color,box-shadow] duration-[var(--duration-fast)] ${on ? "bg-signal-soft shadow-picked" : "bg-panel shadow-chip hover:shadow-pill"}`}
               >
-                {/* The theme's own colors, from its preset. */}
-                <span className="flex h-16 flex-col items-center justify-center gap-1.5 rounded-md px-2.5" style={{ background: t.bg }}>
-                  <span className="h-1.5 w-8 rounded-full" style={{ background: t.ink }} />
-                  <span className="h-3.5 w-full rounded-full" style={{ background: t.surface, boxShadow: t.shadow }} />
-                  <span className="h-3.5 w-full rounded-full" style={{ background: t.surface, boxShadow: t.shadow }} />
+                <span className="text-[24px] leading-none font-semibold text-ink" style={{ fontFamily: f.family }}>
+                  Aa
                 </span>
-                <span className="px-0.5 text-[12px] font-medium">{t.name}</span>
+                <span className="text-[11.5px] font-medium text-muted">{f.name}</span>
               </button>
             );
           })}
@@ -397,6 +412,8 @@ function AppearanceTab({ draft, patch, images, pick }: { draft: BioDraft; patch:
               options={[
                 { value: "solid", label: "Solid" },
                 { value: "outline", label: "Outline" },
+                { value: "hard", label: "Pop" },
+                { value: "glass", label: "Glass" },
               ]}
             />
           </Field>
@@ -558,5 +575,30 @@ function QrCode({ url, name }: { url: string; name: string }) {
         </Button>
       </div>
     </div>
+  );
+}
+
+/** A theme as a small picture: its background (gradients and patterns too) with a title bar and two buttons. */
+function ThemeSwatch({ t, on, onPick }: { t: BioTheme; on: boolean; onPick: () => void }) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={on}
+      onClick={onPick}
+      className={`flex flex-col gap-1.5 rounded-lg p-1.5 text-left transition-[background-color,box-shadow] duration-[var(--duration-fast)] ${on ? "bg-signal-soft shadow-picked" : "bg-panel shadow-chip hover:shadow-pill"}`}
+    >
+      {/* The theme's own colors, from its preset. */}
+      <span className="flex h-16 flex-col items-center justify-center gap-1.5 rounded-md px-2.5" style={{ background: t.bg }}>
+        <span className="h-1.5 w-8 rounded-full" style={{ background: t.ink }} />
+        <span className="flex h-3.5 w-full items-center justify-center rounded-full" style={{ background: t.surface, boxShadow: t.shadow }}>
+          <span className="h-1 w-6 rounded-full" style={{ background: t.btnInk, opacity: 0.5 }} />
+        </span>
+        <span className="flex h-3.5 w-full items-center justify-center rounded-full" style={{ background: t.surface, boxShadow: t.shadow }}>
+          <span className="h-1 w-6 rounded-full" style={{ background: t.btnInk, opacity: 0.5 }} />
+        </span>
+      </span>
+      <span className="px-0.5 text-[12px] font-medium">{t.name}</span>
+    </button>
   );
 }

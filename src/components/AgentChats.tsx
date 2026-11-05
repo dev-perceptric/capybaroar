@@ -8,7 +8,7 @@ import { Floating } from "./Floating";
 import { askConfirm, tell } from "./Dialogs";
 import { deleteChat, recentChats } from "@/app/(app)/agents/actions";
 
-// The Agent's chats, like ChatGPT's sidebar: New chat, then this person's chats, newest first. It sits under Agents in
+// The Agent's chats: this person's chats, newest first, then New chat. It sits under Agents in
 // the main sidebar while an Agents page is open, and in a menu on phones. The chat page tells it to look again with
 // CHATS_EVENT after a message starts a new chat.
 export const CHATS_EVENT = "capybaroar:chats";
@@ -51,11 +51,6 @@ function List({ onPick }: { onPick?: () => void }) {
   };
   return (
     <div className="flex flex-col gap-0.5">
-      <Link href="/agents" onClick={onPick} className={`${row} gap-2 font-medium text-ink hover:bg-hover`}>
-        <SquarePen size={14} className="shrink-0 text-muted" />
-        New chat
-      </Link>
-      {chats?.length ? <p className="mt-2 mb-0.5 px-2.5 text-[11.5px] font-medium text-faint">Chats</p> : null}
       {(chats ?? []).map((c) => (
         <div key={c.id} className="group/chat relative">
           <Link
@@ -90,6 +85,10 @@ function List({ onPick }: { onPick?: () => void }) {
           ) : null}
         </div>
       ))}
+      <Link href="/agents" onClick={onPick} className={`${row} gap-2 font-medium text-ink hover:bg-hover ${chats?.length ? "mt-1" : ""}`}>
+        <SquarePen size={14} className="shrink-0 text-muted" />
+        New chat
+      </Link>
     </div>
   );
 }

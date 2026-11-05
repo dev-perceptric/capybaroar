@@ -7,7 +7,7 @@
 //   never sent to a visitor at all.
 
 import type { NetworkId } from "./networks";
-import { BIO_THEMES, type BioThemeId } from "./bioThemes";
+import { BIO_FONTS, BIO_THEMES, type BioFontId, type BioThemeId } from "./bioThemes";
 
 export const BLOCKS_VERSION = 1;
 export const MAX_BLOCKS = 50;
@@ -84,10 +84,12 @@ export type EmailBlock = Base & { type: "email"; label: string; email: string; s
 export type Block = LinkBlock | HeaderBlock | TextBlock | SocialBlock | PostsBlock | VideoBlock | EmailBlock;
 
 export type ButtonShape = "pill" | "rounded" | "square";
-export type ButtonFill = "solid" | "outline";
+/** hard: a thick ring with a hard offset shadow; glass: frosted. */
+export type ButtonFill = "solid" | "outline" | "hard" | "glass";
+export const FILLS: ButtonFill[] = ["solid", "outline", "hard", "glass"];
 export type TextSize = "normal" | "large";
-export type Appearance = { theme: BioThemeId; shape: ButtonShape; fill: ButtonFill; size: TextSize };
-export const DEFAULT_APPEARANCE: Appearance = { theme: "light", shape: "pill", fill: "solid", size: "normal" };
+export type Appearance = { theme: BioThemeId; shape: ButtonShape; fill: ButtonFill; size: TextSize; font: BioFontId };
+export const DEFAULT_APPEARANCE: Appearance = { theme: "light", shape: "pill", fill: "solid", size: "normal", font: "inter" };
 export const POST_COUNTS = [3, 6, 9, 12];
 
 /** A page as the editor and the server pass it around (bio_pages, with blocks and the look read). */
@@ -410,8 +412,9 @@ export function readAppearance(raw: unknown, legacyTheme?: string | null): Appea
   return {
     theme: pick(a.theme ?? legacyTheme, BIO_THEMES.map((t) => t.id), DEFAULT_APPEARANCE.theme),
     shape: pick(a.shape, ["pill", "rounded", "square"] as const, DEFAULT_APPEARANCE.shape),
-    fill: pick(a.fill, ["solid", "outline"] as const, DEFAULT_APPEARANCE.fill),
+    fill: pick(a.fill, FILLS, DEFAULT_APPEARANCE.fill),
     size: pick(a.size, ["normal", "large"] as const, DEFAULT_APPEARANCE.size),
+    font: pick(a.font, BIO_FONTS.map((f) => f.id), DEFAULT_APPEARANCE.font),
   };
 }
 
