@@ -17,7 +17,7 @@ const MODEL = "claude-opus-5-5";
 // Making a week of posts with a picture each takes more rounds than writing text alone.
 const MAX_TURNS = 20;
 
-async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>, models: ModelChoice): Promise<string> {
+async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): Promise<string> {
   const api: ApiCtx = { keyId: "agent", workspaceId: ctx.workspaceId, workspaceName: ctx.workspaceName, timezone: ctx.timezone, userId: ctx.userId, role: ctx.role as ApiCtx["role"], brandIds: ctx.brandIds };
   const ops = realOps(api);
   if (name === "attach_when_done") {
@@ -30,7 +30,7 @@ async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>, m
     await attachToPost(ctx.workspaceId, ids, postId);
     return JSON.stringify({ post_id: postId, generation_ids: ids, note: "Each file is added to the post when it's done." });
   }
-  const out = (await callTool(ops, name, name === "generate_media" ? withModel(input, models) : input)) as { generation?: { id: string; kind: string; status: string } };
+  const out = (await callTool(ops, name, input)) as { generation?: { id: string; kind: string; status: string } };
   // A picture usually takes seconds: wait for it, so it can be attached right away.
   if (name === "generate_media" && out.generation && out.generation.kind === "image" && out.generation.status !== "done" && out.generation.status !== "failed") {
     await waitForGeneration(ctx.workspaceId, out.generation.id, 45000);
@@ -88,7 +88,7 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, c
     const results: Anthropic.ToolResultBlockParam[] = [];
     for (const c of calls) {
       try {
-        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, c.name, c.input as Record<string, unknown>, models) });
+        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, c.name, c.input as Record<string, unknown>) });
       } catch (e) {
         results.push({ type: "tool_result", tool_use_id: c.id, content: e instanceof Error ? e.message : String(e), is_error: true });
       }
