@@ -52,7 +52,7 @@ export const NETWORKS: Network[] = [
     name: "Facebook",
     limit: 63206,
     fields: [
-      { key: "format", label: "Format", kind: "select", initial: "post", options: [{ value: "post", label: "Post" }, { value: "reel", label: "Reel" }] },
+      { key: "format", label: "Format", kind: "select", initial: "post", options: [{ value: "post", label: "Post" }, { value: "reel", label: "Reel" }, { value: "story", label: "Story" }] },
       FIRST_COMMENT,
     ],
     inbox: { like: true, hide: true },
