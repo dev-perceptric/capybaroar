@@ -203,3 +203,31 @@ export async function trim(id: string, start: number, end: number): Promise<{ er
     return fail(e);
   }
 }
+
+/** Saved channel groups for the composer. */
+export async function channelGroups() {
+  const ctx = await getCtx();
+  const { listGroups } = await import("@/lib/channelGroups");
+  return listGroups(ctx.workspaceId, ctx.brandIds);
+}
+
+export async function saveChannelGroup(name: string, channelIds: string[]): Promise<{ error?: string; group?: import("@/lib/groupRules").ChannelGroup }> {
+  try {
+    const ctx = await writerCtx();
+    const { createGroup } = await import("@/lib/channelGroups");
+    return { group: await createGroup(ctx.workspaceId, ctx.userId, ctx.brandIds, name, channelIds) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function removeChannelGroup(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await writerCtx();
+    const { deleteGroup } = await import("@/lib/channelGroups");
+    await deleteGroup(ctx.workspaceId, ctx.brandIds, id);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}

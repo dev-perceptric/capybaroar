@@ -89,6 +89,7 @@ function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[]; calls: str
     calls,
     brands: async () => [{ id: A, name: "Brand", needs_approval: false }],
     channels: async () => [],
+    channelGroups: async () => [{ id: "g1", name: "All socials", brand_id: null, channel_ids: [B] }],
     posts: async () => [],
     post: async (id) => post(id),
     create: async (f) => {

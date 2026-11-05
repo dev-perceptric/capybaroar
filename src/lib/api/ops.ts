@@ -13,7 +13,9 @@ import { unpublishPost } from "../unpublish";
 import { UnpublishError } from "../unpublisher";
 import { ApiError, isId } from "./input";
 import type { PostFields } from "./input";
-import type { ApiChannel, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
+import type { ApiChannel, ApiChannelGroup, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
+import { listGroups } from "../channelGroups";
+import { groupChannels } from "../groupRules";
 
 // The API's actions on the real workspace. Every write goes through savePost, the same checks the calendar runs:
 // character limits, required settings, media, plan limits, brands and approvals.
@@ -145,6 +147,10 @@ export function realOps(ctx: ApiCtx): Ops {
     },
     async channels(brandId) {
       return (await listChannels(ctx.workspaceId, scopeFor(brandId))).map(toChannel);
+    },
+    async channelGroups(): Promise<ApiChannelGroup[]> {
+      const [groups, channels] = await Promise.all([listGroups(ctx.workspaceId, ctx.brandIds), listChannels(ctx.workspaceId, ctx.brandIds)]);
+      return groups.map((g) => ({ id: g.id, name: g.name, brand_id: g.brand_id, channel_ids: groupChannels(g, channels) })).filter((g) => g.channel_ids.length);
     },
     async posts(from, to, brandId) {
       return (await postsBetween(ctx.workspaceId, from, to, scopeFor(brandId))).map(toPost);

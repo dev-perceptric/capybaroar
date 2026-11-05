@@ -40,6 +40,9 @@ export type ApiUnpublish = {
 
 export type ApiWebhook = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
 
+/** A saved set of channels from one brand. channel_ids: the ones still connected, ready for create_posts. */
+export type ApiChannelGroup = { id: string; name: string; brand_id: string | null; channel_ids: string[] };
+
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
 
 /** An AI picture, video or audio file. status: queued and running are still being made; media is set once it's done. credits: what it costs; reason: why Capy picked the model. */
@@ -58,6 +61,8 @@ export type ApiAnalytics = {
 export interface Ops {
   brands(): Promise<ApiBrand[]>;
   channels(brandId: string | null): Promise<ApiChannel[]>;
+  /** Saved channel groups, to post to many channels at once. */
+  channelGroups(): Promise<ApiChannelGroup[]>;
   posts(from: Date, to: Date, brandId: string | null): Promise<ApiPost[]>;
   post(id: string): Promise<ApiPost>;
   create(fields: PostFields & { channelIds: string[]; mode: Mode }): Promise<ApiPost>;
