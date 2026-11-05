@@ -87,13 +87,18 @@ var STYLES = {
   'underline': ['Underline', mark('̲')],
   'underline-double': ['Double underline', mark('̳')],
   'overline': ['Overline', mark('̅')],
-  'upside': ['Upside down', null]
+  'upside': ['Upside down', null],
+  'reverse': ['Backwards', null],
+  'mirror': ['Mirror', null]
 };
 var FLIP = { a: 'ɐ', b: 'q', c: 'ɔ', d: 'p', e: 'ǝ', f: 'ɟ', g: 'ƃ', h: 'ɥ', i: 'ᴉ', j: 'ɾ', k: 'ʞ', l: 'l', m: 'ɯ', n: 'u', o: 'o', p: 'd', q: 'b', r: 'ɹ', s: 's', t: 'ʇ', u: 'n', v: 'ʌ', w: 'ʍ', x: 'x', y: 'ʎ', z: 'z',
   A: '∀', B: 'ᗺ', C: 'Ɔ', D: 'ᗡ', E: 'Ǝ', F: 'Ⅎ', G: '⅁', H: 'H', I: 'I', J: 'ſ', K: 'ʞ', L: '˥', M: 'W', N: 'N', O: 'O', P: 'Ԁ', Q: 'Ό', R: 'ᴚ', S: 'S', T: '⊥', U: '∩', V: 'Λ', W: 'M', X: 'X', Y: '⅄', Z: 'Z',
   '1': 'Ɩ', '2': 'ᄅ', '3': 'Ɛ', '4': 'ㄣ', '5': 'ϛ', '6': '9', '7': 'ㄥ', '8': '8', '9': '6', '0': '0', '.': '˙', ',': '\'', '\'': ',', '"': '„', '!': '¡', '?': '¿', '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<', '&': '⅋', '_': '‾' };
+var MIRROR = { a: 'ɒ', b: 'd', c: 'ɔ', d: 'b', e: 'ɘ', f: 'ꟻ', g: 'ǫ', h: 'ʜ', j: 'ꞁ', k: 'ʞ', p: 'q', q: 'p', r: 'ɿ', s: 'ƨ', t: 'ƚ', y: 'ʏ', z: 'ƹ', B: 'ᙠ', C: 'Ɔ', D: 'ᗡ', E: 'Ǝ', F: 'ꟻ', G: 'Ꭾ', J: 'Ⴑ', K: 'ꓘ', L: '⅃', N: 'И', P: 'ꟼ', Q: 'Ọ', R: 'Я', S: 'Ƨ', Z: 'Ƹ', '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<', '?': '⸮' };
 function styleText(key, s){
   if (key === 'upside') return cps(s).map(function(ch){ return FLIP[ch] || ch; }).reverse().join('');
+  if (key === 'reverse') return cps(s).reverse().join('');
+  if (key === 'mirror') return cps(s).map(function(ch){ return MIRROR[ch] || ch; }).reverse().join('');
   var f = STYLES[key][1];
   return cps(s).map(f).join('');
 }
@@ -346,9 +351,9 @@ $$('[data-tool="styles"]').forEach(styleList);
 (function(){
   var root = $('[data-tool="ytmoney"]'); if (!root) return;
   var views = $('[data-views]', root), viewsOut = $('[data-views-out]', root), lo = $('[data-lo]', root), hi = $('[data-hi]', root), kind = 'long';
-  var DEF = { long: [1.5, 6], shorts: [0.02, 0.1] };
+  var DEF = root.dataset.def ? JSON.parse(root.dataset.def) : { long: [1.5, 6], shorts: [0.02, 0.1] };
   var out = {}; $$('[data-r]', root).forEach(function(el){ out[el.dataset.r] = el; });
-  function money(n){ return n >= 100 ? '$' + fmt(Math.round(n)) : '$' + n.toFixed(2); }
+  function money(n){ return n >= 10 ? '$' + fmt(Math.round(n)) : '$' + n.toFixed(2); }
   // The slider moves on a log scale so 1,000 and 10 million views are both easy to pick.
   function viewsFromSlider(v){ return Math.round(Math.pow(10, 3 + v / 100 * 5) / 100) * 100; }
   function sliderFromViews(n){ return Math.max(0, Math.min(100, (Math.log10(Math.max(1000, n)) - 3) / 5 * 100)); }
@@ -498,15 +503,37 @@ function ratioLabel(w, h){
       var c = render(img, W, H, mode, fx, fy, fill);
       c.className = 'rs-canvas'; c.setAttribute('role', 'img'); c.setAttribute('aria-label', 'Preview at ' + W + ' by ' + H);
       stage.innerHTML = ''; stage.appendChild(c); stage.style.aspectRatio = W + ' / ' + H;
+      // Tall formats would hit the height cap and leave empty sides; size the frame to the picture instead.
+      stage.style.maxWidth = Math.round(560 * W / H) + 'px';
+      zones();
       stage.classList.toggle('can-move', mode === 'crop');
       dl.disabled = false;
+    }
+    var views = root.dataset.views ? JSON.parse(root.dataset.views) : null, zBtn = $('[data-zones]', root), showZones = true;
+    if (zBtn) zBtn.addEventListener('click', function(){ showZones = !showZones; zBtn.setAttribute('aria-pressed', showZones); zones(); });
+    function zones(){
+      var old = $('.rs-zones', stage); if (old) old.remove();
+      if (!views || !showZones || !img) return;
+      var list = views[fmtName] || views['*']; if (!list) return;
+      var box = document.createElement('div'); box.className = 'rs-zones'; box.setAttribute('aria-hidden', 'true');
+      list.forEach(function(v){
+        var el = document.createElement('div'), x, y, w, h;
+        if (v.ratio){ var r = W / H; if (v.ratio < r){ w = v.ratio / r; h = 1; } else { w = 1; h = r / v.ratio; } x = (1 - w) / 2; y = (1 - h) / 2; }
+        else if (v.circle){ var rw = v.circle[2] * H / W; w = rw * 2; h = v.circle[2] * 2; x = v.circle[0] - rw; y = v.circle[1] - v.circle[2]; el.classList.add('round'); }
+        else { x = v.rect[0]; y = v.rect[1]; w = v.rect[2]; h = v.rect[3]; }
+        el.className += ' rs-z ' + (v.style || 'line');
+        el.style.left = x * 100 + '%'; el.style.top = y * 100 + '%'; el.style.width = w * 100 + '%'; el.style.height = h * 100 + '%';
+        var lab = document.createElement('span'); lab.textContent = v.label; el.appendChild(lab);
+        box.appendChild(el);
+      });
+      stage.appendChild(box);
     }
     function inspect(i, f){
       var w = i.naturalWidth, h = i.naturalHeight, rules = JSON.parse(root.dataset.rules || '[]');
       info.innerHTML = '<span><b>' + w + ' × ' + h + '</b> px</span><span>' + ratioLabel(w, h) + '</span><span>' + kb(f.size) + '</span><span>' + (f.type.split('/')[1] || '').toUpperCase() + '</span>';
       if (checks) checks.innerHTML = rules.map(function(r){
         var ok;
-        if (r.k === 'minw') ok = w >= r.v; else if (r.k === 'ratio') ok = Math.abs(w / h - r.v) < 0.012; else if (r.k === 'bytes') ok = f.size <= r.v; else if (r.k === 'type') ok = r.v.indexOf(f.type) > -1; else if (r.k === 'exact') ok = w === r.v[0] && h === r.v[1];
+        if (r.k === 'minw') ok = w >= r.v; else if (r.k === 'minh') ok = h >= r.v; else if (r.k === 'ratio') ok = Math.abs(w / h - r.v) < 0.012; else if (r.k === 'bytes') ok = f.size <= r.v; else if (r.k === 'type') ok = r.v.indexOf(f.type) > -1; else if (r.k === 'exact') ok = w === r.v[0] && h === r.v[1];
         return '<li class="' + (ok ? 'ck-ok' : 'ck-no') + '">' + (ok ? r.ok : r.no) + '</li>';
       }).join('');
       // Suggest the format closest to the picture's own shape.
@@ -654,5 +681,66 @@ function zip(files){
     secs.concat([recentSec]).forEach(function(s){ io.observe(s); });
   }
   applyTone(); renderOut(); renderRecent();
+})();
+
+/* ---------- Word counter ---------- */
+(function(){
+  var root = $('[data-tool="words"]'); if (!root) return;
+  var ta = $('[data-input]', root), top = $('[data-top]', root), stat = {};
+  $$('[data-stat]', root).forEach(function(el){ stat[el.dataset.stat] = el; });
+  var wseg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'word' }) : null;
+  var sseg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'sentence' }) : null;
+  var gseg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+  var STOP = ' a an and are as at be but by for from has have he her his i if in into is it its me my no not of on or our she so than that the their them then there these they this to too up us was we were what when which who will with you your just can do does did get got had how all any been more most much one only out over some such very would could should about after also because before being both each few own same while '.split(' ').reduce(function(o, w){ if (w) o[w] = 1; return o; }, {});
+  function time(min){ if (min < 1) return Math.max(0, Math.round(min * 60)) + ' sec'; var m = Math.floor(min), sec = Math.round((min - m) * 60); return m + ' min' + (sec ? ' ' + sec + ' sec' : ''); }
+  function update(){
+    var v = ta.value;
+    var words = wseg ? Array.from(wseg.segment(v)).filter(function(x){ return x.isWordLike; }).map(function(x){ return x.segment; }) : (v.match(/[\p{L}\p{N}'’-]+/gu) || []);
+    var n = words.length;
+    var chars = gseg ? Array.from(gseg.segment(v)).length : cps(v).length;
+    var sentences = sseg ? Array.from(sseg.segment(v)).filter(function(x){ return /[\p{L}\p{N}]/u.test(x.segment); }) : v.split(/[.!?]+\s/).filter(function(x){ return x.trim(); });
+    var paras = v.split(/\n\s*\n/).filter(function(x){ return x.trim(); }).length;
+    stat.words.textContent = fmt(n);
+    stat.chars.textContent = fmt(chars);
+    stat.nospace.textContent = fmt(cps(v.replace(/\s/g, '')).length);
+    stat.sentences.textContent = fmt(sentences.length);
+    stat.paragraphs.textContent = fmt(paras);
+    stat.read.textContent = time(n / 238);
+    stat.speak.textContent = time(n / 140);
+    stat.avg.textContent = n ? (words.reduce(function(a, w){ return a + cps(w).length; }, 0) / n).toFixed(1) : '0';
+    var longest = 0; sentences.forEach(function(x){ var c = (x.segment || x).split(/\s+/).filter(Boolean).length; if (c > longest) longest = c; });
+    stat.longest.textContent = fmt(longest) + (longest === 1 ? ' word' : ' words');
+    var freq = {}; words.forEach(function(w){ w = w.toLowerCase(); if (w.length > 2 && !STOP[w] && !/^\d+$/.test(w)) freq[w] = (freq[w] || 0) + 1; });
+    var list = Object.keys(freq).sort(function(a, b){ return freq[b] - freq[a] || (a < b ? -1 : 1); }).slice(0, 10);
+    top.innerHTML = list.length ? list.map(function(w){ return '<li><span>' + esc(w) + '</span><b>' + freq[w] + '</b><small>' + (freq[w] / n * 100).toFixed(1) + '%</small></li>'; }).join('') : '<li class="none">Your most used words show here.</li>';
+    store.set('wc-draft', v);
+  }
+  var saved = store.get('wc-draft'); if (saved) ta.value = saved;
+  ta.addEventListener('input', update);
+  $('[data-clear]', root).addEventListener('click', function(){ ta.value = ''; update(); ta.focus(); });
+  $('[data-copy]', root).addEventListener('click', function(){ copy(ta.value, 'Copied your text'); });
+  update();
+})();
+
+/* ---------- Engagement rate calculator ---------- */
+(function(){
+  var root = $('[data-tool="engagement"]'); if (!root) return;
+  var f = {}; $$('[data-f]', root).forEach(function(el){ f[el.dataset.f] = el; });
+  var out = {}; $$('[data-r]', root).forEach(function(el){ out[el.dataset.r] = el; });
+  function num(el){ var n = parseFloat(String(el.value).replace(/[^\d.]/g, '')); return isFinite(n) && n > 0 ? n : 0; }
+  function update(){
+    var inter = num(f.likes) + num(f.comments) + num(f.shares) + num(f.saves), posts = Math.max(1, num(f.posts) || 1);
+    var per = inter / posts;
+    out.total.textContent = fmt(Math.round(inter));
+    [['followers', 'byFollowers'], ['reach', 'byReach'], ['views', 'byViews']].forEach(function(p){
+      var d = num(f[p[0]]);
+      out[p[1]].textContent = d ? (per / d * 100).toFixed(2) + '%' : '–';
+      out[p[1]].parentNode.classList.toggle('dim', !d);
+    });
+    store.set('er', JSON.stringify(Object.keys(f).reduce(function(o, k){ o[k] = f[k].value; return o; }, {})));
+  }
+  try { var s = JSON.parse(store.get('er') || 'null'); if (s) Object.keys(s).forEach(function(k){ if (f[k]) f[k].value = s[k]; }); } catch (e) {}
+  Object.keys(f).forEach(function(k){ f[k].addEventListener('input', update); });
+  update();
 })();
 })();
