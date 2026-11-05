@@ -6,70 +6,21 @@ import { postsBetween, savePost } from "./posts";
 import { networkOf } from "./networks";
 import type { Ctx } from "./session";
 import { assertCanUseAgent } from "./billing";
+import { listMedia } from "./media";
+import { genRequest } from "./genRules";
+import { MEDIA_RULES, SYSTEM, filesFor, toolsFor, type SavePostInput } from "./agentTools";
+import { aiReady, attachToPost, generationsOf, startGeneration, waitForGeneration } from "./generations";
 
-// The agent: Claude with three tools over this workspace. It writes drafts unless asked to schedule.
+// The agent: Claude with tools over this workspace. It writes drafts unless asked to schedule. With FAL_KEY set it
+// also makes pictures and videos for posts (fal.ai, generations.ts), within the plan's monthly limits.
 const MODEL = "claude-opus-5-5";
-const MAX_TURNS = 8;
-
-const SYSTEM = `You are the agent inside Capybaroar, a tool that schedules social media posts.
-You help the user plan, write and schedule posts for their connected channels.
-- Use list_channels to see which channels exist before writing posts. Only use channel ids it returns.
-- Respect each channel's character limit. Write in the user's voice, plainly, without hashtags unless asked.
-- Save posts as drafts unless the user clearly asks to schedule or publish them.
-- Times are in the workspace time zone unless the user says otherwise. Send publish_at as ISO 8601 with the offset.
-- Never invent facts, numbers, quotes or customer names. If you need one, ask.
-- After saving, say briefly what you saved and when it goes out.`;
-
-const tools: Anthropic.Tool[] = [
-  {
-    name: "list_channels",
-    description: "List the workspace's connected channels with their id, network, name and character limit.",
-    strict: true,
-    input_schema: { type: "object", properties: {}, required: [], additionalProperties: false },
-  },
-  {
-    name: "list_posts",
-    description: "List posts with a publish time between two ISO 8601 times.",
-    strict: true,
-    input_schema: {
-      type: "object",
-      properties: { from: { type: "string", description: "ISO 8601 start" }, to: { type: "string", description: "ISO 8601 end" } },
-      required: ["from", "to"],
-      additionalProperties: false,
-    },
-  },
-  {
-    name: "save_posts",
-    description: "Save one or more posts. mode 'draft' keeps them as drafts on the calendar; mode 'schedule' queues them to publish at publish_at.",
-    strict: true,
-    input_schema: {
-      type: "object",
-      properties: {
-        posts: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              channel_ids: { type: "array", items: { type: "string" } },
-              text: { type: "string" },
-              publish_at: { type: "string", description: "ISO 8601 with offset" },
-              mode: { type: "string", enum: ["draft", "schedule"] },
-            },
-            required: ["channel_ids", "text", "publish_at", "mode"],
-            additionalProperties: false,
-          },
-        },
-      },
-      required: ["posts"],
-      additionalProperties: false,
-    },
-  },
-];
+// Making a week of posts with a picture each takes more rounds than writing text alone.
+const MAX_TURNS = 20;
 
 async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): Promise<string> {
   if (name === "list_channels") {
     const chans = await listChannels(ctx.workspaceId, ctx.brandIds);
-    return JSON.stringify(chans.map((c) => ({ id: c.id, network: networkOf(c.network).name, name: c.name, status: c.status, limit: networkOf(c.network).limit })));
+    return JSON.stringify(chans.map((c) => ({ id: c.id, network: networkOf(c.network).name, name: c.name, status: c.status, limit: networkOf(c.network).limit, needs_media: !!networkOf(c.network).needsMedia })));
   }
   if (name === "list_posts") {
     const posts = await postsBetween(ctx.workspaceId, new Date(String(input.from)), new Date(String(input.to)), ctx.brandIds);
@@ -77,15 +28,34 @@ async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): 
   }
   if (name === "save_posts") {
     const out = [];
-    for (const p of (input.posts as { channel_ids: string[]; text: string; publish_at: string; mode: "draft" | "schedule" }[]) ?? []) {
+    for (const p of (input.posts as SavePostInput[]) ?? []) {
       try {
-        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds: [], publishAt: new Date(p.publish_at).toISOString(), mode: p.mode }, { role: ctx.role, brandIds: ctx.brandIds, brandId: null });
-        out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode: p.mode, status: r.status });
+        // Files already done go in now; the rest are added to the draft when they're done.
+        const { mediaIds, waiting, mode } = filesFor(p, await generationsOf(ctx.workspaceId, p.generation_ids ?? []));
+        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds, publishAt: new Date(p.publish_at).toISOString(), mode }, { role: ctx.role, brandIds: ctx.brandIds, brandId: null });
+        if (waiting.length) await attachToPost(ctx.workspaceId, waiting, r.id);
+        out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode, status: r.status, media_ids: mediaIds, ...(waiting.length ? { waiting_for: waiting, note: "Saved as a draft. Its files are added when they're done; schedule it after that." } : {}) });
       } catch (e) {
         out.push({ ok: false, error: e instanceof Error ? e.message : String(e) });
       }
     }
     return JSON.stringify(out);
+  }
+  if (name === "list_media") {
+    const files = await listMedia(ctx.workspaceId);
+    return JSON.stringify(files.slice(0, 40).map((m) => ({ id: m.id, name: m.name, kind: m.mime.startsWith("video/") ? "video" : "image", alt: m.alt, added: m.created_at })));
+  }
+  if (name === "generate_media") {
+    const g = await startGeneration(ctx.workspaceId, ctx.userId, genRequest(input));
+    // A picture usually takes seconds: wait for it, so the agent can attach it right away.
+    const now = g.kind === "image" && g.status !== "done" && g.status !== "failed" ? await waitForGeneration(ctx.workspaceId, g.id, 45000) : g;
+    if (now.status === "failed") return JSON.stringify({ generation_id: now.id, status: "failed", error: now.error });
+    if (now.status === "done") return JSON.stringify({ generation_id: now.id, status: "done", media_id: now.media_id });
+    return JSON.stringify({ generation_id: now.id, status: "running", note: now.kind === "video" ? "A video takes a few minutes. Save its post as a draft with generation_ids." : "Still being made. Use generation_ids or check_media." });
+  }
+  if (name === "check_media") {
+    const gens = await generationsOf(ctx.workspaceId, (input.generation_ids as string[]) ?? []);
+    return JSON.stringify(gens.map((g) => ({ generation_id: g.id, kind: g.kind, status: g.status, media_id: g.media_id, error: g.error })));
   }
   throw new Error(`Unknown tool ${name}`);
 }
@@ -115,13 +85,14 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string): 
   await add({ role: "user", content: [{ type: "text", text }] });
 
   const client = new Anthropic();
-  const system = `${SYSTEM}\nWorkspace time zone: ${ctx.timezone}. Now: ${new Date().toISOString()}.`;
+  const ai = aiReady();
+  const system = `${SYSTEM}${ai ? MEDIA_RULES : ""}\nWorkspace time zone: ${ctx.timezone}. Now: ${new Date().toISOString()}.`;
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const res = await client.beta.messages.create({
       model: MODEL,
       max_tokens: 16000,
       system,
-      tools,
+      tools: toolsFor(ai),
       messages: messages as Anthropic.Beta.BetaMessageParam[],
       betas: ["server-side-fallback-2026-07-01"],
       // A request a safety check declines is re-run on Anthropic's recommended fallback model.
