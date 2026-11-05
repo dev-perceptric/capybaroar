@@ -86,7 +86,11 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
             {files.map((f) => (
               <figure key={f.id} className="group overflow-hidden rounded-lg bg-panel shadow-card transition-shadow duration-[var(--duration-fast)] hover:shadow-hover">
                 <div className="relative aspect-square bg-paper">
-                  {f.mime.startsWith("video/") ? (
+                  {f.mime.startsWith("audio/") ? (
+                    <div className="flex size-full items-center justify-center p-3">
+                      <audio src={f.thumb ?? undefined} controls preload="metadata" className="w-full" />
+                    </div>
+                  ) : f.mime.startsWith("video/") ? (
                     <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls preload="metadata" />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -106,7 +110,7 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
             ))}
           </div>
         ) : (
-          <ToolIntro drawing="files" title="Add your first file" lead={ai ? "Pictures and videos you upload or generate here are ready for any post." : "Pictures and videos you upload here are ready for any post."} action={button} />
+          <ToolIntro drawing="files" title="Add your first file" lead={ai ? "Pictures and videos you upload, and files Capy makes, are ready for any post." : "Pictures and videos you upload here are ready for any post."} action={button} />
         )}
         {making ? (
           <Modal title="Generate" onClose={() => setMaking(false)} wide>

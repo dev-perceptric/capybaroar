@@ -42,8 +42,8 @@ export type ApiWebhook = { id: string; url: string; events: string[]; enabled: b
 
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
 
-/** An AI picture or video. status: queued and running are still being made; media is set once it's done. */
-export type ApiGeneration = { id: string; kind: "image" | "video"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; created_at: string };
+/** An AI picture, video or audio file. status: queued and running are still being made; media is set once it's done. credits: what it costs; reason: why Capy picked the model. */
+export type ApiGeneration = { id: string; kind: "image" | "video" | "audio"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; credits: number; reason: string | null; created_at: string };
 
 export type ApiAnalytics = {
   days: number;

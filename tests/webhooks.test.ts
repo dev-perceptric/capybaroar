@@ -34,6 +34,10 @@ test("files are judged by their first bytes", () => {
   assert.equal(sniffMime(b(0x52, 0x49, 0x46, 0x46, 1, 2, 3, 4, 0x57, 0x45, 0x42, 0x50)), "image/webp");
   assert.equal(sniffMime(b(0, 0, 0, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d)), "video/mp4");
   assert.equal(sniffMime(b(0, 0, 0, 0x14, 0x66, 0x74, 0x79, 0x70, 0x71, 0x74, 0x20, 0x20)), "video/quicktime");
+  assert.equal(sniffMime(b(0x49, 0x44, 0x33, 4)), "audio/mpeg");
+  assert.equal(sniffMime(b(0xff, 0xfb, 0x90)), "audio/mpeg");
+  assert.equal(sniffMime(b(0x52, 0x49, 0x46, 0x46, 1, 2, 3, 4, 0x57, 0x41, 0x56, 0x45)), "audio/wav");
+  assert.equal(sniffMime(b(0x4f, 0x67, 0x67, 0x53)), "audio/ogg");
   assert.equal(sniffMime(new TextEncoder().encode("<!doctype html><html>")), null);
   assert.equal(nameFromUrl(new URL("https://cdn.test/a/My%20Photo.jpeg?x=1"), "image/jpeg"), "My-Photo.jpg");
   assert.equal(nameFromUrl(new URL("https://cdn.test/"), "image/png"), "file.png");

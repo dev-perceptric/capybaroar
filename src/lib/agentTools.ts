@@ -3,25 +3,13 @@
 // same checks. Pure, so tests check the tool list without Claude or Supabase.
 import type Anthropic from "@anthropic-ai/sdk";
 import { TOOLS, instructions } from "./api/mcp";
-import { defaultModel, modelOf, type GenKind } from "./genRules";
+import { CAPY, type GenKind } from "./genRules";
 
-/** The picture and video models picked in the chat box. */
-export type ModelChoice = { image: string; video: string };
+/** What the chat box's Capy dropdown asks for: the agent decides (auto), or a picture, video or audio. */
+export type CapyChoice = "auto" | GenKind;
 
-/** Keeps only real models of the right kind; anything else falls back to the default. */
-export function modelChoice(v: unknown): ModelChoice {
-  const b = (typeof v === "object" && v !== null ? v : {}) as Record<string, unknown>;
-  const pick = (kind: GenKind) => {
-    const m = typeof b[kind] === "string" ? modelOf(b[kind] as string) : null;
-    return m && m.kind === kind ? m.id : defaultModel(kind).id;
-  };
-  return { image: pick("image"), video: pick("video") };
-}
-
-/** generate_media input with the picked model, unless the user named another one in the chat (the agent then sends it). */
-export function withModel(input: Record<string, unknown>, models: ModelChoice): Record<string, unknown> {
-  if (input.model != null && input.model !== "") return input;
-  return { ...input, model: input.kind === "video" ? models.video : models.image };
+export function capyChoice(v: unknown): CapyChoice {
+  return v === "image" || v === "video" || v === "audio" ? v : "auto";
 }
 
 export const RULES = `You are the agent inside Capybaroar, a tool that schedules social media posts. You run this workspace for the user: plan, write, schedule, change and delete posts, manage the media library, make pictures and videos, read analytics and the posting queue, and manage webhooks.
@@ -32,15 +20,18 @@ export const RULES = `You are the agent inside Capybaroar, a tool that schedules
 - After you act, say briefly what changed and when posts go out.`;
 
 export const MEDIA_RULES = `
-Pictures and videos:
-- Some networks need a picture or video (needs_media in list_channels). Use one from list_media, or make one with generate_media when the user asks for it or the post needs one.
-- Write generate_media prompts as a short scene: the subject, the setting, the light and the style, and for videos what moves and how the camera moves. No text or logos inside the picture unless the user asks.
+Pictures, videos and audio (Capy):
+- generate_media makes a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio). Leave model out so Capy picks the best model for the request; send a model only when the user names one. Tell the user which model Capy picked and what it cost in credits.
+- Some networks need a picture or video (needs_media in list_channels). Use one from list_media, or make one when the user asks or the post needs one.
+- Write picture and video prompts as a short scene: the subject, the setting, the light and the style, and for videos what moves and how the camera moves. Put words to print in quotes. No logos inside the picture unless the user asks.
+- For audio, send the exact words for a voiceover, describe the music or sound effect, or write a song's style followed by "Lyrics:" and the words. Audio goes to the media library; it can't go on a post on its own.
 - Pick the shape for where it goes: 9:16 for stories, reels, TikTok and Shorts; 1:1 for feeds; 16:9 for YouTube, X and LinkedIn link posts.
 - A picture is usually done when generate_media answers: attach its media id with media_ids. A video takes a few minutes: save its post as a draft, then call attach_when_done with the post id and the generation id, and the video is added to the draft when it's done. Don't schedule a post whose file isn't done.
-- Each picture and each second of video counts against the plan's monthly limit, so make one per post unless the user asks for options.`;
+- Each file costs AI credits from the plan's monthly amount, so make one per post unless the user asks for options.`;
 
-export function systemPrompt(ai: boolean, timezone: string, now: Date, models: ModelChoice = modelChoice(null)) {
-  const picked = ai ? `\n- The user picked ${modelOf(models.image)!.name} (${models.image}) for pictures and ${modelOf(models.video)!.name} (${models.video}) for videos. Leave model out of generate_media to use them; send another model only when the user names it.` : "";
+export function systemPrompt(ai: boolean, timezone: string, now: Date, capy: CapyChoice = "auto") {
+  const what = { image: "a picture", video: "a video", audio: "audio" } as const;
+  const picked = ai && capy !== "auto" ? `\n- For this message the user picked ${CAPY[capy].name}: make ${what[capy]} (generate_media kind "${capy}") for what they ask.` : "";
   return `${RULES}\n${instructions(timezone)}${ai ? MEDIA_RULES + picked : ""}\nNow: ${now.toISOString()}.`;
 }
 
