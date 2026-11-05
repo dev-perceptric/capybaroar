@@ -44,6 +44,13 @@ export const TOOLS: Tool[] = [
     annotations: read,
   },
   {
+    name: "list_channel_groups",
+    title: "List channel groups",
+    description: "Saved groups of channels from one brand, like \"All socials\". To post to a group, send its channel_ids to create_posts.",
+    inputSchema: { type: "object", properties: {} },
+    annotations: read,
+  },
+  {
     name: "list_posts",
     title: "List posts",
     description: "Posts with a publish time in a range (up to 92 days). Without from and to: the next 30 days.",
@@ -169,6 +176,8 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       return { brands: await ops.brands() };
     case "list_channels":
       return { channels: await ops.channels(optionalId(args.brand_id, "brand_id")) };
+    case "list_channel_groups":
+      return { groups: await ops.channelGroups() };
     case "list_posts": {
       const r = range(args.from, args.to);
       return { posts: await ops.posts(r.from, r.to, optionalId(args.brand_id, "brand_id")) };

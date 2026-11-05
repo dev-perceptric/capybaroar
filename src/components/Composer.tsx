@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -16,7 +16,9 @@ import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import type { Comment, PostRow } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { approve, composerData, duplicate, loadComments, loadMedia, reject, remove, save, saveAlt } from "@/app/(app)/calendar/actions";
+import { approve, channelGroups, composerData, duplicate, loadComments, loadMedia, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
+import { Floating } from "./Floating";
 import { fmtDateTime } from "@/lib/format";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
 import { EvergreenButton } from "./Evergreen";
@@ -200,6 +202,37 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [picked, targets, text],
   );
+
+  // Select all and saved channel groups (groupRules.ts).
+  const [groups, setGroups] = useState<ChannelGroup[]>([]);
+  const [groupMenu, setGroupMenu] = useState(false);
+  const groupMenuBtn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    channelGroups().then(setGroups, () => setGroups([]));
+  }, []);
+  const pickedIds = channels.filter((c) => targets[c.id]).map((c) => c.id);
+  const setPicked = (ids: string[]) =>
+    setTargets((t) => Object.fromEntries(ids.flatMap((id) => {
+      const c = channels.find((x) => x.id === id);
+      return c ? [[id, t[id] ?? { text: null, settings: initialSettings(c) }]] : [];
+    })));
+  const everyone = selectAll(channels, pickedIds);
+  const allOn = !!everyone && everyone.length > 0 && everyone.every((id) => targets[id]) && pickedIds.length === everyone.length;
+  const saveGroup = async () => {
+    const name = await askText("Name this group", { placeholder: "All socials", ok: "Save" });
+    if (!name?.trim()) return;
+    const r = await saveChannelGroup(name, pickedIds);
+    if (r.error || !r.group) return setError(r.error ?? "Couldn't save the group");
+    setGroups((g) => [...g, r.group!]);
+  };
+  const deleteGroup = async (g: ChannelGroup) => {
+    setGroupMenu(false);
+    if (!(await askConfirm(`Delete the group "${g.name}"?`, { ok: "Delete", danger: true, body: "The channels stay connected." }))) return;
+    const r = await removeChannelGroup(g.id);
+    if (r.error) return setError(r.error);
+    setGroups((all) => all.filter((x) => x.id !== g.id));
+  };
+  const usable = groups.filter((g) => groupChannels(g, channels).length > 0);
 
   const toggle = (c: Channel) =>
     setTargets((t) => {
@@ -414,7 +447,16 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           {/* Editor */}
           <div className="min-h-0 overflow-y-auto">
             <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5 px-5 py-5">
-              <Field label="Channels">
+              <Field
+                label="Channels"
+                aside={
+                  !locked && channels.length > 1 ? (
+                    <Button variant="plain" size="sm" className="-mr-1.5" disabled={!everyone} title={everyone ? undefined : "Pick a channel first to choose its brand"} onClick={() => setPicked(allOn ? [] : (everyone ?? []))}>
+                      {allOn ? "Clear" : "Select all"}
+                    </Button>
+                  ) : null
+                }
+              >
                 {channels.length ? (
                   <div className="flex flex-wrap gap-2">
                     {channels.map((c) => (
@@ -438,6 +480,42 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                   </Link>
                 )}
               </Field>
+              {!locked && (usable.length || pickedIds.length > 1) ? (
+                <div className="-mt-2 flex flex-wrap items-center gap-1.5">
+                  {usable.map((g) => (
+                    <Chip key={g.id} size="sm" on={isGroup(g, pickedIds, channels)} onClick={() => setPicked(groupChannels(g, channels))} title={`${groupChannels(g, channels).length} channels`}>
+                      <Layers size={12} />
+                      {g.name}
+                      <span className="text-muted tabular-nums">{groupChannels(g, channels).length}</span>
+                    </Chip>
+                  ))}
+                  {pickedIds.length > 1 && !usable.some((g) => isGroup(g, pickedIds, channels)) ? (
+                    <Chip size="sm" dashed onClick={saveGroup}>
+                      <Plus size={12} />
+                      Save as group
+                    </Chip>
+                  ) : null}
+                  {usable.length ? (
+                    <>
+                      <button ref={groupMenuBtn} type="button" aria-label="Manage groups" title="Manage groups" aria-expanded={groupMenu} onClick={() => setGroupMenu(!groupMenu)} className="flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink">
+                        <MoreHorizontal size={14} />
+                      </button>
+                      {groupMenu ? (
+                        <Floating anchor={groupMenuBtn} placement="bottom-start" onClose={() => setGroupMenu(false)} role="menu" className="min-w-56 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu">
+                          <p className="px-2.5 pt-1 pb-1.5 text-[11.5px] font-medium text-faint">Groups</p>
+                          {usable.map((g) => (
+                            <button key={g.id} type="button" role="menuitem" onClick={() => deleteGroup(g)} className="flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover">
+                              <Layers size={13} className="text-muted" />
+                              <span className="min-w-0 flex-1 truncate">{g.name}</span>
+                              <Trash2 size={13} className="text-danger" />
+                            </button>
+                          ))}
+                        </Floating>
+                      ) : null}
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
 
               {picked.length ? (
                 <div role="tablist" aria-label="Edit for" className="flex flex-wrap gap-1.5 border-t border-line pt-4">
