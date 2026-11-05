@@ -8,10 +8,11 @@ export type PlanId = "free" | "pro" | "agency";
 /** members counts the team (owners, admins, editors); clients who only approve don't take a seat. */
 /** reports: saved reports with share links and scheduled emails; whiteLabel: the agency's logo and color on them. */
 /** bioBadgeOff: link-in-bio pages may turn off "Made with Capybaroar" (on Free it always shows). */
-export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean; bioBadgeOff: boolean }> = {
-  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false, reports: false, whiteLabel: false, bioBadgeOff: false },
-  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true, reports: true, whiteLabel: false, bioBadgeOff: true },
-  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true, reports: true, whiteLabel: true, bioBadgeOff: true },
+/** aiImages and aiVideoSeconds: AI pictures and seconds of AI video a calendar month (fal.ai, genRules.ts). */
+export const PLANS: Record<PlanId, { name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean; bioBadgeOff: boolean; aiImages: number; aiVideoSeconds: number }> = {
+  free: { name: "Free", price: 0, members: 1, brands: 1, channels: 3, postsPerMonth: 30, agent: false, reports: false, whiteLabel: false, bioBadgeOff: false, aiImages: 0, aiVideoSeconds: 0 },
+  pro: { name: "Pro", price: 19, members: 3, brands: 3, channels: 15, postsPerMonth: null, agent: true, reports: true, whiteLabel: false, bioBadgeOff: true, aiImages: 50, aiVideoSeconds: 30 },
+  agency: { name: "Agency", price: 59, members: 10, brands: null, channels: 60, postsPerMonth: null, agent: true, reports: true, whiteLabel: true, bioBadgeOff: true, aiImages: 200, aiVideoSeconds: 120 },
 };
 
 export const TRIAL_DAYS = 14;

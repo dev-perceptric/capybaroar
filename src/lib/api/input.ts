@@ -2,6 +2,7 @@
 // cover every rule. A bad value throws ApiError with a message the caller can act on.
 import { isIP } from "node:net";
 import { isPublicAddress } from "./net";
+import { genRequest, type GenRequest } from "../genRules";
 
 export class ApiError extends Error {
   constructor(
@@ -197,4 +198,13 @@ export function deleteArgs(everywhereV: unknown, channelsV: unknown): { everywhe
   const out = ids(list, "channel_ids", MAX_CHANNELS);
   if (!out.length) throw bad("Pick at least one channel");
   return { everywhere: true, channelIds: out };
+}
+
+/** An AI picture or video request (genRules.ts has the rules). */
+export function generationInput(body: unknown): GenRequest {
+  try {
+    return genRequest(body);
+  } catch (e) {
+    throw bad(e instanceof Error ? e.message : String(e));
+  }
 }

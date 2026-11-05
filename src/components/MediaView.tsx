@@ -2,22 +2,26 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Image as ImageIcon, Trash2, Upload } from "lucide-react";
+import { Image as ImageIcon, Sparkles, Trash2, Upload } from "lucide-react";
 import { Button, ErrorNote, IconButton, Page } from "./ui";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { askConfirm } from "./Dialogs";
+import { Modal } from "./Overlay";
+import { GenerateForm, PendingTile, useGenerations } from "./Generate";
 import { endUpload, removeMedia, startUpload } from "@/app/(app)/media/actions";
 
 type File = { id: string; name: string; mime: string; size: number; thumb: string | null };
 
 const mb = (n: number) => `${(n / 1024 / 1024).toFixed(n < 10 * 1024 * 1024 ? 1 : 0)} MB`;
 
-export function MediaView({ files }: { files: File[] }) {
+export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, start] = useTransition();
   const [error, setError] = useState("");
   const router = useRouter();
+  const [making, setMaking] = useState(false);
+  const gens = useGenerations(() => router.refresh());
   const pick = () => input.current?.click();
   const send = (list: FileList | null) => {
     if (!list?.length) return;
@@ -55,18 +59,30 @@ export function MediaView({ files }: { files: File[] }) {
     });
   };
   const button = (
-    <Button onClick={pick} disabled={busy}>
-      {busy ? <Loader /> : <Upload />}
-      Upload
-    </Button>
+    <>
+      {ai ? (
+        <Button variant="ghost" onClick={() => setMaking(true)}>
+          <Sparkles />
+          Generate
+        </Button>
+      ) : null}
+      <Button onClick={pick} disabled={busy}>
+        {busy ? <Loader /> : <Upload />}
+        Upload
+      </Button>
+    </>
   );
+  const shown = files.length || gens.pending.length;
   return (
-    <Page icon={<ImageIcon />} title="Media" count={files.length || undefined} actions={files.length ? button : undefined}>
+    <Page icon={<ImageIcon />} title="Media" count={files.length || undefined} actions={shown ? <div className="flex flex-wrap items-center gap-2">{button}</div> : undefined}>
       <div className="min-h-full" onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), send(e.dataTransfer.files))}>
         <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => send(e.target.files)} />
         <ErrorNote message={error} className="mb-4" />
-        {files.length ? (
+        {shown ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {gens.pending.map((g) => (
+              <PendingTile key={g.id} p={g} onDismiss={() => gens.dismiss(g.id)} className="aspect-square" />
+            ))}
             {files.map((f) => (
               <figure key={f.id} className="group overflow-hidden rounded-lg bg-panel shadow-card transition-shadow duration-[var(--duration-fast)] hover:shadow-hover">
                 <div className="relative aspect-square bg-paper">
@@ -90,8 +106,20 @@ export function MediaView({ files }: { files: File[] }) {
             ))}
           </div>
         ) : (
-          <ToolIntro drawing="files" title="Add your first file" lead="Pictures and videos you upload here are ready for any post." action={button} />
+          <ToolIntro drawing="files" title="Add your first file" lead={ai ? "Pictures and videos you upload or generate here are ready for any post." : "Pictures and videos you upload here are ready for any post."} action={button} />
         )}
+        {making ? (
+          <Modal title="Generate" onClose={() => setMaking(false)} wide>
+            <GenerateForm
+              primary
+              pictures={files}
+              onStarted={(p) => {
+                gens.add(p);
+                setMaking(false);
+              }}
+            />
+          </Modal>
+        ) : null}
       </div>
     </Page>
   );

@@ -136,7 +136,8 @@ export async function composerData() {
   const ctx = await getCtx();
   const { suggestedTimes } = await import("@/lib/analytics");
   const [best, media] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId)]);
-  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null };
+  const { aiReady } = await import("@/lib/generations");
+  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null, ai: aiReady() };
 }
 
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */

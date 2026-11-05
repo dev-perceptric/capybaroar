@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Trash2, Type, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -20,6 +20,7 @@ import { approve, composerData, duplicate, loadComments, loadMedia, reject, remo
 import { fmtDateTime } from "@/lib/format";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
 import { EvergreenButton } from "./Evergreen";
+import { GenerateForm, PendingTile, useGenerations } from "./Generate";
 import { dialogIn, fadeIn } from "@/lib/motion";
 
 // Crop and trim load when first used.
@@ -95,7 +96,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [view, setView] = useState<string>("");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [library, setLibrary] = useState<Media[] | null>(null);
-  const [picking, setPicking] = useState<"media" | { cover: string } | null>(null);
+  const [picking, setPicking] = useState<"media" | "generate" | { cover: string } | null>(null);
+  const [ai, setAi] = useState(false);
   const [uploading, setUploading] = useState<Uploading[]>([]);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -172,6 +174,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       (d) => {
         setBest(d.best ?? []);
         setLibrary((d.media ?? []) as Media[]);
+        setAi(!!d.ai);
       },
       () => {
         setBest([]);
@@ -209,6 +212,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     });
   const patch = (id: string, p: Partial<Target>) => setTargets((t) => ({ ...t, [id]: { ...t[id], ...p } }));
   const setSetting = (id: string, key: string, value: string) => setTargets((t) => ({ ...t, [id]: { ...t[id], settings: { ...t[id].settings, [key]: value } } }));
+
+  // AI pictures and videos: attached when their file is in the library.
+  const gens = useGenerations(async (mediaId) => {
+    setLibrary((await loadMedia()) as Media[]);
+    setMediaIds((ids) => (ids.includes(mediaId) ? ids : [...ids, mediaId]));
+  });
 
   /** Upload straight to storage with a one-time link, then attach. Several files upload one after another. */
   const upload = async (list: FileList | File[], replace?: string) => {
@@ -300,7 +309,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     if (r.error) setError(r.error);
     else setLibrary((lib) => (lib ?? []).map((x) => (x.id === m.id ? { ...x, alt: v.trim() || null } : x)));
   };
-  const ready = picked.length > 0 && (text.trim() || mediaIds.length || picked.some((c) => targets[c.id].text?.trim())) && !problems.length && !uploading.some((u) => !u.error);
+  const ready = picked.length > 0 && (text.trim() || mediaIds.length || picked.some((c) => targets[c.id].text?.trim())) && !problems.length && !uploading.some((u) => !u.error) && !gens.busy;
   useEffect(() => {
     keys.current = (e: KeyboardEvent) => {
       if (document.querySelector("[data-dialog-open]")) return;
@@ -582,6 +591,9 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       )}
                     </div>
                   ))}
+                  {gens.pending.map((g) => (
+                    <PendingTile key={g.id} p={g} onDismiss={() => gens.dismiss(g.id)} />
+                  ))}
                   {!locked ? (
                     <button
                       type="button"
@@ -603,9 +615,30 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       From library
                     </button>
                   ) : null}
+                  {!locked && ai ? (
+                    <button
+                      type="button"
+                      onClick={() => setPicking(picking === "generate" ? null : "generate")}
+                      aria-pressed={picking === "generate"}
+                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "generate" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
+                    >
+                      <Sparkles size={18} />
+                      Generate
+                    </button>
+                  ) : null}
                 </div>
                 <input ref={fileInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
-                {picking ? (
+                {picking === "generate" ? (
+                  <div className="rounded-lg bg-paper p-3 shadow-track">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[13px] font-medium">Generate</span>
+                      <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
+                        Done
+                      </Button>
+                    </div>
+                    <GenerateForm pictures={[...files, ...(library ?? []).filter((m) => !mediaIds.includes(m.id))]} onStarted={gens.add} />
+                  </div>
+                ) : picking ? (
                   <div className="rounded-lg bg-paper p-3 shadow-track">
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-[13px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
