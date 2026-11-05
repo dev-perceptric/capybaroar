@@ -1,63 +1,42 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { adminClient } from "./supabase/server";
-import { listChannels } from "./channels";
-import { postsBetween, savePost } from "./posts";
-import { networkOf } from "./networks";
 import type { Ctx } from "./session";
 import { assertCanUseAgent } from "./billing";
-import { listMedia } from "./media";
-import { genRequest } from "./genRules";
-import { MEDIA_RULES, SYSTEM, filesFor, toolsFor, type SavePostInput } from "./agentTools";
-import { aiReady, attachToPost, generationsOf, startGeneration, waitForGeneration } from "./generations";
+import { agentTools, systemPrompt } from "./agentTools";
+import { aiReady, attachToPost, waitForGeneration } from "./generations";
+import { callTool } from "./api/mcp";
+import { realOps } from "./api/ops";
+import { ApiError, id as checkId } from "./api/input";
+import type { ApiCtx } from "./api/types";
 
-// The agent: Claude with tools over this workspace. It writes drafts unless asked to schedule. With FAL_KEY set it
-// also makes pictures and videos for posts (fal.ai, generations.ts), within the plan's monthly limits.
+// The agent: Claude with every action of the REST API and the MCP server (agentTools.ts), run through the same Ops
+// and checks as the person using it. It writes drafts unless asked to schedule, and asks before deleting. With
+// FAL_KEY set it also makes pictures and videos for posts (fal.ai, generations.ts), within the plan's monthly limits.
 const MODEL = "claude-opus-5-5";
 // Making a week of posts with a picture each takes more rounds than writing text alone.
 const MAX_TURNS = 20;
 
 async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): Promise<string> {
-  if (name === "list_channels") {
-    const chans = await listChannels(ctx.workspaceId, ctx.brandIds);
-    return JSON.stringify(chans.map((c) => ({ id: c.id, network: networkOf(c.network).name, name: c.name, status: c.status, limit: networkOf(c.network).limit, needs_media: !!networkOf(c.network).needsMedia })));
+  const api: ApiCtx = { keyId: "agent", workspaceId: ctx.workspaceId, workspaceName: ctx.workspaceName, timezone: ctx.timezone, userId: ctx.userId, role: ctx.role as ApiCtx["role"], brandIds: ctx.brandIds };
+  const ops = realOps(api);
+  if (name === "attach_when_done") {
+    const postId = checkId(input.post_id, "post_id");
+    const ids = Array.isArray(input.generation_ids) ? input.generation_ids.map((g) => checkId(g, "generation_ids")) : [];
+    if (!ids.length) throw new ApiError(400, "invalid_request", "generation_ids must list at least one id");
+    const post = await ops.post(postId);
+    if (post.status !== "draft" && post.status !== "review") throw new ApiError(409, "conflict", "Only drafts and posts in review take files later. Save it as a draft first.");
+    for (const g of ids) await ops.generation(g);
+    await attachToPost(ctx.workspaceId, ids, postId);
+    return JSON.stringify({ post_id: postId, generation_ids: ids, note: "Each file is added to the post when it's done." });
   }
-  if (name === "list_posts") {
-    const posts = await postsBetween(ctx.workspaceId, new Date(String(input.from)), new Date(String(input.to)), ctx.brandIds);
-    return JSON.stringify(posts.map((p) => ({ id: p.id, status: p.status, publish_at: p.publish_at, text: p.text, channel_ids: p.post_targets.map((t) => t.channel_id) })));
+  const out = (await callTool(ops, name, input)) as { generation?: { id: string; kind: string; status: string } };
+  // A picture usually takes seconds: wait for it, so it can be attached right away.
+  if (name === "generate_media" && out.generation && out.generation.kind === "image" && out.generation.status !== "done" && out.generation.status !== "failed") {
+    await waitForGeneration(ctx.workspaceId, out.generation.id, 45000);
+    return JSON.stringify({ generation: await ops.generation(out.generation.id) });
   }
-  if (name === "save_posts") {
-    const out = [];
-    for (const p of (input.posts as SavePostInput[]) ?? []) {
-      try {
-        // Files already done go in now; the rest are added to the draft when they're done.
-        const { mediaIds, waiting, mode } = filesFor(p, await generationsOf(ctx.workspaceId, p.generation_ids ?? []));
-        const r = await savePost(ctx.workspaceId, ctx.userId, { text: p.text, targets: p.channel_ids.map((channelId) => ({ channelId, text: null, settings: {} })), mediaIds, publishAt: new Date(p.publish_at).toISOString(), mode }, { role: ctx.role, brandIds: ctx.brandIds, brandId: null });
-        if (waiting.length) await attachToPost(ctx.workspaceId, waiting, r.id);
-        out.push({ ok: true, id: r.id, publish_at: p.publish_at, mode, status: r.status, media_ids: mediaIds, ...(waiting.length ? { waiting_for: waiting, note: "Saved as a draft. Its files are added when they're done; schedule it after that." } : {}) });
-      } catch (e) {
-        out.push({ ok: false, error: e instanceof Error ? e.message : String(e) });
-      }
-    }
-    return JSON.stringify(out);
-  }
-  if (name === "list_media") {
-    const files = await listMedia(ctx.workspaceId);
-    return JSON.stringify(files.slice(0, 40).map((m) => ({ id: m.id, name: m.name, kind: m.mime.startsWith("video/") ? "video" : "image", alt: m.alt, added: m.created_at })));
-  }
-  if (name === "generate_media") {
-    const g = await startGeneration(ctx.workspaceId, ctx.userId, genRequest(input));
-    // A picture usually takes seconds: wait for it, so the agent can attach it right away.
-    const now = g.kind === "image" && g.status !== "done" && g.status !== "failed" ? await waitForGeneration(ctx.workspaceId, g.id, 45000) : g;
-    if (now.status === "failed") return JSON.stringify({ generation_id: now.id, status: "failed", error: now.error });
-    if (now.status === "done") return JSON.stringify({ generation_id: now.id, status: "done", media_id: now.media_id });
-    return JSON.stringify({ generation_id: now.id, status: "running", note: now.kind === "video" ? "A video takes a few minutes. Save its post as a draft with generation_ids." : "Still being made. Use generation_ids or check_media." });
-  }
-  if (name === "check_media") {
-    const gens = await generationsOf(ctx.workspaceId, (input.generation_ids as string[]) ?? []);
-    return JSON.stringify(gens.map((g) => ({ generation_id: g.id, kind: g.kind, status: g.status, media_id: g.media_id, error: g.error })));
-  }
-  throw new Error(`Unknown tool ${name}`);
+  return JSON.stringify(out);
 }
 
 export type ChatMessage = { role: "user" | "assistant"; content: Anthropic.MessageParam["content"] };
@@ -86,13 +65,13 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string): 
 
   const client = new Anthropic();
   const ai = aiReady();
-  const system = `${SYSTEM}${ai ? MEDIA_RULES : ""}\nWorkspace time zone: ${ctx.timezone}. Now: ${new Date().toISOString()}.`;
+  const system = systemPrompt(ai, ctx.timezone, new Date());
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const res = await client.beta.messages.create({
       model: MODEL,
       max_tokens: 16000,
       system,
-      tools: toolsFor(ai),
+      tools: agentTools(ai),
       messages: messages as Anthropic.Beta.BetaMessageParam[],
       betas: ["server-side-fallback-2026-07-01"],
       // A request a safety check declines is re-run on Anthropic's recommended fallback model.

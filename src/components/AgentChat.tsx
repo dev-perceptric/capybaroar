@@ -14,6 +14,8 @@ export type Shown = {
   key: string;
   role: "user" | "assistant" | "tool" | "media";
   text: string;
+  /** Where an action's line links to (role "tool"). */
+  href?: string;
   /** A picture or video the agent made (role "media"). */
   media?: { kind: "image" | "video"; status: "queued" | "running" | "done" | "failed"; error: string | null; thumb: string | null; mime: string | null };
 };
@@ -164,7 +166,7 @@ function Bubble({ m }: { m: Shown }) {
   }
   if (m.role === "tool")
     return (
-      <Link href="/calendar" className="inline-flex h-7 w-fit items-center gap-1.5 rounded-full bg-signal-soft px-3 text-[12px] font-medium text-ink shadow-picked">
+      <Link href={m.href ?? "/calendar"} className="inline-flex h-7 w-fit items-center gap-1.5 rounded-full bg-signal-soft px-3 text-[12px] font-medium text-ink shadow-picked">
         <CalendarCheck size={14} /> {m.text}
       </Link>
     );
