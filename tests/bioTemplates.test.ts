@@ -21,7 +21,8 @@ import {
   type Resolver,
   type SocialItem,
 } from "../src/lib/bioBlocks";
-import { BIO_TEMPLATES, applyTemplate, catalogText } from "../src/lib/bioTemplates";
+import { BIO_TEMPLATES, TEMPLATE_GROUPS, applyTemplate, catalogText } from "../src/lib/bioTemplates";
+import { BIO_THEMES } from "../src/lib/bioThemes";
 import { SYSTEM, allowedFrom, answerSchema, buildPrompt, cleanInput, cleanResult, extractSite, type BuildContext } from "../src/lib/bioAi";
 import { BioCard } from "../src/components/BioCard";
 
@@ -33,8 +34,9 @@ const mine: SocialItem[] = [
 
 // Templates
 
-test("bio templates: 12 to 16, unique ids, names and lines short, tags set", () => {
-  assert.ok(BIO_TEMPLATES.length >= 12 && BIO_TEMPLATES.length <= 16, String(BIO_TEMPLATES.length));
+test("bio templates: 20 to 30, unique ids, names and lines short, tags set, every group used", () => {
+  assert.ok(BIO_TEMPLATES.length >= 20 && BIO_TEMPLATES.length <= 30, String(BIO_TEMPLATES.length));
+  for (const g of TEMPLATE_GROUPS) assert.ok(BIO_TEMPLATES.filter((t) => t.group === g.id).length >= 3, g.id);
   assert.equal(new Set(BIO_TEMPLATES.map((t) => t.id)).size, BIO_TEMPLATES.length);
   for (const t of BIO_TEMPLATES) {
     assert.ok(t.name.length <= 24 && t.line.length <= 48, t.id);
@@ -250,7 +252,7 @@ test("bio ai: caps and fixes: 50 blocks, long labels and bio clipped, unknown lo
   assert.equal(r.title.length, 80);
   assert.equal(r.bio.length, 300);
   assert.equal(r.template, BIO_TEMPLATES[0].id);
-  assert.deepEqual(r.appearance, { theme: "light", shape: "pill", fill: "solid", size: "normal" });
+  assert.deepEqual(r.appearance, { theme: "light", shape: "pill", fill: "solid", size: "normal", font: "inter" });
   assert.equal(cleanBlocks(r.blocks).length, MAX_BLOCKS);
   assert.throws(() => cleanResult({ blocks: "nope" }, ctx(), mine), /didn't build a page/);
   assert.throws(() => cleanResult(answer([blk("link", { label: "x", url: "javascript:1" })]), ctx(), mine), /didn't build a page/);
@@ -279,4 +281,13 @@ test("bio ai: input is checked; the prompt stays small and carries the rules and
   const chars = SYSTEM.length + prompt.length + JSON.stringify(answerSchema()).length;
   assert.ok(chars < 16000, String(chars));
   assert.ok(catalogText().split("\n").length === BIO_TEMPLATES.length);
+});
+
+test("every theme reads well: text and button colors set, bold themes give the window one solid color", () => {
+  for (const t of BIO_THEMES) {
+    for (const k of ["bg", "base", "surface", "ink", "btnInk", "muted", "glass", "glassLine"] as const) assert.ok(t[k], `${t.id}.${k}`);
+    assert.match(t.base, /^#[0-9a-f]{6}$/i, `${t.id}: base is one solid color for the window and phone bar`);
+  }
+  assert.ok(BIO_THEMES.filter((t) => t.bold).length >= 8);
+  assert.equal(new Set(BIO_THEMES.map((t) => t.id)).size, BIO_THEMES.length);
 });

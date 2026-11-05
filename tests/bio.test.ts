@@ -253,7 +253,10 @@ test("bio migration: old links become link blocks that keep their codes, the pos
   ]);
   assert.deepEqual(fromLegacy([], false), []);
   assert.equal(readAppearance({}, legacy.theme).theme, "dark");
-  assert.deepEqual(readAppearance({ theme: "sage", shape: "square", fill: "outline", size: "large" }), { theme: "sage", shape: "square", fill: "outline", size: "large" });
+  assert.deepEqual(readAppearance({ theme: "sage", shape: "square", fill: "outline", size: "large" }), { theme: "sage", shape: "square", fill: "outline", size: "large", font: "inter" });
+  assert.deepEqual(readAppearance({ theme: "midnight", shape: "rounded", fill: "glass", size: "normal", font: "serif" }), { theme: "midnight", shape: "rounded", fill: "glass", size: "normal", font: "serif" });
+  assert.equal(readAppearance({ fill: "hard", font: "comic" }).fill, "hard");
+  assert.equal(readAppearance({ fill: "hard", font: "comic" }).font, "inter");
   assert.deepEqual(readAppearance({ theme: "neon", shape: "blob" }), DEFAULT_APPEARANCE);
   // What the SQL migration writes reads back as the same blocks: same ids, same fields.
   const sql = readFileSync(new URL("../supabase/migrations/014_bio.sql", import.meta.url), "utf8");

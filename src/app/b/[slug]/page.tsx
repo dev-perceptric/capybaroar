@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateViewport({ params }: Props): Promise<Viewport> {
   const data = await publicBio((await params).slug);
-  return { themeColor: themeOf(data?.page.appearance.theme).bg };
+  return { themeColor: themeOf(data?.page.appearance.theme).base };
 }
 
 export default async function BioPublicPage({ params }: Props) {
