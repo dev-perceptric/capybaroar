@@ -5,13 +5,15 @@ import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { aiReady, generationsOf } from "@/lib/generations";
 import { mediaThumbs } from "@/lib/media";
+import { actionLabel } from "@/lib/agentTools";
 
-type Block = { type: string; id?: string; text?: string; name?: string; input?: { posts?: unknown[]; kind?: string }; tool_use_id?: string; content?: unknown };
+type Block = { type: string; id?: string; text?: string; name?: string; input?: Record<string, unknown>; tool_use_id?: string; content?: unknown; is_error?: boolean };
 
 const genIdOf = (content: unknown): string | null => {
   try {
     const v = JSON.parse(typeof content === "string" ? content : "");
-    return typeof v?.generation_id === "string" ? v.generation_id : null;
+    const g = v?.generation?.id ?? v?.generation_id;
+    return typeof g === "string" ? g : null;
   } catch {
     return null;
   }
@@ -31,7 +33,10 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
     const rows = (open?.data ?? []).map((r) => ({ ...r, blocks: (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[] }));
     // Pictures and videos the agent made: each generate_media call's answer names its request.
     const genOf = new Map<string, string>();
+    // Actions that failed show no "done" line.
+    const failed = new Set<string>();
     for (const r of rows) for (const b of r.blocks) if (b.type === "tool_result" && b.tool_use_id) {
+      if (b.is_error) failed.add(b.tool_use_id);
       const g = genIdOf(b.content);
       if (g) genOf.set(b.tool_use_id, g);
     }
@@ -41,7 +46,8 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
       r.blocks.flatMap((b, i): Shown[] => {
         const key = `${r.id}-${i}`;
         if (b.type === "text" && b.text?.trim()) return [{ key, role: r.role as "user" | "assistant", text: b.text }];
-        if (b.type === "tool_use" && b.name === "save_posts") return [{ key, role: "tool", text: `Saved ${b.input?.posts?.length ?? 0} post${b.input?.posts?.length === 1 ? "" : "s"}` }];
+        const label = b.type === "tool_use" && b.name && b.id && !failed.has(b.id) ? actionLabel(b.name, b.input) : null;
+        if (label) return [{ key, role: "tool", text: label, href: /webhook/.test(b.name!) ? "/settings" : b.name === "upload_media" ? "/media" : "/calendar" }];
         if (b.type === "tool_use" && b.name === "generate_media" && b.id) {
           const g = gens.get(genOf.get(b.id) ?? "");
           if (!g) return [];
