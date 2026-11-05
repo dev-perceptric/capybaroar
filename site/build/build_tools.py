@@ -110,3 +110,4 @@ add = ''.join(f'  <url><loc>https://capybaroar.com{T[k]["slug"]}</loc></url>\n' 
 sm = sm.replace('  <url><loc>https://capybaroar.com/tools</loc></url>\n', '  <url><loc>https://capybaroar.com/tools</loc></url>\n' + add)
 open(P + 'sitemap.xml', 'w').write(sm)
 print('tools built:', len(ORDER))
+exec(open(os.path.join(HERE, 'build_pricing.py')).read())

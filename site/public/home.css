@@ -1012,3 +1012,25 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .promo-x{top:50%;right:6px;transform:translateY(-50%)}
   body.has-promo .t-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
+/* Pricing page */
+.pr-plans{margin-top:48px}
+.plan-line{margin-top:-10px;font-size:14.5px;color:var(--gray)}
+.pr-every{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.pr-every li{display:flex;gap:14px;padding:20px 22px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
+.pr-every .ic{flex:none}
+.pr-every h3{margin-bottom:4px;font-size:16px}
+.pr-every p{font-size:14.5px;color:var(--gray)}
+.pr-table{max-width:1000px;margin:0 auto}
+.pr-table .cmp{min-width:620px}
+.pr-table thead th{position:sticky;top:0;background:var(--panel);font-size:15px;font-weight:600;color:var(--ink);text-align:center}
+.pr-table thead th:first-child{text-align:left}
+.pr-table td{text-align:center;font-variant-numeric:tabular-nums}
+.pr-table tbody th{font-weight:400;color:var(--ink-2)}
+.pr-table tr.grp th{padding-top:22px;font-size:13px;font-weight:600;color:var(--gray);background:var(--canvas)}
+.pr-table td:nth-child(3){background:var(--y-1)}
+.pr-credits{max-width:860px;margin:0 auto}
+.pr-credits td{text-align:right;font-variant-numeric:tabular-nums}
+.pr-credits thead th:not(:first-child){text-align:right}
+@media (max-width:1080px){.pr-every{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.pr-every{grid-template-columns:1fr}}
+.pr-plans .plan-line{min-height:3em}

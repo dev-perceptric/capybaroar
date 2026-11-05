@@ -55,7 +55,7 @@ def dd(key, label, items, logo=False, cols=1, foot=''):
 
 ALLCH = '<a class="dd-all" href="/social-media-scheduler#networks">See what you can post on each network<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>'
 NAV = (dd('platform', 'Platform', PLATFORM, cols=2) + dd('channels', 'Channels', CHANNELS_NAV, logo=True, cols=3, foot=ALLCH)
-       + '<a class="nav-a" href="/#pricing">Pricing</a>' + dd('resources', 'Resources', RESOURCES) + dd('utilities', 'Utilities', UTILITIES, cols=2))
+       + '<a class="nav-a" href="/pricing">Pricing</a>' + dd('resources', 'Resources', RESOURCES) + dd('utilities', 'Utilities', UTILITIES, cols=2))
 
 
 def sheet_group(title, items, logo=False, cols=1):
@@ -65,8 +65,8 @@ def sheet_group(title, items, logo=False, cols=1):
 
 SHEET = (sheet_group('Platform', PLATFORM) + sheet_group('Channels', CHANNELS_NAV, logo=True, cols=2)
          + sheet_group('Resources', RESOURCES) + sheet_group('Utilities', UTILITIES, cols=2)
-         + '<div class="sh-g sh-end"><a href="/#pricing">Pricing</a><a href="https://app.capybaroar.com/login">Log in</a></div>')
-FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/#pricing">Pricing</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
+         + '<div class="sh-g sh-end"><a href="/pricing">Pricing</a><a href="https://app.capybaroar.com/login">Log in</a></div>')
+FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/pricing">Pricing</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
 NAV_IDS = ['i-calendar', 'i-inbox', 'i-chart', 'i-link', 'i-spark', 'i-bot', 'i-file', 'i-layers', 'i-grid', 'i-arrow', 'i-smile', 'i-text', 'i-pen', 'i-image', 'i-clock'] + [f'n-{c[1]}' for c in CHANNELS_NAV]
 
 
@@ -253,7 +253,7 @@ CLOSE = '''<section class="closing" aria-labelledby="closing-title">
 <h2 id="closing-title">{a} <span>{b}</span></h2>
 <p>14 days of Pro free. No card needed.</p>
 </div>
-<div class="cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="/#pricing">See pricing</a></div>
+<div class="cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="/pricing">See pricing</a></div>
 </div>
 </div>
 </section>'''
