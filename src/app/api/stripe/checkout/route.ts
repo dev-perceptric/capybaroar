@@ -2,18 +2,19 @@ import { NextResponse, type NextRequest } from "next/server";
 import { canManage, getCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { appUrl } from "@/lib/channels";
-import { getBilling, priceFor, stripe, type PlanId } from "@/lib/billing";
+import { PAID, getBilling, priceFor, stripe, type Interval, type PlanId } from "@/lib/billing";
 
-// Start a subscription: make the Stripe customer once, then send the owner to Checkout.
+// Start a subscription, monthly or yearly: make the Stripe customer once, then send the owner to Checkout.
 export async function POST(request: NextRequest) {
   const s = stripe();
   if (!s) return NextResponse.json({ error: "Billing isn't set up" }, { status: 503 });
   const ctx = await getCtx();
   const db = adminClient();
   if (!canManage(ctx.role)) return NextResponse.json({ error: "Only owners and admins can change the plan" }, { status: 403 });
-  const body = (await request.json().catch(() => ({}))) as { plan?: string };
+  const body = (await request.json().catch(() => ({}))) as { plan?: string; interval?: string };
   const plan = body.plan as PlanId;
-  const price = plan === "pro" || plan === "agency" ? priceFor(plan) : null;
+  const interval: Interval = body.interval === "year" ? "year" : "month";
+  const price = PAID.includes(plan) ? priceFor(plan, interval) : null;
   if (!price) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   try {
     const ws = await getBilling(ctx.workspaceId);

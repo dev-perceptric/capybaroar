@@ -14,6 +14,7 @@ import type { Channel } from "@/lib/channels";
 import type { PostStatus } from "@/lib/posts";
 import { bulkCaption, bulkCheck, bulkCsv, bulkMedia, bulkTimes, bulkZone } from "@/app/(app)/calendar/bulk";
 import { endUpload, startUpload } from "@/app/(app)/media/actions";
+import { creditGate } from "./creditGate";
 
 // Bulk upload, opened from the calendar: a CSV file (one row, one post, checked row by row before anything is saved)
 // or a stack of pictures and videos (one post each, spread over the queue or one a day). Everything is saved as
@@ -369,7 +370,7 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
         setProgress(`Writing ${n + 1} of ${todo.length}`);
         const r = await bulkCaption(it.mediaId!, notes, network);
         if (r.error) {
-          await tell("Couldn't write captions", r.error);
+          if (!(await creditGate(r.error))) await tell("Couldn't write captions", r.error);
           break;
         }
         patch(it.key, { text: r.text ?? "" });

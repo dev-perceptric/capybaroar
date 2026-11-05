@@ -18,6 +18,7 @@ import { buildView, draftOf, placeholderProblem, slugProblem, videoSource, type 
 import { applyTemplate, type BioTemplate } from "@/lib/bioTemplates";
 import type { BuildInput } from "@/lib/bioAi";
 import { buildBio, checkSlug, createBio, removeBio, saveBio } from "@/app/(app)/bio/actions";
+import { creditGate } from "./creditGate";
 
 export type BioTab = "blocks" | "appearance" | "analytics" | "settings";
 const TABS: { value: BioTab; label: string }[] = [
@@ -150,6 +151,7 @@ export function BioEditor({
       setAiBusy(false);
       if (!made.page || r.error || !("draft" in r) || !r.draft) {
         if (made.page && !draft) setDraft(draftOf(made.page));
+        if (await creditGate(r.error)) return;
         return setAiError(r.error ?? "Couldn't build the page");
       }
       const d = r.draft;

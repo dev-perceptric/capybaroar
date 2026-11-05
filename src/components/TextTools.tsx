@@ -7,6 +7,7 @@ import { Floating } from "./Floating";
 import { Loader } from "./Loader";
 import { askConfirm, askText } from "./Dialogs";
 import { aiRewrite, loadSnippets, newSnippet, removeSnippet, shortLink } from "@/app/(app)/calendar/actions";
+import { creditGate } from "./creditGate";
 
 type Area = React.RefObject<HTMLTextAreaElement | null>;
 type Snippet = { id: string; name: string; body: string };
@@ -149,6 +150,7 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
     setWorking("ai");
     const r = await aiRewrite(part, how, network);
     setWorking(null);
+    if (r.error && (await creditGate(r.error))) return;
     if (r.error || r.text == null) onError(r.error ?? "Claude didn't answer, try again");
     else replaceRange(a, from, to, r.text, true);
   };

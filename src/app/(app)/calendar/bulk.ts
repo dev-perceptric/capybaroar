@@ -72,7 +72,7 @@ export async function bulkCaption(mediaId: string, notes: string, network: strin
   const { caption } = await import("@/lib/composer");
   try {
     const { b } = await writer();
-    return { text: await caption(b.workspaceId, mediaId, notes, (network as never) ?? null) };
+    return { text: await caption({ workspaceId: b.workspaceId, userId: b.userId, brandId: homeBrand(b) }, mediaId, notes, (network as never) ?? null) };
   } catch (e) {
     return fail(e);
   }

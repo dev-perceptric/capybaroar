@@ -7,13 +7,14 @@ import { listMedia, mediaThumbs } from "../media";
 import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
 import { uploadFromLink } from "./upload";
 import { getGeneration, startGeneration, type Generation } from "../generations";
+import { brandOfScope, creditsOf } from "../credits";
 import { adminClient } from "../supabase/server";
 import { analytics } from "../analytics";
 import { unpublishPost } from "../unpublish";
 import { UnpublishError } from "../unpublisher";
 import { ApiError, isId } from "./input";
 import type { PostFields } from "./input";
-import type { ApiChannel, ApiChannelGroup, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
+import type { ApiChannel, ApiChannelGroup, ApiCredits, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
 import { listGroups } from "../channelGroups";
 import { groupChannels } from "../groupRules";
 
@@ -180,7 +181,12 @@ export function realOps(ctx: ApiCtx): Ops {
       return (await oneMedia(await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt)))!;
     },
     async generate(r) {
-      return toGeneration(await startGeneration(ctx.workspaceId, ctx.userId, r));
+      const g = await startGeneration({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: ctx.spendBrand !== undefined ? ctx.spendBrand : brandOfScope(ctx.brandIds) }, r);
+      return { ...(await toGeneration(g)), credits_charged: g.status === "failed" ? 0 : g.credits, credits_left: g.creditsLeft };
+    },
+    async credits(): Promise<ApiCredits> {
+      const c = await creditsOf(ctx.workspaceId);
+      return { plan: c.plan, plan_credits: c.planTotal, plan_credits_left: c.planLeft, bought_credits_left: c.bought, credits_left: c.left, refills_at: c.refillAt };
     },
     async generation(genId) {
       return toGeneration(await getGeneration(ctx.workspaceId, genId));

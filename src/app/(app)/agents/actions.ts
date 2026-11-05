@@ -1,6 +1,7 @@
 "use server";
 
 import { getCtx } from "@/lib/session";
+import { getBrandCtx } from "@/lib/brands";
 import { agentTurn } from "@/lib/agent";
 import { capyChoice } from "@/lib/agentTools";
 import { adminClient } from "@/lib/supabase/server";
@@ -19,7 +20,8 @@ export async function send(chatId: string | null, text: string, capy?: unknown, 
       if (error) throw new Error(error.message);
       files = (data ?? []).map((m) => ({ id: m.id as string, name: m.name as string }));
     }
-    return await agentTurn(ctx, chatId, text.trim(), capyChoice(capy), files);
+    const { brand } = await getBrandCtx();
+    return await agentTurn(ctx, brand?.id ?? null, chatId, text.trim(), capyChoice(capy), files);
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
   }

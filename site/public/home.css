@@ -98,7 +98,7 @@ h1 span,h2 span{color:var(--head-2)}
 .grid p{color:var(--gray);font-size:15px}
 
 /* Pricing */
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
 .plan{display:flex;flex-direction:column;gap:20px;padding:28px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
 .plan.on{background:var(--y-1);box-shadow:0 0 0 1px var(--y-h),0 12px 24px -12px rgba(122,92,0,.16)}
 .plan-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -144,6 +144,7 @@ h1 span,h2 span{color:var(--head-2)}
   .panel-text .btn{display:none}
   .panel .inset{min-height:0}
   .split{grid-template-columns:1fr}
+  .plans{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:760px){
   main>section{padding:72px 0}

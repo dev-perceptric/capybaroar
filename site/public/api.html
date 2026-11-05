@@ -56,6 +56,9 @@
 <tr><th><code>delete_post</code></th><td>Delete a post from Capybaroar. With <code>everywhere: true</code>, delete it on the networks too (all its channels, or <code>channel_ids</code>)</td></tr>
 <tr><th><code>list_media</code></th><td>Files in the media library, to attach by id</td></tr>
 <tr><th><code>upload_media</code></th><td>Add a picture or video from a public link</td></tr>
+<tr><th><code>generate_media</code></th><td>Make an AI picture, video or audio file. It uses credits and answers with <code>credits_charged</code> and <code>credits_left</code></td></tr>
+<tr><th><code>get_generation</code></th><td>Check an AI file until it's done</td></tr>
+<tr><th><code>get_credits</code></th><td>AI credits left this month, bought credits and the next refill</td></tr>
 <tr><th><code>next_queue_slot</code></th><td>The next free time in the posting queue</td></tr>
 <tr><th><code>get_analytics</code></th><td>Reach, engagement, best times to post and top posts</td></tr>
 <tr><th><code>list_webhooks</code>, <code>create_webhook</code>, <code>set_webhook</code>, <code>test_webhook</code>, <code>delete_webhook</code></th><td>Manage webhooks (owners and admins)</td></tr>
@@ -77,6 +80,9 @@
 <tr><th><code>DELETE /posts/{id}?everywhere=true&amp;channels=</code></th><td>Delete a post on the networks it went out on (all, or the channel ids in <code>channels</code>, comma-separated)</td></tr>
 <tr><th><code>GET /media</code></th><td>Media library</td></tr>
 <tr><th><code>POST /media</code></th><td>Add a file from a link</td></tr>
+<tr><th><code>POST /generations</code></th><td>Make an AI picture, video or audio file: <code>{"kind": "image", "prompt": "..."}</code></td></tr>
+<tr><th><code>GET /generations/{id}</code></th><td>Where an AI file is</td></tr>
+<tr><th><code>GET /credits</code></th><td>AI credits: plan credits left, bought credits left, the total and the next refill</td></tr>
 <tr><th><code>GET /queue</code></th><td>Next free queue time</td></tr>
 <tr><th><code>GET /analytics?days=30&amp;channel_id=</code></th><td>Results for 7, 30 or 90 days</td></tr>
 <tr><th><code>GET /webhooks</code></th><td>Webhooks</td></tr>
@@ -168,7 +174,7 @@ function verify(secret, header, rawBody) {
 <p><strong>Answer with a 2xx within 10 seconds.</strong> Anything else is tried again after 1, 5, 15 and 60 minutes, then 3, 6 and 12 hours. A webhook whose deliveries fail 5 times in a row turns itself off, and Settings shows why. Every try of an event has the same <code>id</code>, so you can skip ones you already handled.</p>
 
 <h2>Errors and limits</h2>
-<p>Errors come back as <code>{"error": {"code": "...", "message": "..."}}</code> with a status: 400 for a request to fix, 401 for a missing or deleted key, 404 when something isn't there, 409 when a post already went out, 429 when you go over 120 requests a minute (wait for the seconds in <code>Retry-After</code>).</p>
+<p>Errors come back as <code>{"error": {"code": "...", "message": "..."}}</code> with a status: 400 for a request to fix, 401 for a missing or deleted key, 402 when the plan has no AI (<code>upgrade_required</code>) or there aren't enough credits (<code>out_of_credits</code>, <code>brand_limit</code>), 404 when something isn't there, 409 when a post already went out, 429 when you go over 120 requests a minute (wait for the seconds in <code>Retry-After</code>).</p>
 </main>
 <footer class="foot">
 <div class="wrap foot-grid">

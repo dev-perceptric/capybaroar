@@ -1,8 +1,11 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import Anthropic from "@anthropic-ai/sdk";
 import { adminClient } from "./supabase/server";
 import type { Ctx } from "./session";
-import { assertCanUseAgent } from "./billing";
+import { assertCanUseAi } from "./billing";
+import { hold, settle } from "./credits";
+import { AGENT_HOLD, AGENT_MIN, claudeCredits } from "./creditRules";
 import { ATTACHED, agentTools, systemPrompt, type CapyChoice } from "./agentTools";
 import { aiReady, attachToPost, waitForGeneration } from "./generations";
 import { callTool } from "./api/mcp";
@@ -13,12 +16,17 @@ import type { ApiCtx } from "./api/types";
 // The agent: Claude with every action of the REST API and the MCP server (agentTools.ts), run through the same Ops
 // and checks as the person using it. It writes drafts unless asked to schedule, and asks before deleting. With
 // FAL_KEY set it also makes pictures and videos for posts (fal.ai, generations.ts), within the plan's monthly limits.
+// Credits: each message holds AGENT_HOLD when it starts and again each time it has used that much, and is charged
+// what Claude really used (tokens times MARKUP, creditRules.ts) when it ends. When no more can be held, it finishes the
+// step it's on, keeps what it saved, and stops. Files it makes are charged on their own (generations.ts).
 const MODEL = "claude-opus-5-5";
 // Making a week of posts with a picture each takes more rounds than writing text alone.
 const MAX_TURNS = 20;
 
-async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): Promise<string> {
-  const api: ApiCtx = { keyId: "agent", workspaceId: ctx.workspaceId, workspaceName: ctx.workspaceName, timezone: ctx.timezone, userId: ctx.userId, role: ctx.role as ApiCtx["role"], brandIds: ctx.brandIds };
+export const OUT_OF_CREDITS = "I stopped here because the credits ran out. What I saved is kept. Buy more in Settings, Billing.";
+
+async function runTool(ctx: Ctx, brandId: string | null, name: string, input: Record<string, unknown>): Promise<string> {
+  const api: ApiCtx = { keyId: "agent", workspaceId: ctx.workspaceId, workspaceName: ctx.workspaceName, timezone: ctx.timezone, userId: ctx.userId, role: ctx.role as ApiCtx["role"], brandIds: ctx.brandIds, spendBrand: brandId };
   const ops = realOps(api);
   if (name === "attach_when_done") {
     const postId = checkId(input.post_id, "post_id");
@@ -42,8 +50,39 @@ async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): 
 export type ChatMessage = { role: "user" | "assistant"; content: Anthropic.MessageParam["content"] };
 
 /** Send one user message and run the agent until it answers. Every message is saved, append-only. */
-export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, capy: CapyChoice = "auto", files: { id: string; name: string }[] = []): Promise<{ chatId: string }> {
-  await assertCanUseAgent(ctx.workspaceId);
+export async function agentTurn(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice = "auto", files: { id: string; name: string }[] = []): Promise<{ chatId: string }> {
+  await assertCanUseAi(ctx.workspaceId);
+  const sp = { workspaceId: ctx.workspaceId, userId: ctx.userId, brandId };
+  const key = `agent:${randomUUID()}`;
+  // The first hold takes what there is, up to AGENT_HOLD; less than one message's least is out of credits.
+  let held = await hold(sp, key, AGENT_HOLD, { tool: "agent" }, { partial: true });
+  if (held < AGENT_MIN) {
+    await settle(ctx.workspaceId, key, 0).catch(() => undefined);
+    throw new ApiError(402, "out_of_credits", "You're out of credits. Buy more in Settings, Billing.");
+  }
+  let used = 0;
+  let seq = 1;
+  try {
+    return await converse(ctx, brandId, chatId, text, capy, files, {
+      spent: (n) => void (used += n),
+      // Before each round: hold more when this message has used what it holds. False when none is left.
+      async room() {
+        while (used >= held) {
+          const more = await hold(sp, key, AGENT_HOLD, { tool: "agent" }, { partial: true, seq: seq++ }).catch(() => 0);
+          if (more <= 0) return false;
+          held += more;
+        }
+        return true;
+      },
+    });
+  } finally {
+    await settle(ctx.workspaceId, key, used > 0 ? Math.max(AGENT_MIN, used) : 0).catch((e) => console.error("agent credits:", e instanceof Error ? e.message : e));
+  }
+}
+
+type Meter = { spent: (credits: number) => void; room: () => Promise<boolean> };
+
+async function converse(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice, files: { id: string; name: string }[], meter: Meter): Promise<{ chatId: string }> {
   const db = adminClient();
   let id = chatId;
   if (!id) {
@@ -68,6 +107,10 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, c
   const ai = aiReady();
   const system = systemPrompt(ai, ctx.timezone, new Date(), capy);
   for (let turn = 0; turn < MAX_TURNS; turn++) {
+    if (turn > 0 && !(await meter.room())) {
+      await add({ role: "assistant", content: [{ type: "text", text: OUT_OF_CREDITS }] });
+      break;
+    }
     const res = await client.beta.messages.create({
       model: MODEL,
       max_tokens: 16000,
@@ -78,6 +121,7 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, c
       // A request a safety check declines is re-run on Anthropic's recommended fallback model.
       ...({ fallbacks: "default" } as object),
     } as Anthropic.Beta.MessageCreateParamsNonStreaming);
+    meter.spent(claudeCredits(res.usage));
     if (res.stop_reason === "refusal") {
       await add({ role: "assistant", content: [{ type: "text", text: "I can't help with that request." }] });
       break;
@@ -89,7 +133,7 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, c
     const results: Anthropic.ToolResultBlockParam[] = [];
     for (const c of calls) {
       try {
-        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, c.name, c.input as Record<string, unknown>) });
+        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, brandId, c.name, c.input as Record<string, unknown>) });
       } catch (e) {
         results.push({ type: "tool_result", tool_use_id: c.id, content: e instanceof Error ? e.message : String(e), is_error: true });
       }

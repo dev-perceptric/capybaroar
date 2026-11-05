@@ -107,7 +107,7 @@ export const TOOLS: Tool[] = [
     name: "generate_media",
     title: "Make an AI picture, video or audio",
     description:
-      "Make a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio: a voiceover of your words, music, or a sound effect) with fal.ai models. Leave model out and Capy picks the best one for the request; the answer says which and why, and what it cost in credits. A picture takes seconds, a video a few minutes: call get_generation until status is done, then attach media.id with media_ids (audio can't go on a post on its own). A picture can be edited and a video can start from a picture in the library (source_media_id). Counts against the plan's monthly AI credits.",
+      "Make a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio: a voiceover of your words, music, or a sound effect) with fal.ai models. Leave model out and Capy picks the best one for the request; the answer says which and why, and what it cost in credits. A picture takes seconds, a video a few minutes: call get_generation until status is done, then attach media.id with media_ids (audio can't go on a post on its own). A picture can be edited and a video can start from a picture in the library (source_media_id). Uses credits (plan credits first, then bought ones): the answer has credits_charged (given back if it fails) and credits_left. When there aren't enough the error is out_of_credits.",
     inputSchema: {
       type: "object",
       properties: {
@@ -123,6 +123,7 @@ export const TOOLS: Tool[] = [
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   },
   { name: "get_generation", title: "Check an AI file", description: "Where a generate_media request is: queued, running, done (with media to attach) or failed (with the error).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: read },
+  { name: "get_credits", title: "Get AI credits", description: "The workspace's AI credits: this month's plan credits and what's left of them, bought credits left, the total left and when plan credits refill.", inputSchema: { type: "object", properties: {} }, annotations: read },
   { name: "next_queue_slot", title: "Next queue slot", description: "The next free time slot in the workspace's posting queue.", inputSchema: { type: "object", properties: {} }, annotations: read },
   {
     name: "get_analytics",
@@ -220,6 +221,8 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       return { generation: await ops.generate(generationInput(args)) };
     case "get_generation":
       return { generation: await ops.generation(id(args.id)) };
+    case "get_credits":
+      return { credits: await ops.credits() };
     case "list_webhooks":
       return { webhooks: await ops.webhooks() };
     case "create_webhook": {

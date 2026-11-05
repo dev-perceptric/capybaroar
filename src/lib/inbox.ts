@@ -6,7 +6,8 @@ import { AuthError, type InboxKind, type InboxRef } from "./providers/types";
 import { networkOf, type NetworkId } from "./networks";
 import { supabaseStore } from "./runner";
 import { sendAlert } from "./alerts";
-import { assertCanUseAgent } from "./billing";
+import { withCredits } from "./credits";
+import { WRITE_CREDITS } from "./creditRules";
 
 // The Inbox screen: threads to answer, one thread's messages, and answering, liking, hiding and closing them.
 // Reading from the networks happens in the runner (`inbox` jobs); here only what a person does.
@@ -249,13 +250,12 @@ const SUGGEST = `You write replies to comments and messages that people sent to 
 - Stay polite and calm, even when the message is rude. Don't argue.`;
 
 /** A draft answer for the newest message in a thread, from Claude, for the person to edit before sending. */
-export async function suggestReply(workspaceId: string, itemId: string): Promise<string> {
-  await assertCanUseAgent(workspaceId);
+export async function suggestReply(workspaceId: string, userId: string, itemId: string): Promise<string> {
   const item = await itemOf(workspaceId, itemId);
   const db = adminClient();
   const [{ items, post }, { data: ch }, { data: recent }] = await Promise.all([
     getThread(workspaceId, item.channel_id, item.thread_id),
-    db.from("channels").select("name, network").eq("id", item.channel_id).single(),
+    db.from("channels").select("name, network, brand_id").eq("id", item.channel_id).single(),
     db.from("post_targets").select("text, posts(text)").eq("channel_id", item.channel_id).eq("status", "published").order("published_at", { ascending: false }).limit(5),
   ]);
   const network = ch ? networkOf(ch.network as NetworkId) : null;
@@ -277,23 +277,26 @@ export async function suggestReply(workspaceId: string, itemId: string): Promise
   ]
     .filter(Boolean)
     .join("\n\n");
-  const res = await new Anthropic().beta.messages.create({
-    model: MODEL,
-    // Thinking is always on with this model and counts toward max_tokens; low effort suits a short reply.
-    max_tokens: 4000,
-    system,
-    messages: [{ role: "user", content }],
-    betas: ["server-side-fallback-2026-07-01"],
-    ...({ fallbacks: "default", output_config: { effort: "low" } } as object),
-  } as Anthropic.Beta.MessageCreateParamsNonStreaming);
-  if (res.stop_reason === "refusal") throw new Error("Claude can't suggest a reply to this");
-  const out = res.content
-    .filter((b) => b.type === "text")
-    .map((b) => (b as { text: string }).text)
-    .join("")
-    .trim();
-  if (!out) throw new Error("No reply came back, try again");
-  return out;
+  // The reply counts against the brand of the channel it's on.
+  return withCredits({ workspaceId, userId, brandId: (ch?.brand_id as string | null) ?? null }, { tool: "reply" }, WRITE_CREDITS, async () => {
+    const res = await new Anthropic().beta.messages.create({
+      model: MODEL,
+      // Thinking is always on with this model and counts toward max_tokens; low effort suits a short reply.
+      max_tokens: 4000,
+      system,
+      messages: [{ role: "user", content }],
+      betas: ["server-side-fallback-2026-07-01"],
+      ...({ fallbacks: "default", output_config: { effort: "low" } } as object),
+    } as Anthropic.Beta.MessageCreateParamsNonStreaming);
+    if (res.stop_reason === "refusal") throw new Error("Claude can't suggest a reply to this");
+    const out = res.content
+      .filter((b) => b.type === "text")
+      .map((b) => (b as { text: string }).text)
+      .join("")
+      .trim();
+    if (!out) throw new Error("No reply came back, try again");
+    return out;
+  });
 }
 
 /** Why reading stopped on a channel (a permission the network wants), by channel id. */

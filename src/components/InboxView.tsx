@@ -13,6 +13,7 @@ import type { Channel } from "@/lib/channels";
 import type { InboxStatus, Item, Thread, ThreadRow } from "@/lib/inbox";
 import type { InboxKind } from "@/lib/providers/types";
 import { hide, like, loadThread, loadThreads, mark, reply, suggest } from "@/app/(app)/inbox/actions";
+import { creditGate } from "./creditGate";
 
 type Kind = InboxKind | "";
 const KINDS: { value: Kind; label: string }[] = [
@@ -280,7 +281,7 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
     setError("");
     const r = await suggest(target.id);
     setSuggesting(false);
-    if (r.error) return setError(r.error);
+    if (r.error) return (await creditGate(r.error)) ? undefined : setError(r.error);
     setText(r.text ?? "");
     box.current?.focus();
   };

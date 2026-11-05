@@ -1,9 +1,12 @@
 // AI pictures, videos and audio made through fal.ai (one key, many models). People pick what to make (CapyImage,
 // CapyVideo, CapyAudio) and Capy picks the model from what they asked for (capyPick), or they pick one themselves.
-// Pure: the models, the input each one takes, how Capy picks, what each costs in credits (1 credit = 1 cent of fal
-// cost), how to read fal's answers and the plan limits. No fetch and no Supabase, so tests run it as it is.
+// Pure: the models, the input each one takes, how Capy picks, what each costs us (cents) and costs people (credits,
+// MARKUP times the cost, creditRules.ts), how to read fal's answers and the limits. No fetch and no Supabase, so tests
+// run it as it is.
 // Inputs follow each model's schema on fal (fal.ai/models/<endpoint>/api); prices are from the same pages and fal's
 // pricing API, 2026-11-05.
+
+import { MAX_ACTION } from "./creditRules";
 
 export type GenKind = "image" | "video" | "audio";
 export const KINDS: GenKind[] = ["image", "video", "audio"];
@@ -31,11 +34,13 @@ export type GenModel = {
   /** "needs": only with a start picture (edits); "takes": with or without one; absent: never. */
   picture?: "needs" | "takes";
   build: (a: Ask) => Built;
+  /** What it costs us, in cents (fal's price). */
+  cost: (c: Cost) => number;
+  /** What it costs people, in credits: at least MARKUP times the cost (tests/credits.test.ts checks every model). */
   credits: (c: Cost) => number;
 };
 
 const SIZE: Record<Aspect, string> = { "1:1": "square_hd", "9:16": "portrait_16_9", "16:9": "landscape_16_9" };
-const cents = (usd: number) => Math.max(1, Math.ceil(Math.round(usd * 10000) / 100));
 const veoLength = (s: Seconds) => (s === 5 ? 6 : 8);
 /** MiniMax Music sings words written after "Lyrics:"; the part before is the style. */
 export const splitLyrics = (prompt: string) => {
@@ -46,48 +51,48 @@ export const splitLyrics = (prompt: string) => {
 /** The first model of each kind is its fallback. */
 export const MODELS: GenModel[] = [
   // Pictures
-  { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", credits: () => 3, // $0.03 per megapixel
+  { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", cost: () => 3, credits: () => 8, // $0.03 per megapixel
     build: (a) => ({ endpoint: "fal-ai/flux-2-pro", input: { prompt: a.prompt, image_size: SIZE[a.aspect], output_format: "jpeg", enable_safety_checker: true } }) },
-  { id: "ideogram-v3", kind: "image", name: "Ideogram V3", credits: () => 3, // $0.03 with TURBO
+  { id: "ideogram-v3", kind: "image", name: "Ideogram V3", cost: () => 3, credits: () => 8, // $0.03 with TURBO
     build: (a) => ({ endpoint: "fal-ai/ideogram/v3", input: { prompt: a.prompt, image_size: SIZE[a.aspect], rendering_speed: "TURBO", num_images: 1 } }) },
-  { id: "nano-banana-2", kind: "image", name: "Nano Banana 2", credits: () => 8, // $0.08 at 1K
+  { id: "nano-banana-2", kind: "image", name: "Nano Banana 2", cost: () => 8, credits: () => 20, // $0.08 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-2", input: { prompt: a.prompt, aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
-  { id: "nano-banana-pro", kind: "image", name: "Nano Banana Pro", credits: () => 15, // $0.15 at 1K
+  { id: "nano-banana-pro", kind: "image", name: "Nano Banana Pro", cost: () => 15, credits: () => 40, // $0.15 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-pro", input: { prompt: a.prompt, aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
-  { id: "nano-banana-2-edit", kind: "image", name: "Nano Banana 2 Edit", picture: "needs", credits: () => 8, // $0.08 at 1K
+  { id: "nano-banana-2-edit", kind: "image", name: "Nano Banana 2 Edit", picture: "needs", cost: () => 8, credits: () => 20, // $0.08 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-2/edit", input: { prompt: a.prompt, image_urls: [a.imageUrl], aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
   // Videos
-  { id: "kling-3-pro", kind: "video", name: "Kling 3 Pro", picture: "takes", credits: (c) => cents(0.168 * c.seconds), // $0.168 a second with sound
+  { id: "kling-3-pro", kind: "video", name: "Kling 3 Pro", picture: "takes", cost: (c) => 16.8 * c.seconds, credits: (c) => 42 * c.seconds, // $0.168 a second with sound
     build: (a) =>
       a.imageUrl
         ? { endpoint: "fal-ai/kling-video/v3/pro/image-to-video", input: { prompt: a.prompt, start_image_url: a.imageUrl, duration: String(a.seconds), generate_audio: true } }
         : { endpoint: "fal-ai/kling-video/v3/pro/text-to-video", input: { prompt: a.prompt, aspect_ratio: a.aspect, duration: String(a.seconds), generate_audio: true } } },
-  { id: "seedance-2-fast", kind: "video", name: "Seedance 2.0 Fast", picture: "takes", credits: (c) => cents(((1280 * 720 * c.seconds * 24) / 1024) * 0.0000112), // $0.0112 per 1,000 tokens at 720p
+  { id: "seedance-2-fast", kind: "video", name: "Seedance 2.0 Fast", picture: "takes", cost: (c) => ((1280 * 720 * c.seconds * 24) / 1024) * 0.00112, credits: (c) => 61 * c.seconds, // $0.0112 per 1,000 tokens at 720p
     build: (a) =>
       a.imageUrl
         ? { endpoint: "bytedance/seedance-2.0/fast/image-to-video", input: { prompt: a.prompt, image_url: a.imageUrl, duration: String(a.seconds), resolution: "720p", generate_audio: true } }
         : { endpoint: "bytedance/seedance-2.0/fast/text-to-video", input: { prompt: a.prompt, aspect_ratio: a.aspect, duration: String(a.seconds), resolution: "720p", generate_audio: true } } },
-  { id: "veo-3.1", kind: "video", name: "Veo 3.1", picture: "takes", credits: (c) => cents(0.4 * veoLength(c.seconds)), // $0.40 a second with sound; 6 or 8 seconds
+  { id: "veo-3.1", kind: "video", name: "Veo 3.1", picture: "takes", cost: (c) => 40 * veoLength(c.seconds), credits: (c) => 100 * veoLength(c.seconds), // $0.40 a second with sound; 6 or 8 seconds
     build: (a) =>
       a.imageUrl
         ? { endpoint: "fal-ai/veo3.1/image-to-video", input: { prompt: a.prompt, image_url: a.imageUrl, duration: `${veoLength(a.seconds)}s`, resolution: "720p", generate_audio: true } }
         : { endpoint: "fal-ai/veo3.1", input: { prompt: a.prompt, aspect_ratio: a.aspect === "9:16" ? "9:16" : "16:9", duration: `${veoLength(a.seconds)}s`, resolution: "720p", generate_audio: true } } },
   // Audio
-  { id: "elevenlabs-turbo", kind: "audio", name: "ElevenLabs Turbo v2.5", credits: (c) => cents((c.prompt.length / 1000) * 0.05), // $0.05 per 1,000 characters
+  { id: "elevenlabs-turbo", kind: "audio", name: "ElevenLabs Turbo v2.5", cost: (c) => (c.prompt.length / 1000) * 5, credits: (c) => Math.max(2, Math.ceil((c.prompt.length * 13) / 1000)), // $0.05 per 1,000 characters
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/tts/turbo-v2.5", input: { text: a.prompt } }) },
-  { id: "elevenlabs-v3", kind: "audio", name: "ElevenLabs v3", credits: (c) => cents((c.prompt.length / 1000) * 0.1), // $0.10 per 1,000 characters
+  { id: "elevenlabs-v3", kind: "audio", name: "ElevenLabs v3", cost: (c) => (c.prompt.length / 1000) * 10, credits: (c) => Math.max(2, Math.ceil((c.prompt.length * 25) / 1000)), // $0.10 per 1,000 characters
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/tts/eleven-v3", input: { text: a.prompt } }) },
-  { id: "lyria-2", kind: "audio", name: "Lyria 2", credits: () => 10, // $0.10 per 30 seconds
+  { id: "lyria-2", kind: "audio", name: "Lyria 2", cost: () => 10, credits: () => 25, // $0.10 per 30 seconds
     build: (a) => ({ endpoint: "fal-ai/lyria2", input: { prompt: a.prompt } }) },
-  { id: "stable-audio-2.5", kind: "audio", name: "Stable Audio 2.5", credits: () => 20, // $0.20 an audio
+  { id: "stable-audio-2.5", kind: "audio", name: "Stable Audio 2.5", cost: () => 20, credits: () => 50, // $0.20 an audio
     build: (a) => ({ endpoint: "fal-ai/stable-audio-25/text-to-audio", input: { prompt: a.prompt, seconds_total: 30 } }) },
-  { id: "minimax-music-v2", kind: "audio", name: "MiniMax Music v2", credits: () => 3, // $0.03 a song
+  { id: "minimax-music-v2", kind: "audio", name: "MiniMax Music v2", cost: () => 3, credits: () => 8, // $0.03 a song
     build: (a) => {
       const parts = splitLyrics(a.prompt);
       if (!parts || parts.style.length < 10 || parts.lyrics.length < 10) throw new Error('For a song, describe the style, then write the words after "Lyrics:" (10 characters or more each)');
       return { endpoint: "fal-ai/minimax-music/v2", input: { prompt: parts.style.slice(0, 2000), lyrics_prompt: parts.lyrics.slice(0, 3000) } };
     } },
-  { id: "elevenlabs-sfx", kind: "audio", name: "ElevenLabs Sound Effects", credits: (c) => cents(0.002 * c.seconds), // $0.002 a second
+  { id: "elevenlabs-sfx", kind: "audio", name: "ElevenLabs Sound Effects", cost: (c) => 0.2 * c.seconds, credits: (c) => Math.max(1, Math.ceil(c.seconds / 2)), // $0.002 a second
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/sound-effects/v2", input: { text: a.prompt, duration_seconds: a.seconds } }) },
 ];
 
@@ -222,18 +227,12 @@ export const retryWait = (tries: number) => [5000, 15000, 45000][tries - 1] ?? 1
 
 /** At most this many being made at once per workspace. */
 export const AT_ONCE = 4;
-/** No single file may cost more than this many credits (a long Veo video is 320). */
-export const MAX_CREDITS = 350;
+export type GenUse = { open: number };
 
-export type GenUse = { credits: number; open: number };
-export type GenLimits = { aiCredits: number };
-
-/** Throws when this request would pass the plan's monthly credits, the cap for one file, or the number being made at once. */
-export function checkLimits(r: Pick<GenRequest, "credits">, use: GenUse, limits: GenLimits) {
-  if (limits.aiCredits <= 0) throw new Error("Your plan doesn't include AI credits. Upgrade to make pictures, videos and audio.");
-  if (r.credits > MAX_CREDITS) throw new Error(`This would cost ${r.credits} credits. One file can cost up to ${MAX_CREDITS}.`);
-  const left = Math.max(0, limits.aiCredits - use.credits);
-  if (r.credits > left) throw new Error(left ? `This costs ${r.credits} credits and ${left} are left this month` : `Your ${limits.aiCredits.toLocaleString("en-US")} AI credits for this month are used. They start again on the 1st.`);
+/** Throws when this request would cost more than one action may, or too many are being made at once. Credits are
+ *  checked by the ledger when the request holds them (credits.ts). */
+export function checkLimits(r: Pick<GenRequest, "credits">, use: GenUse) {
+  if (r.credits > MAX_ACTION) throw new Error(`This would cost ${r.credits} credits. One file can cost up to ${MAX_ACTION}.`);
   if (use.open >= AT_ONCE) throw new Error(`${AT_ONCE} are being made already. Wait for one to finish.`);
 }
 

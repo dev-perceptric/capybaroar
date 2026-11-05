@@ -33,7 +33,7 @@ Pictures, videos and audio (Capy):
 - For audio, send the exact words for a voiceover, describe the music or sound effect, or write a song's style followed by "Lyrics:" and the words. Audio goes to the media library; it can't go on a post on its own.
 - Pick the shape for where it goes: 9:16 for stories, reels, TikTok and Shorts; 1:1 for feeds; 16:9 for YouTube, X and LinkedIn link posts.
 - A picture is usually done when generate_media answers: attach its media id with media_ids. A video takes a few minutes: save its post as a draft, then call attach_when_done with the post id and the generation id, and the video is added to the draft when it's done. Don't schedule a post whose file isn't done.
-- Each file costs AI credits from the plan's monthly amount, so make one per post unless the user asks for options.`;
+- Each file costs credits (get_credits shows what's left), and so does this chat, so make one per post unless the user asks for options.`;
 
 export function systemPrompt(ai: boolean, timezone: string, now: Date, capy: CapyChoice = "auto") {
   const what = { image: "a picture", video: "a video", audio: "audio" } as const;

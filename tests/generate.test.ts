@@ -223,9 +223,9 @@ test("a saved request id is never sent again: later steps only look at its statu
 
 test("requests are checked before anything is sent, and Capy picks the model unless one is named", () => {
   const img = genRequest({ kind: "image", prompt: "  A capybara at sunset  " });
-  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null, credits: 3, why: "it's fast and sharp for everyday posts" });
+  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null, credits: 8, why: "it's fast and sharp for everyday posts" });
   const vid = genRequest({ kind: "video", prompt: "Waves", model: "seedance-2-fast", aspect: "9:16", seconds: 10, source_media_id: PIC });
-  assert.deepEqual({ ...vid, why: undefined }, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC, credits: 242, why: undefined });
+  assert.deepEqual({ ...vid, why: undefined }, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC, credits: 610, why: undefined });
   assert.equal(genRequest({ kind: "video", prompt: "x", model: "auto" }).model, "kling-3-pro");
   assert.equal(genRequest({ kind: "image", prompt: "make the sky pink", source_media_id: PIC }).model, "nano-banana-2-edit");
   for (const [body, msg] of [
@@ -270,22 +270,25 @@ test("Capy picks the model from what was asked", () => {
   for (const k of ["image", "video", "audio"] as const) assert.equal(RULES.filter((r) => r.kind === k).at(-1)!.test("", false), true);
 });
 
-test("credits follow fal's prices (1 credit = 1 cent)", () => {
+test("credits are the price list: 2.5 times fal's price, rounded up", () => {
   const c = (kind: GenKind, model: string, extra: object = {}) => genRequest({ kind, prompt: "x".repeat(20), model, ...extra }).credits;
-  assert.equal(c("image", "flux-2-pro"), 3);
-  assert.equal(c("image", "ideogram-v3"), 3);
-  assert.equal(c("image", "nano-banana-2"), 8);
-  assert.equal(c("image", "nano-banana-pro"), 15);
-  assert.equal(c("video", "kling-3-pro"), 84);
-  assert.equal(c("video", "kling-3-pro", { seconds: 10 }), 168);
-  assert.equal(c("video", "seedance-2-fast"), 121);
-  assert.equal(c("video", "veo-3.1"), 240);
-  assert.equal(c("video", "veo-3.1", { seconds: 10 }), 320);
-  assert.equal(c("audio", "lyria-2"), 10);
-  assert.equal(c("audio", "stable-audio-2.5"), 20);
-  assert.equal(c("audio", "elevenlabs-sfx"), 1);
-  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-turbo" }).credits, 15);
-  assert.equal(genRequest({ kind: "audio", prompt: "Hi there", model: "elevenlabs-v3" }).credits, 1);
+  assert.equal(c("image", "flux-2-pro"), 8);
+  assert.equal(c("image", "ideogram-v3"), 8);
+  assert.equal(c("image", "nano-banana-2"), 20);
+  assert.equal(c("image", "nano-banana-pro"), 40);
+  assert.equal(c("video", "kling-3-pro"), 210);
+  assert.equal(c("video", "kling-3-pro", { seconds: 10 }), 420);
+  assert.equal(c("video", "seedance-2-fast"), 305);
+  assert.equal(c("video", "seedance-2-fast", { seconds: 10 }), 610);
+  assert.equal(c("video", "veo-3.1"), 600);
+  assert.equal(c("video", "veo-3.1", { seconds: 10 }), 800);
+  assert.equal(c("audio", "lyria-2"), 25);
+  assert.equal(c("audio", "stable-audio-2.5"), 50);
+  assert.equal(c("audio", "elevenlabs-sfx"), 3);
+  assert.equal(c("audio", "elevenlabs-sfx", { seconds: 10 }), 5);
+  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-turbo" }).credits, 39);
+  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-v3" }).credits, 75);
+  assert.equal(genRequest({ kind: "audio", prompt: "Hi there", model: "elevenlabs-v3" }).credits, 2);
 });
 
 test("each model gets the input its fal schema takes", () => {
@@ -324,15 +327,12 @@ test("fal's answers are read the same way every time", () => {
   assert.throws(() => resultFile("audio", { video: { url: "https://v3.fal.media/a.mp4" } }), /no audio/);
 });
 
-test("plan limits: monthly credits, a cap per file, and 4 at once", () => {
-  const pro = { aiCredits: 600 };
-  const none = { credits: 0, open: 0 };
-  assert.throws(() => checkLimits({ credits: 3 }, none, { aiCredits: 0 }), /doesn't include AI credits/);
-  assert.doesNotThrow(() => checkLimits({ credits: 84 }, { ...none, credits: 516 }, pro));
-  assert.throws(() => checkLimits({ credits: 84 }, { ...none, credits: 520 }, pro), /costs 84 credits and 80 are left/);
-  assert.throws(() => checkLimits({ credits: 3 }, { ...none, credits: 600 }, pro), /600 AI credits for this month are used/);
-  assert.throws(() => checkLimits({ credits: 400 }, none, { aiCredits: 2000 }), /up to 350/);
-  assert.throws(() => checkLimits({ credits: 3 }, { ...none, open: 4 }, pro), /4 are being made already/);
+test("limits: a cap per file and 4 at once (credits are the ledger's)", () => {
+  const none = { open: 0 };
+  assert.doesNotThrow(() => checkLimits({ credits: 800 }, none));
+  assert.doesNotThrow(() => checkLimits({ credits: 1000 }, none));
+  assert.throws(() => checkLimits({ credits: 1001 }, none), /up to 1000/);
+  assert.throws(() => checkLimits({ credits: 8 }, { open: 4 }), /4 are being made already/);
   assert.equal(fileName("A Capybara, at sunset! On the beach today", "image/jpeg"), "a-capybara-at-sunset-on-the.jpg");
   assert.equal(fileName("!!!", "video/mp4"), "ai.mp4");
   assert.equal(fileName("Welcome to our opening", "audio/mpeg"), "welcome-to-our-opening.mp3");

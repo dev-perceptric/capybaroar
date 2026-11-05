@@ -6,6 +6,7 @@ import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { ASPECTS, CAPY, KINDS, MAX_PROMPT, MAX_SCRIPT, SECONDS, capyPick, modelOf, modelsFor, type Aspect, type GenKind, type Seconds } from "@/lib/genRules";
 import { aiCredits, generate, generationsStatus } from "@/app/(app)/media/actions";
+import { creditGate } from "./creditGate";
 
 // Making AI pictures, videos and audio (fal.ai): people pick CapyImage, CapyVideo or CapyAudio and Capy picks the
 // model, or they pick one under Other models. The rules live in genRules.ts.
@@ -53,7 +54,7 @@ export function GenerateForm({ pictures, onStarted, primary = false }: { picture
       setError("");
       const r = await generate({ kind, model: model === auto.model && !chosen ? undefined : model.id, prompt, aspect, seconds: kind === "image" ? undefined : secs, source_media_id: picture ? source : undefined });
       if (r.error || !r.id) {
-        setError(r.error ?? "Couldn't start it. Try again.");
+        if (!(await creditGate(r.error))) setError(r.error ?? "Couldn't start it. Try again.");
         return;
       }
       setPrompt("");
@@ -83,7 +84,7 @@ export function GenerateForm({ pictures, onStarted, primary = false }: { picture
             <Segmented value={seconds} options={SECONDS.map((s) => ({ value: String(s), label: `${s}s` }))} onChange={setSeconds} label="Length" size="sm" />
           </Field>
         ) : null}
-        <Button variant={primary ? "primary" : "ghost"} size="sm" className="ml-auto" disabled={busy || !prompt.trim() || (left != null && credits > left)} onClick={send}>
+        <Button variant={primary ? "primary" : "ghost"} size="sm" className="ml-auto" disabled={busy || !prompt.trim()} onClick={send}>
           {busy ? <Loader /> : null}
           Generate
         </Button>

@@ -151,7 +151,8 @@ export async function aiRewrite(text: string, how: string, network: string | nul
   const { rewrite } = await import("@/lib/composer");
   try {
     const ctx = await writerCtx();
-    return { text: await rewrite(ctx.workspaceId, text, how as never, (network as never) ?? null) };
+    const b = await getBrandCtx();
+    return { text: await rewrite({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: homeBrand(b) }, text, how as never, (network as never) ?? null) };
   } catch (e) {
     return fail(e);
   }
