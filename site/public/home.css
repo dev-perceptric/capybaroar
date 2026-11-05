@@ -385,8 +385,15 @@ h1 span.dim,h2 span{color:var(--head-2)}
 .price{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.035em}
 .price small{margin-left:6px;font-size:15px;font-weight:400;letter-spacing:0;color:var(--gray)}
 .plan .btn{width:100%}
-.plan .checks{padding-top:20px;border-top:1px solid var(--line)}
-.plan.on .checks{border-top-color:var(--y-6)}
+.plan .checks{gap:9px;font-size:14px}
+.plan .checks b{font-weight:600;color:var(--ink)}
+.plan-line{margin-top:-12px;font-size:14px;color:var(--gray)}
+.save{min-height:20px;margin-top:-12px;font-size:13px;font-weight:600;color:var(--y-ink)}
+.save:empty{visibility:hidden}
+.unl{list-style:none;display:flex;flex-wrap:wrap;gap:6px;padding-top:20px;border-top:1px solid var(--line)}
+.plan.on .unl{border-top-color:var(--y-6)}
+.unl li{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:6px;background:var(--y);color:var(--y-ink);font-size:12.5px;font-weight:600;letter-spacing:-.005em}
+.plus{margin-bottom:-8px;font-size:13px;font-weight:600;color:var(--ink)}
 
 
 /* ---------- FAQ + closing (from the live site) ---------- */

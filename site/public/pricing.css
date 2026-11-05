@@ -12,6 +12,20 @@
 .compare .cmp td,.compare .cmp thead th:not(:first-child){text-align:center;width:16%}
 .compare .cmp tbody th{font-weight:400;color:var(--ink-2)}
 .compare .cmp .group th{padding-top:24px;font-weight:600;color:var(--ink);font-size:13px}
+.every{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.every li{display:flex;flex-direction:column;gap:6px;padding:20px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
+.every h3{margin-top:8px;font-size:15px;font-weight:600}
+.every p{font-size:14px;line-height:1.45;color:var(--gray)}
+.ev-ic{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--y-3);color:var(--y-ink)}
+.ev-ic .ico{width:18px;height:18px}
+.netrow{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:28px}
+.netrow li{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 10px;border-radius:999px;background:var(--panel);box-shadow:var(--sh-rest);font-size:14px;font-weight:500}
+.netrow svg{width:22px;height:22px}
+.menu{list-style:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.menu li{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
+.mn{font-size:14px;font-weight:500;color:var(--ink-2)}
+.mc{font-size:24px;line-height:1.1;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
+.mc small{display:block;margin-top:2px;font-size:12px;font-weight:400;letter-spacing:0;color:var(--gray)}
 .credit-split{display:grid;grid-template-columns:3fr 2fr;gap:24px;align-items:start}
 .credit-split>*{min-width:0}
 .credit-list{position:relative;border-radius:12px;background:var(--panel);box-shadow:var(--sh-rest)}
@@ -30,6 +44,8 @@
 .pack-n{font-size:15px;color:var(--ink-2)}
 @media (max-width:1080px){
   .credit-split{grid-template-columns:1fr}
+  .every{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .menu{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (max-width:760px){
   .price-hero{padding-top:40px!important}
@@ -37,4 +53,7 @@
   .period{width:100%}
   .period [role=radio]{padding:0 12px;flex:1 0 auto;justify-content:center}
   .packs{grid-template-columns:1fr}
+  .every li{padding:16px}
+  .menu{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .netrow li{height:36px;font-size:13px}
 }
