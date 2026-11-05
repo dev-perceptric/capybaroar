@@ -385,15 +385,23 @@ h1 span.dim,h2 span{color:var(--head-2)}
 .price{font-size:48px;line-height:1;font-weight:600;letter-spacing:-.035em}
 .price small{margin-left:6px;font-size:15px;font-weight:400;letter-spacing:0;color:var(--gray)}
 .plan .btn{width:100%}
-.plan .checks{gap:9px;font-size:14px}
+.plan .checks{gap:9px;font-size:14px;padding-top:20px;border-top:1px solid var(--line)}
+.plan.on .checks{border-top-color:var(--y-6)}
 .plan .checks b{font-weight:600;color:var(--ink)}
 .plan-line{margin-top:-12px;font-size:14px;color:var(--gray)}
-.save{min-height:20px;margin-top:-12px;font-size:13px;font-weight:600;color:var(--y-ink)}
-.save:empty{visibility:hidden}
-.unl{list-style:none;display:flex;flex-wrap:wrap;gap:6px;padding-top:20px;border-top:1px solid var(--line)}
-.plan.on .unl{border-top-color:var(--y-6)}
-.unl li{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:6px;background:var(--y);color:var(--y-ink);font-size:12.5px;font-weight:600;letter-spacing:-.005em}
-.plus{margin-bottom:-8px;font-size:13px;font-weight:600;color:var(--ink)}
+.yearly{margin-top:-12px;font-size:13px;color:var(--gray)}
+.plus{margin-bottom:-12px;font-size:14px;font-weight:600;color:var(--ink)}
+.pfeats .fx{position:relative;display:inline}
+.pfeats .nw{white-space:nowrap}
+.tip{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin:-2px 0 0 4px;padding:0;border:0;border-radius:999px;background:none;color:var(--faint);vertical-align:middle;cursor:help;transition:color var(--fast)}
+.tip svg{width:15px;height:15px}
+.tip:hover,.tip:focus-visible,.tip-on .tip{color:var(--ink)}
+.tip:focus-visible{outline:2px solid var(--y-h);outline-offset:1px}
+.tip-box{position:absolute;left:0;bottom:calc(100% + 8px);z-index:20;width:max-content;max-width:min(260px,72vw);padding:8px 10px;border-radius:8px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:400;line-height:1.45;white-space:normal;opacity:0;visibility:hidden;transform:translateY(2px);transition:opacity var(--fast),transform var(--fast),visibility var(--fast);pointer-events:none}
+.fx:has(.tip:hover)>.tip-box,.fx:has(.tip:focus-visible)>.tip-box,.tip-on>.fx>.tip-box{opacity:1;visibility:visible;transform:none}
+.sub{list-style:none;display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.sub li{position:relative;padding-left:14px;font-size:13px;color:var(--gray)}
+.sub li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:999px;border:1.25px solid var(--faint);background:none}
 
 
 /* ---------- FAQ + closing (from the live site) ---------- */
