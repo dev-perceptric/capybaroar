@@ -490,3 +490,6 @@ h1 span.dim,h2 span{color:var(--head-2)}
 }
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
 .fine{margin-top:20px;text-align:center;font-size:14px;color:var(--gray)}
+.av{overflow:visible}
+.av>img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.rot-w svg,.mcp-clients .pill svg,.mcp .win-h svg{border-radius:0}
