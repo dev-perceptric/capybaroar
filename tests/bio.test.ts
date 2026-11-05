@@ -340,3 +340,8 @@ test("bio view: a posts block with nothing to show and an empty social row are l
   const grid = withPosts.blocks.find((b) => b.type === "posts");
   assert.equal(grid?.type === "posts" ? grid.posts.length : 0, 3);
 });
+
+test("addresses the homepage uses are reserved, since bio pages share capybaroar.com", () => {
+  for (const s of ["pricing", "privacy", "terms", "data-deletion", "brand", "img", "api", "blog", "templates"]) assert.equal(slugProblem(s), "That address is reserved", s);
+  assert.equal(slugProblem("perceptric"), null);
+});

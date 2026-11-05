@@ -486,6 +486,8 @@ export async function bioStats(workspaceId: string, brandId: string, days: numbe
   return { days: s.days, daily: s.daily, views: s.views, clicks: s.clicks, rate: s.rate, referrers: s.referrers.slice(0, 10), top };
 }
 
-export const bioUrl = (slug: string) => `${appUrl()}/b/${slug}`;
+/** Where a page lives: capybaroar.com/<slug> once BIO_URL is set (the site serves it), else the app's /b/<slug>. */
+export const bioBase = () => (process.env.BIO_URL ? process.env.BIO_URL.replace(/\/$/, "") : `${appUrl()}/b`);
+export const bioUrl = (slug: string) => `${bioBase()}/${slug}`;
 
 export type { BioDraft, BioPage };
