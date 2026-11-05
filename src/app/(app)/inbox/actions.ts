@@ -81,7 +81,7 @@ export async function suggest(itemId: string): Promise<{ error?: string; text?: 
   if (!process.env.ANTHROPIC_API_KEY) return { error: "Suggestions aren't set up yet" };
   try {
     const ctx = await allowed({ itemId });
-    return { text: await suggestReply(ctx.workspaceId, itemId) };
+    return { text: await suggestReply(ctx.workspaceId, ctx.userId, itemId) };
   } catch (e) {
     return fail(e);
   }

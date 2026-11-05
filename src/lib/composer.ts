@@ -7,7 +7,8 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 import { adminClient } from "./supabase/server";
 import { appUrl } from "./channels";
-import { assertCanUseAgent } from "./billing";
+import { withCredits, type Spender } from "./credits";
+import { WRITE_CREDITS } from "./creditRules";
 import { networkOf, type NetworkId } from "./networks";
 
 // Tools for the composer: Claude rewrites, saved snippets, short links and video trims.
@@ -27,8 +28,7 @@ export const REWRITES = {
 } as const;
 export type Rewrite = keyof typeof REWRITES;
 
-export async function rewrite(workspaceId: string, text: string, how: Rewrite, network: NetworkId | null): Promise<string> {
-  await assertCanUseAgent(workspaceId);
+export async function rewrite(sp: Spender, text: string, how: Rewrite, network: NetworkId | null): Promise<string> {
   if (!text.trim()) throw new Error("Write something first");
   if (!(how in REWRITES)) throw new Error("Unknown action");
   const n = network ? networkOf(network) : null;
@@ -41,9 +41,11 @@ export async function rewrite(workspaceId: string, text: string, how: Rewrite, n
   ]
     .filter(Boolean)
     .join("\n");
-  const out = await ask(system, [{ type: "text", text: `${REWRITES[how]}\n\n<post>\n${text}\n</post>` }], 4000);
-  if (out === null) throw new Error("Claude can't rewrite this post");
-  return out;
+  return withCredits(sp, { tool: "rewrite", note: how }, WRITE_CREDITS, async () => {
+    const out = await ask(system, [{ type: "text", text: `${REWRITES[how]}\n\n<post>\n${text}\n</post>` }], 4000);
+    if (out === null) throw new Error("Claude can't rewrite this post");
+    return out;
+  });
 }
 
 /** One Claude call that answers with text. Null when Claude declines. */
@@ -75,8 +77,8 @@ const SEE_BYTES = 5 * 1024 * 1024;
  * A caption for a picture or video in the library (bulk upload). Claude looks at pictures; for videos and large
  * files it works from the file name and the notes.
  */
-export async function caption(workspaceId: string, mediaId: string, notes: string, network: NetworkId | null): Promise<string> {
-  await assertCanUseAgent(workspaceId);
+export async function caption(sp: Spender, mediaId: string, notes: string, network: NetworkId | null): Promise<string> {
+  const workspaceId = sp.workspaceId;
   const db = adminClient();
   const { data: m } = await db.from("media").select("path, name, mime, size").eq("id", mediaId).eq("workspace_id", workspaceId).maybeSingle();
   if (!m) throw new Error("File not found");
@@ -97,9 +99,11 @@ export async function caption(workspaceId: string, mediaId: string, notes: strin
     .join("\n");
   const about = notes.trim().slice(0, 1000);
   content.push({ type: "text", text: `Write a caption for this ${String(m.mime).startsWith("video/") ? "video" : "picture"}.\n<file_name>${String(m.name).slice(0, 200)}</file_name>${about ? `\n<notes>\n${about}\n</notes>` : ""}` });
-  const out = await ask(system, content, 1000, "low");
-  if (out === null) throw new Error("Claude can't write a caption for this file");
-  return n && [...out].length > n.limit ? [...out].slice(0, n.limit).join("") : out;
+  return withCredits(sp, { tool: "caption" }, WRITE_CREDITS, async () => {
+    const out = await ask(system, content, 1000, "low");
+    if (out === null) throw new Error("Claude can't write a caption for this file");
+    return n && [...out].length > n.limit ? [...out].slice(0, n.limit).join("") : out;
+  });
 }
 
 export type Snippet = { id: string; name: string; body: string };

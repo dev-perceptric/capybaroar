@@ -42,7 +42,8 @@ export async function generate(body: unknown): Promise<{ error?: string; id?: st
     const ctx = await writerCtx();
     const { genRequest } = await import("@/lib/genRules");
     const { startGeneration } = await import("@/lib/generations");
-    const g = await startGeneration(ctx.workspaceId, ctx.userId, genRequest(body));
+    const { getBrandCtx, homeBrand } = await import("@/lib/brands");
+    const g = await startGeneration({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: homeBrand(await getBrandCtx()) }, genRequest(body));
     return g.status === "failed" ? { error: g.error ?? "Couldn't make it. Try again." } : { id: g.id };
   } catch (e) {
     unstable_rethrow(e);
@@ -56,9 +57,9 @@ export async function generationsStatus(ids: string[]): Promise<{ id: string; ki
   return (await generationsOf(ctx.workspaceId, ids.filter((x) => typeof x === "string"))).map((g) => ({ id: g.id, kind: g.kind, status: g.status, error: g.error, media_id: g.media_id }));
 }
 
-/** This month's AI credits for the workspace. */
+/** The workspace's AI credits: this period's plan credits, and what's left in all. */
 export async function aiCredits(): Promise<{ total: number; left: number }> {
   const ctx = await getCtx();
-  const { creditsOf } = await import("@/lib/generations");
-  return creditsOf(ctx.workspaceId);
+  const { aiCreditsOf } = await import("@/lib/generations");
+  return aiCreditsOf(ctx.workspaceId);
 }

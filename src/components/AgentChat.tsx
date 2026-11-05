@@ -14,6 +14,7 @@ import { ChatsMenu, CHATS_EVENT } from "./AgentChats";
 import { send } from "@/app/(app)/agents/actions";
 import { loadMedia } from "@/app/(app)/calendar/actions";
 import { CAPY, type GenKind } from "@/lib/genRules";
+import { creditGate } from "./creditGate";
 
 // The Agent, like ChatGPT: chats live in the sidebar (AgentChats), the first screen is a drawing, a title, the box and
 // starters, and a chat is a thread with the box docked at the bottom. The box has + (files from Media) and Make on
@@ -38,8 +39,8 @@ const MAKE_KEY = "cb_agent_make";
 const MAKE_ICON: Record<Make, React.ReactNode> = { auto: <Sparkles />, image: <ImageIcon />, video: <Video />, audio: <AudioLines /> };
 const MAKES: { value: Make; label: string; line: string }[] = [
   { value: "auto", label: "Auto", line: "The agent decides what each post needs" },
-  { value: "image", label: CAPY.image.name, line: "Pictures and edits, from 3 credits" },
-  { value: "video", label: CAPY.video.name, line: "Short videos with sound, from 84 credits" },
+  { value: "image", label: CAPY.image.name, line: "Pictures and edits, from 8 credits" },
+  { value: "video", label: CAPY.video.name, line: "Short videos with sound, from 210 credits" },
   { value: "audio", label: CAPY.audio.name, line: "Voiceovers, music and sound effects, from 1 credit" },
 ];
 
@@ -107,7 +108,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
       const r = await send(chatId, t, make, sent.map((f) => f.id));
       setPending(null);
       if (r.error) {
-        setError(r.error);
+        if (!(await creditGate(r.error))) setError(r.error);
         setText(t);
         setFiles(sent);
       } else if (r.chatId && r.chatId !== chatId) {
@@ -122,8 +123,8 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
   const box = <Composer text={text} setText={setText} files={files} setFiles={setFiles} make={make} setMake={pickMake} ai={ai} busy={busy} error={error} onSend={() => submit()} big={empty} />;
   const actions = (
     <div className="flex items-center gap-1.5">
-      {ai && credits != null ? (
-        <span title="AI credits left this month" className="inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] text-body tabular-nums shadow-chip">
+      {credits != null ? (
+        <span title="Credits left" className="inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] text-body tabular-nums shadow-chip">
           <span className="size-2 rounded-full bg-signal shadow-picked" />
           {credits.toLocaleString("en-US")} credits
         </span>

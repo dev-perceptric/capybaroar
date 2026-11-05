@@ -3,7 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { adminClient } from "./supabase/server";
 import { listChannels } from "./channels";
 import { networkOf } from "./networks";
-import { assertCanUseAgent } from "./billing";
+import { withCredits } from "./credits";
+import { BIO_CREDITS } from "./creditRules";
 import { safeGet } from "./api/fetchSafe";
 import { httpUrl, profileUrl } from "./bioBlocks";
 import { SYSTEM, answerSchema, buildPrompt, cleanInput, cleanResult, extractSite, type BuildContext, type BuildResult, type SiteInfo } from "./bioAi";
@@ -78,9 +79,12 @@ async function recentPosts(workspaceId: string, channelIds: string[], networks: 
 export type BuildAnswer = BuildResult & { tokens: { input: number; output: number } };
 
 /** One Claude call for a page draft for this brand. Throws a message people can read. */
-export async function buildBioDraft(workspaceId: string, brand: { id: string; name: string }, rawInput: unknown): Promise<BuildAnswer> {
-  await assertCanUseAgent(workspaceId);
+export async function buildBioDraft(workspaceId: string, userId: string, brand: { id: string; name: string }, rawInput: unknown): Promise<BuildAnswer> {
   const input = cleanInput(rawInput);
+  return withCredits({ workspaceId, userId, brandId: brand.id }, { tool: "bio" }, BIO_CREDITS, () => draftFor(workspaceId, brand, input));
+}
+
+async function draftFor(workspaceId: string, brand: { id: string; name: string }, input: ReturnType<typeof cleanInput>): Promise<BuildAnswer> {
   const chans = await listChannels(workspaceId, [brand.id]);
   const names = new Map(chans.map((c) => [c.id, networkOf(c.network).name]));
   const [posts, social, site] = await Promise.all([recentPosts(workspaceId, chans.map((c) => c.id), names), socialDefaults(workspaceId, brand.id), input.website ? readSite(input.website) : Promise.resolve(null)]);

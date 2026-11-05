@@ -1,15 +1,17 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { hostname } from "node:os";
 import { adminClient } from "./supabase/server";
-import { limitsOf, monthStart } from "./billing";
 import { linkToMedia } from "./api/upload";
 import { ApiError } from "./api/input";
 import { checkLimits, falCall, fileName, type GenKind, type GenRequest, type GenUse } from "./genRules";
+import { creditsOf, hold, settle, type Spender } from "./credits";
 import { BadFile, advance, runGenerations as run, type FalApi, type FalAnswer, type GenRow, type GenStore } from "./generator";
 
 // AI pictures and videos through fal.ai's queue (fal.ai/docs/documentation/model-apis/inference/queue). A request is
 // saved, sent to fal, and then looked at every few seconds by the runner's own loop until its file is in the library.
-// The rules are in generator.ts and genRules.ts.
+// The rules are in generator.ts and genRules.ts. Each request holds its credits (key gen:<id>) when it starts; they're
+// charged when the file is in the library and given back when it fails.
 
 const WORKER = `${hostname()}:${process.pid}`;
 const FAL_QUEUE = "https://queue.fal.run";
@@ -105,11 +107,16 @@ export const genStore: GenStore = {
   later: (id, checkAfter, tries) => update(id, { check_after: iso(checkAfter), tries, locked_at: null, locked_by: null }),
   async done(id, mediaId) {
     await update(id, { status: "done", media_id: mediaId, error: null, finished_at: iso(Date.now()), locked_at: null, locked_by: null });
+    // A hiccup here leaves the hold to the hourly sweep, which settles it the same way.
+    await settleGeneration(id).catch((e) => console.error("generation credits:", e instanceof Error ? e.message : e));
     // A draft the agent saved while this was being made gets its file now. The request is already done, so a
     // hiccup here is logged and never makes it run again.
     await attach(id).catch((e) => console.error("attach generation:", e instanceof Error ? e.message : e));
   },
-  failed: (id, error) => update(id, { status: "failed", error: error.slice(0, 500), finished_at: iso(Date.now()), locked_at: null, locked_by: null }),
+  async failed(id, error) {
+    await update(id, { status: "failed", error: error.slice(0, 500), finished_at: iso(Date.now()), locked_at: null, locked_by: null });
+    await settleGeneration(id).catch((e) => console.error("generation credits:", e instanceof Error ? e.message : e));
+  },
   async saveFile(row, url) {
     try {
       return await linkToMedia(row.workspaceId, row.userId, new URL(url), {
@@ -157,25 +164,34 @@ export async function waitForGeneration(workspaceId: string, id: string, ms: num
 /** The runner's loop: every few seconds, one step for each request that's due. */
 export const runGenerations = () => run(genStore, falApi, WORKER);
 
+/** Charges a finished request's credits, or gives them back when it failed. Safe to repeat. */
+async function settleGeneration(id: string) {
+  const { data } = await adminClient().from("generations").select("workspace_id, status, credits, post_id").eq("id", id).maybeSingle();
+  if (!data || (data.status !== "done" && data.status !== "failed")) return;
+  await settle(data.workspace_id as string, `gen:${id}`, data.status === "done" ? Number(data.credits) : 0, (data.post_id as string | null) ?? null);
+}
+
 // Starting one
 
 async function usageOf(workspaceId: string): Promise<GenUse> {
-  const { data, error } = await adminClient().from("generations").select("credits, status").eq("workspace_id", workspaceId).neq("status", "failed").gte("created_at", monthStart().toISOString());
+  const { count, error } = await adminClient().from("generations").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).in("status", ["queued", "running"]);
   if (error) throw new Error(error.message);
-  const rows = data ?? [];
-  return { credits: rows.reduce((s, r) => s + Number(r.credits ?? 0), 0), open: rows.filter((r) => r.status === "queued" || r.status === "running").length };
+  return { open: count ?? 0 };
 }
 
-/** This month's AI credits: the plan's total and what's left. Failed files give their credits back. */
-export async function creditsOf(workspaceId: string): Promise<{ total: number; left: number }> {
-  const [use, limits] = await Promise.all([usageOf(workspaceId), limitsOf(workspaceId)]);
-  return { total: limits.aiCredits, left: Math.max(0, limits.aiCredits - use.credits) };
+/** The workspace's credits: this period's plan credits and what's left in all (plan and bought). */
+export async function aiCreditsOf(workspaceId: string): Promise<{ total: number; left: number }> {
+  const c = await creditsOf(workspaceId);
+  return { total: c.planTotal, left: c.left };
 }
 
-/** Checks the request and the plan, saves it and sends it to fal. Returns the request; its file comes later. */
-export async function startGeneration(workspaceId: string, userId: string, r: GenRequest): Promise<Generation> {
+export type Started = Generation & { creditsLeft: number };
+
+/** Checks the request, holds its credits, saves it and sends it to fal. Returns the request; its file comes later. */
+export async function startGeneration(sp: Spender, r: GenRequest): Promise<Started> {
   if (!aiReady()) throw new ApiError(503, "unavailable", "AI media isn't set up on this server");
-  checkLimits(r, await usageOf(workspaceId), await limitsOf(workspaceId));
+  const workspaceId = sp.workspaceId;
+  checkLimits(r, await usageOf(workspaceId));
   const db = adminClient();
   let imageUrl: string | null = null;
   if (r.sourceMediaId) {
@@ -188,12 +204,16 @@ export async function startGeneration(workspaceId: string, userId: string, r: Ge
     imageUrl = s.signedUrl;
   }
   const call = falCall(r, imageUrl);
+  const id = randomUUID();
+  const key = `gen:${id}`;
+  await hold(sp, key, r.credits, { tool: r.kind, model: r.model });
   // Saved locked, so the loop leaves it alone while it's sent here; a crash here lets the loop send it later.
   const { data, error } = await db
     .from("generations")
     .insert({
+      id,
       workspace_id: workspaceId,
-      created_by: userId,
+      created_by: sp.userId,
       kind: r.kind,
       model: r.model,
       prompt: r.prompt,
@@ -209,9 +229,13 @@ export async function startGeneration(workspaceId: string, userId: string, r: Ge
     })
     .select("*")
     .single();
-  if (error || !data) throw new ApiError(503, "unavailable", "Couldn't save the request. Try again in a moment.");
+  if (error || !data) {
+    await settle(workspaceId, key, 0).catch(() => undefined);
+    throw new ApiError(503, "unavailable", "Couldn't save the request. Try again in a moment.");
+  }
   await advance(genStore, falApi, toRow(data as Db));
-  return getGeneration(workspaceId, data.id as string);
+  const [g, c] = await Promise.all([getGeneration(workspaceId, id), creditsOf(workspaceId).catch(() => null)]);
+  return { ...g, creditsLeft: c?.left ?? 0 };
 }
 
 export async function getGeneration(workspaceId: string, id: string): Promise<Generation> {
