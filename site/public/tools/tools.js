@@ -16,7 +16,10 @@ function toast(msg){
   toastEl.textContent = msg; toastEl.classList.add('in');
   clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove('in'); }, 1500);
 }
+/* Tells the Capybaroar card (promo.js) that someone got something out of the tool. */
+function used(){ try { document.dispatchEvent(new CustomEvent('capy:used')); } catch (e) {} }
 function copy(text, label){
+  used();
   var done = function(){ toast(label || 'Copied'); };
   var fallback = function(){
     var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
@@ -476,6 +479,7 @@ function render(img, w, h, mode, fx, fy, fill){
 }
 function toBlob(canvas, type, q){ return new Promise(function(res){ canvas.toBlob(res, type, q); }); }
 function save(blob, name){
+  used();
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
 }

@@ -988,3 +988,27 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .er-res b{display:block;margin-top:4px;font-size:24px;font-variant-numeric:tabular-nums}
 @media (max-width:1080px){.wc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.er-in,.er-res{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.wc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wc-top{grid-template-columns:1fr}}
+/* Floating Capybaroar card (promo.js) */
+.promo{position:fixed;right:max(24px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:55;display:grid;grid-template-columns:40px minmax(0,1fr);gap:4px 14px;width:min(380px,calc(100vw - 32px));padding:16px 44px 16px 16px;border-radius:16px;background:var(--panel);box-shadow:var(--sh-lift);opacity:0;transform:translateY(16px);transition:opacity var(--normal),transform var(--normal) var(--ease-out)}
+.promo[hidden]{display:none}
+.promo.in{opacity:1;transform:none}
+.promo-mark{width:40px;height:40px;border-radius:10px;box-shadow:var(--sh-chip)}
+.promo-tx{min-width:0}
+.promo-tx b{display:block;font-size:15px;line-height:1.3;color:var(--ink)}
+.promo-tx p{margin-top:4px;font-size:13.5px;line-height:1.45;color:var(--gray)}
+.promo-nets{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:10px}
+.promo-nets .nl{width:16px;height:16px}
+.promo-nets small{margin-left:6px;font-size:12px;color:var(--gray)}
+.promo-go{grid-column:2;justify-self:start;margin-top:8px}
+.promo-x{position:absolute;top:10px;right:10px;display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:0;border-radius:999px;background:none;color:var(--gray);cursor:pointer}
+.promo-x svg{width:14px;height:14px}
+.promo-x:hover{background:var(--shell);color:var(--ink)}
+@media (max-width:640px){
+  .promo{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));width:auto;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 40px 10px 12px;border-radius:14px}
+  .promo-mark{width:32px;height:32px;border-radius:8px}
+  .promo-tx b{font-size:14px}
+  .promo-tx p,.promo-nets{display:none}
+  .promo-go{grid-column:3;margin:0}
+  .promo-x{top:50%;right:6px;transform:translateY(-50%)}
+  body.has-promo .t-toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}

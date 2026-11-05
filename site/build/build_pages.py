@@ -82,6 +82,33 @@ def nav_sprite(src):
 NAV_SPRITE = nav_sprite(open(P + 'index.html').read())
 
 
+# Floating Capybaroar card on the free tools and the blog: one line that fits what the visitor just did.
+PROMO_COPY = {
+    'text': ('Styled your text? Schedule the post.', 'Write it once and Capybaroar posts it to Instagram, TikTok, LinkedIn and 9 more networks on time.'),
+    'write': ('Post ready? Let it go out on time.', 'Capybaroar posts to 12 networks from one calendar and checks every limit before it goes out.'),
+    'image': ('Picture ready? Schedule the post.', 'Capybaroar crops it for each network and posts it to 12 networks from one calendar.'),
+    'plan': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 12 networks.'),
+    'index': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 12 networks.'),
+}
+
+
+def promo(group):
+    title, line = PROMO_COPY[group]
+    nets = ''.join(f'<svg class="nl" aria-hidden="true"><use href="#n-{n}"/></svg>' for n in ['instagram', 'tiktok', 'linkedin', 'youtube', 'x', 'facebook'])
+    return (f'<aside class="promo" data-promo hidden aria-label="Capybaroar">'
+            f'<img class="promo-mark" src="/icon.svg" alt="" width="40" height="40">'
+            f'<div class="promo-tx"><b>{title}</b><p>{line}</p><span class="promo-nets">{nets}<small>Free plan, no card</small></span></div>'
+            f'<a class="btn sm promo-go" href="https://app.capybaroar.com/signup">Start free</a>'
+            f'<button class="promo-x" type="button" aria-label="Close" data-promo-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></aside>')
+
+
+def with_promo(html, group):
+    if 'data-promo' in html:
+        return html
+    html = html.replace('</main>', '</main>\n' + promo(group), 1)
+    return html.replace('</body>', '<script src="/promo.js?v=1" defer></script>\n</body>', 1)
+
+
 def renav(s):
     s, a = re.subn(r'<nav class="nav-links" aria-label="Main">.*?</nav>', lambda m: f'<nav class="nav-links" aria-label="Main">{NAV}</nav>', s, flags=re.S)
     s, b = re.subn(r'<nav class="nav-sheet" aria-label="Menu">.*?</nav>', lambda m: f'<nav class="nav-sheet" aria-label="Menu">{SHEET}</nav>', s, flags=re.S)

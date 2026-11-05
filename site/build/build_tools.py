@@ -81,6 +81,7 @@ for k in ORDER:
     html = html.replace('</head>', '<script type="application/ld+json">' + json.dumps(app, separators=(',', ':')) + '</script>\n<script type="application/ld+json">' + json.dumps(crumbs, separators=(',', ':')) + '</script>\n</head>', 1)
     html = re.sub(r'<section class="related-band".*?</section>', lambda m: more_tools(k), html, count=1, flags=re.S)
     html = html.replace('<script src="/nav.js?v=1" defer></script>', '<script src="/nav.js?v=1" defer></script>\n<script src="/tools/tools.js?v=1" defer></script>')
+    html = with_promo(html, t['group'])
     os.makedirs(P + 'tools', exist_ok=True)
     open(P + t['slug'][1:] + '.html', 'w').write(html)
 
@@ -101,7 +102,7 @@ tools_body = f'''<section class="hero f-hero simple-hero">
 tp = open(P + 'tools.html').read()
 tp = re.sub(r'<section class="hero f-hero simple-hero">.*?</section>', lambda m: tools_body, tp, count=1, flags=re.S)
 tp = tp.replace('<meta name="description" content="Free tools for social media from Capybaroar. No account needed.">', '<meta name="description" content="Free social media tools: font generator, character counter, word counter, emoji copy and paste, Instagram post size, LinkedIn text formatter, UTM builder and more. No account needed.">')
-open(P + 'tools.html', 'w').write(tp)
+open(P + 'tools.html', 'w').write(with_promo(tp, 'index'))
 
 # ---------- sitemap ----------
 sm = open(P + 'sitemap.xml').read()

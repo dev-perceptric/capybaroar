@@ -432,6 +432,8 @@ def simple(slug, title, desc, tag_icon, tag, h1a, h1b, lead, empty_t, empty_l):
 </body>
 </html>
 '''
+    if slug == '/blog':
+        html = with_promo(html, 'index')
     open(P + slug[1:] + '.html', 'w').write(html)
 
 
