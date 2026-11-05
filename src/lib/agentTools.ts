@@ -3,6 +3,26 @@
 // same checks. Pure, so tests check the tool list without Claude or Supabase.
 import type Anthropic from "@anthropic-ai/sdk";
 import { TOOLS, instructions } from "./api/mcp";
+import { defaultModel, modelOf, type GenKind } from "./genRules";
+
+/** The picture and video models picked in the chat box. */
+export type ModelChoice = { image: string; video: string };
+
+/** Keeps only real models of the right kind; anything else falls back to the default. */
+export function modelChoice(v: unknown): ModelChoice {
+  const b = (typeof v === "object" && v !== null ? v : {}) as Record<string, unknown>;
+  const pick = (kind: GenKind) => {
+    const m = typeof b[kind] === "string" ? modelOf(b[kind] as string) : null;
+    return m && m.kind === kind ? m.id : defaultModel(kind).id;
+  };
+  return { image: pick("image"), video: pick("video") };
+}
+
+/** generate_media input with the picked model, unless the user named another one in the chat (the agent then sends it). */
+export function withModel(input: Record<string, unknown>, models: ModelChoice): Record<string, unknown> {
+  if (input.model != null && input.model !== "") return input;
+  return { ...input, model: input.kind === "video" ? models.video : models.image };
+}
 
 export const RULES = `You are the agent inside Capybaroar, a tool that schedules social media posts. You run this workspace for the user: plan, write, schedule, change and delete posts, manage the media library, make pictures and videos, read analytics and the posting queue, and manage webhooks.
 - Use list_channels before writing posts. Only use ids that tools return.
@@ -19,8 +39,9 @@ Pictures and videos:
 - A picture is usually done when generate_media answers: attach its media id with media_ids. A video takes a few minutes: save its post as a draft, then call attach_when_done with the post id and the generation id, and the video is added to the draft when it's done. Don't schedule a post whose file isn't done.
 - Each picture and each second of video counts against the plan's monthly limit, so make one per post unless the user asks for options.`;
 
-export function systemPrompt(ai: boolean, timezone: string, now: Date) {
-  return `${RULES}\n${instructions(timezone)}${ai ? MEDIA_RULES : ""}\nNow: ${now.toISOString()}.`;
+export function systemPrompt(ai: boolean, timezone: string, now: Date, models: ModelChoice = modelChoice(null)) {
+  const picked = ai ? `\n- The user picked ${modelOf(models.image)!.name} (${models.image}) for pictures and ${modelOf(models.video)!.name} (${models.video}) for videos. Leave model out of generate_media to use them; send another model only when the user names it.` : "";
+  return `${RULES}\n${instructions(timezone)}${ai ? MEDIA_RULES + picked : ""}\nNow: ${now.toISOString()}.`;
 }
 
 const MEDIA_ONLY = ["generate_media", "get_generation"];

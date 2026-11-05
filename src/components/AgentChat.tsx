@@ -9,6 +9,12 @@ import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { send } from "@/app/(app)/agents/actions";
 import { Markdown } from "./Markdown";
+import { Select } from "./Select";
+import { defaultModel, modelOf, modelsFor, type GenKind } from "@/lib/genRules";
+
+// The picture and video models picked in the chat box, remembered in this browser.
+const MODELS_KEY = "cb_agent_models";
+const pickOf = (kind: GenKind, saved: Record<string, string>) => (modelOf(saved[kind] ?? "")?.kind === kind ? saved[kind] : defaultModel(kind).id);
 
 export type Shown = {
   key: string;
@@ -26,6 +32,26 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   const router = useRouter();
+  const [models, setModels] = useState({ image: defaultModel("image").id, video: defaultModel("video").id });
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(MODELS_KEY) ?? "{}") as Record<string, string>;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after the first paint, so the server and browser render the same
+      setModels({ image: pickOf("image", saved), video: pickOf("video", saved) });
+    } catch {
+      // no saved choice
+    }
+  }, []);
+  const pickModel = (kind: GenKind, id: string) =>
+    setModels((m) => {
+      const next = { ...m, [kind]: id };
+      try {
+        localStorage.setItem(MODELS_KEY, JSON.stringify(next));
+      } catch {
+        // kept for this visit only
+      }
+      return next;
+    });
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
     end.current?.scrollIntoView({ block: "end" });
@@ -45,7 +71,7 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
     setPending(t);
     setError("");
     start(async () => {
-      const r = await send(chatId, t);
+      const r = await send(chatId, t, models);
       setPending("");
       if (r.error) {
         setError(r.error);
@@ -105,7 +131,13 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
             placeholder={ai ? "Write 5 Instagram posts about our launch with a picture for each, one each weekday at 9 AM" : "Write 5 LinkedIn posts about our launch, one each weekday at 9 AM"}
             className={bareArea}
           />
-          <div className="flex items-center gap-2 px-2 pb-2">
+          <div className="flex flex-wrap items-center gap-2 px-2 pb-2">
+            {ai ? (
+              <>
+                <Select value={models.image} onChange={(v) => pickModel("image", v)} options={modelsFor("image").map((m) => ({ value: m.id, label: m.name }))} lead="Picture" ariaLabel="Picture model" size="sm" />
+                <Select value={models.video} onChange={(v) => pickModel("video", v)} options={modelsFor("video").map((m) => ({ value: m.id, label: m.name }))} lead="Video" ariaLabel="Video model" size="sm" />
+              </>
+            ) : null}
             {error ? (
               <p role="alert" className="pl-1 text-[12px] text-danger">
                 {error}
