@@ -2,7 +2,7 @@
 // answered on its own, so any server can take it and a restart loses nothing. Pure: it runs the tools through Ops,
 // so tests drive it with fake actions.
 import { ApiError, MAX_BATCH, days, deleteArgs, generationInput, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
-import { ASPECTS, MAX_PROMPT, SECONDS, modelsFor } from "../genRules";
+import { ASPECTS, CAPY, KINDS, MAX_SCRIPT, MODELS, SECONDS, modelsFor } from "../genRules";
 import { EVENTS } from "./hookRules";
 import type { Ops } from "./types";
 
@@ -98,24 +98,24 @@ export const TOOLS: Tool[] = [
   },
   {
     name: "generate_media",
-    title: "Make an AI picture or video",
+    title: "Make an AI picture, video or audio",
     description:
-      "Make a picture or a short video from a description, with fal.ai models. It takes seconds for a picture and a few minutes for a video: call get_generation until status is done, then attach media.id with media_ids. A video can start from a picture in the library (source_media_id). Counts against the plan's AI pictures or seconds of AI video a month.",
+      "Make a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio: a voiceover of your words, music, or a sound effect) with fal.ai models. Leave model out and Capy picks the best one for the request; the answer says which and why, and what it cost in credits. A picture takes seconds, a video a few minutes: call get_generation until status is done, then attach media.id with media_ids (audio can't go on a post on its own). A picture can be edited and a video can start from a picture in the library (source_media_id). Counts against the plan's monthly AI credits.",
     inputSchema: {
       type: "object",
       properties: {
-        kind: { type: "string", enum: ["image", "video"] },
-        prompt: { type: "string", maxLength: MAX_PROMPT, description: "What to make: the subject, setting, style and, for videos, what moves." },
-        model: { type: "string", enum: [...modelsFor("image"), ...modelsFor("video")].map((m) => m.id), description: `Pictures: ${modelsFor("image").map((m) => m.id).join(" (default), ")}. Videos: ${modelsFor("video").map((m) => m.id).join(" (default), ")}.` },
-        aspect: { type: "string", enum: ASPECTS, description: "1:1 (default), 9:16 for stories and reels, 16:9 for wide. A video from a picture keeps the picture's shape." },
-        seconds: { type: "number", enum: [...SECONDS], description: "Video length, 5 (default) or 10" },
-        source_media_id: { type: "string", description: "Videos only: a JPG, PNG or WebP picture id from list_media to start from" },
+        kind: { type: "string", enum: [...KINDS] },
+        prompt: { type: "string", maxLength: MAX_SCRIPT, description: "Pictures and videos: the scene (subject, setting, light, style; for videos what moves). Audio: the exact words for a voiceover, a description of the music or sound, or a song's style followed by \"Lyrics:\" and the words." },
+        model: { type: "string", enum: MODELS.map((m) => m.id), description: `Leave out for Capy to pick. ${KINDS.map((k) => `${CAPY[k].name}: ${modelsFor(k).map((m) => m.id).join(", ")}`).join(". ")}.` },
+        aspect: { type: "string", enum: ASPECTS, description: "1:1 (default), 9:16 for stories, reels and TikTok, 16:9 for wide. Pictures and videos only." },
+        seconds: { type: "number", enum: [...SECONDS], description: "Videos and sound effects: 5 (default) or 10" },
+        source_media_id: { type: "string", description: "A JPG, PNG or WebP picture id from list_media: a picture to edit, or the first frame of a video" },
       },
       required: ["kind", "prompt"],
     },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   },
-  { name: "get_generation", title: "Check an AI picture or video", description: "Where a generate_media request is: queued, running, done (with media to attach) or failed (with the error).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: read },
+  { name: "get_generation", title: "Check an AI file", description: "Where a generate_media request is: queued, running, done (with media to attach) or failed (with the error).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: read },
   { name: "next_queue_slot", title: "Next queue slot", description: "The next free time slot in the workspace's posting queue.", inputSchema: { type: "object", properties: {} }, annotations: read },
   {
     name: "get_analytics",

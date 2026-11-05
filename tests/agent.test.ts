@@ -3,7 +3,7 @@
 // agent sends to generate_media passes the app's checks, and the chat names each action.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ATTACH_TOOL, actionLabel, agentTools, modelChoice, systemPrompt, withModel } from "../src/lib/agentTools";
+import { ATTACH_TOOL, actionLabel, agentTools, capyChoice, systemPrompt } from "../src/lib/agentTools";
 import { TOOLS } from "../src/lib/api/mcp";
 import { genRequest } from "../src/lib/genRules";
 
@@ -33,7 +33,8 @@ test("the instructions ask before deleting and keep drafts by default; media rul
 });
 
 test("what the agent sends to generate_media passes the app's checks", () => {
-  assert.deepEqual(genRequest({ kind: "image", prompt: "A capybara reading on a beach at sunset", aspect: "1:1" }), { kind: "image", model: "flux-2-pro", prompt: "A capybara reading on a beach at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null });
+  assert.equal(genRequest({ kind: "image", prompt: "A capybara reading on a beach at sunset", aspect: "1:1" }).model, "flux-2-pro");
+  assert.equal(genRequest({ kind: "audio", prompt: "Welcome to our grand opening" }).model, "elevenlabs-turbo");
   assert.equal(genRequest({ kind: "video", prompt: "Slow push-in", model: "seedance-2-fast", aspect: "9:16", seconds: 10 }).seconds, 10);
   assert.throws(() => genRequest({ kind: "image", prompt: "x", model: "kling-3-pro" }), /model must be/);
 });
@@ -47,15 +48,13 @@ test("the chat names each action and stays quiet for reads", () => {
   for (const read of ["list_channels", "list_posts", "get_post", "list_media", "get_analytics", "next_queue_slot", "get_generation"]) assert.equal(actionLabel(read, {}), null, read);
 });
 
-test("the models picked in the chat box are used unless the user names another one", () => {
-  assert.deepEqual(modelChoice({ image: "nano-banana-2", video: "seedance-2-fast" }), { image: "nano-banana-2", video: "seedance-2-fast" });
-  // Wrong kinds and unknown names fall back to the defaults.
-  assert.deepEqual(modelChoice({ image: "kling-3-pro", video: "nope" }), { image: "flux-2-pro", video: "kling-3-pro" });
-  assert.deepEqual(modelChoice(undefined), { image: "flux-2-pro", video: "kling-3-pro" });
-  const picked = { image: "nano-banana-2", video: "seedance-2-fast" };
-  assert.equal(withModel({ kind: "image", prompt: "x" }, picked).model, "nano-banana-2");
-  assert.equal(withModel({ kind: "video", prompt: "x", model: null }, picked).model, "seedance-2-fast");
-  assert.equal(withModel({ kind: "video", prompt: "x", model: "kling-3-pro" }, picked).model, "kling-3-pro");
-  assert.match(systemPrompt(true, "UTC", new Date(), picked), /picked Nano Banana 2 \(nano-banana-2\) for pictures and Seedance 2.0 Fast \(seedance-2-fast\) for videos/);
-  assert.doesNotMatch(systemPrompt(false, "UTC", new Date(), picked), /picked/);
+test("the chat box's Capy choice tells the agent what to make, and Capy picks the model", () => {
+  assert.equal(capyChoice("video"), "video");
+  assert.equal(capyChoice("audio"), "audio");
+  assert.equal(capyChoice("gif"), "auto");
+  assert.equal(capyChoice(undefined), "auto");
+  assert.match(systemPrompt(true, "UTC", new Date(), "video"), /picked CapyVideo: make a video \(generate_media kind "video"\)/);
+  assert.match(systemPrompt(true, "UTC", new Date(), "auto"), /Leave model out so Capy picks/);
+  assert.doesNotMatch(systemPrompt(true, "UTC", new Date(), "auto"), /For this message the user picked/);
+  assert.doesNotMatch(systemPrompt(false, "UTC", new Date(), "audio"), /CapyAudio/);
 });

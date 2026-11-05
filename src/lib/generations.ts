@@ -17,9 +17,9 @@ const FAL_QUEUE = "https://queue.fal.run";
 export const aiReady = () => !!process.env.FAL_KEY;
 
 export type GenStatus = "queued" | "running" | "done" | "failed";
-export type Generation = { id: string; kind: GenKind; model: string; prompt: string; status: GenStatus; error: string | null; media_id: string | null; created_at: string };
+export type Generation = { id: string; kind: GenKind; model: string; prompt: string; status: GenStatus; error: string | null; media_id: string | null; credits: number; reason: string | null; created_at: string };
 
-const COLUMNS = "id, kind, model, prompt, status, error, media_id, created_at";
+const COLUMNS = "id, kind, model, prompt, status, error, media_id, credits, reason, created_at";
 
 // fal
 
@@ -160,14 +160,16 @@ export const runGenerations = () => run(genStore, falApi, WORKER);
 // Starting one
 
 async function usageOf(workspaceId: string): Promise<GenUse> {
-  const { data, error } = await adminClient().from("generations").select("kind, seconds, status").eq("workspace_id", workspaceId).neq("status", "failed").gte("created_at", monthStart().toISOString());
+  const { data, error } = await adminClient().from("generations").select("credits, status").eq("workspace_id", workspaceId).neq("status", "failed").gte("created_at", monthStart().toISOString());
   if (error) throw new Error(error.message);
   const rows = data ?? [];
-  return {
-    images: rows.filter((r) => r.kind === "image").length,
-    videoSeconds: rows.filter((r) => r.kind === "video").reduce((s, r) => s + Number(r.seconds ?? 0), 0),
-    open: rows.filter((r) => r.status === "queued" || r.status === "running").length,
-  };
+  return { credits: rows.reduce((s, r) => s + Number(r.credits ?? 0), 0), open: rows.filter((r) => r.status === "queued" || r.status === "running").length };
+}
+
+/** This month's AI credits: the plan's total and what's left. Failed files give their credits back. */
+export async function creditsOf(workspaceId: string): Promise<{ total: number; left: number }> {
+  const [use, limits] = await Promise.all([usageOf(workspaceId), limitsOf(workspaceId)]);
+  return { total: limits.aiCredits, left: Math.max(0, limits.aiCredits - use.credits) };
 }
 
 /** Checks the request and the plan, saves it and sends it to fal. Returns the request; its file comes later. */
@@ -179,7 +181,7 @@ export async function startGeneration(workspaceId: string, userId: string, r: Ge
   if (r.sourceMediaId) {
     const { data: m } = await db.from("media").select("path, mime").eq("id", r.sourceMediaId).eq("workspace_id", workspaceId).maybeSingle();
     if (!m) throw new ApiError(400, "invalid_request", "That picture isn't in this workspace's media library");
-    if (!/^image\/(jpeg|png|webp)$/.test(m.mime as string)) throw new ApiError(400, "invalid_request", "A video starts from a JPG, PNG or WebP picture");
+    if (!/^image\/(jpeg|png|webp)$/.test(m.mime as string)) throw new ApiError(400, "invalid_request", "Use a JPG, PNG or WebP picture");
     // fal fetches it when the request starts, which can wait in fal's queue: the link lasts 6 hours.
     const { data: s, error: e } = await db.storage.from("media").createSignedUrl(m.path as string, 6 * 3600);
     if (e || !s) throw new ApiError(503, "unavailable", "Couldn't link the picture. Try again in a moment.");
@@ -196,7 +198,9 @@ export async function startGeneration(workspaceId: string, userId: string, r: Ge
       model: r.model,
       prompt: r.prompt,
       aspect: r.aspect,
-      seconds: r.kind === "video" ? r.seconds : null,
+      seconds: r.kind === "image" ? null : r.seconds,
+      credits: r.credits,
+      reason: r.why,
       source_media_id: r.sourceMediaId,
       endpoint: call.endpoint,
       input: call.input,

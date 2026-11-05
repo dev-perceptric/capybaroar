@@ -86,6 +86,7 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
   const all = await mediaInfo(workspaceId, [...new Set([...input.mediaIds, ...coverIds])]);
   const media = input.mediaIds.map((id) => all.find((m) => m.id === id)).filter((m) => m !== undefined);
   if (media.length !== input.mediaIds.length) throw new Error("A file in this post was deleted");
+  if (media.some((m) => m.mime.startsWith("audio/"))) throw new Error("Audio can't go on a post on its own. Use a picture or a video.");
   for (const t of input.targets) {
     const c = byId.get(t.channelId);
     if (!c) throw new Error("A channel in this post was removed");
@@ -135,6 +136,8 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   const brandId = input.targets.length ? brands[0] : (cur?.brand_id ?? actor?.brandId ?? null);
   if (actor && !mayUseBrand(actor, brandId)) throw new Error("You can't post to this brand");
   if (sending) await assertCanSchedule(workspaceId, input.id);
+  // Sending checks this in validate; a draft checks it here.
+  if (!sending && input.mediaIds.length && (await mediaInfo(workspaceId, input.mediaIds)).some((m) => m.mime.startsWith("audio/"))) throw new Error("Audio can't go on a post on its own. Use a picture or a video.");
   const { data: brand } = brandId ? await db.from("brands").select("name, needs_approval").eq("id", brandId).maybeSingle() : { data: null };
   const review = sending && sendsToReview(actor?.role, !!brand?.needs_approval);
   const status: PostStatus = !sending ? "draft" : review ? "review" : "scheduled";

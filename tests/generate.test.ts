@@ -6,7 +6,7 @@
 // message; and inputs, answers and plan limits follow the rules.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { GIVE_UP_MS, LOCK_MS, checkLimits, falCall, fileName, genRequest, resultFile, statusStep, type GenKind } from "../src/lib/genRules";
+import { GIVE_UP_MS, LOCK_MS, RULES, capyPick, checkLimits, falCall, fileName, genRequest, modelOf, resultFile, statusStep, type GenKind } from "../src/lib/genRules";
 import { BadFile, advance, runGenerations, setSaveRetryMs, type FalAnswer, type FalApi, type GenRow, type GenStore } from "../src/lib/generator";
 import { handleMcp } from "../src/lib/api/mcp";
 import { generationInput } from "../src/lib/api/input";
@@ -221,20 +221,25 @@ test("a saved request id is never sent again: later steps only look at its statu
   assert.equal(store.rows[0].status, "done");
 });
 
-test("requests are checked before anything is sent", () => {
+test("requests are checked before anything is sent, and Capy picks the model unless one is named", () => {
   const img = genRequest({ kind: "image", prompt: "  A capybara at sunset  " });
-  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null });
+  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null, credits: 3, why: "it's fast and sharp for everyday posts" });
   const vid = genRequest({ kind: "video", prompt: "Waves", model: "seedance-2-fast", aspect: "9:16", seconds: 10, source_media_id: PIC });
-  assert.deepEqual(vid, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC });
-  assert.equal(genRequest({ kind: "video", prompt: "x" }).model, "kling-3-pro");
+  assert.deepEqual({ ...vid, why: undefined }, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC, credits: 242, why: undefined });
+  assert.equal(genRequest({ kind: "video", prompt: "x", model: "auto" }).model, "kling-3-pro");
+  assert.equal(genRequest({ kind: "image", prompt: "make the sky pink", source_media_id: PIC }).model, "nano-banana-2-edit");
   for (const [body, msg] of [
     [{ kind: "gif", prompt: "x" }, /kind must be/],
     [{ kind: "image", prompt: "   " }, /Describe what to make/],
+    [{ kind: "audio", prompt: "" }, /Write the words/],
     [{ kind: "image", prompt: "x".repeat(2001) }, /under 2,000/],
-    [{ kind: "image", prompt: "x", model: "kling-3-pro" }, /model must be one of flux-2-pro, nano-banana-2/],
+    [{ kind: "audio", prompt: "x".repeat(5001) }, /under 5,000/],
+    [{ kind: "image", prompt: "x", model: "kling-3-pro" }, /model must be one of flux-2-pro/],
+    [{ kind: "image", prompt: "x", model: "nano-banana-2-edit" }, /edits a picture/],
+    [{ kind: "image", prompt: "x", model: "flux-2-pro", source_media_id: PIC }, /doesn't take a picture/],
     [{ kind: "image", prompt: "x", aspect: "4:3" }, /aspect must be/],
     [{ kind: "video", prompt: "x", seconds: 7 }, /seconds must be 5 or 10/],
-    [{ kind: "image", prompt: "x", source_media_id: PIC }, /for videos/],
+    [{ kind: "audio", prompt: "x", source_media_id: PIC }, /for pictures and videos/],
     [{ kind: "video", prompt: "x", source_media_id: "nope" }, /picture's id/],
     [null, /kind must be/],
   ] as const)
@@ -242,14 +247,64 @@ test("requests are checked before anything is sent", () => {
   assert.throws(() => generationInput({ kind: "image" }), (e: Error & { status?: number }) => e.status === 400 && /Describe/.test(e.message));
 });
 
+test("Capy picks the model from what was asked", () => {
+  const cases: [GenKind, string, boolean, string][] = [
+    ["image", 'A poster that says "Grand opening Saturday"', false, "ideogram-v3"],
+    ["image", "Coffee shop logo on a cup", false, "ideogram-v3"],
+    ["image", "A cup of coffee on a wooden table", false, "flux-2-pro"],
+    ["image", "Premium hero shot of a watch", false, "nano-banana-pro"],
+    ["image", "Make the sky pink", true, "nano-banana-2-edit"],
+    ["video", "Our barista says hi to the camera", false, "seedance-2-fast"],
+    ["video", "Cinematic ad for running shoes", false, "veo-3.1"],
+    ["video", "Waves at sunset", false, "kling-3-pro"],
+    ["video", "Bring this photo to life", true, "kling-3-pro"],
+    ["video", "An address card spinning", false, "kling-3-pro"], // "ad" only as a word
+    ["audio", "Upbeat jingle for a reel", false, "lyria-2"],
+    ["audio", "Happy pop song. Lyrics: we open on Saturday, come say hi", false, "minimax-music-v2"],
+    ["audio", "A whoosh sound effect", false, "elevenlabs-sfx"],
+    ["audio", "Welcome to our grand opening this Saturday!", false, "elevenlabs-turbo"],
+  ];
+  for (const [kind, prompt, pic, want] of cases) assert.equal(capyPick(kind, prompt, pic).model.id, want, prompt);
+  // Every rule points at a model of its own kind, and each kind ends with a rule that always matches.
+  for (const r of RULES) assert.equal(modelOf(r.model)?.kind, r.kind, r.when);
+  for (const k of ["image", "video", "audio"] as const) assert.equal(RULES.filter((r) => r.kind === k).at(-1)!.test("", false), true);
+});
+
+test("credits follow fal's prices (1 credit = 1 cent)", () => {
+  const c = (kind: GenKind, model: string, extra: object = {}) => genRequest({ kind, prompt: "x".repeat(20), model, ...extra }).credits;
+  assert.equal(c("image", "flux-2-pro"), 3);
+  assert.equal(c("image", "ideogram-v3"), 3);
+  assert.equal(c("image", "nano-banana-2"), 8);
+  assert.equal(c("image", "nano-banana-pro"), 15);
+  assert.equal(c("video", "kling-3-pro"), 84);
+  assert.equal(c("video", "kling-3-pro", { seconds: 10 }), 168);
+  assert.equal(c("video", "seedance-2-fast"), 121);
+  assert.equal(c("video", "veo-3.1"), 240);
+  assert.equal(c("video", "veo-3.1", { seconds: 10 }), 320);
+  assert.equal(c("audio", "lyria-2"), 10);
+  assert.equal(c("audio", "stable-audio-2.5"), 20);
+  assert.equal(c("audio", "elevenlabs-sfx"), 1);
+  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-turbo" }).credits, 15);
+  assert.equal(genRequest({ kind: "audio", prompt: "Hi there", model: "elevenlabs-v3" }).credits, 1);
+});
+
 test("each model gets the input its fal schema takes", () => {
   const r = (b: object) => genRequest({ prompt: "p", ...b });
+  const url = "https://s.test/a.jpg";
   assert.deepEqual(falCall(r({ kind: "image", aspect: "9:16" }), null), { endpoint: "fal-ai/flux-2-pro", input: { prompt: "p", image_size: "portrait_16_9", output_format: "jpeg", enable_safety_checker: true } });
-  assert.deepEqual(falCall(r({ kind: "image", model: "nano-banana-2", aspect: "16:9" }), null), { endpoint: "fal-ai/nano-banana-2", input: { prompt: "p", aspect_ratio: "16:9", resolution: "1K", num_images: 1, output_format: "jpeg" } });
-  assert.deepEqual(falCall(r({ kind: "video", aspect: "1:1" }), null), { endpoint: "fal-ai/kling-video/v3/pro/text-to-video", input: { prompt: "p", aspect_ratio: "1:1", duration: "5", generate_audio: true } });
-  assert.deepEqual(falCall(r({ kind: "video", seconds: 10, source_media_id: PIC }), "https://s.test/a.jpg"), { endpoint: "fal-ai/kling-video/v3/pro/image-to-video", input: { prompt: "p", start_image_url: "https://s.test/a.jpg", duration: "10", generate_audio: true } });
+  assert.deepEqual(falCall(r({ kind: "image", model: "ideogram-v3", aspect: "16:9" }), null), { endpoint: "fal-ai/ideogram/v3", input: { prompt: "p", image_size: "landscape_16_9", rendering_speed: "TURBO", num_images: 1 } });
+  assert.deepEqual(falCall(r({ kind: "image", model: "nano-banana-pro" }), null), { endpoint: "fal-ai/nano-banana-pro", input: { prompt: "p", aspect_ratio: "1:1", resolution: "1K", num_images: 1, output_format: "jpeg" } });
+  assert.deepEqual(falCall(r({ kind: "image", source_media_id: PIC }), url), { endpoint: "fal-ai/nano-banana-2/edit", input: { prompt: "p", image_urls: [url], aspect_ratio: "1:1", resolution: "1K", num_images: 1, output_format: "jpeg" } });
+  assert.deepEqual(falCall(r({ kind: "video", model: "kling-3-pro", aspect: "1:1" }), null), { endpoint: "fal-ai/kling-video/v3/pro/text-to-video", input: { prompt: "p", aspect_ratio: "1:1", duration: "5", generate_audio: true } });
+  assert.deepEqual(falCall(r({ kind: "video", model: "kling-3-pro", seconds: 10, source_media_id: PIC }), url), { endpoint: "fal-ai/kling-video/v3/pro/image-to-video", input: { prompt: "p", start_image_url: url, duration: "10", generate_audio: true } });
   assert.deepEqual(falCall(r({ kind: "video", model: "seedance-2-fast", aspect: "9:16" }), null), { endpoint: "bytedance/seedance-2.0/fast/text-to-video", input: { prompt: "p", aspect_ratio: "9:16", duration: "5", resolution: "720p", generate_audio: true } });
-  assert.deepEqual(falCall(r({ kind: "video", model: "seedance-2-fast", source_media_id: PIC }), "https://s.test/a.jpg"), { endpoint: "bytedance/seedance-2.0/fast/image-to-video", input: { prompt: "p", image_url: "https://s.test/a.jpg", duration: "5", resolution: "720p", generate_audio: true } });
+  assert.deepEqual(falCall(r({ kind: "video", model: "veo-3.1", aspect: "1:1" }), null), { endpoint: "fal-ai/veo3.1", input: { prompt: "p", aspect_ratio: "16:9", duration: "6s", resolution: "720p", generate_audio: true } });
+  assert.deepEqual(falCall(r({ kind: "video", model: "veo-3.1", seconds: 10, source_media_id: PIC }), url), { endpoint: "fal-ai/veo3.1/image-to-video", input: { prompt: "p", image_url: url, duration: "8s", resolution: "720p", generate_audio: true } });
+  assert.deepEqual(falCall(r({ kind: "audio", model: "elevenlabs-turbo" }), null), { endpoint: "fal-ai/elevenlabs/tts/turbo-v2.5", input: { text: "p" } });
+  assert.deepEqual(falCall(r({ kind: "audio", model: "lyria-2" }), null), { endpoint: "fal-ai/lyria2", input: { prompt: "p" } });
+  assert.deepEqual(falCall(r({ kind: "audio", model: "elevenlabs-sfx", seconds: 10 }), null), { endpoint: "fal-ai/elevenlabs/sound-effects/v2", input: { text: "p", duration_seconds: 10 } });
+  assert.deepEqual(falCall(genRequest({ kind: "audio", prompt: "Happy pop song about coffee. Lyrics: we open on Saturday, come say hi" }), null), { endpoint: "fal-ai/minimax-music/v2", input: { prompt: "Happy pop song about coffee.", lyrics_prompt: "we open on Saturday, come say hi" } });
+  assert.throws(() => falCall(genRequest({ kind: "audio", prompt: "Pop. Lyrics: hi", model: "minimax-music-v2" }), null), /Lyrics:/);
 });
 
 test("fal's answers are read the same way every time", () => {
@@ -265,21 +320,22 @@ test("fal's answers are read the same way every time", () => {
   assert.throws(() => resultFile("image", { images: [] }), /no picture/);
   assert.throws(() => resultFile("video", { images: [{ url: "https://x.test/a.jpg" }] }), /no video/);
   assert.throws(() => resultFile("image", { images: [{ url: "http://v3.fal.media/a.jpg" }] }), /no picture/);
+  assert.deepEqual(resultFile("audio", { audio: { url: "https://v3.fal.media/a.mp3", content_type: "audio/mpeg" } }), { url: "https://v3.fal.media/a.mp3", mime: "audio/mpeg" });
+  assert.throws(() => resultFile("audio", { video: { url: "https://v3.fal.media/a.mp4" } }), /no audio/);
 });
 
-test("plan limits: pictures a month, seconds of video a month, and 4 at once", () => {
-  const pro = { aiImages: 50, aiVideoSeconds: 30 };
-  const none = { images: 0, videoSeconds: 0, open: 0 };
-  assert.throws(() => checkLimits({ kind: "image", seconds: 5 }, none, { aiImages: 0, aiVideoSeconds: 0 }), /doesn't include AI pictures/);
-  assert.throws(() => checkLimits({ kind: "video", seconds: 5 }, none, { aiImages: 0, aiVideoSeconds: 0 }), /doesn't include AI videos/);
-  assert.doesNotThrow(() => checkLimits({ kind: "image", seconds: 5 }, { ...none, images: 49 }, pro));
-  assert.throws(() => checkLimits({ kind: "image", seconds: 5 }, { ...none, images: 50 }, pro), /50 AI pictures a month/);
-  assert.doesNotThrow(() => checkLimits({ kind: "video", seconds: 10 }, { ...none, videoSeconds: 20 }, pro));
-  assert.throws(() => checkLimits({ kind: "video", seconds: 10 }, { ...none, videoSeconds: 25 }, pro), /5 seconds of AI video are left/);
-  assert.throws(() => checkLimits({ kind: "video", seconds: 5 }, { ...none, videoSeconds: 30 }, pro), /30 seconds of AI video a month/);
-  assert.throws(() => checkLimits({ kind: "image", seconds: 5 }, { ...none, open: 4 }, pro), /4 are being made already/);
+test("plan limits: monthly credits, a cap per file, and 4 at once", () => {
+  const pro = { aiCredits: 600 };
+  const none = { credits: 0, open: 0 };
+  assert.throws(() => checkLimits({ credits: 3 }, none, { aiCredits: 0 }), /doesn't include AI credits/);
+  assert.doesNotThrow(() => checkLimits({ credits: 84 }, { ...none, credits: 516 }, pro));
+  assert.throws(() => checkLimits({ credits: 84 }, { ...none, credits: 520 }, pro), /costs 84 credits and 80 are left/);
+  assert.throws(() => checkLimits({ credits: 3 }, { ...none, credits: 600 }, pro), /600 AI credits for this month are used/);
+  assert.throws(() => checkLimits({ credits: 400 }, none, { aiCredits: 2000 }), /up to 350/);
+  assert.throws(() => checkLimits({ credits: 3 }, { ...none, open: 4 }, pro), /4 are being made already/);
   assert.equal(fileName("A Capybara, at sunset! On the beach today", "image/jpeg"), "a-capybara-at-sunset-on-the.jpg");
   assert.equal(fileName("!!!", "video/mp4"), "ai.mp4");
+  assert.equal(fileName("Welcome to our opening", "audio/mpeg"), "welcome-to-our-opening.mp3");
 });
 
 test("MCP: generate_media checks its input and get_generation reads one back", async () => {
@@ -287,9 +343,9 @@ test("MCP: generate_media checks its input and get_generation reads one back", a
   const ops = {
     generate: async (r) => {
       calls.push(`${r.kind}:${r.model}:${r.aspect}:${r.seconds}:${r.sourceMediaId ?? "-"}`);
-      return { id: "g1", kind: r.kind, model: r.model, prompt: r.prompt, status: "running", error: null, media: null, created_at: "2026-11-05T00:00:00Z" };
+      return { id: "g1", kind: r.kind, model: r.model, prompt: r.prompt, status: "running", error: null, media: null, credits: r.credits, reason: r.why, created_at: "2026-11-05T00:00:00Z" };
     },
-    generation: async (id) => ({ id, kind: "video", model: "kling-3-pro", prompt: "x", status: "failed", error: "busy", media: null, created_at: "2026-11-05T00:00:00Z" }),
+    generation: async (id) => ({ id, kind: "video", model: "kling-3-pro", prompt: "x", status: "failed", error: "busy", media: null, credits: 84, reason: null, created_at: "2026-11-05T00:00:00Z" }),
   } as Partial<Ops> as Ops;
   const call = (name: string, args: unknown) => handleMcp({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }, ops, "UTC") as Promise<{ result: { content: { text: string }[]; isError: boolean } }>;
   const ok = await call("generate_media", { kind: "video", prompt: "Waves", aspect: "9:16", source_media_id: PIC });

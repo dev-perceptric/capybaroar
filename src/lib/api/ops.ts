@@ -134,6 +134,8 @@ export function realOps(ctx: ApiCtx): Ops {
     status: g.status,
     error: g.error,
     media: g.media_id ? await oneMedia(g.media_id) : null,
+    credits: g.credits,
+    reason: g.reason,
     created_at: g.created_at,
   });
 

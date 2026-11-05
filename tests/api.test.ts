@@ -112,9 +112,9 @@ function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[]; calls: str
     uploadFromLink: async (url) => ({ id: "m1", name: url.pathname, mime: "image/png", size: 1, alt: null, created_at: AT, preview_url: null }),
     generate: async (r) => {
       calls.push(`generate:${r.kind}:${r.model}:${r.aspect}:${r.seconds}:${r.sourceMediaId ?? "-"}`);
-      return { id: "g1", kind: r.kind, model: r.model, prompt: r.prompt, status: "running", error: null, media: null, created_at: AT };
+      return { id: "g1", kind: r.kind, model: r.model, prompt: r.prompt, status: "running", error: null, media: null, credits: r.credits, reason: r.why, created_at: AT };
     },
-    generation: async (id) => ({ id, kind: "image", model: "flux-2-pro", prompt: "x", status: "done", error: null, media: { id: "m1", name: "x.jpg", mime: "image/jpeg", size: 1, alt: null, created_at: AT, preview_url: null }, created_at: AT }),
+    generation: async (id) => ({ id, kind: "image", model: "flux-2-pro", prompt: "x", status: "done", error: null, media: { id: "m1", name: "x.jpg", mime: "image/jpeg", size: 1, alt: null, created_at: AT, preview_url: null }, credits: 3, reason: null, created_at: AT }),
     webhooks: async () => [],
     createWebhook: async (url, events) => ({ webhook: { id: "h1", url: url.toString(), events, enabled: true, failures: 0, last_status: null, last_error: null, last_delivered_at: null, created_at: AT }, secret: "whsec_x" }),
     setWebhook: async (id, enabled) => ({ id, url: "https://x.test/", events: [], enabled, failures: 0, last_status: null, last_error: null, last_delivered_at: null, created_at: AT }),

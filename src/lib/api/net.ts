@@ -73,10 +73,13 @@ export function sniffMime(head: Uint8Array): string | null {
   if (at(0, 0x47, 0x49, 0x46, 0x38)) return "image/gif";
   if (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x45, 0x42, 0x50)) return "image/webp";
   if (at(4, 0x66, 0x74, 0x79, 0x70)) return at(8, 0x71, 0x74, 0x20, 0x20) ? "video/quicktime" : "video/mp4"; // "ftyp", brand "qt  "
+  if (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x41, 0x56, 0x45)) return "audio/wav"; // "RIFF" ... "WAVE"
+  if (at(0, 0x49, 0x44, 0x33) || (head[0] === 0xff && (head[1] & 0xe0) === 0xe0)) return "audio/mpeg"; // "ID3" tag or an MP3 frame
+  if (at(0, 0x4f, 0x67, 0x67, 0x53)) return "audio/ogg"; // "OggS"
   return null;
 }
 
-export const EXT: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "image/webp": "webp", "video/mp4": "mp4", "video/quicktime": "mov" };
+export const EXT: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "image/webp": "webp", "video/mp4": "mp4", "video/quicktime": "mov", "audio/mpeg": "mp3", "audio/wav": "wav", "audio/ogg": "ogg" };
 
 /** A file name from a link: its last path part, cleaned, with the right ending for what the file really is. */
 export function nameFromUrl(url: URL, mime: string): string {

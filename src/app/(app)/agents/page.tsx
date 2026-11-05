@@ -4,6 +4,7 @@ import { AgentChat, type Shown } from "@/components/AgentChat";
 import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
 import { aiReady, generationsOf } from "@/lib/generations";
+import { modelOf } from "@/lib/genRules";
 import { mediaThumbs } from "@/lib/media";
 import { actionLabel } from "@/lib/agentTools";
 
@@ -52,7 +53,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
           const g = gens.get(genOf.get(b.id) ?? "");
           if (!g) return [];
           const m = g.media_id ? thumbs.get(g.media_id) : undefined;
-          return [{ key, role: "media", text: g.prompt, media: { kind: g.kind, status: g.status, error: g.error, thumb: m?.thumb ?? null, mime: m?.mime ?? null } }];
+          return [{ key, role: "media", text: g.prompt, media: { kind: g.kind, status: g.status, error: g.error, thumb: m?.thumb ?? null, mime: m?.mime ?? null, model: modelOf(g.model)?.name ?? g.model, credits: g.credits, reason: g.reason } }];
         }
         return [];
       }),

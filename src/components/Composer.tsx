@@ -214,9 +214,10 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const setSetting = (id: string, key: string, value: string) => setTargets((t) => ({ ...t, [id]: { ...t[id], settings: { ...t[id].settings, [key]: value } } }));
 
   // AI pictures and videos: attached when their file is in the library.
-  const gens = useGenerations(async (mediaId) => {
+  const gens = useGenerations(async (mediaId, kind) => {
     setLibrary((await loadMedia()) as Media[]);
-    setMediaIds((ids) => (ids.includes(mediaId) ? ids : [...ids, mediaId]));
+    // Audio waits in the library: it can't go on a post on its own.
+    if (kind !== "audio") setMediaIds((ids) => (ids.includes(mediaId) ? ids : [...ids, mediaId]));
   });
 
   /** Upload straight to storage with a one-time link, then attach. Several files upload one after another. */
@@ -651,7 +652,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     ) : library.length ? (
                       <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto">
                         {library
-                          .filter((m) => picking === "media" || !m.mime.startsWith("video/"))
+                          .filter((m) => !m.mime.startsWith("audio/") && (picking === "media" || !m.mime.startsWith("video/")))
                           .map((m) => {
                             const on = picking === "media" ? mediaIds.includes(m.id) : targets[picking.cover]?.settings.cover === m.id;
                             return (

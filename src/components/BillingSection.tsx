@@ -6,7 +6,7 @@ import { Loader } from "./Loader";
 import { tell } from "./Dialogs";
 import { fmtDate, fmtNum } from "@/lib/format";
 
-export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean; bioBadgeOff: boolean; aiImages: number; aiVideoSeconds: number };
+export type PlanCard = { id: "free" | "pro" | "agency"; name: string; price: number; members: number; brands: number | null; channels: number; postsPerMonth: number | null; agent: boolean; reports: boolean; whiteLabel: boolean; bioBadgeOff: boolean; aiCredits: number };
 
 export type BillingInfo = {
   plan: PlanCard["id"];
@@ -93,8 +93,7 @@ export function BillingSection({ info }: { info: BillingInfo }) {
                 <li>{limit(p.channels)} channels</li>
                 <li>{p.postsPerMonth == null ? "Unlimited posts" : `${fmtNum(p.postsPerMonth)} posts a month`}</li>
                 <li>{p.agent ? "Agent" : "No agent"}</li>
-                <li>{p.aiImages ? `${fmtNum(p.aiImages)} AI pictures a month` : "No AI pictures"}</li>
-                <li>{p.aiVideoSeconds ? `${fmtNum(p.aiVideoSeconds)} seconds of AI video a month` : "No AI video"}</li>
+                <li>{p.aiCredits ? `${fmtNum(p.aiCredits)} AI credits a month` : "No AI credits"}</li>
                 <li>{p.whiteLabel ? "White-label reports" : p.reports ? "Reports" : "No reports"}</li>
                 <li>{p.bioBadgeOff ? "Link in bio without our badge" : "Link in bio"}</li>
               </ul>

@@ -10,11 +10,12 @@ import { Logo } from "./Logo";
 import { send } from "@/app/(app)/agents/actions";
 import { Markdown } from "./Markdown";
 import { Select } from "./Select";
-import { defaultModel, modelOf, modelsFor, type GenKind } from "@/lib/genRules";
+import { CAPY, KINDS, type GenKind } from "@/lib/genRules";
 
-// The picture and video models picked in the chat box, remembered in this browser.
-const MODELS_KEY = "cb_agent_models";
-const pickOf = (kind: GenKind, saved: Record<string, string>) => (modelOf(saved[kind] ?? "")?.kind === kind ? saved[kind] : defaultModel(kind).id);
+// What to make with this message, picked in the chat box and remembered in this browser. Capy picks the model.
+type Make = "auto" | GenKind;
+const MAKE_KEY = "cb_agent_make";
+const MAKES: { value: Make; label: string }[] = [{ value: "auto", label: "Auto" }, ...KINDS.map((k) => ({ value: k as Make, label: CAPY[k].name }))];
 
 export type Shown = {
   key: string;
@@ -22,8 +23,8 @@ export type Shown = {
   text: string;
   /** Where an action's line links to (role "tool"). */
   href?: string;
-  /** A picture or video the agent made (role "media"). */
-  media?: { kind: "image" | "video"; status: "queued" | "running" | "done" | "failed"; error: string | null; thumb: string | null; mime: string | null };
+  /** A picture, video or audio file the agent made (role "media"), with the model Capy picked. */
+  media?: { kind: GenKind; status: "queued" | "running" | "done" | "failed"; error: string | null; thumb: string | null; mime: string | null; model: string; credits: number; reason: string | null };
 };
 
 export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id: string; title: string }[]; chatId: string | null; messages: Shown[]; ai?: boolean }) {
@@ -32,26 +33,24 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   const router = useRouter();
-  const [models, setModels] = useState({ image: defaultModel("image").id, video: defaultModel("video").id });
+  const [make, setMake] = useState<Make>("auto");
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(MODELS_KEY) ?? "{}") as Record<string, string>;
+      const saved = localStorage.getItem(MAKE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after the first paint, so the server and browser render the same
-      setModels({ image: pickOf("image", saved), video: pickOf("video", saved) });
+      if (MAKES.some((m) => m.value === saved)) setMake(saved as Make);
     } catch {
       // no saved choice
     }
   }, []);
-  const pickModel = (kind: GenKind, id: string) =>
-    setModels((m) => {
-      const next = { ...m, [kind]: id };
-      try {
-        localStorage.setItem(MODELS_KEY, JSON.stringify(next));
-      } catch {
-        // kept for this visit only
-      }
-      return next;
-    });
+  const pickMake = (v: Make) => {
+    setMake(v);
+    try {
+      localStorage.setItem(MAKE_KEY, v);
+    } catch {
+      // kept for this visit only
+    }
+  };
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
     end.current?.scrollIntoView({ block: "end" });
@@ -71,7 +70,7 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
     setPending(t);
     setError("");
     start(async () => {
-      const r = await send(chatId, t, models);
+      const r = await send(chatId, t, make);
       setPending("");
       if (r.error) {
         setError(r.error);
@@ -90,7 +89,7 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
             <div className="rise flex h-full flex-col items-center justify-center px-6 text-center">
               <Logo variant="icon" className="size-20" />
               <h2 className="mt-6 max-w-md text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
-                Plan a week of posts. <span className="text-faint">{ai ? "The agent writes them and makes their pictures and videos." : "The agent writes and schedules them."}</span>
+                Plan a week of posts. <span className="text-faint">{ai ? "The agent writes them and makes what they need." : "The agent writes and schedules them."}</span>
               </h2>
             </div>
           ) : (
@@ -132,12 +131,7 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
             className={bareArea}
           />
           <div className="flex flex-wrap items-center gap-2 px-2 pb-2">
-            {ai ? (
-              <>
-                <Select value={models.image} onChange={(v) => pickModel("image", v)} options={modelsFor("image").map((m) => ({ value: m.id, label: m.name }))} lead="Picture" ariaLabel="Picture model" size="sm" />
-                <Select value={models.video} onChange={(v) => pickModel("video", v)} options={modelsFor("video").map((m) => ({ value: m.id, label: m.name }))} lead="Video" ariaLabel="Video model" size="sm" />
-              </>
-            ) : null}
+            {ai ? <Select value={make} onChange={pickMake} options={MAKES} lead="Make" ariaLabel="What to make" size="sm" className="w-auto" /> : null}
             {error ? (
               <p role="alert" className="pl-1 text-[12px] text-danger">
                 {error}
@@ -177,23 +171,41 @@ export function AgentChat({ chats, chatId, messages, ai = false }: { chats: { id
 function Bubble({ m }: { m: Shown }) {
   if (m.role === "media" && m.media) {
     const f = m.media;
-    if (f.status === "failed") return <p className="w-fit max-w-[80%] rounded-lg bg-danger-soft px-3 py-2 text-[12px] text-danger">{f.error ?? "Couldn't make it"}</p>;
-    if (f.status !== "done" || !f.thumb)
-      return (
-        <div className="flex size-40 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line-strong text-[12px] text-muted">
+    const label = f.kind === "image" ? "Picture" : f.kind === "video" ? "Video" : "Audio";
+    const line = (
+      <p className="flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
+        <span className="inline-flex h-[22px] items-center rounded-full bg-signal-soft px-2 font-medium text-ink shadow-picked">{CAPY[f.kind].name}</span>
+        <span>
+          picked <span className="font-medium text-ink">{f.model}</span>, {f.credits} credits{f.reason ? `, because ${f.reason}` : ""}
+        </span>
+      </p>
+    );
+    let body: React.ReactNode;
+    if (f.status === "failed") body = <p className="w-fit max-w-[80%] rounded-lg bg-danger-soft px-3 py-2 text-[12px] text-danger">{f.error ?? "Couldn't make it"}</p>;
+    else if (f.status !== "done" || !f.thumb)
+      body = (
+        <div className={`flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line-strong text-[12px] text-muted ${f.kind === "audio" ? "h-12 w-64 flex-row" : "size-40"}`}>
           <Loader />
-          {f.kind === "image" ? "Picture" : "Video"}
+          {label}
         </div>
       );
+    else if (f.mime?.startsWith("audio/")) body = <audio src={f.thumb} controls preload="metadata" className="w-72 max-w-full" />;
+    else
+      body = (
+        <Link href="/media" className="block w-fit overflow-hidden rounded-lg bg-paper shadow-card transition-shadow hover:shadow-hover" title={m.text}>
+          {f.mime?.startsWith("video/") ? (
+            <video src={f.thumb} className="max-h-72 max-w-72" muted controls preload="metadata" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={f.thumb} alt={m.text} loading="lazy" decoding="async" className="max-h-72 max-w-72 object-contain" />
+          )}
+        </Link>
+      );
     return (
-      <Link href="/media" className="block w-fit overflow-hidden rounded-lg bg-paper shadow-card transition-shadow hover:shadow-hover" title={m.text}>
-        {f.mime?.startsWith("video/") ? (
-          <video src={f.thumb} className="max-h-72 max-w-72" muted controls preload="metadata" />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={f.thumb} alt={m.text} loading="lazy" decoding="async" className="max-h-72 max-w-72 object-contain" />
-        )}
-      </Link>
+      <div className="flex flex-col gap-2">
+        {line}
+        {body}
+      </div>
     );
   }
   if (m.role === "tool")

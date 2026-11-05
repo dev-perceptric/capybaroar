@@ -4,7 +4,7 @@ import { mkdtemp, open, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { adminClient } from "../supabase/server";
-import { ALLOWED, MAX_BYTES } from "../media";
+import { ALLOWED, MAX_BYTES, UPLOADS } from "../media";
 import { ApiError } from "./input";
 import { BlockedAddress, safeGet } from "./fetchSafe";
 import { nameFromUrl, sniffMime } from "./net";
@@ -82,7 +82,8 @@ export async function linkToMedia(workspaceId: string, userId: string | null, ur
     await fh.read(head, 0, 16, 0);
     await fh.close();
     const mime = sniffMime(head);
-    if (!mime || !ALLOWED.test(mime)) throw bad("The link isn't a JPG, PNG, GIF, WebP, MP4 or MOV file");
+    // Links people send take pictures and videos; files Capy made may also be audio.
+    if (!mime || !(opts.place ? ALLOWED : UPLOADS).test(mime)) throw bad("The link isn't a JPG, PNG, GIF, WebP, MP4 or MOV file");
     const fixed = opts.place?.(mime);
     const name = fixed?.name ?? nameFromUrl(res.url, mime);
     const path = fixed ? `${workspaceId}/${fixed.path}` : `${workspaceId}/${crypto.randomUUID()}-${name}`;
