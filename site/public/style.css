@@ -53,16 +53,50 @@ a{color:inherit}
 .logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;letter-spacing:-.01em;text-decoration:none;color:var(--ink)}
 .logo-mark{display:block;width:136px;height:24px}
 .nav-links{display:flex;align-items:center;gap:4px;margin:0 auto}
-.nav-links a,.nav-login{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;transition:background-color var(--fast),color var(--fast)}
-.nav-links a:hover,.nav-login:hover{background:var(--shell);color:var(--ink)}
+.nav-links>a,.nav-login,.dd-btn{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink-2);text-decoration:none;transition:background-color var(--fast),color var(--fast)}
+.nav-links>a:hover,.nav-login:hover,.dd-btn:hover,.dd.open .dd-btn{background:var(--shell);color:var(--ink)}
 .nav-end{display:flex;align-items:center;gap:6px}
 .nav-menu{display:none;position:relative}
 .nav-menu summary{display:flex;align-items:center;justify-content:center;width:38px;height:34px;border-radius:999px;cursor:pointer;list-style:none;box-shadow:var(--sh-pill);background:var(--panel)}
 .nav-menu summary::-webkit-details-marker{display:none}
 .nav-menu summary .ico{width:18px;height:18px}
-.nav-sheet{position:absolute;right:0;top:44px;display:flex;flex-direction:column;min-width:200px;padding:6px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-menu)}
+.nav-sheet{position:absolute;right:0;top:44px;display:flex;flex-direction:column;width:min(340px,calc(100vw - 32px));max-height:calc(100vh - 90px);overflow-y:auto;padding:6px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-menu)}
 .nav-sheet a{display:flex;align-items:center;height:38px;padding:0 10px;border-radius:6px;font-size:15px;text-decoration:none;color:var(--ink)}
 .nav-sheet a:hover{background:var(--shell)}
+
+/* Nav menus: Platform, Channels, Resources and Utilities open on hover, focus or click (nav.js) */
+.dd{position:relative}
+.dd-btn{gap:4px;border:0;background:none;font-family:inherit;cursor:pointer}
+.dd-chev{width:14px;height:14px;transition:transform var(--fast)}
+.dd:hover .dd-chev,.dd.open .dd-chev{transform:rotate(180deg)}
+.dd-panel{position:absolute;left:50%;top:100%;z-index:45;padding-top:14px;opacity:0;visibility:hidden;transform:translate(-50%,4px);transition:opacity var(--fast),transform var(--fast) var(--ease-out),visibility 0s linear var(--fast)}
+.dd:hover .dd-panel,.dd:focus-within .dd-panel,.dd.open .dd-panel{opacity:1;visibility:visible;transform:translate(-50%,0);transition-delay:0s}
+.dd.shut .dd-panel{opacity:0;visibility:hidden}
+.dd-box{display:grid;gap:2px;padding:8px;border-radius:12px;background:var(--panel);box-shadow:var(--sh-menu)}
+.dd-box.cols1{grid-template-columns:280px}
+.dd-box.cols2{grid-template-columns:repeat(2,260px)}
+.dd-box.cols3{grid-template-columns:repeat(3,210px)}
+.dd-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;color:var(--ink);text-decoration:none;transition:background-color var(--fast)}
+.dd-item:hover,.dd-item:focus-visible{background:var(--shell)}
+.dd-ic{flex:none;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:var(--shell);transition:background-color var(--fast)}
+.dd-item:hover .dd-ic{background:var(--panel);box-shadow:var(--sh-chip)}
+.dd-ic .ico{width:18px;height:18px;color:var(--ink-2)}
+.dd-ic.logo{background:var(--panel);box-shadow:var(--sh-chip)}
+.dd-ic .nl{width:20px;height:20px}
+.dd-tx{display:flex;flex-direction:column;min-width:0}
+.dd-tx b{font-size:14px;font-weight:500;line-height:1.3}
+.dd-tx small{font-size:12.5px;line-height:1.35;color:var(--gray)}
+.dd-all{grid-column:1 / -1;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;padding:10px;border-radius:8px;background:var(--canvas);font-size:13px;font-weight:500;color:var(--ink);text-decoration:none}
+.dd-all:hover{background:var(--shell)}
+.dd-all .ico{width:14px;height:14px}
+.sh-g{display:flex;flex-direction:column;gap:2px;padding:6px 0;border-bottom:1px solid var(--line)}
+.sh-g:last-child{border-bottom:0}
+.sh-t{padding:4px 10px;font-size:12px;font-weight:500;color:var(--gray)}
+.sh-l{display:grid;gap:2px}
+.sh-l.cols2{grid-template-columns:1fr 1fr}
+.nav-sheet a{gap:10px}
+.nav-sheet .ico,.nav-sheet .nl{width:16px;height:16px;flex:none}
+.nav-sheet .ico{color:var(--ink-2)}
 
 /* Footer: the same on every page */
 .foot{margin-top:96px;border-top:1px solid var(--line);background:var(--panel);font-size:14px}

@@ -746,3 +746,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 }
 @media (min-width:1081px){.related:has(> li:nth-child(5)){grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media (min-width:761px) and (max-width:1080px){.related>li:last-child:nth-child(odd){grid-column:1 / -1}}
+.simple-hero .hero-bg{height:420px}
+.soon{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:560px;margin:56px auto 0;padding:48px 32px;border-radius:16px;background:var(--panel);box-shadow:var(--sh-rest);text-align:center}
+.soon h2{font-size:22px;letter-spacing:-.015em}
+.soon p{color:var(--gray)}
+.soon .btn{margin-top:8px}
