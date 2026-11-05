@@ -8,6 +8,7 @@ import { Avatar, Dot } from "./ui";
 import { Floating, HoverTip } from "./Floating";
 import { tell } from "./Dialogs";
 import { Logo } from "./Logo";
+import { SidebarChats } from "./AgentChats";
 import { signOut } from "@/app/login/actions";
 import { switchBrand, switchWorkspace } from "@/app/(app)/actions";
 import type { Brand } from "@/lib/brands";
@@ -105,7 +106,10 @@ export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name:
       </div>
       <nav aria-label="Main" className="-mx-3 flex gap-1 overflow-x-auto px-3 pb-0.5 [scrollbar-width:none] md:mx-0 md:min-h-0 md:flex-1 md:flex-col md:gap-0.5 md:overflow-y-auto md:px-0 md:pt-2 md:pb-0">
         {ITEMS.filter((n) => switcher.role !== "client" || n.client).map((n) => (
-          <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} count={n.href === "/inbox" ? inbox : undefined} />
+          <span key={n.href} className="contents">
+            <NavLink href={n.href} label={n.label} icon={n.icon} count={n.href === "/inbox" ? inbox : undefined} />
+            {n.href === "/agents" ? <SidebarChats /> : null}
+          </span>
         ))}
         {settings ? (
           <span className="contents md:hidden">
