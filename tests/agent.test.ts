@@ -3,7 +3,7 @@
 // agent sends to generate_media passes the app's checks, and the chat names each action.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ATTACH_TOOL, actionLabel, agentTools, capyChoice, systemPrompt } from "../src/lib/agentTools";
+import { ATTACHED, ATTACH_TOOL, actionLabel, agentTools, attachedNames, capyChoice, systemPrompt } from "../src/lib/agentTools";
 import { TOOLS } from "../src/lib/api/mcp";
 import { genRequest } from "../src/lib/genRules";
 
@@ -57,4 +57,9 @@ test("the chat box's Capy choice tells the agent what to make, and Capy picks th
   assert.match(systemPrompt(true, "UTC", new Date(), "auto"), /Leave model out so Capy picks/);
   assert.doesNotMatch(systemPrompt(true, "UTC", new Date(), "auto"), /For this message the user picked/);
   assert.doesNotMatch(systemPrompt(false, "UTC", new Date(), "audio"), /CapyAudio/);
+});
+
+test("files added with + come back as chips with their names", () => {
+  assert.deepEqual(attachedNames(`${ATTACHED}storefront.jpg (media id 8f14e45f-ceea-467f-a0e6-2e1b4a1c9a11), logo, final.png (media id 9f14e45f-ceea-467f-a0e6-2e1b4a1c9a11)`), ["storefront.jpg", "logo, final.png"]);
+  assert.equal(attachedNames("Write 5 posts"), null);
 });

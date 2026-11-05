@@ -3,7 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { adminClient } from "./supabase/server";
 import type { Ctx } from "./session";
 import { assertCanUseAgent } from "./billing";
-import { agentTools, systemPrompt, type CapyChoice } from "./agentTools";
+import { ATTACHED, agentTools, systemPrompt, type CapyChoice } from "./agentTools";
 import { aiReady, attachToPost, waitForGeneration } from "./generations";
 import { callTool } from "./api/mcp";
 import { realOps } from "./api/ops";
@@ -42,7 +42,7 @@ async function runTool(ctx: Ctx, name: string, input: Record<string, unknown>): 
 export type ChatMessage = { role: "user" | "assistant"; content: Anthropic.MessageParam["content"] };
 
 /** Send one user message and run the agent until it answers. Every message is saved, append-only. */
-export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, capy: CapyChoice = "auto"): Promise<{ chatId: string }> {
+export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, capy: CapyChoice = "auto", files: { id: string; name: string }[] = []): Promise<{ chatId: string }> {
   await assertCanUseAgent(ctx.workspaceId);
   const db = adminClient();
   let id = chatId;
@@ -61,7 +61,8 @@ export async function agentTurn(ctx: Ctx, chatId: string | null, text: string, c
     const { error } = await db.from("agent_messages").insert({ chat_id: id, role: m.role, content: m.content });
     if (error) throw new Error(error.message);
   };
-  await add({ role: "user", content: [{ type: "text", text }] });
+  // Files added with + ride along as a second text block, so the chat shows them as chips and the agent gets their ids.
+  await add({ role: "user", content: [{ type: "text", text }, ...(files.length ? [{ type: "text" as const, text: `${ATTACHED}${files.map((f) => `${f.name} (media id ${f.id})`).join(", ")}` }] : [])] });
 
   const client = new Anthropic();
   const ai = aiReady();

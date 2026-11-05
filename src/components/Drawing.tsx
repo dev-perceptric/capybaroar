@@ -33,7 +33,8 @@ export type DrawingKind =
   | "approval"
   | "live"
   | "nomatch"
-  | "replies";
+  | "replies"
+  | "agent";
 
 const SIGNS: Record<DrawingKind, React.ReactNode> = {
   records: (
@@ -177,10 +178,22 @@ const SIGNS: Record<DrawingKind, React.ReactNode> = {
       <path d="M6 5h12l3 7v7H3v-7z" />
     </>
   ),
+  agent: (
+    <>
+      <rect x="4" y="8" width="16" height="12" rx="2" />
+      <path d="M12 8V4H8M2 14h2M20 14h2M15 13v2M9 13v2" />
+    </>
+  ),
 };
 
 // The small tile's sign, for the drawings that have one.
 const MINI: Partial<Record<DrawingKind, React.ReactNode>> = {
+  agent: (
+    <>
+      <path d="M4 5h16v11H9l-5 4z" />
+      <path d="M8 9.5h8M8 12.5h5" />
+    </>
+  ),
   campaigns: SIGNS.people,
   audience: (
     <>

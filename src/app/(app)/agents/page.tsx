@@ -1,12 +1,10 @@
-import { Bot } from "lucide-react";
-import { Page } from "@/components/ui";
 import { AgentChat, type Shown } from "@/components/AgentChat";
 import { teamCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
-import { aiReady, generationsOf } from "@/lib/generations";
+import { aiReady, creditsOf, generationsOf } from "@/lib/generations";
 import { modelOf } from "@/lib/genRules";
 import { mediaThumbs } from "@/lib/media";
-import { actionLabel } from "@/lib/agentTools";
+import { actionLabel, attachedNames } from "@/lib/agentTools";
 
 type Block = { type: string; id?: string; text?: string; name?: string; input?: Record<string, unknown>; tool_use_id?: string; content?: unknown; is_error?: boolean };
 
@@ -24,13 +22,16 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   const ctx = await teamCtx();
   const { chat } = await searchParams;
   const db = adminClient();
-  // The open chat's messages load alongside the list, and show only when the chat is in it (this person's).
-  const [{ data: chats }, open] = await Promise.all([
-    db.from("agent_chats").select("id, title").eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).order("created_at", { ascending: false }).limit(50),
+  const ai = aiReady();
+  // The open chat's messages load alongside it, and show only when the chat is this person's. The chat list lives in
+  // the sidebar (AgentChats).
+  const [{ data: mine }, open, credits] = await Promise.all([
+    chat ? db.from("agent_chats").select("id, title").eq("id", chat).eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).maybeSingle() : Promise.resolve({ data: null }),
     chat ? db.from("agent_messages").select("id, role, content").eq("chat_id", chat).order("id") : null,
+    ai ? creditsOf(ctx.workspaceId).catch(() => null) : null,
   ]);
   let shown: Shown[] = [];
-  if (chat && chats?.some((c) => c.id === chat)) {
+  if (mine) {
     const rows = (open?.data ?? []).map((r) => ({ ...r, blocks: (Array.isArray(r.content) ? r.content : [{ type: "text", text: String(r.content) }]) as Block[] }));
     // Pictures and videos the agent made: each generate_media call's answer names its request.
     const genOf = new Map<string, string>();
@@ -46,7 +47,11 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
     shown = rows.flatMap((r) =>
       r.blocks.flatMap((b, i): Shown[] => {
         const key = `${r.id}-${i}`;
-        if (b.type === "text" && b.text?.trim()) return [{ key, role: r.role as "user" | "assistant", text: b.text }];
+        if (b.type === "text" && b.text?.trim()) {
+          const files = r.role === "user" ? attachedNames(b.text) : null;
+          if (files) return [{ key, role: "files", text: files.join(", "), files }];
+          return [{ key, role: r.role as "user" | "assistant", text: b.text }];
+        }
         const label = b.type === "tool_use" && b.name && b.id && !failed.has(b.id) ? actionLabel(b.name, b.input) : null;
         if (label) return [{ key, role: "tool", text: label, href: /webhook/.test(b.name!) ? "/settings" : b.name === "upload_media" ? "/media" : "/calendar" }];
         if (b.type === "tool_use" && b.name === "generate_media" && b.id) {
@@ -59,9 +64,5 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
       }),
     );
   }
-  return (
-    <Page icon={<Bot />} title="Agents" flush>
-      <AgentChat chats={(chats ?? []) as { id: string; title: string }[]} chatId={chat ?? null} messages={shown} ai={aiReady()} />
-    </Page>
-  );
+  return <AgentChat chatId={mine ? (chat ?? null) : null} title={(mine?.title as string | undefined) ?? null} messages={shown} ai={ai} credits={credits?.left ?? null} />;
 }

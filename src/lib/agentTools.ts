@@ -5,6 +5,12 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { TOOLS, instructions } from "./api/mcp";
 import { CAPY, type GenKind } from "./genRules";
 
+/** How files added with + start the message block that lists them (and how the chat finds that block). */
+export const ATTACHED = "Attached from Media: ";
+
+/** The file names in an attachment block, for the chat's chips. */
+export const attachedNames = (text: string) => (text.startsWith(ATTACHED) ? text.slice(ATTACHED.length).split(/ \(media id [^)]+\)(?:, )?/).filter(Boolean) : null);
+
 /** What the chat box's Capy dropdown asks for: the agent decides (auto), or a picture, video or audio. */
 export type CapyChoice = "auto" | GenKind;
 
