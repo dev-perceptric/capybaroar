@@ -1649,7 +1649,7 @@ TERMS += [
 <h2>GIF vs video</h2>
 <p>GIFs and short videos look alike, but they suit different jobs.</p>
 <figure data-chart="2"></figure>
-<p>GIF files can be large for their quality. For long or detailed clips, a short video usually works better and looks sharper. Keep GIFs for quick loops and reactions.</p>
+<p>GIF files can be large for their quality. For long or detailed clips, a short video usually works better and looks sharper. Keep GIFs for quick loops and reactions. If a platform asks you to upload a GIF as a video, that is normal, and the loop usually still plays.</p>
 <h2>Things to watch for</h2>
 <ul>
 <li><b>Flashing.</b> Fast-flashing GIFs can harm people with photosensitive conditions. Avoid strobing effects.</li>
