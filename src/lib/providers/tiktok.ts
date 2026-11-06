@@ -24,7 +24,7 @@ export const tiktok: Provider = {
   oauth: {
     configured: () => Boolean(key() && secret()),
     authUrl: ({ state, redirect }) =>
-      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,user.info.profile,user.info.stats,video.list,video.upload,video.publish", redirect_uri: redirect, state })}`,
+      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,user.info.profile,user.info.stats,video.list,video.publish", redirect_uri: redirect, state })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await call<{ access_token: string; expires_in: number; refresh_token: string; open_id: string }>(
         `${API}/oauth/token/`,
@@ -59,11 +59,11 @@ export const tiktok: Provider = {
     if (!t.access_token) throw new AuthError(`TikTok refresh: ${t.error_description ?? t.error}`);
     return { accessToken: t.access_token, refreshToken: t.refresh_token ?? s.refreshToken, expiresAt: new Date(Date.now() + (t.expires_in ?? 86400) * 1000) };
   },
-  check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "TikTok needs exactly one video" : p.text.length > 2200 ? "TikTok captions are up to 2,200 characters" : null),
+  check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "TikTok needs exactly one video" : p.text.length > 2200 ? "TikTok captions are up to 2,200 characters" : p.settings.brand === "branded" && p.settings.privacy === "SELF_ONLY" ? "Branded content can't be set to Only me on TikTok" : null),
   publish: async (s, _openId, p) => {
     const token = s.accessToken;
     const video = p.media[0];
-    const creator = await tt<{ privacy_level_options: string[] }>(`${API}/post/publish/creator_info/query/`, { method: "POST", headers: json(token) }, "TikTok account");
+    const creator = await tt<{ privacy_level_options: string[]; comment_disabled?: boolean; duet_disabled?: boolean; stitch_disabled?: boolean }>(`${API}/post/publish/creator_info/query/`, { method: "POST", headers: json(token) }, "TikTok account");
     const privacy = p.settings.privacy;
     if (!privacy) throw new PostError("Choose who can watch this TikTok");
     if (!creator.privacy_level_options.includes(privacy)) throw new PostError(`This TikTok account can only post as: ${creator.privacy_level_options.join(", ")}`);
@@ -77,7 +77,16 @@ export const tiktok: Provider = {
         method: "POST",
         headers: json(token),
         body: JSON.stringify({
-          post_info: { title: p.text, privacy_level: privacy, disable_comment: p.settings.comments === "off", disable_duet: false, disable_stitch: false },
+          post_info: {
+            title: p.text,
+            privacy_level: privacy,
+            // Off unless the person turned it on, and off when the account's own TikTok settings turn it off.
+            disable_comment: p.settings.comments !== "on" || Boolean(creator.comment_disabled),
+            disable_duet: p.settings.duet !== "on" || Boolean(creator.duet_disabled),
+            disable_stitch: p.settings.stitch !== "on" || Boolean(creator.stitch_disabled),
+            brand_organic_toggle: p.settings.brand === "own",
+            brand_content_toggle: p.settings.brand === "branded",
+          },
           source_info: { source: "FILE_UPLOAD", video_size: size, chunk_size: chunk, total_chunk_count: count },
         }),
       },

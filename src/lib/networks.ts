@@ -88,7 +88,21 @@ export const NETWORKS: Network[] = [
           { value: "SELF_ONLY", label: "Only me" },
         ],
       },
-      { key: "comments", label: "Comments", kind: "select", initial: "on", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+      // TikTok's content sharing rules: comments, Duet and Stitch start off and the person turns them on.
+      { key: "comments", label: "Allow comments", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+      { key: "duet", label: "Allow Duet", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+      { key: "stitch", label: "Allow Stitch", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+      {
+        key: "brand",
+        label: "Promotional content",
+        kind: "select",
+        initial: "off",
+        options: [
+          { value: "off", label: "No" },
+          { value: "own", label: "Your brand" },
+          { value: "branded", label: "Branded content" },
+        ],
+      },
     ],
   },
   {

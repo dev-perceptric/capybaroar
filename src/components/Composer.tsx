@@ -779,6 +779,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     ))
                 : null}
 
+              {active?.network === "tiktok" ? <TikTokConsent brand={targets[active.id].settings.brand ?? "off"} /> : null}
+
               {comments.length ? (
                 <div className="flex flex-col gap-2 border-t border-line pt-4">
                   <p className="text-[12.5px] font-medium text-body">Approval</p>
@@ -1015,6 +1017,26 @@ function FitBox({ width, children }: { width: number; children: React.ReactNode 
           {children}
         </div>
       </div>
+    </div>
+  );
+}
+
+
+/** What TikTok requires next to the Post button: the label promotional posts get and the policies the person agrees to. */
+function TikTokConsent({ brand }: { brand: string }) {
+  const link = (href: string, label: string) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="text-ink underline underline-offset-2">
+      {label}
+    </a>
+  );
+  return (
+    <div className="flex flex-col gap-1 text-[12px] text-muted">
+      {brand === "own" ? <p>Your video will be labeled “Promotional content”.</p> : null}
+      {brand === "branded" ? <p>Your video will be labeled “Paid partnership”.</p> : null}
+      <p>
+        By posting, you agree to TikTok’s {link("https://www.tiktok.com/legal/page/global/music-usage-confirmation/en", "Music Usage Confirmation")}
+        {brand === "branded" ? <> and {link("https://www.tiktok.com/legal/page/global/bc-policy/en", "Branded Content Policy")}</> : null}.
+      </p>
     </div>
   );
 }
