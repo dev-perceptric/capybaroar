@@ -7,7 +7,7 @@ POST = {
     'h1a': '8 X (Twitter) post schedulers',
     'h1b': 'with the real cost of X.',
     'lead': 'Some schedulers charge extra for X, and some don\'t mention it at all. We kept only tools whose own pages name X or Twitter, and we show what X really costs on each.',
-    'cover': {'type': 'list', 'tools': ['typefully.com', 'buffer.com', 'metricool.com', 'publer.com']},
+    'cover': {'type': 'list', 'network': 'x', 'bg': 'paper', 'tools': ['typefully.com', 'buffer.com', 'metricool.com', 'publer.com']},
     'picks': [
         ('Best overall', 'capybaroar', 'X and 11 more networks on one plan with no X add-on listed, plus an AI agent that drafts your posts.'),
         ('Best for writers on X', 'typefully', 'A writing first tool with X analytics, scheduled retweets and a free plan.'),

@@ -361,6 +361,7 @@ function list(s) {
   });
   let out = win(170, 125, 580, 400, inner);
   out += check(170 + 568, 125 + 60 + 22, 14);
+  if (s.network) out += tile(176, 128, 92, s.network, { glow: true });
   // Two cards on the right: a booked week and a reach chart.
   let wk = "";
   for (let i = 0; i < 7; i++) wk += box(16 + i * 30, 46, 24, 24, `day sm${[1, 3, 4].includes(i) ? " on" : ""}`, "");
@@ -368,7 +369,7 @@ function list(s) {
   let ch = "";
   [38, 54, 46, 72, 64, 96].forEach((v, i) => { ch += box(20 + i * 34, 140 - v, 22, v, `col2${i === 5 ? " on" : ""}`, ""); });
   out += box(800, 285, 240, 160, "card big", bar(16, 20, 90, 9, C.skInk) + ch);
-  return { bg: "yolk", html: out };
+  return { bg: s.bg || "yolk", html: out };
 }
 
 // One inbox: comments from every network, one reply drafted and ready.

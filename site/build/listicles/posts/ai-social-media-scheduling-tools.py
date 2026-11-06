@@ -7,7 +7,7 @@ POST = {
     'h1a': '8 best tools for scheduling',
     'h1b': 'social media posts with AI.',
     'lead': "AI in social tools now goes past writing captions. Some tools plan the week and schedule it, and some let you run everything from Claude or ChatGPT. Here's what the AI in 8 tools really does.",
-    'cover': {'type': 'list', 'tools': ['postiz.com', 'hootsuite.com', 'socialbee.com', 'contentstudio.io']},
+    'cover': {'type': 'agent', 'ai': 'claude', 'networks': ['instagram', 'linkedin', 'tiktok']},
     'picks': [
         ('Best overall', 'capybaroar', 'An agent plans and writes posts from one message, plus MCP on every plan.'),
         ('Best for developers', 'postiz', 'MCP server, CLI and API on every plan, from $29 a month.'),

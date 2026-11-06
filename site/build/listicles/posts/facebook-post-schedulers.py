@@ -7,7 +7,7 @@ POST = {
     'h1a': '8 best Facebook post schedulers',
     'h1b': 'for Pages, Reels and Stories.',
     'lead': 'If you post to a Facebook Page every week, a scheduler saves you from doing it by hand. Here are 8 tools that schedule to Facebook, with the Reels and Stories support each one names on its own site.',
-    'cover': {'type': 'list', 'tools': ['buffer.com', 'metricool.com', 'publer.com', 'sendible.com']},
+    'cover': {'type': 'list', 'network': 'facebook', 'bg': 'paper', 'tools': ['buffer.com', 'sendible.com', 'metricool.com', 'publer.com']},
     'picks': [
         ('Best overall', 'capybaroar', 'Facebook posts, Reels and Stories with a first comment, plus one inbox for replies on every plan.'),
         ('Best for post types', 'publer', 'Lists Facebook posts, Reels, Stories and carousels, from $5 a month.'),

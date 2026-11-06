@@ -7,7 +7,7 @@ POST = {
     'h1a': '6 TikTok post schedulers',
     'h1b': 'to plan your videos ahead.',
     'lead': 'Posting TikToks by hand every day wears you out fast. These 6 schedulers let you load your videos once and plan the week, with prices and TikTok features checked on each tool\'s own site.',
-    'cover': {'type': 'list', 'tools': ['later.com', 'metricool.com', 'buffer.com', 'postiz.com']},
+    'cover': {'type': 'list', 'network': 'tiktok', 'bg': 'paper', 'tools': ['later.com', 'metricool.com', 'buffer.com', 'postiz.com']},
     'picks': [
         ('Best overall', 'capybaroar', 'TikTok plus 11 more networks, bulk upload and an agent that plans the week.'),
         ('Best for TikTok analytics', 'metricool', 'Schedules TikTok videos and keeps your full history on paid plans.'),

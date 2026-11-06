@@ -7,7 +7,7 @@ POST = {
     'h1a': '15 best social media scheduling tools',
     'h1b': 'sorted by who each one fits.',
     'lead': 'There is no single best scheduler for everyone. A solo creator, a small business and a 20-client agency need different things. Here are 15 tools with real prices, and the kind of team each one fits.',
-    'cover': {'type': 'list', 'tools': ['buffer.com', 'hootsuite.com', 'later.com', 'metricool.com']},
+    'cover': {'type': 'calendar', 'networks': ['instagram', 'linkedin', 'tiktok', 'youtube', 'facebook']},
     'picks': [
         ('Best overall', 'capybaroar', 'One calendar for 12 networks, an AI agent that drafts the week and a free plan to start.'),
         ('Best for solo creators', 'buffer', 'Free for 3 channels, then $5 a month per channel, billed yearly.'),

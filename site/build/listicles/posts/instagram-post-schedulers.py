@@ -7,7 +7,7 @@ POST = {
     'h1a': '10 best Instagram post schedulers',
     'h1b': 'for Reels, Stories and carousels.',
     'lead': 'Scheduling a photo is easy. Reels, Stories and carousels are where Instagram tools start to differ. Here are 10 schedulers, with the Instagram features each one names on its own site.',
-    'cover': {'type': 'list', 'tools': ['later.com', 'buffer.com', 'metricool.com', 'publer.com']},
+    'cover': {'type': 'list', 'network': 'instagram', 'bg': 'paper', 'tools': ['later.com', 'buffer.com', 'metricool.com', 'publer.com']},
     'picks': [
         ('Best overall', 'capybaroar', 'Schedules Instagram posts, Reels and Stories with a first comment, plus one inbox and a link in bio page.'),
         ('Best for Instagram detail', 'pallyy', 'Reels, carousels, multi-story posts, a grid preview and first comment, from $25 a month.'),

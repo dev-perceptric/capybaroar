@@ -177,3 +177,21 @@ if add:
     sm = sm.replace('  <url><loc>https://capybaroar.com/blog</loc></url>\n', '  <url><loc>https://capybaroar.com/blog</loc></url>\n' + add)
     open(P + 'sitemap.xml', 'w').write(sm)
 print('listicles built:', len(POSTS))
+
+# ---------- links from product pages to the matching list ----------
+LINKS = {'instagram-post-scheduler': 'instagram-post-schedulers', 'facebook-post-scheduler': 'facebook-post-schedulers',
+         'linkedin-post-scheduler': 'linkedin-post-schedulers', 'tiktok-scheduler': 'tiktok-post-schedulers', 'x-post-scheduler': 'x-post-schedulers',
+         'social-media-scheduler': 'social-media-scheduling-tools', 'social-media-inbox': 'social-media-scheduling-platforms',
+         'social-media-analytics': 'social-media-tools-for-agencies', 'mcp': 'ai-social-media-scheduling-tools'}
+BYSLUG = {p['slug']: p for p in POSTS}
+for pg, slug in LINKS.items():
+    if slug not in BYSLUG or not os.path.exists(P + pg + '.html'):
+        continue
+    s = open(P + pg + '.html').read()
+    s = re.sub(r'<section class="lx-link".*?</section>\n', '', s, flags=re.S)
+    post = BYSLUG[slug]
+    band = (f'<section class="lx-link" aria-label="Compare tools"><div class="wrap"><a href="/blog/{slug}">'
+            f'<img src="/img/blog/{slug}.webp" width="2400" height="1260" alt="" loading="lazy">'
+            f'<span><small>Compare</small><b>{esc(post["title"])}</b><span>{esc(post["desc"])}</span></span></a></div></section>\n')
+    s = s.replace('<section class="related-band"', band + '<section class="related-band"', 1)
+    open(P + pg + '.html', 'w').write(s)

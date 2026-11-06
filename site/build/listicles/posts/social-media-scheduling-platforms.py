@@ -7,7 +7,7 @@ POST = {
     'h1a': '10 scheduling platforms',
     'h1b': 'for teams and brands.',
     'lead': 'Once more than one person touches your posts, you need more than a calendar. Here are 10 platforms compared on approvals, roles, brands and client review, with what a team really pays.',
-    'cover': {'type': 'list', 'tools': ['planable.io', 'loomly.com', 'sproutsocial.com', 'agorapulse.com']},
+    'cover': {'type': 'inbox', 'networks': ['instagram', 'facebook', 'linkedin', 'tiktok']},
     'picks': [
         ('Best overall', 'capybaroar', 'Approvals, 5 members and 5 brands on Pro for $49 a month, and clients who only approve are free.'),
         ('Best for review and feedback', 'planable', 'Unlimited users on every plan, with feedback and approvals on each post.'),

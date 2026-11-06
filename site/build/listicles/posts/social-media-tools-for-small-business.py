@@ -7,7 +7,7 @@ POST = {
     'h1a': '10 social media tools',
     'h1b': 'for small businesses.',
     'lead': 'When one person runs social for the whole business, the tool has to be cheap, quick to set up and easy to keep up with. Here are 10 that fit, with real monthly prices.',
-    'cover': {'type': 'list', 'tools': ['buffer.com', 'zoho.com', 'metricool.com', 'publer.com']},
+    'cover': {'type': 'calendar', 'networks': ['facebook', 'instagram', 'tiktok', 'pinterest', 'youtube']},
     'picks': [
         ('Best overall', 'capybaroar', 'An AI agent that drafts your week, with 8 channels on Creator for $29 a month.'),
         ('Cheapest for a few channels', 'buffer', '$5 a month per channel billed yearly, and a free plan for 3 channels.'),

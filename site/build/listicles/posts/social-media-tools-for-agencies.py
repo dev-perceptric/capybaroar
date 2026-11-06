@@ -7,7 +7,7 @@ POST = {
     'h1a': '10 social media tools for agencies',
     'h1b': 'priced by the client.',
     'lead': 'An agency tool has to keep clients apart, get their sign off and send them reports with your name on top. Here are 10 tools that do it, with what each client really costs you.',
-    'cover': {'type': 'list', 'tools': ['sendible.com', 'pallyy.com', 'vistasocial.com', 'socialpilot.co']},
+    'cover': {'type': 'analytics', 'networks': ['instagram', 'linkedin', 'facebook']},
     'picks': [
         ('Best overall', 'capybaroar', 'Unlimited client brands, client approvals and reports with your logo for $149 a month.'),
         ('Best price per client', 'pallyy', '10 clients for $99 a month, then $10 for each extra client.'),

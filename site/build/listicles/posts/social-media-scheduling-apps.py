@@ -7,7 +7,7 @@ POST = {
     'h1a': '10 social media scheduling apps',
     'h1b': 'for your desk and your phone.',
     'lead': 'Most of your planning happens at a desk, but posts and comments don\'t wait until you get back. Here are 10 scheduling apps, with what each one offers on a laptop and on a phone.',
-    'cover': {'type': 'list', 'tools': ['later.com', 'buffer.com', 'sproutsocial.com', 'loomly.com']},
+    'cover': {'type': 'channel', 'network': 'instagram', 'photo': 'coffee', 'face': 'ana'},
     'picks': [
         ('Best overall', 'capybaroar', 'A full workspace in the browser, plus an agent you can also run from Claude or ChatGPT.'),
         ('Best phone app on a budget', 'later', 'iPhone and Android app on every plan, from $18.75 a month billed yearly.'),
