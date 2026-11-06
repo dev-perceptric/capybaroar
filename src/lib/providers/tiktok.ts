@@ -9,11 +9,20 @@ const secret = () => process.env.TIKTOK_CLIENT_SECRET ?? "";
 const json = (token: string) => ({ Authorization: `Bearer ${token}`, "Content-Type": "application/json; charset=UTF-8" });
 
 type TT<T> = { data: T; error: { code: string; message: string } };
+// TikTok's own message for these is a link to its guidelines, so say what to do instead.
+const PLAIN: Record<string, string> = {
+  unaudited_client_can_only_post_to_private_accounts: "Until TikTok approves Capybaroar, set the TikTok account to private and post as Only me",
+  privacy_level_option_mismatch: "This TikTok account can't post with that Who can watch choice. Pick another",
+  spam_risk_too_many_posts: "TikTok's daily post limit for this account is reached. Try again tomorrow",
+  spam_risk_user_banned_from_posting: "TikTok has blocked this account from posting for now",
+  reached_active_user_cap: "TikTok's daily limit for apps like Capybaroar is reached. Try again later",
+  url_ownership_unverified: "TikTok needs the media website verified first",
+};
 async function tt<T>(url: string, init: RequestInit, what: string): Promise<T> {
   const r = await call<TT<T>>(url, init, { what });
   if (r.error && r.error.code !== "ok") {
     if (r.error.code === "access_token_invalid" || r.error.code === "scope_not_authorized") throw new AuthError(`${what}: ${r.error.message}`);
-    throw new PostError(`${what}: ${r.error.message}`);
+    throw new PostError(`${what}: ${PLAIN[r.error.code] ?? `${r.error.message} (${r.error.code})`}`);
   }
   return r.data;
 }

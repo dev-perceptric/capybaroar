@@ -85,3 +85,14 @@ test("a failed sign-in says TikTok's reason instead of calling on with no token"
   assert.equal(urls.length, 1, "no profile call without a token");
   assert.deepEqual(types, ["application/x-www-form-urlencoded"], "TikTok rejects the type with ;charset=UTF-8");
 });
+
+test("TikTok error codes come out in plain words", async () => {
+  const real = globalThis.fetch;
+  globalThis.fetch = (async () =>
+    Response.json({ data: {}, error: { code: "unaudited_client_can_only_post_to_private_accounts", message: "Please review our integration guidelines at https://developers.tiktok.com/doc/content-sharing-guidelines/" } })) as typeof fetch;
+  try {
+    await assert.rejects(tt.publish(secret, "open1", post({ privacy: "SELF_ONLY" })), /set the TikTok account to private and post as Only me/);
+  } finally {
+    globalThis.fetch = real;
+  }
+});
