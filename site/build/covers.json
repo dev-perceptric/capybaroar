@@ -5,7 +5,6 @@
   {"slug": "social-media-content-calendar", "type": "calendar", "networks": ["instagram", "linkedin", "tiktok", "youtube", "facebook"]},
   {"slug": "schedule-social-posts-from-claude", "type": "agent", "ai": "claude", "networks": ["instagram", "linkedin", "tiktok"]},
   {"slug": "capybaroar-vs-hootsuite", "type": "versus", "vs": "hootsuite.com"},
-  {"slug": "buffer-alternatives", "type": "alternatives", "subject": "buffer.com", "others": ["hootsuite.com", "sproutsocial.com", "metricool.com"]},
   {"slug": "best-social-media-scheduling-tools", "type": "list", "tools": ["buffer.com", "hootsuite.com", "sproutsocial.com", "metricool.com"]},
   {"slug": "reply-to-comments-in-one-inbox", "type": "inbox", "networks": ["instagram", "facebook", "youtube", "tiktok"]},
   {"slug": "social-media-report", "type": "analytics", "networks": ["instagram", "tiktok", "linkedin"]},
