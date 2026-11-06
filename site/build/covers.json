@@ -1,0 +1,13 @@
+[
+  { "slug": "how-to-schedule-instagram-reels", "type": "channel", "network": "instagram", "photo": "croissant", "face": "maya" },
+  { "slug": "best-time-to-post-on-tiktok", "type": "time", "network": "tiktok" },
+  { "slug": "instagram-post-size", "type": "size", "network": "instagram", "formats": [["1080", "1080"], ["1080", "1350"], ["1080", "1920"]], "pick": 1 },
+  { "slug": "social-media-content-calendar", "type": "calendar", "networks": ["instagram", "linkedin", "tiktok", "youtube", "facebook"] },
+  { "slug": "schedule-social-posts-from-claude", "type": "agent", "ai": "claude", "networks": ["instagram", "linkedin", "tiktok"] },
+  { "slug": "capybaroar-vs-hootsuite", "type": "versus", "vs": "hootsuite.com" },
+  { "slug": "buffer-alternatives", "type": "alternatives", "subject": "buffer.com", "others": ["hootsuite.com", "sproutsocial.com", "metricool.com"] },
+  { "slug": "best-social-media-scheduling-tools", "type": "list", "tools": ["buffer.com", "hootsuite.com", "sproutsocial.com", "metricool.com"] },
+  { "slug": "reply-to-comments-in-one-inbox", "type": "inbox", "networks": ["instagram", "facebook", "youtube", "tiktok"] },
+  { "slug": "social-media-report", "type": "analytics", "networks": ["instagram", "tiktok", "linkedin"] },
+  { "slug": "facebook-stories-scheduling-is-here", "type": "news", "network": "facebook", "photo": "coffee" }
+]
