@@ -986,3 +986,326 @@ TERMS += [
  'related': ['instagram', 'direct-message', 'instagram-close-friends', 'instagram-stories'],
 },
 ]
+
+TERMS += [
+{
+ 'slug': 'instagram-reels',
+ 'short': 'Instagram Reels are short vertical videos with music and effects that can reach people beyond your followers on Instagram.',
+ 'body': '''<h2>What are Instagram Reels?</h2>
+<p>Reels are Instagram's short video format. They fill the phone screen, loop when they end and usually carry music, a voiceover or a trending sound. You can film inside the app or upload a video you edited somewhere else. Reels show up in their own tab, in the main feed, on Explore and on your profile grid.</p>
+<p>For many accounts, Reels are the main way new people find them. A good Reel can be seen by thousands of people who have never visited your profile.</p>
+<h2>How Reels work</h2>
+<p>Instagram shows Reels to people who follow you and to people who don't. The app looks at how viewers react, such as whether they watch to the end, rewatch, share, save or comment, and uses those clues to decide who sees it next. A Reel that holds attention with a small test group can be pushed to a bigger one.</p>
+<p>Reels also tend to have a longer life than you might expect. A Story fades in a day, and a feed post is mostly seen in its first day or two. A Reel can keep picking up plays for days or weeks as it reaches new groups.</p>
+<figure data-chart="1"></figure>
+<p>Other people can remix your Reel or use its audio, which can spread it further. If your original sound catches on, every video that uses it links back to you.</p>
+<h2>How to make a good Reel</h2>
+<ol>
+<li><b>Open with a hook.</b> Show the result or put a bold line on screen in the first second.</li>
+<li><b>Keep it tight.</b> Cut pauses and repeats with jump cuts so the pace never drags.</li>
+<li><b>Add on-screen text and captions.</b> Many people watch with the sound off.</li>
+<li><b>Pick audio that fits.</b> A trending sound can help, but only if it suits the video.</li>
+<li><b>Write a short caption.</b> Add context, a keyword or two and a question to spark comments. You have up to 2,200 characters, though most strong captions use far fewer.</li>
+<li><b>Choose a clear cover.</b> It shows on your profile grid and should tell people what the Reel is about.</li>
+</ol>
+<p>Here is a made-up example. A bike repair shop films a 20 second Reel titled "Fix a slipping chain in 4 moves." It opens on the chain slipping, cuts quickly through each move with on-screen labels and ends on the bike riding smoothly. The caption asks, "What should we fix next?" The comments fill up with ideas for the next ten videos, so the shop never runs out of topics.</p>
+<h2>Where Reels views come from</h2>
+<p>Instagram Insights shows where a Reel's plays came from, such as your followers' feeds, the Reels tab, Explore or shares. A Reel that mostly reaches followers is keeping fans happy. A Reel that pulls a big share from the Reels tab or Explore is finding new people.</p>
+<figure data-chart="2"></figure>
+<p>Both kinds have a place. If every Reel reaches only followers, try broader topics or stronger hooks. If every Reel reaches only strangers and few follow, make sure your profile shows them what else you offer.</p>
+<h2>Reels vs Stories</h2>
+<p>Stories mainly reach people who already follow you and fade after a day. Reels stay on your profile and can keep reaching new people long after you post them. Use Stories for daily chatter, polls and behind-the-scenes moments. Use Reels for content you want new people to find, like tips, tutorials and entertaining clips.</p>
+<figure data-chart="3"></figure>
+<h2>How to measure a Reel</h2>
+<p>Look past plays. Watch time and the share of viewers who stay to the end show whether the Reel held attention. Shares and saves show whether people found it worth passing on or keeping. New followers from a Reel show whether it brought in people who want more. Compare each Reel with your own average from the last month, and note what the best ones had in common, such as length, topic or the type of opening.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Starting with a logo or a slow intro.</li>
+<li>Uploading clips that still show another app's watermark.</li>
+<li>Leaving out captions, so silent viewers miss the point.</li>
+<li>Copying a trend without adding anything of your own.</li>
+<li>Giving up after a handful of Reels. Reach often builds as you keep posting.</li>
+</ul>
+<p>Most of these come down to one habit. Before you post, watch the Reel once as a stranger would, on mute, and ask if the first second would make you stay.</p>''',
+ 'charts': [
+  {'type': 'line', 'title': 'Plays per day after posting one Reel', 'sub': 'A Reel can keep finding new viewers for days', 'example': True, 'unit': 'Plays',
+   'points': [('Day 1', 2400), ('Day 2', 1900), ('Day 3', 1100), ('Day 4', 800), ('Day 5', 950), ('Day 6', 600), ('Day 7', 420), ('Day 8', 310)],
+   'note': 'Made-up numbers for one Reel.'},
+  {'type': 'stack', 'title': 'Where one Reel\'s plays came from', 'sub': 'Share of total plays by source', 'example': True,
+   'parts': [('Reels tab', 40), ('Followers in feed', 35), ('Explore', 15), ('Shares', 10)],
+   'note': 'Made-up numbers. Source names differ in the app.'},
+  {'type': 'versus', 'title': 'Reels vs Stories', 'cols': ('Reels', 'Stories'),
+   'rows': [('Reaches people who don\'t follow you', 'Often', 'Rarely'), ('Stays on your profile', True, 'Only in Highlights'), ('How long it lasts', 'Until you delete it', 'About a day'),
+            ('Polls and question stickers', False, True), ('Best for', 'Being found', 'Talking with followers')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Instagram scheduler', 'url': '/instagram-post-scheduler', 'line': 'Plan and schedule Instagram posts in one calendar with your other channels.'},
+  {'name': 'CapCut', 'url': 'https://www.capcut.com/', 'domain': 'capcut.com', 'line': 'A video editor for cutting clips, adding captions and on-screen text.'},
+  {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design app for making clear Reel covers for your grid.'},
+ ],
+ 'list': 'instagram-post-schedulers',
+ 'faqs': [
+  ("How long can an Instagram Reel be?", "Instagram has changed the maximum length several times, so check the app for the current limit. Many strong Reels are short, since a tight video is easier to watch to the end."),
+  ("Do Reels get more reach than posts?", "Reels are often shown to people who don't follow you, so they can bring new viewers. Results vary by account, so compare your own Insights."),
+  ("Can I schedule Instagram Reels?", "Yes. Professional accounts can schedule Reels in the app or with approved scheduling apps."),
+  ("Can I post the same video to Reels and TikTok?", "You can, but remove any watermark first and adjust the caption, text and sound for each app so it feels native."),
+  ("What is a good Reel cover?", "A clear frame with a face or the main object and a few big words. It should tell people what the Reel is about at tile size."),
+ ],
+ 'related': ['hook', 'trending-audio', 'remix', 'youtube-shorts', 'instagram-stories'],
+},
+{
+ 'slug': 'instagram-stories',
+ 'short': 'Instagram Stories are full-screen photos and videos that show at the top of the app and disappear from view after a day.',
+ 'body': '''<h2>What are Instagram Stories?</h2>
+<p>Instagram Stories are quick, vertical posts that sit in a row of circles at the top of the home screen. Viewers tap through them one after another. Each Story stays up for about a day and then moves to your private archive, unless you add it to a Highlight on your profile. Because they don't last, Stories tend to feel more relaxed and real than feed posts.</p>
+<p>When you post several Stories in a day, they play as a set. Viewers can tap to skip ahead, tap back, hold to pause or swipe to move on to the next account.</p>
+<h2>How Stories work</h2>
+<p>You can post photos, short videos, text on a colored background or a mix. Stickers add things people can tap:</p>
+<ul>
+<li>Polls and quizzes</li>
+<li>Question boxes</li>
+<li>Links to a web page</li>
+<li>Countdowns to an event</li>
+<li>Mentions of other accounts and location tags</li>
+</ul>
+<p>When someone replies to a Story, the reply goes to your DMs. You can see who viewed each Story while it is live, which is handy for knowing who your most loyal viewers are. Instagram decides the order of the Story row, and people who often interact with you usually see you closer to the front.</p>
+<h2>Why Stories are worth using</h2>
+<p>Stories keep you in front of the people who already follow you. They are great for daily updates, two-way chats and quick tests of new ideas. Polls and questions give you fast feedback for free. For a shop, a link sticker on a Story is one of the easiest ways to send people to a product page.</p>
+<p>They also take less effort than a polished post. A quick clip of a new delivery or a photo of today's special is enough. That makes Stories easy to post often without burning out.</p>
+<p>Stories are also where many followers first talk to you. A reply to a poll or a quick emoji reaction opens a private chat. For a small business, those chats often turn into questions about price, stock or opening hours, which are a short step from a sale.</p>
+<h2>How to plan Stories</h2>
+<figure data-chart="1"></figure>
+<p>Keep text big and away from the top and bottom edges, where the app places your name, the reply box and buttons. Add captions to videos, since many people tap through with the sound off. And keep each frame simple. People spend only a moment on each one before they tap.</p>
+<h2>How to measure Stories</h2>
+<p>Instagram Insights shows views, replies, sticker taps, link taps and how many people tapped forward, tapped back or left your Stories. The most useful thing to watch is how many viewers make it from the first frame to the last. If lots of people drop after frame two, that frame is the problem.</p>
+<figure data-chart="2"></figure>
+<p>In the made-up set above, the big drop came after frame 3, a long text slide. Swapping it for a short video kept more people watching to the link at the end. Taps back are a good sign too. They mean someone wanted to see a frame again.</p>
+<h2>Stories vs feed posts</h2>
+<p>Feed posts are permanent and build your profile grid. Stories are short-lived and casual. Feed posts are where you put polished work you want people to find later. Stories are where you check in and test ideas day to day. Most accounts do best using both, and a Story is a handy way to point people to a new feed post or Reel they might have missed.</p>
+<figure data-chart="3"></figure>
+<h2>Common mistakes</h2>
+<ul>
+<li>Posting a long run of frames that look the same, so people swipe away.</li>
+<li>Putting key text where the reply bar or your name covers it.</li>
+<li>Adding a sticker to every frame until nothing stands out.</li>
+<li>Going silent for weeks, then posting a dozen Stories in one burst.</li>
+<li>Never saving the good sets to Highlights, so new visitors miss them.</li>
+</ul>
+<p>Here is a made-up habit that works for a small cafe: one morning frame with the day's bake, one poll at lunch and one closing frame with tomorrow's special. It takes a few minutes a day and gives regulars a reason to check in. Over a month, the poll answers also tell the cafe which bakes to make more of.</p>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'Plan a set of Stories',
+   'steps': [('Open strong', 'Make the first frame a reason to keep tapping.'),
+             ('Tell it in order', 'Give the set a start, a middle and an end.'),
+             ('Add one sticker', 'A poll, question or quiz invites a reply.'),
+             ('End with a next step', 'A link sticker or a "reply to this" line.'),
+             ('Save the best', 'Add strong sets to a Highlight on your profile.')]},
+  {'type': 'line', 'title': 'Viewers per frame in one Story set', 'sub': 'The drop after frame 3 shows the weak spot', 'example': True, 'unit': 'Viewers',
+   'points': [('Frame 1', 1000), ('Frame 2', 860), ('Frame 3', 790), ('Frame 4', 520), ('Frame 5', 480), ('Frame 6', 455)],
+   'note': 'Made-up numbers for one set of Stories.'},
+  {'type': 'versus', 'title': 'Stories vs feed posts', 'cols': ('Stories', 'Feed posts'),
+   'rows': [('How long it lasts', 'About a day', 'Until you delete it'), ('Shows on your grid', False, True), ('Polls and question stickers', True, False),
+            ('Clickable link sticker', True, False), ('Best for', 'Daily check-ins', 'Work you want found later')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Instagram scheduler', 'url': '/instagram-post-scheduler', 'line': 'Plan Instagram posts in a calendar next to your other channels.'},
+  {'name': 'Instagram story size', 'url': '/tools/instagram-story-size', 'line': 'Get the right size and safe areas for Story photos and videos.'},
+  {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design app with vertical templates for Story frames.'},
+ ],
+ 'list': 'instagram-post-schedulers',
+ 'faqs': [
+  ("How long do Instagram Stories last?", "A Story stays visible for about a day. After that it moves to your archive, and you can add it to a Highlight to keep it on your profile."),
+  ("Can I see who viewed my Instagram Story?", "Yes. While the Story is live you can see the list of accounts that viewed it."),
+  ("Can I add a link to an Instagram Story?", "Yes. Use the link sticker to add a clickable web link to a Story."),
+  ("Can I schedule Instagram Stories?", "Yes. With a professional account you can schedule Stories through Meta's own tools or approved scheduling apps."),
+  ("How many Stories should I post a day?", "There is no set number. A short set with a clear point usually holds people better than a long run of similar frames."),
+ ],
+ 'related': ['story', 'highlights', 'qanda-sticker', 'instagram-close-friends', 'instagram-reels'],
+},
+{
+ 'slug': 'jump-cut',
+ 'short': 'A jump cut is a video edit that removes part of a continuous shot, so the person or scene seems to jump forward in time.',
+ 'body': '''<h2>What is a jump cut?</h2>
+<p>A jump cut happens when you cut a slice out of a clip and join the parts on each side. The camera angle stays the same, so the viewer sees a small skip. A person talking to the camera might shift their head slightly between sentences, or an object might suddenly move across a table. In old films it looked like a mistake. In social video it has become a normal, even expected, way to edit.</p>
+<p>You see jump cuts most in talking videos: tips, reviews, vlogs and stories told straight to camera. They also show up in playful ways, like a person jumping between outfits or a messy room turning tidy in a few skips.</p>
+<h2>How jump cuts work</h2>
+<p>Every pause, "um" and false start is a moment where a viewer might swipe away. A jump cut removes that moment. The person's words flow straight from one idea to the next, and the small skip in the picture tells the viewer time has moved on. Because the shot stays the same, the cut is easy to follow even though it is visible.</p>
+<p>For a made-up example, a gardener films a 95 second take explaining how to plant tomatoes. After cutting pauses, repeats and a sneeze, the video runs 58 seconds and says exactly the same thing. Nothing useful was lost, and the viewer gets to the good part faster.</p>
+<figure data-chart="1"></figure>
+<h2>Why creators use jump cuts</h2>
+<ul>
+<li><b>Faster pace:</b> cutting pauses and filler keeps the video moving.</li>
+<li><b>Easier filming:</b> you can record in one long take and fix flubs later.</li>
+<li><b>More watch time:</b> fewer slow moments means fewer reasons to swipe away.</li>
+<li><b>Built-in energy:</b> small skips add a quick, punchy feel that suits short video.</li>
+<li><b>Room for more:</b> a tight edit fits more useful points into a short video.</li>
+</ul>
+<h2>How to make jump cuts</h2>
+<figure data-chart="2"></figure>
+<p>A few details make the cuts look planned. Keep the camera locked on a stand, since a moving frame makes every cut jarring. Keep the light steady by filming away from windows where passing clouds change the room. If two clips sit side by side and a skip feels harsh, zoom in a little on the second one. That small punch-in makes the cut look like a choice. Captions on top also help hide small changes between cuts. Some editors can find silences for you and cut them in one pass. That saves time, but check the result by ear, since an auto cut can clip the start of a word.</p>
+<h2>Jump cuts vs other cuts</h2>
+<p>A standard cut moves to a different shot, like a close-up or a new angle. A B-roll cut moves away to other footage that shows what you are talking about. A J-cut lets the next clip's sound start before its picture, and an L-cut lets the sound carry on after the picture changes. Jump cuts keep the same shot and simply remove time.</p>
+<figure data-chart="3"></figure>
+<p>Editors often use these together in one video. A creator might talk to camera with jump cuts, then let the voice carry on over a few seconds of B-roll with an L-cut, then come back to the main shot. Each kind of cut has its own job.</p>
+<p>Mixing them keeps a talking video from looking flat. Use jump cuts for pace, a punch-in every so often for variety and B-roll whenever you mention something people would like to see.</p>
+<h2>How to tell if your edit works</h2>
+<p>Most video apps show how many viewers are still watching at each point. Look for sharp drops. A drop right after a slow stretch means you should cut harder there. A drop right after a jarring cut may mean you cut too much. Compare a few videos with different editing styles to find the pace your viewers like, then keep a note of what worked so your next edit starts from it.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Cutting every breath, which makes you sound rushed and robotic.</li>
+<li>Moving the camera or changing the light halfway through.</li>
+<li>Cutting in the middle of a word, which makes the sound click.</li>
+<li>Leaving the same framing for minutes with no punch-ins or B-roll.</li>
+</ul>
+<p>Leave a natural beat between ideas, trim at a breath and watch the full video once before you post. If it feels like you are talking to a friend, the pace is right.</p>''',
+ 'charts': [
+  {'type': 'columns', 'title': 'The same take before and after cutting', 'sub': 'Video length in seconds', 'example': True, 'unit': 'Seconds',
+   'rows': [('Raw take', 95, '95s'), ('After jump cuts', 58, '58s')], 'highlight': 'After jump cuts', 'labels': 'all',
+   'note': 'Made-up numbers for one video.'},
+  {'type': 'steps', 'title': 'Make jump cuts',
+   'steps': [('Film on a stand', 'Keep the frame and light the same the whole time.'),
+             ('Import the clip', 'Any video editor works, including the ones inside social apps.'),
+             ('Find the pauses', 'Flat parts of the audio wave are usually silence.'),
+             ('Split and delete', 'Cut at the start and end of each pause or mistake.'),
+             ('Watch and polish', 'Add punch-ins where skips feel harsh, then add captions.')]},
+  {'type': 'versus', 'title': 'Jump cut vs standard cut', 'cols': ('Jump cut', 'Standard cut'),
+   'rows': [('Same camera angle', True, False), ('Removes time from one shot', True, False), ('Needs a second shot', False, True),
+            ('Visible skip', True, False), ('Common in talking videos', True, True)]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar TikTok scheduler', 'url': '/tiktok-scheduler', 'line': 'Schedule your edited videos to TikTok from the same calendar as your other channels.'},
+  {'name': 'CapCut', 'url': 'https://www.capcut.com/', 'domain': 'capcut.com', 'line': 'A video editor for splitting clips, cutting pauses and adding captions.'},
+  {'name': 'YouTube Studio', 'url': 'https://studio.youtube.com/', 'domain': 'youtube.com', 'line': 'YouTube\'s creator dashboard, where you can see where viewers stop watching.'},
+ ],
+ 'list': 'tiktok-post-schedulers',
+ 'faqs': [
+  ("Why are jump cuts so common on YouTube and TikTok?", "They keep talking videos quick and remove dead air, which suits viewers who scroll fast. They also make filming easier, since mistakes can be cut later."),
+  ("Are jump cuts bad editing?", "Not on social media. Viewers there are used to them. They only feel bad when they are random or cut off words."),
+  ("What app can I use to make jump cuts?", "Almost any video editor can do it, from free phone apps to desktop software. Many social apps also let you trim and split clips before you post."),
+  ("What is a punch-in?", "A punch-in is a small zoom on the next clip after a cut. It makes a jump cut look planned and adds variety to a talking video."),
+ ],
+ 'related': ['hook', 'watch-time', 'vlog', 'voiceover', 'closed-captions'],
+},
+{
+ 'slug': 'key-opinion-leader',
+ 'short': 'A key opinion leader (KOL) is a trusted expert in a field whose views shape what others in that field think and buy.',
+ 'body': '''<h2>What is a key opinion leader (KOL)?</h2>
+<p>A key opinion leader is a person known for deep knowledge of a subject. It might be a doctor others in medicine listen to, a respected chef, a well-known software engineer or a researcher in farming. People turn to them for advice because of their training and track record. Their pull comes from expertise more than from a big following, though many KOLs also have large audiences online.</p>
+<p>The short form, KOL, is common in marketing plans and agency briefs. You may also hear "thought leader" used in a similar way, especially in business-to-business work.</p>
+<h2>KOL vs influencer</h2>
+<p>An influencer earns trust mostly through personality and steady posting. A KOL earns trust through credentials and experience in a field. Followers of an influencer often relate to them as a peer. Followers of a KOL see them as an authority. The line blurs when an expert also builds a big social following. In practice, use KOL when the person's expertise is the main reason people listen.</p>
+<figure data-chart="1"></figure>
+<h2>Where you'll hear the term</h2>
+<p>The word has long been used in healthcare, where companies work with respected doctors and researchers to share findings with other doctors. It is also common in marketing across much of Asia, where KOL is often the everyday word for what other places call an influencer. In business-to-business marketing, KOLs might be analysts, authors or founders whose posts shape how buyers think about a topic.</p>
+<p>So when someone says KOL, ask what they mean. In one meeting it might mean a professor. In another it might mean a lifestyle creator with a big following.</p>
+<h2>How KOLs shape opinions</h2>
+<p>A KOL's word carries weight because it is hard to fake. A dermatologist who explains why an ingredient works sounds more convincing than an ad saying the same thing. Their posts often travel through other experts too. When a respected engineer praises a tool, other engineers repeat it, and the message spreads through people who trust each other.</p>
+<p>That also means a KOL's reputation is fragile. If they seem to sell their opinion, they lose what made them worth hearing. Good partnerships protect that.</p>
+<p>On social media, KOLs often show up on LinkedIn, YouTube and in long video formats where they have room to explain. Short posts can work too, but the expert usually needs space to show their thinking. Plan the format around what they need to say well.</p>
+<h2>How to work with a KOL</h2>
+<figure data-chart="2"></figure>
+<p>What you offer matters. Many experts care as much about interesting work as about a fee: early research, a chance to test something new, a speaking slot or a place to share their own ideas. Pay them fairly for their time all the same, and put the terms in writing.</p>
+<p>Let them speak in their own words. If a KOL disagrees with part of your message, listen. Their honest view is what your audience will trust, and their pushback may save you from a claim that wouldn't hold up.</p>
+<h2>Examples</h2>
+<p>These are made up to show the idea. A skincare brand asks a dermatologist to explain how an ingredient works in a short video, with no script beyond the facts. A software company invites a well-known engineer to host a webinar on a problem its tool solves, and the engineer is free to show other tools too. A farm supply store asks a local soil scientist to answer questions in a live stream each spring. In each case, the expert's knowledge carries the message and the brand stays in the background.</p>
+<p>Notice what these have in common. The expert teaches something useful, and the product is part of the lesson. People come away smarter, which is what makes them remember the brand.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Picking a KOL for their follower count when their field doesn't match your product.</li>
+<li>Writing a script that bends their views to fit an ad.</li>
+<li>Hiding the paid relationship, which can break rules and ruin trust for both sides.</li>
+<li>Treating one webinar as the whole plan, when long relationships build more trust.</li>
+<li>Skipping a check of their past statements, which may clash with your brand.</li>
+</ul>
+<p>The best KOL work feels like a lesson from someone who knows. If your brand would be fine with the expert saying exactly what they think, you have picked the right person.</p>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'KOL vs influencer', 'cols': ('KOL', 'Influencer'),
+   'rows': [('Trusted for', 'Expertise and credentials', 'Personality and connection'), ('Needs a big following', False, 'Usually'), ('Followers see them as', 'An authority', 'A peer'),
+            ('Long used in healthcare', True, False), ('Can be the same person', True, True)]},
+  {'type': 'steps', 'title': 'Work with a KOL',
+   'steps': [('Define the topic', 'Be clear about which field you need an expert in.'),
+             ('Check credentials', 'Look at their background, published work and past statements.'),
+             ('Look for fit', 'Make sure their views line up with your product without bending.'),
+             ('Offer real value', 'Fair pay, early research, a speaking slot or a test of something new.'),
+             ('Disclose clearly', 'Label any paid relationship in every post.')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'See comments and mentions in one place when experts talk about your brand on connected channels.'},
+  {'name': 'Notion', 'url': 'https://www.notion.so/', 'domain': 'notion.so', 'line': 'A workspace for keeping briefs, notes and agreements with each expert.'},
+  {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for tracking the experts you contact and how each partnership went.'},
+ ],
+ 'faqs': [
+  ("What does KOL stand for?", "KOL stands for key opinion leader, a respected expert whose views influence others in their field."),
+  ("Is a KOL the same as an influencer?", "They overlap. A KOL is trusted mainly for expertise, while an influencer is trusted mainly for personality and connection with followers. In parts of Asia the two words are often used the same way."),
+  ("Do KOLs get paid?", "Often, yes. They may be paid for speaking, advising, content or research. Any paid relationship should be disclosed."),
+  ("How do I find a KOL in my field?", "Look at who speaks at industry events, writes respected articles or gets quoted by others in your field. Check that their expertise matches your topic before you reach out."),
+ ],
+ 'related': ['influencer', 'influencer-marketing', 'micro-influencer', 'social-proof', 'employee-advocacy'],
+},
+{
+ 'slug': 'key-performance-indicator',
+ 'short': 'A key performance indicator (KPI) is a number you track to see whether you are reaching a specific goal, such as more leads or sales.',
+ 'body': '''<h2>What is a key performance indicator (KPI)?</h2>
+<p>A key performance indicator, or KPI, is a number you pick because it tells you whether a goal is on track. Social media apps give you dozens of numbers. Only a few of them are key for you, and those few are your KPIs. If your goal is sign-ups, the number of sign-ups that came from social is a KPI. Your total likes probably isn't.</p>
+<p>A good KPI has four parts: the number itself, where it comes from, a target and a time frame. "Get 120 newsletter sign-ups from Instagram each month by June" is a KPI. "Do better on Instagram" is a wish.</p>
+<h2>KPI vs metric</h2>
+<p>Every KPI is a metric, but most metrics aren't KPIs. A metric is any number you can measure, like impressions, follower count or video views. A KPI is a metric tied to a goal, with a target and a deadline. Reach on its own is a metric. "Grow monthly Instagram reach by a set amount this quarter" turns it into a KPI.</p>
+<figure data-chart="1"></figure>
+<h2>Social media KPIs by goal</h2>
+<ul>
+<li><b>Awareness:</b> reach, impressions, follower growth and share of voice.</li>
+<li><b>Engagement:</b> engagement rate (engagements ÷ followers × 100), comments and shares.</li>
+<li><b>Traffic:</b> link clicks and click-through rate (clicks ÷ impressions × 100).</li>
+<li><b>Leads and sales:</b> conversion rate (conversions ÷ clicks × 100), cost per lead and revenue.</li>
+<li><b>Customer care:</b> response time and how many messages get solved.</li>
+</ul>
+<p>Pick from the row that matches what your business needs most right now. A new brand may care most about awareness. A brand with plenty of followers but few sales may move its focus to traffic and conversions.</p>
+<p>It also helps to pair a leading KPI with a lagging one. A leading KPI moves fast and hints at what's coming, like link clicks. A lagging KPI moves slowly and shows the final result, like sales. Watching both tells you early if a campaign is heading the right way, before the sales numbers come in.</p>
+<h2>How to set social media KPIs</h2>
+<figure data-chart="2"></figure>
+<p>Here is a made-up example. A yoga studio wants more trial class bookings. Its KPI is trial bookings from social, tracked with a tagged link in each bio. Last quarter it averaged about 80 a month, so it sets a target of 120 a month by June. Every month the team checks the number, looks at which posts sent the most bookings and plans more of them.</p>
+<figure data-chart="3"></figure>
+<p>In the chart, the studio crosses its target in May. That tells the team the plan is working, and it can raise the target or move on to a second goal. If it had stayed flat by April, the team would have changed the content mix long before the deadline.</p>
+<h2>How to track KPIs</h2>
+<p>Decide where each number comes from before you start. Reach and engagement come from each platform's analytics or a tool that pulls them together. Clicks, sign-ups and sales usually come from your website analytics, which is why tagged links matter. Put everything in one simple report each month, with this month, last month and the target side by side. When a number moves, write a line about why you think it did.</p>
+<p>Keep the report in the same format every month. When the layout never changes, anyone on the team can glance at it and see at once whether things are on track.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Tracking too many KPIs, so none of them get real attention.</li>
+<li>Choosing vanity metrics, like raw likes, that make a weak month look good.</li>
+<li>Setting KPIs social media can't move alone, such as total company sales.</li>
+<li>Changing the target every month, which makes progress impossible to judge.</li>
+<li>Never writing down the starting point, so nobody knows if things improved.</li>
+</ul>
+<h2>Tips</h2>
+<p>Keep the list short, often one or two KPIs per goal. Review monthly and change your content first. Only change the target if it was clearly wrong from the start. And share the KPI with everyone who posts, so each person knows what a good week looks like and can spot a problem early. A KPI that only one person checks tends to get forgotten by spring. Put it at the top of your monthly report and say it out loud in team meetings.</p>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'KPI vs metric', 'cols': ('KPI', 'Metric'),
+   'rows': [('Tied to a goal', True, 'Not always'), ('Has a target and a date', True, False), ('Example', 'Trial bookings from social per month', 'Total likes'),
+            ('How many you track', 'A few', 'As many as the app shows')]},
+  {'type': 'steps', 'title': 'Set a social media KPI',
+   'steps': [('Start with a business goal', 'More bookings, more sales or fewer support calls.'),
+             ('Pick one or two numbers', 'Choose numbers your posts can actually move.'),
+             ('Write down the baseline', 'Note where the number sits today.'),
+             ('Set a target and a date', 'Make it a stretch you can still reach.'),
+             ('Review each month', 'Change your content first, the target only if it was off.')]},
+  {'type': 'line', 'title': 'Trial bookings from social', 'sub': 'Target: 120 a month by June', 'example': True, 'unit': 'Bookings',
+   'points': [('Jan', 78), ('Feb', 82), ('Mar', 80), ('Apr', 98), ('May', 124), ('Jun', 131)],
+   'note': 'Made-up numbers for one studio.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Track reach, engagement and followers across channels, with reports on Pro and Agency.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag your links so sign-ups and sales from social show in your website analytics.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics for counting the visits, sign-ups and sales that came from social.'},
+  {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for a simple monthly KPI report.'},
+ ],
+ 'list': 'social-media-management-tools',
+ 'faqs': [
+  ("What are good KPIs for social media?", "It depends on your goal. Common ones are reach for awareness, engagement rate for interest, click-through rate for traffic and conversion rate for sales."),
+  ("How many KPIs should I track?", "Keep it to a handful. One or two per goal is usually enough to stay focused."),
+  ("Is follower count a KPI?", "It can be if growing your audience is a real goal. On its own it is often a vanity metric, since it doesn't show whether people engage or buy."),
+  ("What is the difference between a KPI and an OKR?", "An OKR is a goal plus the key results that show you reached it. KPIs are the ongoing numbers you track, and some of them can serve as key results."),
+  ("How often should I check my KPIs?", "Monthly works for most teams. Check weekly during a campaign, but judge progress on the full month."),
+ ],
+ 'related': ['analytics', 'vanity-metrics', 'engagement-rate', 'conversion-rate', 'return-on-investment'],
+},
+]

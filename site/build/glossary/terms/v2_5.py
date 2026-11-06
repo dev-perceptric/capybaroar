@@ -120,9 +120,8 @@ TERMS += [
 <h2>Document post vs carousel post</h2>
 <p>On Instagram and Facebook, a carousel is a post with several images or videos. On LinkedIn, the swipe format usually comes from uploading a document. The result looks alike, but the steps differ. If you reuse one design across apps, export images for Instagram and a single PDF for LinkedIn.</p>
 <figure data-chart="3"></figure>
-<h2>How to write the caption</h2>
+<h2>How to write the caption and check results</h2>
 <p>Your caption sits above the document and can run up to LinkedIn's 3,000 character limit, though short usually works better here. Tell people what they will learn by swiping. For example: "Our team cut weekly meetings from five to two. Here is the checklist we used. Swipe to page 4 for the one change that made the biggest difference." End with a question to start comments.</p>
-<h2>How to measure a document post</h2>
 <p>Check the post analytics a few days after it goes live. Impressions show how often it was shown. Reactions, comments and reposts show who cared enough to act. Saves and comments that quote a page are good signs that people read past the cover. Compare each document post with your own text and image posts to see whether the format earns its extra design time.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -170,7 +169,6 @@ TERMS += [
  'body': '''<h2>What is a LinkedIn newsletter?</h2>
 <p>A LinkedIn newsletter is a set of long articles published under one name on a regular schedule. You might run "Friday Hiring Notes" or "The Small Shop Report." Readers can subscribe with one click, and LinkedIn tells them when a new issue is out. Both personal profiles and Company Pages can publish newsletters, though LinkedIn decides who has access to the feature.</p>
 <p>It sits somewhere between a blog and an email newsletter. Like a blog, each issue lives on LinkedIn where anyone can find it. Like email, subscribers get a notice each time you publish.</p>
-<h2>How LinkedIn newsletters work</h2>
 <p>Each issue is a LinkedIn article with a title, a cover image and a body. When you publish, LinkedIn notifies your subscribers and shares the issue in the feed. Because people chose to subscribe, they tend to pay more attention than casual scrollers. Past issues stay on your profile or page, so new readers can catch up on what they missed.</p>
 <h2>How to start a LinkedIn newsletter</h2>
 <figure data-chart="1"></figure>
@@ -247,7 +245,6 @@ TERMS += [
  'body': '''<h2>What is live streaming?</h2>
 <p>Live streaming means sharing video as you film it. Viewers see you right away and can type comments that you read and answer on the spot. When the stream ends, many apps let you save a replay so people who missed it can watch later. It is the closest thing social media has to a live TV show, and you run it.</p>
 <p>People go live for all kinds of reasons. A bakery might show a cake being decorated. A software company might demo a new feature and take questions. A teacher might run a study session the night before an exam.</p>
-<h2>Where you can go live</h2>
 <p>Most big networks have a live option, including Instagram, TikTok, YouTube, Facebook and LinkedIn. Twitch is built mainly around live streams, and Discord lets people stream to a server. Each app has its own rules about who can go live and how long a stream can run. The tools differ too, such as adding guests, pinning comments, running Q&amp;A or receiving gifts. Check each app's current rules before you plan.</p>
 <h2>Why go live</h2>
 <ul>
@@ -482,7 +479,6 @@ TERMS += [
 <h2>How Mastodon works</h2>
 <p>When you join, you pick a server. Some are general, and others focus on a topic, a region or a language. Your handle includes your server, like @maria@example.social. Servers connect through a shared standard called ActivityPub, and the wider network of connected apps is often called the fediverse. If you don't like your server, you can move to another and bring your followers with you.</p>
 <p>Each server has its own moderators and rules. One might ban political posts. Another might focus on artists and ask everyone to add image descriptions. Read the rules before you join, since they shape what your timeline feels like.</p>
-<h2>Posting on Mastodon</h2>
 <ul>
 <li>Posts can be up to 500 characters on default servers, though some servers allow more.</li>
 <li>Boosting a post shares it with your followers, similar to a repost.</li>
@@ -587,10 +583,9 @@ TERMS += [
 <h2>MCP vs API</h2>
 <p>An API is how software talks to a service, and it is usually written for developers. MCP sits on top of APIs and packages them in a form AI assistants understand. Many MCP servers call a service's API behind the scenes. If you code, you'd use the API directly. If you'd rather ask an assistant, MCP makes that possible.</p>
 <figure data-chart="2"></figure>
-<h2>Staying safe with MCP</h2>
+<h2>Staying safe and reading the tool list</h2>
 <p>Only connect MCP servers from sources you trust. Read what each one can access, and give it the smallest set of permissions that does the job. Keep keys and tokens private, and remove a connection when you stop using it. Review actions that publish, send or delete before you approve them, since an AI can misread a request.</p>
 <p>It also helps to save AI work as drafts first. That way nothing goes live until a person has read it.</p>
-<h2>Where you'll see MCP</h2>
 <p>MCP shows up in a few kinds of apps. Chat assistants use it to reach your files, calendars and work tools. Coding tools use it to read databases, open tickets or check docs while they write code. Business apps offer MCP servers so their customers can work with them through an assistant of their choice.</p>
 <p>If an app you use lists an MCP server, it usually has a short guide that shows the link to paste and what the server can do. Read that list of tools before you connect. It tells you exactly what the assistant will be able to see and change. If the list includes things like "delete" or "publish," decide whether you want the assistant to have those at all, or whether drafts are enough for your team.</p>
 <h2>Common mistakes</h2>
@@ -636,7 +631,7 @@ TERMS += [
  'body': '''<h2>What is a meme?</h2>
 <p>A meme is a piece of content that people pass around and remix. It often starts as a funny photo, a scene from a show, a catchphrase or a sound. Then others reuse the same format with their own twist, and it spreads. Part of the fun is that everyone knows the format, so a new version lands fast. Memes come and go quickly, and some come back years later.</p>
 <p>What makes something a meme is the copying. One funny photo is just a funny photo. When lots of people start adding their own captions to it, it becomes a meme.</p>
-<h2>Common meme formats</h2>
+<p>Common meme formats include:</p>
 <ul>
 <li><b>Image macros:</b> a picture with bold text on top and bottom.</li>
 <li><b>Reaction images and GIFs:</b> a face or moment used to show a feeling.</li>
@@ -728,7 +723,6 @@ TERMS += [
 <li><b>Search for untagged mentions.</b> Use social listening or search your brand name to catch posts without the @.</li>
 </ol>
 <p>Here is a made-up example. A bike shop gets 40 mentions in a week. Most are happy customers posting their new bikes. A handful ask about opening hours. Two complain about a late repair. The shop answers the complaints first, thanks the happy riders and pins its hours to the profile so fewer people need to ask.</p>
-<h2>What your mentions are telling you</h2>
 <p>Once you sort mentions for a few weeks, patterns show up. Lots of the same question means your website or bio is missing something. A spike in complaints after a change means the change needs a second look. The made-up mix below is from one month for a small brand.</p>
 <figure data-chart="3"></figure>
 <h2>Mentions on different networks</h2>
@@ -794,8 +788,7 @@ TERMS += [
 <li><b>Manage access:</b> give teammates roles so they can help without sharing passwords.</li>
 </ul>
 <p>Meta adds and moves features over time, so menus may look a bit different from one month to the next.</p>
-<h2>Is Meta Business Suite free?</h2>
-<p>Yes. Using Meta Business Suite costs nothing. You only pay if you choose to run ads, and that money goes to the ads themselves.</p>
+<p>Using Meta Business Suite is free. You only pay if you choose to run ads, and that money goes to the ads themselves.</p>
 <h2>How to get started</h2>
 <figure data-chart="1"></figure>
 <ol>
@@ -823,7 +816,6 @@ TERMS += [
 <h2>Business Suite vs a multi-network scheduler</h2>
 <p>Meta Business Suite only covers Meta's apps. If you also post to TikTok, LinkedIn, YouTube or other networks, you'll need another tool or extra time for each. A multi-network scheduler puts every channel on one calendar, while Business Suite goes deeper on Meta's own features, like ads and Page settings. Many teams use both: Business Suite for ads and Meta settings, and a scheduler for day-to-day posting everywhere.</p>
 <figure data-chart="2"></figure>
-<h2>Limits to keep in mind</h2>
 <p>Because the insights only show Meta data, you'll want your website analytics to see what happens after someone clicks. Some newer post types and features may reach the apps themselves before they reach Business Suite. And if you lose admin access to the Page, you lose access to Business Suite too, so always keep more than one admin.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -890,7 +882,6 @@ TERMS += [
 <li><b>Share a simple brief.</b> Explain the goal and the must-haves, then let them speak in their own voice.</li>
 <li><b>Track results.</b> Give each creator a unique code or link.</li>
 </ol>
-<h2>Micro-influencers on different networks</h2>
 <p>The kind of content a micro-influencer makes depends on where they post. On Instagram, they often share photos, Reels and Stories, and Stories are a natural place for a quick product mention with a link. On TikTok, short videos with a real reaction or a how-to tend to work best. On YouTube, they may do longer reviews that people find through search for months. On LinkedIn, micro-influencers are often experts in a field who post about their work, which suits business products.</p>
 <p>Pick the network where your buyers already spend time, then find creators there. A sock brand might look on Instagram and YouTube, where runners share gear. A software company might look on LinkedIn, where its buyers read about work tools. The same creator may post on more than one app, so ask which one their most engaged followers use.</p>
 <h2>What to put in a brief</h2>
@@ -965,7 +956,6 @@ TERMS += [
 <li><b>Reply to others often.</b> On these apps, conversation is a big part of growth.</li>
 </ol>
 <p>Here is a made-up before and after. Before: "We are so excited to share with all of you that our brand new coffee blend is finally available to order today!" After: "Our new coffee blend is out today. Dark, smooth, a little cocoa. Order link below." The second one says more in fewer characters.</p>
-<h2>Threads of posts</h2>
 <p>When an idea doesn't fit in one post, you can chain several together as a thread. Each post replies to the one before, so readers can follow the whole story in order. Make the first one a strong hook, since it's the part most people see first. Keep each post readable on its own in case someone only sees one.</p>
 <figure data-chart="2"></figure>
 <h2>Microblogging vs blogging</h2>
@@ -1032,7 +1022,6 @@ TERMS += [
 <li><b>Report:</b> send rule-breaking content to the platform to review.</li>
 </ul>
 <p>The exact tools and names differ by platform, so check what each app offers. Group spaces like Discord servers and Facebook Groups often give you more, such as slow mode, member approval or timeouts.</p>
-<h2>Hide vs delete</h2>
 <p>These two get mixed up a lot. Hiding keeps the comment visible to the writer and their friends while removing it for everyone else, which can calm things down without starting a fight. Deleting removes it for good. Hide is often the better first step for rude but harmless comments. Delete is for scams, hate and anything dangerous.</p>
 <figure data-chart="1"></figure>
 <h2>How to set up moderation rules</h2>
@@ -1119,7 +1108,6 @@ TERMS += [
 <li><b>Track what earns.</b> Note which posts lead to sales or sign-ups.</li>
 <li><b>Add more sources over time.</b> A change on one app shouldn't wipe you out.</li>
 </ol>
-<h2>Mixing your income</h2>
 <p>Relying on one source is risky. If a brand pulls its budget or an app changes its payouts, your income can drop overnight. A healthier mix spreads money across a few sources. The made-up example below shows how one creator's monthly income might split.</p>
 <figure data-chart="2"></figure>
 <p>For example, a made-up home cooking creator earns from brand deals with kitchen companies, affiliate links to the pans she uses, an e-book of weeknight recipes and a small share of platform payouts. When one brand deal ends, the other sources keep her going while she finds the next.</p>
@@ -1208,7 +1196,6 @@ TERMS += [
 <li><b>Mute words in settings.</b> Look in your privacy or content settings for muted words.</li>
 <li><b>Undo it the same way.</b> Follow the same steps and pick unmute.</li>
 </ol>
-<h2>Mute on different networks</h2>
 <p>The idea is the same everywhere, but the details change. On Instagram, you can mute someone's posts and Stories separately, so you might keep their posts and skip their Stories. On X, Threads and Bluesky, you can mute accounts and words, and muting a word often hides replies that use it too. On Facebook, the closest option is often called snooze or unfollow, and snoozing can be set for a limited time. In Discord and group chats, mute usually means silencing alerts while you stay in the chat.</p>
 <p>Because the names and menus move around, search the app's help pages for "mute" if you can't find it. The option is almost always somewhere near the profile menu or in privacy settings.</p>
 <h2>How brands and social media managers use mute</h2>
@@ -1283,7 +1270,6 @@ TERMS += [
 <p>With small creators, each one brings a small number of sales or visits. The value comes from working with several at once and seeing who fits best. Give each person their own code, then compare. The made-up chart below shows sales by code from five nano creators who each posted once for a local bakery.</p>
 <figure data-chart="3"></figure>
 <p>In that made-up example, one creator drove far more sales than the rest. The bakery invites her back each month and tries new people in the other spots. Over time, it builds a small group of regulars who know the brand well.</p>
-<h2>An example campaign</h2>
 <p>Here is a made-up campaign. A new climbing gym invites eight local climbers with small followings to a free evening session. Each one gets a guest pass to give away and a code for a discount on a first month. They post Stories from the night and a photo or two over the next week. The gym counts code uses, new sign-ups and how many new people tag the gym afterward. The whole thing costs a few passes and a pizza night.</p>
 <h2>Nano-influencers on different networks</h2>
 <p>Most nano-influencers post on Instagram and TikTok, where everyday life content fits right in. Instagram Stories are a natural spot for a quick "look what I got" moment with a link sticker. TikTok can push a small creator's video to many strangers when it lands well, so one post sometimes reaches far past their followers. Facebook Groups and local community pages are another good place for neighborhood creators. On LinkedIn, a nano-influencer might be a respected person in one small industry whose posts every peer reads.</p>
@@ -1345,7 +1331,6 @@ TERMS += [
 <li><b>Fit the text limits.</b> Write captions that work within each app's cap.</li>
 <li><b>Upload files directly.</b> A link to a video on another network feels like a detour.</li>
 </ol>
-<h2>Text limits by network</h2>
 <p>Length is one of the clearest signs that a post was made for its app. A caption that works on Facebook may get cut off or rejected on X. Here are the caps for the main networks:</p>
 <figure data-chart="3"></figure>
 <p>Even when a long caption fits, short often reads better. A long story suits Facebook and LinkedIn. A single sharp line suits X, Threads and Bluesky.</p>
@@ -1356,7 +1341,6 @@ TERMS += [
 <h2>Native content on different networks</h2>
 <p>Here is a quick sense of what feels native on the main apps, in general terms. On Instagram, polished photos, carousels and Reels with clear covers. On TikTok, fast vertical video that starts with action in the first second. On YouTube, longer videos with a strong thumbnail, plus Shorts for quick clips. On LinkedIn, text posts with a clear opening line, document posts and real stories from work. On X, Threads and Bluesky, short, sharp text and replies. On Pinterest, tall images with helpful titles that people save for later.</p>
 <p>Features on every app change often. The best guide is what you see working in your own feed this month.</p>
-<h2>How to measure it</h2>
 <p>Compare the same idea across networks. If the native version on each app beats the posts you used to cross-post unchanged, your effort is paying off. Look at watch time on video apps, saves on Pinterest and Instagram, and comments on LinkedIn. Each app rewards a different kind of attention, so judge each version by what counts there.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -1426,7 +1410,6 @@ TERMS += [
 <p>You won't know a niche works until you try it. A simple test is to post about two to four related ideas for a few weeks each, then compare how people respond. Use your average engagement rate or saves per post, so posts with lucky timing don't fool you.</p>
 <figure data-chart="2"></figure>
 <p>In the made-up test above, a gardening account tried four angles. Balcony herbs won by a lot, even though general gardening has a bigger audience. The account narrowed its focus to small-space growing and kept houseplants as a side topic.</p>
-<h2>Examples of niches</h2>
 <p>Here are some made-up examples to spark ideas. A broad topic becomes a niche when you add a twist:</p>
 <ul>
 <li>Fitness becomes home workouts for new moms.</li>
@@ -1438,9 +1421,8 @@ TERMS += [
 </ul>
 <h2>Niches on different networks</h2>
 <p>Some apps reward narrow topics more than others. Video apps with strong recommendation feeds can put a niche video in front of the right strangers fast, even with few followers. Search-driven apps like YouTube and Pinterest reward niches that people actively look for, such as "how to fix a squeaky door." On LinkedIn, a niche is often a job or an industry. On X and Threads, niches form around shared interests and the people who talk about them.</p>
-<h2>How a niche grows over time</h2>
+<h2>Growing, narrowing and widening</h2>
 <p>Most accounts start narrow and widen slowly. You might begin with balcony herbs, then add small-space tomatoes, then indoor seed starting. Each step stays close to what your followers already like, so they come along. Jumping from herbs to car repair would lose them. Before you add a new topic, ask whether your current followers would care about it. If most would, it fits your niche.</p>
-<h2>Too narrow or too broad</h2>
 <p>Going too broad leaves people unsure what you're about. Going so narrow that hardly anyone searches for it can stall growth. A good test: can you think of at least 50 post ideas, and can you find other people already talking about it? If both are yes, you are probably in a good spot.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -1485,7 +1467,6 @@ TERMS += [
 <p>Related tags you'll spot include GRWM (get ready with me), WIWT (what I wore today) and OOTN (outfit of the night). Some people add a theme, like "work OOTD" or "rainy day OOTD."</p>
 <p>Here is a made-up example post: "Rainy Monday OOTD: thrifted trench coat, white sneakers, silver hoops and my lucky green scarf. Jeans are from my sister's closet. #OOTD"</p>
 <p>And a made-up video caption: "OOTD for a job interview, all pieces linked below."</p>
-<h2>OOTD on different networks</h2>
 <p>The tag looks a little different on each app. On Instagram, OOTD is often a single photo or a carousel, with a close-up of shoes or jewelry on the second slide. On TikTok, it is usually a short video with a quick outfit change or a slow turn set to music. On Pinterest, OOTD photos are saved as outfit ideas, so a clean, full-length photo with a helpful title does well. On YouTube, people make longer videos with a week of outfits in one go.</p>
 <p>If you post the same look on more than one app, change the format to fit. A carousel for Instagram, a short clip for TikTok and a tall photo for Pinterest can all come from the same ten minutes of filming.</p>
 <h2>OOTD vs GRWM</h2>
@@ -1541,5 +1522,373 @@ TERMS += [
   ('What does OOTN mean?', 'OOTN means outfit of the night. People use it for a look they wore to a party, a dinner or a night out.'),
  ],
  'related': ['grwm', 'hashtag', 'user-generated-content', 'influencer', 'pov'],
+},
+]
+
+TERMS += [
+{
+ 'slug': 'open-graph',
+ 'short': "Open Graph is a set of tags in a web page's code that tells social apps which title, description and image to show when someone shares the link.",
+ 'body': '''<h2>What is Open Graph?</h2>
+<p>Open Graph is a small set of meta tags that sit in the head section of a web page. When you paste a link into a post or a chat, the app visits the page, reads these tags and builds a preview card. That card usually shows an image, a title, a short description and the site name. Facebook first introduced the idea, and today most social apps and messaging tools read the same tags.</p>
+<p>Without Open Graph tags, an app has to guess. It may grab the wrong image, pull a random line of text or show a bare link with no picture at all.</p>
+<h2>How Open Graph works</h2>
+<p>Each tag is one line of HTML with a property and a value. The most common ones are:</p>
+<ul>
+<li><b>og:title</b>: the headline shown on the card.</li>
+<li><b>og:description</b>: one or two lines under the headline.</li>
+<li><b>og:image</b>: the address of the picture the card shows.</li>
+<li><b>og:url</b>: the main address of the page.</li>
+<li><b>og:type</b>: the kind of page, such as an article or a website.</li>
+<li><b>og:site_name</b>: the name of your site, shown small on some cards.</li>
+</ul>
+<p>Here is what the code looks like for a made-up blog post: <b>&lt;meta property="og:title" content="How to repot a fern"&gt;</b>. You add one line like this for each tag.</p>
+<p>When someone shares the link, the app fetches the page once, reads the tags and saves the card. That saved card is what everyone sees, which is why changes don't always show up right away.</p>
+<figure data-chart="1"></figure>
+<h2>Why Open Graph matters for social media</h2>
+<p>A link with a clear image and a good title stands out in a busy feed. A broken preview looks careless and gives people a reason to scroll past. If you share blog posts, product pages or landing pages, these tags decide how your links look before anyone clicks.</p>
+<p>It also matters when other people share your links. You can't control their caption, but your Open Graph tags still decide the image and headline they show. Every share becomes a small ad you designed ahead of time.</p>
+<h2>How to set up Open Graph tags</h2>
+<figure data-chart="2"></figure>
+<ol>
+<li><b>Add the tags.</b> Put them in the head of each page, or switch them on in your website builder or SEO plugin.</li>
+<li><b>Write for sharing.</b> Your sharing title and description can differ from your search title. Make them clear and inviting.</li>
+<li><b>Pick a strong image.</b> Use a sharp, wide picture with very little small text on it.</li>
+<li><b>Give each page its own tags.</b> Each important page should have its own title and image.</li>
+<li><b>Test the link.</b> Use the preview or debug tool of the platform you post to.</li>
+<li><b>Refresh after changes.</b> If you change the image later, ask the platform to fetch the page again.</li>
+</ol>
+<h2>Open Graph on different networks</h2>
+<p>Most apps read Open Graph, but they don't all show the card the same way. Facebook and LinkedIn usually show a wide image with the title below. Messaging apps often show a smaller card. Some apps crop the image to a square or show only the title on small screens. X reads its own card tags first and falls back to Open Graph when they are missing. On apps where links in captions don't click, like Instagram feed posts, the card doesn't show at all.</p>
+<p>Because of this, keep the key part of your image in the center, where it survives cropping. And keep titles short enough to read in a small card.</p>
+<h2>Testing and fixing previews</h2>
+<p>Paste your link into the platform's debug or inspector tool before you post. It shows the card the app will build and lists any missing tags. If you see an old image, the tool usually has a button to fetch the page again.</p>
+<p>Here is a made-up example. A shop changes a product photo, but shared links still show the old one. The owner runs the link through the debug tool, presses the button to fetch again, and the new photo appears in fresh shares.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>A missing or tiny image, which leaves the card blank or badly cropped.</li>
+<li>Giving every page the same title and image, so every shared link looks alike.</li>
+<li>Putting small text on the image that nobody can read in a feed.</li>
+<li>Forgetting that apps save old previews, then thinking your changes didn't work.</li>
+<li>Pointing og:image at a picture that needs a login to load.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'What happens when you share a link', 'steps': [
+   ('You paste the link', 'Into a post, a comment or a chat.'),
+   ('The app visits the page', 'It reads the Open Graph tags in the head.'),
+   ('It builds a card', 'Image, title, description and site name.'),
+   ('It saves the card', 'Everyone sees the saved card until the app fetches again.')]},
+  {'type': 'steps', 'title': 'Setting up Open Graph tags', 'steps': [
+   ('Add the tags', 'In the page head or through your site builder.'),
+   ('Write a sharing title', 'Short, clear and inviting.'),
+   ('Choose a wide image', 'Sharp, centered and with little small text.'),
+   ('Test the link', 'Use each platform\'s preview tool.'),
+   ('Refresh after changes', 'Ask the app to fetch the page again.')]},
+ ],
+ 'tools': [
+  {'name': 'Sharing Debugger', 'url': 'https://developers.facebook.com/tools/debug/', 'domain': 'facebook.com', 'line': "Meta's tool for seeing how a link will look when shared and fetching it again."},
+  {'name': 'LinkedIn Post Inspector', 'url': 'https://www.linkedin.com/post-inspector/', 'domain': 'linkedin.com', 'line': "LinkedIn's tool for checking and refreshing a link preview."},
+  {'name': 'Canva', 'url': 'https://www.canva.com', 'domain': 'canva.com', 'line': 'A design tool for making the share image for each page.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag the links you share so you can see which posts bring visitors.'},
+ ],
+ 'faqs': [
+  ('What does og:image mean?', 'og:image is the Open Graph tag that points to the picture a social app should show in a link preview. If it is missing, the app may pick a random image or show none.'),
+  ('Why is my link preview showing an old image?', "Social apps save previews, so an old image can stick around after you change it. Update the og:image tag, then use the platform's sharing debug tool to fetch the page again."),
+  ('Does WordPress add Open Graph tags?', 'Many WordPress themes and SEO plugins add Open Graph tags for you. View your page source and search for og: to see whether they are there.'),
+  ('Does Open Graph help SEO?', 'Open Graph tags have no direct effect on search rankings. Better link previews can still bring you more clicks from social apps.'),
+  ('Do I need Open Graph if I use a link in bio page?', 'It still helps, since people may share that page in chats and posts. A clear image and title make those shares look better.'),
+ ],
+ 'related': ['thumbnail', 'embed', 'url-shortener', 'utm-parameters', 'link-in-bio'],
+},
+{
+ 'slug': 'organic-reach',
+ 'short': 'Organic reach is the number of unique people who see your content without you paying to promote it.',
+ 'body': '''<h2>What is organic reach?</h2>
+<p>Organic reach counts the different people who saw a post through free means. They might follow you, find the post on an explore or For You page, see it because a friend shared it, or land on it through search. Each person counts once, however many times they saw it.</p>
+<p>Any view that came from an ad or a boosted post counts as paid reach instead. Most analytics tools split the two so you can see each one on its own.</p>
+<h2>Organic reach vs paid reach</h2>
+<p>Paid reach grows when you spend money and stops when the budget runs out. Organic reach grows when people find your content worth showing to others and when the app's algorithm decides to recommend it. Organic reach takes longer to build, but it keeps working after a post goes live, and it tells you what your audience truly cares about.</p>
+<figure data-chart="1"></figure>
+<h2>How to calculate organic reach rate</h2>
+<p>Raw reach is hard to compare across accounts of different sizes. A rate fixes that. Divide organic reach by your followers and multiply by 100.</p>
+<figure data-chart="2"></figure>
+<p>A rate above 100% is possible. It means the post reached more people than you have followers, usually because it was shared or recommended to strangers. Track your rate for each format, since a video and a photo often behave very differently.</p>
+<h2>How organic reach builds and changes</h2>
+<p>Most posts get the bulk of their reach in the first day or two. Many apps show a new post to a small group first, then widen the audience if people react. So reach climbs fast at first, then levels off. The made-up chart below shows how total reach might grow over the first two days.</p>
+<figure data-chart="3"></figure>
+<p>Some posts break the pattern. A video that gets picked up by a recommendation feed can keep growing for days or weeks. Search-driven content on YouTube or Pinterest can gain reach for months.</p>
+<p>Feeds hold far more posts than anyone can see, so each app ranks them. A post that gets early likes, comments, saves and shares tends to be shown to more people. Reach can drop when you post less, when your topic drifts away from what your followers expect or when the app changes how it ranks content. A sudden drop on one post is normal. A steady drop over weeks is worth a closer look.</p>
+<p>Each app hands out reach in its own way. Apps with strong recommendation feeds, like TikTok and Instagram Reels, can show a post to many people who don't follow you. Facebook Pages often reach a smaller share of their followers, so groups and shares matter more. LinkedIn tends to reward posts that start real conversations in the comments. YouTube and Pinterest work more like search engines, so good titles and descriptions help people find you long after you post. On Mastodon and other time-ordered feeds, reach depends heavily on when you post and who boosts you.</p>
+<h2>How to measure organic reach</h2>
+<p>Open the insights or analytics area of each app and look for reach on posts that were not promoted. If you ran ads, make sure you are looking at the organic number only, since some views combine both. Check each post a few days after it goes live, once most of its reach has come in.</p>
+<p>Keep a simple log with one row per post: the date, the format, the topic and the organic reach. After a month, sort by reach. You will start to see which formats and topics travel, and which days and times work best for you. Compare averages over weeks instead of judging single posts.</p>
+<h2>How to grow organic reach</h2>
+<ul>
+<li>Open with a strong hook so people stop scrolling.</li>
+<li>Use the formats each app is pushing, such as short video or carousels.</li>
+<li>Reply to comments quickly, since active threads often travel further.</li>
+<li>Post when your followers are online.</li>
+<li>Make things people want to save or send to a friend.</li>
+<li>Keep a steady rhythm so the app and your audience know what to expect.</li>
+</ul>
+<h2>Common mistakes</h2>
+<ul>
+<li>Mixing up reach and impressions. Reach counts people. Impressions count views.</li>
+<li>Judging an account on one post instead of a few weeks of averages.</li>
+<li>Comparing your reach with a much bigger account without using a rate.</li>
+<li>Panicking about one bad week and changing everything at once.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'Organic reach vs paid reach', 'cols': ('Organic reach', 'Paid reach'), 'rows': [
+   ('Costs money', False, True),
+   ('Stops when spending stops', False, True),
+   ('You choose exactly who sees it', False, True),
+   ('Shows what people truly like', True, False),
+   ('Speed', 'Builds over time', 'Fast')]},
+  {'type': 'formula', 'title': 'Organic reach rate', 'formula': 'Organic reach rate = organic reach ÷ followers × 100',
+   'note': 'Made-up numbers to show the math.', 'result': '35%',
+   'example': [('Organic reach', '2,800'), ('Followers', '8,000')]},
+  {'type': 'line', 'title': 'Total reach in the first two days', 'sub': 'Unique people reached since posting', 'example': True,
+   'points': [('1h', 300), ('3h', 900), ('6h', 1500), ('12h', 2100), ('24h', 2600), ('48h', 2850)], 'unit': 'People reached',
+   'note': 'Made-up numbers for one post.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See reach, engagement and followers for every channel side by side, with your best times to post.'},
+  {'name': 'Best time to post', 'url': '/tools/best-time-to-post', 'line': 'Our free guide to picking posting times for each network.'},
+  {'name': 'Engagement rate calculator', 'url': '/tools/engagement-rate-calculator', 'line': 'Work out engagement by reach to see how people who saw a post reacted.'},
+ ],
+ 'list': 'social-media-management-tools',
+ 'faqs': [
+  ('What is a good organic reach rate?', 'It varies a lot by app, account size and topic. The most useful benchmark is your own average, so aim to beat your last few months.'),
+  ('Why is my organic reach going down?', 'Common causes are posting less often, content your audience engages with less and changes to how the app ranks posts. Check which recent posts did best and make more like them.'),
+  ('Is organic reach the same as impressions?', 'No. Reach counts unique people, while impressions count every time the post was shown, so one person can create several impressions.'),
+  ('Can organic reach be higher than my follower count?', 'Yes. When a post is shared or recommended to people who don\'t follow you, reach can go past your follower count.'),
+ ],
+ 'related': ['reach', 'impressions', 'algorithm', 'paid-social', 'organic-social'],
+},
+{
+ 'slug': 'organic-social',
+ 'short': 'Organic social is everything a brand or creator does on social media for free, such as posting, replying to comments and joining conversations.',
+ 'body': '''<h2>What is organic social?</h2>
+<p>Organic social covers all the unpaid work you do on social apps. It includes the posts, Stories and videos you publish, the comments you answer, the messages you reply to and the groups or threads you take part in. Nothing in it is boosted with ad money.</p>
+<p>The goal is to build an audience that knows you, trusts you and comes back on its own. Over time, that audience becomes a steady source of website visits, leads and word of mouth.</p>
+<h2>Organic social vs paid social</h2>
+<p>Paid social uses ads to put content in front of chosen groups of people, and it can reach strangers fast. Organic social mostly reaches your followers, their friends and people who find you through search or recommendations. The two work well together. Many teams test ideas organically first, then put ad money behind the posts that already did well.</p>
+<figure data-chart="1"></figure>
+<p>Organic social is worth the effort for a few reasons:</p>
+<ul>
+<li>It gives your brand a human voice people can talk to.</li>
+<li>It builds trust before someone is ready to buy.</li>
+<li>It costs time more than money, so small teams can start today.</li>
+<li>Comments and messages show you what customers think.</li>
+<li>Your best organic posts tell you which ads are worth running.</li>
+</ul>
+<h2>How to build an organic social plan</h2>
+<figure data-chart="2"></figure>
+<ol>
+<li><b>Pick your apps.</b> Choose where your audience already spends time. Two done well beat many done badly.</li>
+<li><b>Choose content pillars.</b> These are the few topics you will post about again and again.</li>
+<li><b>Set a rhythm.</b> Pick a posting pace you can keep for months, then plan it on a content calendar.</li>
+<li><b>Batch your posts.</b> Write and schedule ahead so busy weeks don't leave gaps.</li>
+<li><b>Make time to reply.</b> Block time each day to answer comments and messages.</li>
+<li><b>Review monthly.</b> Check your analytics and do more of what worked.</li>
+</ol>
+<p>Followers stay for posts that help or entertain them. If every post is an offer, people tune out. A healthy mix leans on useful and human posts, with offers mixed in. The made-up split below is one example for a small brand.</p>
+<figure data-chart="3"></figure>
+<p>Here is how that might look for a made-up coffee roaster over a month. Helpful posts teach brewing tips. Behind-the-scenes posts show the roasting room. Community posts share customer photos and answer questions. Offers announce new beans and a holiday gift box. Each type gives followers a different reason to stay.</p>
+<h2>Organic social on different networks</h2>
+<p>What works for free varies by app. Short video apps can show a new account's posts to many strangers, so they are often the fastest place to grow from zero. Instagram rewards a steady mix of Reels, carousels and Stories. LinkedIn rewards people who post their own ideas and reply to others, so staff accounts often reach more than the Company Page. Facebook Groups can build a close community around a topic. On X, Threads, Bluesky and Mastodon, growth comes from joining conversations as much as posting. Pick one or two to master before adding more.</p>
+<h2>Organic social for small teams</h2>
+<p>You don't need a big team to do organic social well. Many small businesses run it with one person and a few hours a week. The trick is a routine. Spend one block of time each week writing and scheduling posts. Spend a few minutes each day replying to comments and messages. Once a month, look at what worked and plan the next month around it.</p>
+<p>For example, a made-up hair salon owner sets aside Monday mornings. She photographs a few recent styles, writes captions and schedules the week. Each evening she spends ten minutes answering comments and booking questions. That routine keeps her accounts active without taking over her week.</p>
+<h2>How to measure organic social</h2>
+<p>Track a few numbers each month: follower growth, reach, engagement rate and clicks to your website. Add the business numbers too, such as sign-ups or sales that came from social links. Use UTM tags on your links so your website analytics can show which posts sent visitors. Look at trends over a few months, since organic work builds slowly.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Posting only about your own products, which gives people little reason to follow.</li>
+<li>Posting in bursts and then disappearing for weeks.</li>
+<li>Ignoring comments and messages.</li>
+<li>Spreading across every app at once and doing none of them well.</li>
+<li>Quitting after a month, before organic work has had time to build.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'Organic social vs paid social', 'cols': ('Organic social', 'Paid social'), 'rows': [
+   ('Costs ad money', False, True),
+   ('Reaches strangers fast', False, True),
+   ('Builds trust over time', True, 'Sometimes'),
+   ('Keeps working after you stop spending', True, False),
+   ('Main cost', 'Time', 'Budget')]},
+  {'type': 'steps', 'title': 'Building an organic social plan', 'steps': [
+   ('Pick your apps', 'Where your audience already spends time.'),
+   ('Choose content pillars', 'A few topics you post about again and again.'),
+   ('Set a rhythm', 'A pace you can keep, planned on a calendar.'),
+   ('Batch and schedule', 'Write ahead so busy weeks stay covered.'),
+   ('Reply and review', 'Answer daily, check results monthly.')]},
+  {'type': 'stack', 'title': 'A content mix for a small brand', 'sub': 'Share of posts in one month', 'example': True,
+   'parts': [('Helpful tips', 40), ('Behind the scenes', 25), ('Community', 20), ('Offers', 15)],
+   'note': 'Made-up split. Adjust it to your audience.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan your posts on a calendar or a queue, and bulk upload a month at a time.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See reach, engagement and followers for every channel side by side.'},
+  {'name': 'Best time to post', 'url': '/tools/best-time-to-post', 'line': 'Our free guide to picking posting times for each network.'},
+  {'name': 'Canva', 'url': 'https://www.canva.com', 'domain': 'canva.com', 'line': 'A design tool for making post graphics and short videos.'},
+ ],
+ 'list': 'social-media-scheduling-tools',
+ 'faqs': [
+  ('Is organic social media free?', 'Posting is free on every major app. The real cost is the time it takes to plan, create and reply, plus any tools you choose to use.'),
+  ('How long does organic social take to work?', 'It usually takes months of steady posting before you see clear growth. Results build up over time as your audience grows.'),
+  ('Should I do organic or paid social first?', 'Most brands start with organic social to learn what their audience likes. Paid social works better once you know which posts and messages land.'),
+  ('How often should I post for organic growth?', 'Pick a pace you can keep for months. Steady posting usually beats a burst of daily posts followed by silence.'),
+ ],
+ 'related': ['paid-social', 'organic-reach', 'content-calendar', 'content-pillars', 'community-management'],
+},
+{
+ 'slug': 'owned-media',
+ 'short': 'Owned media are the channels a brand controls itself, such as its website, blog, email list and app.',
+ 'body': '''<h2>What is owned media?</h2>
+<p>Owned media are the places where you decide what goes out, when it goes out and who sees it. Your website, your blog, your email newsletter, your mobile app and your podcast feed are all owned media. You do not need permission from another company to publish there, and nobody can change the rules on you overnight.</p>
+<p>Owning a channel also means you own the data. You can see who signed up, who visited and what they did, and you can keep that list even if you change tools.</p>
+<h2>Owned, earned and paid media</h2>
+<p>Marketers often sort channels into groups:</p>
+<ul>
+<li><b>Owned media</b>: channels you run, like your site and email list.</li>
+<li><b>Earned media</b>: attention you get for free from others, such as press stories, reviews and shares.</li>
+<li><b>Paid media</b>: space you buy, such as ads and sponsored posts.</li>
+<li><b>Shared media</b>: social posts, which sit between the others.</li>
+</ul>
+<p>Most brands use all of them. Paid and earned media bring new people in. Owned media is where you keep them.</p>
+<h2>Are social media profiles owned media?</h2>
+<p>Partly. You control what you post on your profiles, so many people count them as owned. But the platform owns the account rules, the feed and your list of followers. If an app changes its algorithm, limits your account or shuts down a feature, you can lose reach you spent years building. That is why social profiles are sometimes called rented space.</p>
+<figure data-chart="1"></figure>
+<p>Owned channels protect you from sudden changes on any one app. When someone joins your email list, you can reach them directly, whatever happens to a feed. Content on your own site can also rank in search for years and keep bringing visitors.</p>
+<p>Here is a made-up example. A pottery studio has a big following on one app. The app changes how it ranks posts, and the studio's reach drops by half. Its class sign-ups barely change, though, because most bookings come from its email list. It had spent two years inviting followers to join.</p>
+<h2>How to use social media to grow owned media</h2>
+<figure data-chart="2"></figure>
+<ol>
+<li><b>Use your bio link.</b> Put a clear link in your bio that leads to your site or a sign-up page.</li>
+<li><b>Offer something useful.</b> A guide, a checklist or a discount in exchange for an email address.</li>
+<li><b>Share and send back.</b> Post a short version of a blog post, then link to the full article.</li>
+<li><b>Tag your links.</b> Add UTM parameters so you can see which posts bring visitors.</li>
+<li><b>Repurpose your best posts.</b> Turn top social posts into articles or newsletter issues.</li>
+</ol>
+<p>Each step moves people from a feed you rent to a channel you own. Most people who see a post won't click, and most who click won't sign up, so the funnel narrows fast. That is normal. A steady trickle adds up over a year.</p>
+<h2>Where your visitors come from</h2>
+<p>Once your owned channels grow, check your website analytics to see where visits start. A healthy mix doesn't lean too hard on any one source. The made-up split below is for a small online shop.</p>
+<figure data-chart="3"></figure>
+<p>If social sends most of your traffic, work on your email list and search content so a change on one app can't sink you. If email is strong but social is weak, social may be a good place to find new subscribers.</p>
+<h2>Owned media on different networks</h2>
+<p>Every social app lets you point people to owned media, but in different ways. Instagram and TikTok mostly rely on a link in your bio. Facebook, LinkedIn and X let you put links right in posts. YouTube lets you add links in video descriptions. Pinterest Pins can link straight to a page on your site. LinkedIn newsletters and Facebook Groups feel owned, but they still live on someone else's app.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Building only on social apps with no website or email list.</li>
+<li>Sending followers to a home page instead of a page made for them.</li>
+<li>Asking for an email without offering anything in return.</li>
+<li>Collecting emails and then never sending anything.</li>
+</ul>
+<p>Think of social apps as the place people meet you and owned media as the place they get to know you.</p>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'Owned media vs a social profile', 'cols': ('Website and email list', 'Social profile'), 'rows': [
+   ('You set the rules', True, False),
+   ('You keep your audience list', True, False),
+   ('Reach can change overnight', False, True),
+   ('Easy for strangers to find you', 'Through search', 'Through feeds'),
+   ('Free to start', 'Mostly', True)]},
+  {'type': 'funnel', 'title': 'From followers to email subscribers', 'sub': 'One month of bio link traffic', 'example': True, 'unit': 'People',
+   'stages': [('Followers', 10000), ('Clicked the bio link', 400), ('Visited the sign-up page', 300), ('Joined the email list', 90)],
+   'note': 'Made-up numbers to show how the funnel narrows.'},
+  {'type': 'stack', 'title': "Where one shop's website visits come from", 'example': True,
+   'parts': [('Email', 35), ('Social', 30), ('Search', 25), ('Ads', 10)],
+   'note': 'Made-up split for one small shop.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Link in bio', 'url': '/link-in-bio', 'line': 'One page behind your bio link that sends followers to your site, shop or sign-up form.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag your social links so you can see which posts bring visitors.'},
+  {'name': 'Mailchimp', 'url': 'https://mailchimp.com', 'domain': 'mailchimp.com', 'line': 'An email marketing tool for building and writing to your list.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics for seeing where visitors come from and what they do.'},
+ ],
+ 'faqs': [
+  ('What are examples of owned media?', 'Your website, blog, email newsletter, mobile app, podcast and printed brochures are all owned media. Many people also include your social media profiles.'),
+  ('What is the difference between owned and earned media?', 'Owned media are channels you control and publish on yourself. Earned media is attention other people give you for free, such as reviews, press coverage or shares.'),
+  ('Why is an email list important if I have followers?', 'A platform can change its rules or reach at any time, but your email list stays with you. It lets you contact your audience directly.'),
+  ('What is shared media?', 'Shared media usually means social posts. You make them, but they live on someone else\'s app and spread when people share them.'),
+ ],
+ 'related': ['earned-media', 'paid-social', 'link-in-bio', 'lead-generation', 'utm-parameters'],
+},
+{
+ 'slug': 'paid-social',
+ 'short': 'Paid social is advertising on social media apps, where you pay to show posts or ads to people you choose by interest, location, age or behavior.',
+ 'body': '''<h2>What is paid social?</h2>
+<p>Paid social means any content you pay a social app to show. It includes ads in the feed, sponsored Stories, promoted videos, boosted posts and sponsored messages. You set a budget, choose who should see the ad and pick a goal, such as website visits, app installs, leads or sales.</p>
+<p>The big draw is control. With organic posts, you hope the right people see them. With paid social, you choose the audience and pay to reach them.</p>
+<h2>How paid social works</h2>
+<p>Each app has an ads manager where you build a campaign. The usual steps are:</p>
+<figure data-chart="1"></figure>
+<ol>
+<li><b>Pick a goal.</b> The app uses it to decide who to show the ad to.</li>
+<li><b>Choose an audience.</b> Target by location, age, interests or job title, or upload a customer list.</li>
+<li><b>Set a budget and schedule.</b> Choose a daily or total amount and how long the ads run.</li>
+<li><b>Create the ad.</b> Add images or video, text, a headline and a call to action.</li>
+<li><b>Launch and watch the results.</b> Check costs, clicks and conversions, then adjust.</li>
+</ol>
+<p>Ads are sold through auctions. The price you pay depends on how many other advertisers want the same audience and how well people respond to your ad. An ad people like often costs less to show than one they skip.</p>
+<h2>Paid social vs organic social</h2>
+<p>Organic posts reach mostly your followers and people the algorithm picks. Paid posts can reach strangers right away and can be aimed very precisely. Organic social builds trust slowly, while paid social gives fast, measurable results that stop when spending stops. Most brands use both, often by putting money behind organic posts that already did well.</p>
+<h2>Following an ad from view to sale</h2>
+<p>Think of each campaign as a funnel. Many people see the ad, some click, fewer sign up or buy. Each step has a rate you can work on. The made-up funnel below shows one small campaign.</p>
+<figure data-chart="2"></figure>
+<p>If many people see the ad but few click, the ad itself needs work: try a new image or a stronger first line. If people click but don't sign up, look at the page they land on. It should match the ad and make the next step easy.</p>
+<p>The numbers most teams watch are:</p>
+<ul>
+<li><b>CPM</b>: cost per thousand impressions.</li>
+<li><b>CPC</b>: cost per click.</li>
+<li><b>CTR</b>: clicks ÷ impressions × 100.</li>
+<li><b>Conversion rate</b>: conversions ÷ clicks × 100.</li>
+<li><b>ROAS</b>: revenue from ads ÷ ad spend.</li>
+</ul>
+<p>ROAS, or return on ad spend, is the number many teams care about most. It tells you how much money came back for each dollar you spent.</p>
+<figure data-chart="3"></figure>
+<h2>Paid social on different networks</h2>
+<p>Each app suits different goals, in general terms. Facebook and Instagram offer wide reach and many targeting options, so they suit lots of consumer brands. TikTok ads work best when they look like native TikToks, with real people and fast hooks. LinkedIn lets you target by job title, company and industry, which suits B2B brands. Pinterest reaches people who are planning purchases. YouTube suits video ads that teach or show a product in use. Ad tools and formats change often, so check each ads manager for what's current.</p>
+<h2>How to set a budget and test your ads</h2>
+<p>Start with an amount you are comfortable losing while you learn. Treat your first campaigns as tests. Their job is to show you what works. Spread the money across two or more ad versions so you can compare. Once one version clearly does better, move more of the budget to it and test a new challenger.</p>
+<p>Write down what you expect before you launch. For example, you might decide that a sign-up is worth a certain amount to you. If an ad brings sign-ups for less than that, keep it running. If it costs more, change it or stop it.</p>
+<p>Change one thing at a time. Run two versions of an ad with the same audience and budget, where only the image or the headline differs. Give each test enough time and enough results before you pick a winner. Then test the next thing. Small, steady tests teach you more than one big launch.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Targeting too many people, so the budget spreads thin.</li>
+<li>Using an ad that looks nothing like a normal post, so people skip it.</li>
+<li>Sending clicks to a home page that has nothing to do with the ad.</li>
+<li>Stopping a test after a day, before there is real data.</li>
+<li>Skipping tracking, so you can't tell which ads led to sales.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'Building a paid social campaign', 'steps': [
+   ('Pick a goal', 'Visits, leads, installs or sales.'),
+   ('Choose an audience', 'Location, interests, job title or a customer list.'),
+   ('Set a budget', 'A daily or total amount and an end date.'),
+   ('Create the ad', 'Image or video, text and a clear call to action.'),
+   ('Launch and adjust', 'Watch costs and results, then change one thing at a time.')]},
+  {'type': 'funnel', 'title': 'One campaign from view to sign-up', 'example': True, 'unit': 'People',
+   'stages': [('Saw the ad', 50000), ('Clicked', 600), ('Landed on the page', 520), ('Signed up', 48)],
+   'note': 'Made-up numbers for one small campaign.'},
+  {'type': 'formula', 'title': 'Return on ad spend (ROAS)', 'formula': 'ROAS = revenue from ads ÷ ad spend',
+   'note': 'Made-up numbers to show the math.', 'result': '3.2',
+   'example': [('Revenue from ads', '$1,600'), ('Ad spend', '$500')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Find the organic posts that did best so you know which ones to put ad money behind.'},
+  {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': "Meta's tool for running ads on Facebook and Instagram."},
+  {'name': 'LinkedIn Campaign Manager', 'url': 'https://business.linkedin.com/advertise', 'domain': 'linkedin.com', 'line': "LinkedIn's tool for running ads to professionals."},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag your ad links so your website analytics can show which ads brought visitors.'},
+ ],
+ 'faqs': [
+  ('How much does paid social cost?', 'It depends on your audience, the app, your goal and how much competition there is. You set the budget yourself, and most apps let you start small.'),
+  ('Is a boosted post the same as paid social?', 'A boosted post is one simple type of paid social. Full ad campaigns give you more choices for goals, audiences and ad formats.'),
+  ('Which platform is best for paid social?', 'The best one is where your customers spend time. LinkedIn suits many B2B brands, while visual products often do well on Instagram, TikTok or Pinterest.'),
+  ('What is ROAS?', 'ROAS stands for return on ad spend. It is the revenue your ads brought in divided by what you spent on them.'),
+  ('How long should I run a paid social test?', 'Long enough to collect a fair number of results for each version, often at least several days. Stopping after one day can point you to the wrong winner.'),
+ ],
+ 'related': ['organic-social', 'boosted-post', 'retargeting', 'lookalike-audience', 'cost-per-click'],
 },
 ]

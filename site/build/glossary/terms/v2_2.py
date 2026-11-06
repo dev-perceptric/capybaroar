@@ -1067,3 +1067,339 @@ TERMS += [
  'related': ['content-calendar', 'brand-voice', 'niche', 'target-audience', 'batching'],
 },
 ]
+
+TERMS += [
+{
+ 'slug': 'conversion-rate',
+ 'short': 'Conversion rate is the share of people who take an action you want, such as buying or signing up, out of everyone who had the chance to.',
+ 'body': '''<h2>What is conversion rate?</h2>
+<p>Conversion rate tells you how many people did the thing you asked them to do. A conversion is any goal you pick. It might be a sale, a newsletter sign-up, a free trial, a download, a booked call or a filled-in form. On social media, you usually measure it from the people who clicked a link in your post, bio or ad and landed on your site.</p>
+<p>It answers the question every business asks sooner or later: did all that attention turn into anything? Likes and views show people noticed you. Conversion rate shows whether they acted.</p>
+<h2>How to calculate conversion rate</h2>
+<figure data-chart="1"></figure>
+<p>With made-up numbers: 400 people click through from a post and 12 of them sign up. 12 ÷ 400 × 100 = 3%. If you improve the landing page and the next 400 visitors bring 20 sign-ups, the rate climbs to 5%.</p>
+<p>Some teams divide by all visitors to a page, and others divide by clicks or by sessions. Each is fine. Write down which base you use and keep it the same, or your numbers won't compare from month to month.</p>
+<h2>Where conversion rate fits in the journey</h2>
+<p>Conversion rate is the last step in a chain. Your post is shown, some people click, some of those land on your page, and a few complete your goal. A weak step anywhere in the chain shrinks the final number.</p>
+<figure data-chart="2"></figure>
+<p>In this made-up funnel, 3% of the people who reached the page signed up. Looking at each step tells you where to work. If clicks are high and sign-ups are low, the problem is usually on the page. If clicks are low, start with the post.</p>
+<h2>How to track conversions from social media</h2>
+<ol>
+<li><b>Pick one goal per campaign.</b> Decide what counts as a conversion before you post.</li>
+<li><b>Tag your links.</b> Add UTM parameters so your website analytics can tell which post sent each visitor.</li>
+<li><b>Set up goals in your analytics tool.</b> Mark the thank-you page or checkout step as the conversion.</li>
+<li><b>Use ad tracking for paid campaigns.</b> Ad platforms can report conversions from your ads when you add their tracking code to your site.</li>
+<li><b>Compare by source.</b> Look at the rate for each network, post type and audience.</li>
+</ol>
+<h2>How conversion rates differ by network and offer</h2>
+<p>Each network sends a different kind of visitor. People who tap a link on LinkedIn may be at work and ready to read. People who tap through from a short video may be curious but in a hurry. A free download usually converts far better than a paid product, and a small purchase better than a big one. So compare like with like: the same offer, on the same kind of page, from different sources.</p>
+<figure data-chart="3"></figure>
+<p>In this made-up example, LinkedIn sends fewer visitors but more of them sign up, while short video sends lots of visitors who mostly look around. Both can be worth it. Multiply each rate by the number of visitors to see which source brought the most sign-ups in total.</p>
+<h2>How to improve your conversion rate</h2>
+<ul>
+<li>Make the promise in your post match the page people land on.</li>
+<li>Use one clear call to action on the page instead of several.</li>
+<li>Cut extra form fields and steps.</li>
+<li>Make sure the page loads fast and works well on a phone, since many people tap through from one.</li>
+<li>Add proof, such as reviews or a short customer quote, near the button.</li>
+<li>Test one change at a time with A/B testing.</li>
+</ul>
+<h2>Common mistakes</h2>
+<p>A frequent mistake is judging a post only by its conversion rate. A post with a low rate but huge reach can still bring more total sales than a post with a high rate and tiny reach. Look at both the rate and the raw count. Another mistake is changing your goal halfway through a campaign, which makes the numbers impossible to compare. Last, remember the people who come back later. Someone may see your post today, then buy next week after searching your name. Your analytics may credit that sale to search, so social often does more than the report shows.</p>''',
+ 'charts': [
+  {'type': 'formula', 'title': 'Conversion rate', 'formula': 'Conversion rate = conversions ÷ visitors × 100',
+   'note': 'Made-up numbers to show the math.', 'result': '3%', 'example': [('Sign-ups', '12'), ('Visitors', '400')]},
+  {'type': 'funnel', 'title': 'From a post to a sign-up', 'sub': 'One post linking to a sign-up page', 'example': True, 'unit': 'People',
+   'stages': [('Impressions', 25000, '25,000'), ('Link clicks', 500, '500'), ('Page visits', 400, '400'), ('Sign-ups', 12, '12')],
+   'note': 'Made-up numbers. 12 ÷ 400 = 3% of visitors signed up.'},
+  {'type': 'bars', 'title': 'Same offer, different sources', 'sub': 'Conversion rate of visitors from each network', 'example': True,
+   'rows': [('LinkedIn post', 4.2, '4.2%'), ('Instagram bio link', 2.8, '2.8%'), ('Facebook post', 2.1, '2.1%'), ('Short video', 1.6, '1.6%')],
+   'highlight': 'LinkedIn post', 'unit': 'Conversion rate', 'note': 'Made-up numbers for one offer. Your networks will rank differently.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Compare reach and engagement across your channels to see which ones get the most attention.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder tags each link so your analytics can tie sign-ups back to the post.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics where you can mark a page or action as a conversion and see where it came from.'},
+ ],
+ 'faqs': [
+  ('What is a good conversion rate for social media?', 'It depends on your industry, your offer and what you count as a conversion. A free sign-up will convert far better than an expensive purchase. The best benchmark is your own past results, so track your rate over time and try to beat it.'),
+  ('How do you calculate conversion rate?', 'Divide the number of conversions by the number of visitors or clicks, then multiply by 100. For example, 10 sign-ups from 500 clicks is a 2% conversion rate.'),
+  ('What is the difference between conversion rate and click-through rate?', 'Click-through rate measures how many people clicked after seeing your post. Conversion rate measures how many of those people went on to complete your goal.'),
+  ('How do I track conversions from Instagram or TikTok?', 'Add UTM tags to the links in your bio or ads, then set up a conversion goal in your website analytics. For ads, the platform\'s own tracking code can report conversions too.'),
+  ('Why is my conversion rate low?', 'Common causes are a landing page that doesn\'t match the post, a slow or confusing page on phones, or too many steps in the form. Fix the biggest gap first and test again.'),
+ ],
+ 'related': ['click-through-rate', 'utm-parameters', 'call-to-action', 'a-b-testing', 'return-on-investment'],
+},
+{
+ 'slug': 'cost-per-click',
+ 'short': 'Cost per click (CPC) is the average amount you pay each time someone clicks your ad. You find it by dividing your ad spend by your clicks.',
+ 'body': '''<h2>What is cost per click (CPC)?</h2>
+<p>Cost per click, or CPC, is a way to price and measure online ads. When you run a social ad, you spend money and people click. CPC tells you what each of those clicks cost you on average. It is one of the first numbers to check when you want ads to send people to your website, shop or sign-up page.</p>
+<p>The word "click" can mean different things on different platforms. Some count any click on the ad, including a tap to see more text or a tap on your profile name. Others offer a "link click" figure that only counts clicks that leave the platform. For website traffic, link clicks are the ones that matter, so check which one you are looking at.</p>
+<h2>How to calculate CPC</h2>
+<figure data-chart="1"></figure>
+<p>With made-up numbers: you spend $100 on an ad and it gets 400 link clicks. $100 ÷ 400 = $0.25 per click. If a second ad spends the same $100 and gets 250 clicks, its CPC is $0.40. The first ad brings you more visitors for the same money.</p>
+<h2>How CPC bidding works</h2>
+<p>On many ad platforms you can choose to be charged per click instead of per view. You set a budget and sometimes a top bid. The platform runs an auction each time there is space to show an ad to someone in your audience. Your price depends on how many other advertisers want the same people, how relevant your ad looks and how often people click it.</p>
+<figure data-chart="2"></figure>
+<p>Ads that people find useful often get cheaper clicks over time, because platforms want to show ads their users like. Even if you pay per view, you can still work out your CPC afterward by dividing spend by clicks.</p>
+<h2>What affects your cost per click?</h2>
+<ul>
+<li><b>Audience.</b> Popular audiences have more advertisers competing for them.</li>
+<li><b>Ad quality.</b> Clear, relevant ads tend to earn more clicks and lower costs.</li>
+<li><b>Timing.</b> Busy shopping seasons often push prices up.</li>
+<li><b>Placement.</b> Feed, Stories, Reels and other spots can cost different amounts.</li>
+<li><b>Goal.</b> The campaign goal you choose changes who the platform shows your ad to.</li>
+<li><b>Network.</b> Each platform has its own auction and its own audience, so prices vary between them.</li>
+</ul>
+<h2>Comparing ads by CPC</h2>
+<p>CPC is most useful when you compare ads inside one campaign. Run a few versions, let each one collect a fair number of clicks, then look at the numbers side by side.</p>
+<figure data-chart="3"></figure>
+<p>In this made-up test, the short demo video wins on CPC. Before you pour your budget into it, check that those clicks also turn into sign-ups or sales. A cheap click from someone who leaves at once is worth less than a pricier click from someone who buys.</p>
+<h2>How to lower your CPC</h2>
+<ol>
+<li><b>Write a hook for one group.</b> An ad that speaks to new dog owners usually beats one that speaks to everyone.</li>
+<li><b>Test images and videos.</b> Try a few and keep the winner.</li>
+<li><b>Adjust your audience.</b> Narrow or widen it and see which gives cheaper clicks that still convert.</li>
+<li><b>Pause weak ads.</b> Turn off ads that get views but few clicks.</li>
+<li><b>Refresh tired ads.</b> When the same people see an ad many times, clicks drop and costs rise, so swap in new versions.</li>
+<li><b>Match the page to the ad.</b> Some platforms look at the landing page too, so make it fast and on topic.</li>
+</ol>
+<h2>CPC vs CPM and common mistakes</h2>
+<p>CPC charges you for clicks. CPM charges you for every thousand impressions, whether anyone clicks or not. CPC suits campaigns where you want website visits. CPM suits campaigns where you want lots of people to see a message. If you know your click-through rate, you can work out one from the other.</p>
+<p>The biggest mistake is treating the lowest CPC as the goal. What matters is the cost of each customer, so always check your conversion rate. Another mistake is judging an ad after a day or two, before it has had time to settle. Finally, think about the audience before you compare CPC across networks. A pricier click from the right buyer is often the better deal.</p>''',
+ 'charts': [
+  {'type': 'formula', 'title': 'Cost per click', 'formula': 'CPC = total ad spend ÷ clicks',
+   'note': 'Made-up numbers to show the math.', 'result': '$0.25', 'example': [('Ad spend', '$100'), ('Link clicks', '400')]},
+  {'type': 'steps', 'title': 'How a pay-per-click auction works', 'steps': [
+   ('You set a budget', 'And sometimes a top bid per click.'),
+   ('An auction runs', 'Each time there is space for an ad.'),
+   ('The platform picks ads', 'Based on bids, relevance and how likely people are to click.'),
+   ('Your ad is shown', 'To someone in the audience you chose.'),
+   ('You pay for the click', 'Only when someone clicks.'),
+  ], 'note': 'Each platform runs its own version of this auction.'},
+  {'type': 'bars', 'title': 'CPC for four versions of one ad', 'sub': 'Same budget and audience, different creative', 'example': True,
+   'rows': [('Short demo video', 0.22, '$0.22'), ('Customer quote image', 0.31, '$0.31'), ('Product photo', 0.38, '$0.38'), ('Text-only graphic', 0.55, '$0.55')],
+   'highlight': 'Short demo video', 'unit': 'Cost per click', 'note': 'Made-up numbers. Real prices vary by network, audience and season.'},
+ ],
+ 'tools': [
+  {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': 'Meta\'s tool for creating and tracking ads on Facebook and Instagram.'},
+  {'name': 'LinkedIn Campaign Manager', 'url': 'https://business.linkedin.com/marketing-solutions/ads', 'domain': 'linkedin.com', 'line': 'LinkedIn\'s tool for running and tracking ads on LinkedIn.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder tags ad links so your website analytics can show what each click led to.'},
+  {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for comparing CPC, conversions and cost per customer across ads.'},
+ ],
+ 'faqs': [
+  ('What is a good cost per click?', 'There is no single good number. CPC changes by platform, country, industry and season. Compare your CPC to your own past campaigns and to how much a customer is worth to you.'),
+  ('How is CPC calculated?', 'Divide your total ad spend by the number of clicks the ad got. The result is your average cost for each click.'),
+  ('Is CPC the same as pay per click (PPC)?', 'They are closely related. PPC is the ad model where you pay when someone clicks, and CPC is the price you pay for each of those clicks.'),
+  ('Why is my CPC going up?', 'More advertisers may be targeting the same people, or your audience may have seen the ad too many times. Try fresh creative and test a different audience.'),
+  ('Should I choose CPC or CPM bidding?', 'Pick CPC when you mainly want website visits. Pick CPM when you want as many people as possible to see the ad, such as for a launch or awareness campaign.'),
+ ],
+ 'related': ['cost-per-mille', 'click-through-rate', 'paid-social', 'boosted-post', 'return-on-investment'],
+},
+{
+ 'slug': 'cost-per-mille',
+ 'short': 'Cost per mille (CPM) is what you pay for every 1,000 times your ad is shown. Mille is the Latin word for thousand.',
+ 'body': '''<h2>What is cost per mille (CPM)?</h2>
+<p>CPM stands for cost per mille. Mille is the Latin word for thousand, so CPM is the price of 1,000 ad impressions. An impression is one time your ad appears on someone's screen. CPM is one of the oldest ways to price ads. It came from print, radio and TV long before social media existed, and it still sits at the heart of most ad reports.</p>
+<p>On social platforms, CPM shows up in two ways. Some campaigns charge you by impressions, so CPM is what you pay. Others charge you for clicks or results, and CPM is still reported so you can see what it cost to be seen.</p>
+<h2>How to calculate CPM</h2>
+<figure data-chart="1"></figure>
+<p>With made-up numbers: you spend $30 and your ad is shown 10,000 times. $30 ÷ 10,000 × 1,000 = $3. Each thousand showings cost you $3. If a second ad spends $30 and gets 6,000 impressions, its CPM is $5, so it costs more to reach the same number of screens.</p>
+<h2>Why CPM matters</h2>
+<p>CPM shows how expensive it is to put your ad in front of people. A rising CPM can mean more advertisers want the same audience, or that the platform sees your ad as less relevant. Watching it helps you understand where your budget goes before anyone clicks or buys.</p>
+<p>CPM is also handy for comparing networks and audiences. If one platform reaches the people you want for much less, it may be worth a test there. Cheaper reach only helps if the people reached care about what you sell, so look at what happens next too.</p>
+<h2>CPM vs CPC</h2>
+<p>With CPM, you pay for being seen. With CPC, you pay when someone clicks. The two are linked by click-through rate. When CTR is written as a percent, CPC = CPM ÷ (CTR × 10). With made-up numbers, a $5 CPM and a 1% CTR give a CPC of $0.50. Double the CTR to 2% and the CPC drops to $0.25, even though the CPM stayed the same.</p>
+<figure data-chart="2"></figure>
+<p>So if your ad gets clicked often, even a high CPM can turn into cheap clicks. That is why a strong creative matters on both models.</p>
+<h2>What pushes CPM up or down</h2>
+<ul>
+<li><b>Competition.</b> When many advertisers want the same people, prices rise. Busy shopping seasons are a common example.</li>
+<li><b>Audience size.</b> A very small, specific audience often costs more per thousand than a broad one.</li>
+<li><b>Ad relevance.</b> Ads people react well to can win auctions for less.</li>
+<li><b>Placement.</b> Different spots on a platform can carry different prices.</li>
+<li><b>Frequency.</b> Showing the same ad to the same people again and again makes each new impression less useful.</li>
+</ul>
+<figure data-chart="3"></figure>
+<p>The made-up chart shows a CPM climbing through a busy holiday stretch, then easing off. If your campaign has a flexible date, running it outside the busiest weeks may stretch your budget further.</p>
+<h2>When to use CPM bidding</h2>
+<ul>
+<li>You want as many people as possible to see a launch or event.</li>
+<li>You are building brand awareness in a new market.</li>
+<li>You plan to retarget the people who saw your ad later.</li>
+<li>Your video ad works when people watch it, even if they never click.</li>
+</ul>
+<p>For example, a made-up music festival might buy impressions for a short trailer in the weeks before tickets go on sale. Few people click, but thousands see the lineup. Later, a click-based ad goes only to people who watched most of the trailer.</p>
+<h2>Common mistakes</h2>
+<p>Many advertisers chase the lowest CPM. Cheap impressions often come from placements where people scroll past fast, or from audiences that don't care about your product. A higher CPM that reaches the right people can bring better results. Also remember that impressions count every showing, so one person may see your ad several times. Check frequency and reach next to CPM so you know how many different people you actually reached. Finally, judge CPM together with what came after it. Clicks, sign-ups and sales tell you whether the reach paid off.</p>''',
+ 'charts': [
+  {'type': 'formula', 'title': 'Cost per mille', 'formula': 'CPM = ad spend ÷ impressions × 1,000',
+   'note': 'Made-up numbers to show the math.', 'result': '$3', 'example': [('Ad spend', '$30'), ('Impressions', '10,000')]},
+  {'type': 'versus', 'title': 'CPM vs CPC', 'cols': ('CPM', 'CPC'), 'rows': [
+   ('You pay for', 'Every 1,000 showings', 'Each click'),
+   ('Best for', 'Awareness and reach', 'Website visits'),
+   ('Cost if nobody clicks', 'You still pay', 'Nothing'),
+   ('Linked by', 'Click-through rate', 'Click-through rate'),
+  ]},
+  {'type': 'line', 'title': 'CPM through a busy season', 'sub': 'Weekly CPM in dollars for one ad account', 'example': True, 'unit': 'CPM',
+   'points': [('Wk 1', 4.1), ('Wk 2', 4.3), ('Wk 3', 4.8), ('Wk 4', 5.6), ('Wk 5', 6.9), ('Wk 6', 7.4), ('Wk 7', 5.2), ('Wk 8', 4.4)],
+   'note': 'Made-up numbers to show how competition can move prices.'},
+ ],
+ 'tools': [
+  {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': 'Meta\'s tool for creating and tracking ads on Facebook and Instagram.'},
+  {'name': 'LinkedIn Campaign Manager', 'url': 'https://business.linkedin.com/marketing-solutions/ads', 'domain': 'linkedin.com', 'line': 'LinkedIn\'s tool for running and tracking ads on LinkedIn.'},
+  {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for tracking CPM, reach and frequency week by week.'},
+ ],
+ 'faqs': [
+  ('What does the M in CPM stand for?', 'The M stands for mille, the Latin word for thousand. CPM is the cost for 1,000 impressions of your ad.'),
+  ('How do you calculate CPM?', 'Divide your total ad spend by the number of impressions, then multiply by 1,000. That gives you the cost of showing your ad a thousand times.'),
+  ('Is a lower CPM always better?', 'No. A low CPM can mean you are reaching people who are unlikely to care. Judge CPM together with clicks, conversions and the quality of the audience.'),
+  ('How do I turn CPM into CPC?', 'Divide CPM by your click-through rate times 10, with CTR as a percent. For example, a $5 CPM with a 2% CTR works out to a $0.25 CPC.'),
+  ('Why did my CPM go up suddenly?', 'Common causes are more advertisers bidding for the same people, a busy season or an ad that people have seen too often. Fresh creative or a wider audience can help.'),
+ ],
+ 'related': ['cost-per-click', 'impressions', 'reach', 'paid-social', 'brand-awareness'],
+},
+{
+ 'slug': 'creator-economy',
+ 'short': 'The creator economy is the world of people who earn money by making content online, plus the platforms, brands and tools that pay or support them.',
+ 'body': '''<h2>What is the creator economy?</h2>
+<p>The creator economy is a name for all the business that grows around online creators. Creators are people who build an audience by posting videos, photos, writing, podcasts or live streams. They turn that audience into income in many ways. Around them sit the platforms that host their work, the brands that sponsor them, the agencies that connect the two and the companies that sell them tools.</p>
+<p>A creator can be one person filming in a bedroom or a small team running a full media business. What they share is that the audience follows the person or the channel directly, with no TV network or magazine standing in between.</p>
+<h2>Who is part of the creator economy</h2>
+<ul>
+<li><b>Creators.</b> The people making the content, from hobbyists to full-time pros.</li>
+<li><b>Platforms.</b> Video apps, social networks, podcast hosts, newsletter tools and streaming sites.</li>
+<li><b>Brands.</b> Companies that pay creators for sponsored posts or for content to run on their own channels.</li>
+<li><b>Agencies and managers.</b> People who find deals, write contracts and plan campaigns.</li>
+<li><b>Tool makers.</b> Apps for editing, scheduling, selling, link-in-bio pages and fan memberships.</li>
+<li><b>Fans.</b> The audience who watch, share and sometimes pay creators directly.</li>
+</ul>
+<h2>How creators make money</h2>
+<ul>
+<li><b>Brand deals.</b> Companies pay creators to feature a product in sponsored posts.</li>
+<li><b>Platform payouts.</b> Some networks share ad money or pay from creator programs.</li>
+<li><b>Fan support.</b> Subscriptions, tips and paid memberships let fans pay creators directly.</li>
+<li><b>Products.</b> Creators sell merch, courses, ebooks, templates or presets.</li>
+<li><b>Affiliate links.</b> Creators earn a cut when followers buy through their link.</li>
+</ul>
+<p>Most full-time creators mix several of these. Relying on one source is risky, because a platform can change its rules or its payouts at any time.</p>
+<figure data-chart="1"></figure>
+<h2>Why creator income goes up and down</h2>
+<p>Creator income is rarely steady. Brand budgets often bunch up around big shopping seasons. A video can take off one month and the next can be quiet. A change to a platform's feed can cut views overnight. The made-up chart shows one creator's income across six months.</p>
+<figure data-chart="2"></figure>
+<p>That's why many creators keep a cushion of savings, sign longer brand deals when they can and build income they control, such as an email list or their own products.</p>
+<h2>Why the creator economy matters for brands</h2>
+<p>People often trust a creator they follow more than they trust an ad. That is why many brands now work with creators of every size, from nano-influencers to big names. Smaller creators can be a strong fit, because their audiences are often close-knit and focused on one topic.</p>
+<p>Brands also borrow the creator style for their own accounts. Casual, face-to-camera videos and honest reviews often feel more natural in a feed than polished ads. For example, a made-up hardware store might hire a local DIY creator to film weekend projects for its own TikTok, then use the best clips as ads.</p>
+<h2>How to take part as a small business</h2>
+<ol>
+<li><b>Find creators your customers already watch.</b> Search your niche, your city and your product type.</li>
+<li><b>Start small.</b> Try one or two creators before signing a big campaign.</li>
+<li><b>Give clear goals and creative freedom.</b> Say what you need, then let creators speak in their own voice.</li>
+<li><b>Agree on rights.</b> Decide in writing whether you can reuse the content in ads and for how long.</li>
+<li><b>Track results.</b> Give each creator their own link or code so you can see what each partnership brought in.</li>
+</ol>
+<h2>Challenges in the creator economy</h2>
+<p>Life as a creator can be unstable. Burnout is common because audiences expect a steady flow of posts. Creators also handle their own taxes, contracts and rights, often with no training. On the brand side, fake followers and unclear results can make deals risky. Both sides do better with written agreements, honest disclosure of paid posts and simple tracking. Many creators also plan ahead and batch their work, so they can post on a schedule without being online every hour of the day.</p>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'Platform income vs income you own', 'cols': ('Platform income', 'Income you own'), 'rows': [
+   ('Examples', 'Ad revenue share, creator programs', 'Products, memberships, email list sales'),
+   ('Rules set by', 'The platform', 'You'),
+   ('Can change overnight', True, 'Less likely'),
+   ('Needs a big audience', 'Often', 'Not always'),
+  ]},
+  {'type': 'columns', 'title': "One creator's income by month", 'sub': 'Brand deals, payouts and sales added together', 'example': True,
+   'rows': [('Jan', 2100, '$2,100'), ('Feb', 1400, '$1,400'), ('Mar', 1800, '$1,800'), ('Apr', 3900, '$3,900'), ('May', 1200, '$1,200'), ('Jun', 2600, '$2,600')],
+   'highlight': 'Apr', 'labels': 'all', 'unit': 'Income', 'note': 'Made-up numbers to show how uneven creator income can be.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Link in bio', 'url': '/link-in-bio', 'line': 'Send fans to your shop, newsletter and latest work from one link-in-bio page.'},
+  {'name': 'TikTok money calculator', 'url': '/tools/tiktok-money-calculator', 'line': 'Our free calculator gives a rough estimate of what TikTok views could earn.'},
+  {'name': 'YouTube money calculator', 'url': '/tools/youtube-money-calculator', 'line': 'Our free calculator gives a rough estimate of what a YouTube channel could earn.'},
+ ],
+ 'faqs': [
+  ('Who is part of the creator economy?', 'It includes creators themselves, the platforms they post on, brands that pay them, agencies that connect them and the companies that make tools for them.'),
+  ('Do you need a big following to earn money as a creator?', 'No. Many creators with small but loyal audiences earn through brand deals, affiliate links or their own products. A focused niche often matters more than a large follower count.'),
+  ('How do creators get paid by platforms?', 'It differs by network. Common options include a share of ad revenue, bonuses for popular content, paid subscriptions and tips from fans. Each platform sets its own rules for who qualifies.'),
+  ('How can a small business work with creators?', 'Find creators your customers already follow, start with a small paid test and agree in writing on what you can reuse. Give each creator a unique link or code to track results.'),
+  ('Why is creator income so uneven?', 'Brand budgets, feed changes and how well each post does all move from month to month. Many creators build several income sources to smooth out the swings.'),
+ ],
+ 'related': ['content-creator', 'influencer-marketing', 'monetization', 'creator-fund', 'sponsored-content'],
+},
+{
+ 'slug': 'creator-fund',
+ 'short': 'A creator fund is a pool of money a social platform sets aside to pay creators for popular content, usually based on views and engagement.',
+ 'body': '''<h2>What is a creator fund?</h2>
+<p>A creator fund is a payment program run by a social media platform. The platform puts money into a pool and splits it among creators who meet its rules. The idea is to reward people who make content that keeps users on the app, and to give creators a reason to post there instead of somewhere else.</p>
+<p>Funds and programs like this have appeared on several short video apps and other networks. Names and rules change often. Some platforms have closed their first funds and replaced them with newer programs that pay in other ways, such as by qualified views, for longer videos or through a share of ad money.</p>
+<h2>How a creator fund works</h2>
+<p>Each program has its own details, but most follow a similar pattern.</p>
+<figure data-chart="1"></figure>
+<ol>
+<li><b>Check the rules.</b> Platforms usually set a minimum age, a supported country, an account in good standing and some level of followers or views.</li>
+<li><b>Apply or opt in.</b> You join from your account settings or the creator tools area.</li>
+<li><b>Post eligible content.</b> Original videos that follow the guidelines can earn. Reposted or copied clips often don't.</li>
+<li><b>Earn a share.</b> Your posts earn part of the pool based on things like views, watch time and engagement.</li>
+<li><b>Get paid.</b> Money builds up in your account, and you withdraw it once you pass the payout threshold.</li>
+</ol>
+<h2>Why fund payouts can shrink</h2>
+<p>A fund with a fixed pool has a catch. The pot stays the same size while more creators join and more videos get posted. Each view ends up worth a smaller slice. Some creators in fixed-pool programs have said their earnings fell even when their views held steady.</p>
+<figure data-chart="2"></figure>
+<p>The made-up chart shows what that can look like: the same number of views each month, earning less as the pool is split more ways. Newer programs that pay per qualified view or share ad money work differently, but they also change their rates and rules over time.</p>
+<h2>Why creator funds matter</h2>
+<p>For new creators, a fund can be the first money they earn from posting. It shows that their work has value and can make it easier to keep going. For platforms, funds are a way to attract creators from other apps and keep them posting.</p>
+<p>Fund payments alone tend to be small and hard to predict. That is why many creators treat a fund as a bonus and build other income alongside it.</p>
+<h2>Creator fund vs other ways to earn</h2>
+<figure data-chart="3"></figure>
+<ul>
+<li><b>Ad revenue sharing</b> pays you a cut of ads shown with your content.</li>
+<li><b>Brand deals</b> pay you directly from a company, often a set fee per post.</li>
+<li><b>Fan subscriptions and tips</b> come straight from your audience.</li>
+<li><b>Affiliate income</b> pays you when followers buy through your link.</li>
+<li><b>Your own products</b> let you keep more of each sale and own the customer list.</li>
+</ul>
+<p>A fund depends fully on the platform. The other options give you more control over your income.</p>
+<h2>Tips before you join</h2>
+<ol>
+<li>Read the current rules on the platform's own help pages, since they change.</li>
+<li>Check whether joining limits other kinds of earning or how you can post.</li>
+<li>Keep posting original content, because reposted or copied clips often don't qualify.</li>
+<li>Track your payouts each month next to your views, so you can see what a view is really worth to you.</li>
+<li>Use the fund as a starting point and work toward income you control.</li>
+</ol>
+<p>For example, a made-up comedy creator might earn a small monthly payout from a fund while she builds a following. Once she has a loyal audience, she adds a merch line and a few brand deals, and the fund becomes a minor part of her income.</p>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'How a creator fund usually works', 'steps': [
+   ('Meet the rules', 'Age, country, account standing and a minimum level of activity.'),
+   ('Opt in', 'Join from your settings or creator tools.'),
+   ('Post original videos', 'Copied or reposted clips often don\'t count.'),
+   ('Earn a share', 'Based on views, watch time and engagement.'),
+   ('Withdraw', 'Once you pass the payout threshold.'),
+  ], 'note': 'Rules differ by platform and change over time.'},
+  {'type': 'line', 'title': 'Same views, smaller payout', 'sub': 'Monthly fund payout in dollars for 100,000 views', 'example': True, 'unit': 'Payout',
+   'points': [('Jan', 40), ('Feb', 36), ('Mar', 31), ('Apr', 29), ('May', 25), ('Jun', 22)],
+   'note': 'Made-up numbers to show how a fixed pool shrinks as more creators join.'},
+  {'type': 'versus', 'title': 'Creator fund vs brand deal', 'cols': ('Creator fund', 'Brand deal'), 'rows': [
+   ('Who pays', 'The platform', 'A company'),
+   ('Amount set in advance', False, True),
+   ('Depends on views', True, 'Partly'),
+   ('You can negotiate', False, True),
+   ('Needs a contract', False, 'Usually'),
+  ]},
+ ],
+ 'tools': [
+  {'name': 'TikTok money calculator', 'url': '/tools/tiktok-money-calculator', 'line': 'Our free calculator gives a rough estimate of what TikTok views could earn.'},
+  {'name': 'YouTube money calculator', 'url': '/tools/youtube-money-calculator', 'line': 'Our free calculator gives a rough estimate of what a YouTube channel could earn.'},
+  {'name': 'YouTube Studio', 'url': 'https://studio.youtube.com/', 'domain': 'youtube.com', 'line': 'YouTube\'s own dashboard for your channel, its earnings and its analytics.'},
+ ],
+ 'faqs': [
+  ('How much does a creator fund pay?', 'Payouts vary a lot by platform, country, content and season. Most platforms don\'t publish fixed rates, and many creators say the amounts are small compared with brand deals.'),
+  ('Who can join a creator fund?', 'Each platform sets its own rules. They usually include a minimum age, an account in good standing, a supported country and some level of followers or views.'),
+  ('Does the TikTok Creator Fund still exist?', 'TikTok has replaced its original Creator Fund with newer reward programs. Check TikTok\'s own creator pages for the current options and rules.'),
+  ('Why did my creator fund earnings drop?', 'In a fixed pool, more creators and more videos mean each view is worth less. Changes in your views, watch time or the program\'s rules can also lower payouts.'),
+  ('Is a creator fund worth joining?', 'It can be a helpful bonus, especially early on. Read the rules first and keep building other income, since the fund depends fully on the platform.'),
+ ],
+ 'related': ['monetization', 'creator-economy', 'content-creator', 'tiktok', 'watch-time'],
+},
+]
