@@ -1091,6 +1091,7 @@ TERMS += [
 <li><b>Use ad tracking for paid campaigns.</b> Ad platforms can report conversions from your ads when you add their tracking code to your site.</li>
 <li><b>Compare by source.</b> Look at the rate for each network, post type and audience.</li>
 </ol>
+<p>Give each post its own tag, even when two posts share one link. That way you can tell whether the Tuesday carousel or the Friday Reel brought the sign-ups.</p>
 <h2>How conversion rates differ by network and offer</h2>
 <p>Each network sends a different kind of visitor. People who tap a link on LinkedIn may be at work and ready to read. People who tap through from a short video may be curious but in a hurry. A free download usually converts far better than a paid product, and a small purchase better than a big one. So compare like with like: the same offer, on the same kind of page, from different sources.</p>
 <figure data-chart="3"></figure>
@@ -1102,6 +1103,7 @@ TERMS += [
 <li>Cut extra form fields and steps.</li>
 <li>Make sure the page loads fast and works well on a phone, since many people tap through from one.</li>
 <li>Add proof, such as reviews or a short customer quote, near the button.</li>
+<li>Repeat the offer on the page in the same words the post used.</li>
 <li>Test one change at a time with A/B testing.</li>
 </ul>
 <h2>Common mistakes</h2>
@@ -1138,7 +1140,7 @@ TERMS += [
 <p>The word "click" can mean different things on different platforms. Some count any click on the ad, including a tap to see more text or a tap on your profile name. Others offer a "link click" figure that only counts clicks that leave the platform. For website traffic, link clicks are the ones that matter, so check which one you are looking at.</p>
 <h2>How to calculate CPC</h2>
 <figure data-chart="1"></figure>
-<p>With made-up numbers: you spend $100 on an ad and it gets 400 link clicks. $100 ÷ 400 = $0.25 per click. If a second ad spends the same $100 and gets 250 clicks, its CPC is $0.40. The first ad brings you more visitors for the same money.</p>
+<p>With made-up numbers: you spend $100 on an ad and it gets 400 link clicks. $100 ÷ 400 = $0.25 per click. If a second ad spends the same $100 and gets 250 clicks, its CPC is $0.40. The first ad brings you more visitors for the same money. Keep the spend and clicks from the same date range, or the math will drift.</p>
 <h2>How CPC bidding works</h2>
 <p>On many ad platforms you can choose to be charged per click instead of per view. You set a budget and sometimes a top bid. The platform runs an auction each time there is space to show an ad to someone in your audience. Your price depends on how many other advertisers want the same people, how relevant your ad looks and how often people click it.</p>
 <figure data-chart="2"></figure>
@@ -1152,6 +1154,7 @@ TERMS += [
 <li><b>Goal.</b> The campaign goal you choose changes who the platform shows your ad to.</li>
 <li><b>Network.</b> Each platform has its own auction and its own audience, so prices vary between them.</li>
 </ul>
+<p>Because so many things move the price, a CPC on its own says little. Read it next to your click-through rate and conversion rate to see the full picture.</p>
 <h2>Comparing ads by CPC</h2>
 <p>CPC is most useful when you compare ads inside one campaign. Run a few versions, let each one collect a fair number of clicks, then look at the numbers side by side.</p>
 <figure data-chart="3"></figure>
@@ -1209,6 +1212,7 @@ TERMS += [
 <h2>Why CPM matters</h2>
 <p>CPM shows how expensive it is to put your ad in front of people. A rising CPM can mean more advertisers want the same audience, or that the platform sees your ad as less relevant. Watching it helps you understand where your budget goes before anyone clicks or buys.</p>
 <p>CPM is also handy for comparing networks and audiences. If one platform reaches the people you want for much less, it may be worth a test there. Cheaper reach only helps if the people reached care about what you sell, so look at what happens next too.</p>
+<p>Think of CPM as the price of a seat in front of your audience. It tells you nothing yet about whether anyone liked the show, which is why it works best as a starting point for other numbers.</p>
 <h2>CPM vs CPC</h2>
 <p>With CPM, you pay for being seen. With CPC, you pay when someone clicks. The two are linked by click-through rate. When CTR is written as a percent, CPC = CPM ÷ (CTR × 10). With made-up numbers, a $5 CPM and a 1% CTR give a CPC of $0.50. Double the CTR to 2% and the CPC drops to $0.25, even though the CPM stayed the same.</p>
 <figure data-chart="2"></figure>
@@ -1229,6 +1233,7 @@ TERMS += [
 <li>You are building brand awareness in a new market.</li>
 <li>You plan to retarget the people who saw your ad later.</li>
 <li>Your video ad works when people watch it, even if they never click.</li>
+<li>You are testing which audience is cheapest to reach before you spend on clicks.</li>
 </ul>
 <p>For example, a made-up music festival might buy impressions for a short trailer in the weeks before tickets go on sale. Few people click, but thousands see the lineup. Later, a click-based ad goes only to people who watched most of the trailer.</p>
 <h2>Common mistakes</h2>
@@ -1275,6 +1280,7 @@ TERMS += [
 <li><b>Tool makers.</b> Apps for editing, scheduling, selling, link-in-bio pages and fan memberships.</li>
 <li><b>Fans.</b> The audience who watch, share and sometimes pay creators directly.</li>
 </ul>
+<p>Money moves in several directions. Brands pay creators and platforms, fans pay creators, creators pay for tools and editors, and platforms share some ad money back with creators. A change in any one of those flows ripples through the rest.</p>
 <h2>How creators make money</h2>
 <ul>
 <li><b>Brand deals.</b> Companies pay creators to feature a product in sponsored posts.</li>
@@ -1301,7 +1307,7 @@ TERMS += [
 <li><b>Track results.</b> Give each creator their own link or code so you can see what each partnership brought in.</li>
 </ol>
 <h2>Challenges in the creator economy</h2>
-<p>Life as a creator can be unstable. Burnout is common because audiences expect a steady flow of posts. Creators also handle their own taxes, contracts and rights, often with no training. On the brand side, fake followers and unclear results can make deals risky. Both sides do better with written agreements, honest disclosure of paid posts and simple tracking. Many creators also plan ahead and batch their work, so they can post on a schedule without being online every hour of the day.</p>''',
+<p>Life as a creator can be unstable. Burnout is common because audiences expect a steady flow of posts. Creators also handle their own taxes, contracts and rights, often with no training. On the brand side, fake followers and unclear results can make deals risky. Both sides do better with written agreements, honest disclosure of paid posts and simple tracking. Many creators also plan ahead and batch their work, so they can post on a schedule without being online every hour of the day. Creators who run their channel like a small business, with a budget and simple records, tend to get through slow months more easily.</p>''',
  'charts': [
   {'type': 'versus', 'title': 'Platform income vs income you own', 'cols': ('Platform income', 'Income you own'), 'rows': [
    ('Examples', 'Ad revenue share, creator programs', 'Products, memberships, email list sales'),
@@ -1332,7 +1338,7 @@ TERMS += [
  'short': 'A creator fund is a pool of money a social platform sets aside to pay creators for popular content, usually based on views and engagement.',
  'body': '''<h2>What is a creator fund?</h2>
 <p>A creator fund is a payment program run by a social media platform. The platform puts money into a pool and splits it among creators who meet its rules. The idea is to reward people who make content that keeps users on the app, and to give creators a reason to post there instead of somewhere else.</p>
-<p>Funds and programs like this have appeared on several short video apps and other networks. Names and rules change often. Some platforms have closed their first funds and replaced them with newer programs that pay in other ways, such as by qualified views, for longer videos or through a share of ad money.</p>
+<p>Funds and programs like this have appeared on several short video apps and other networks. Names and rules change often. Some platforms have closed their first funds and replaced them with newer programs that pay in other ways, such as by qualified views, for longer videos or through a share of ad money. Some programs also ask you to switch to a creator or business account first.</p>
 <h2>How a creator fund works</h2>
 <p>Each program has its own details, but most follow a similar pattern.</p>
 <figure data-chart="1"></figure>
@@ -1343,12 +1349,14 @@ TERMS += [
 <li><b>Earn a share.</b> Your posts earn part of the pool based on things like views, watch time and engagement.</li>
 <li><b>Get paid.</b> Money builds up in your account, and you withdraw it once you pass the payout threshold.</li>
 </ol>
+<p>Payout thresholds and payment methods differ. Some programs pay monthly, others when your balance reaches a set amount, and most need tax and bank details before they send anything.</p>
 <h2>Why fund payouts can shrink</h2>
 <p>A fund with a fixed pool has a catch. The pot stays the same size while more creators join and more videos get posted. Each view ends up worth a smaller slice. Some creators in fixed-pool programs have said their earnings fell even when their views held steady.</p>
 <figure data-chart="2"></figure>
-<p>The made-up chart shows what that can look like: the same number of views each month, earning less as the pool is split more ways. Newer programs that pay per qualified view or share ad money work differently, but they also change their rates and rules over time.</p>
+<p>The made-up chart shows what that can look like: the same number of views each month, earning less as the pool is split more ways. Newer programs that pay per qualified view or share ad money work differently, but they also change their rates and rules over time. Watch your payout per thousand views each month, since that one number shows the trend clearly.</p>
 <h2>Why creator funds matter</h2>
 <p>For new creators, a fund can be the first money they earn from posting. It shows that their work has value and can make it easier to keep going. For platforms, funds are a way to attract creators from other apps and keep them posting.</p>
+<p>Funds also shape what gets made. When a program pays more for longer videos, creators start making longer videos. When it pays for qualified views, creators work harder on the first few seconds. Read what a program rewards before you change your style to chase it.</p>
 <p>Fund payments alone tend to be small and hard to predict. That is why many creators treat a fund as a bonus and build other income alongside it.</p>
 <h2>Creator fund vs other ways to earn</h2>
 <figure data-chart="3"></figure>

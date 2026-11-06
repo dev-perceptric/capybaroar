@@ -1309,3 +1309,329 @@ TERMS += [
  'related': ['analytics', 'vanity-metrics', 'engagement-rate', 'conversion-rate', 'return-on-investment'],
 },
 ]
+
+TERMS += [
+{
+ 'slug': 'keyword',
+ 'short': 'A keyword is a word or phrase people type into search, and on social media it is the wording that helps your posts show up for those searches.',
+ 'body': '''<h2>What is a keyword?</h2>
+<p>A keyword is the wording people use when they look something up. "Easy dinner ideas," "running shoes for flat feet" and "how to fix a squeaky door" are all keywords. A keyword can be one word, but most are short phrases. Search engines have used them for a long time. Now many people search inside social apps too, so keywords matter on social media as much as on Google.</p>
+<p>On social media, the word also covers the plain words in your post that tell an app what the post is about. When those words match what someone types, your post has a better chance to show up.</p>
+<h2>How keywords work on social media</h2>
+<p>Apps like TikTok, YouTube, Pinterest, Instagram and LinkedIn all have search bars, and people use them like search engines. To match a search, these apps read the words connected to your post. That can include your caption, title, on-screen text, profile name, alt text and sometimes the words you say in a video. The app then compares those words with the search and with what it knows about the person searching.</p>
+<p>Keywords help outside search too. Many apps use the words in a post to work out which topics it covers, which can shape who sees it in their feed or on topic pages.</p>
+<h2>Where to put keywords</h2>
+<ul>
+<li><b>Profile name and bio:</b> say what you do in plain words, like "Denver wedding photographer."</li>
+<li><b>Captions and descriptions:</b> use the main phrase near the start, where it shows before the cut.</li>
+<li><b>On-screen text:</b> add the keyword as a title in the first frame of a video.</li>
+<li><b>Video titles:</b> on YouTube, the title carries a lot of weight.</li>
+<li><b>Alt text:</b> describe the image honestly, which often includes the right words naturally.</li>
+<li><b>Spoken words:</b> say the topic out loud early in your video, since some apps turn speech into text.</li>
+</ul>
+<h2>How to find keywords</h2>
+<figure data-chart="1"></figure>
+<p>The search bar suggestions are the best free source you have. Type the start of your topic, like "sourdough," and note what the app offers to finish it, such as "sourdough starter," "sourdough for beginners" or "sourdough discard recipes." Those are real phrases people search for. Do the same on each network you use, since the words can differ between apps.</p>
+<p>Your own audience is a second source. Read comments, DMs and reviews. If customers keep asking "is this safe for cats," that exact phrase belongs in a post. People rarely search the way a brand talks, so their words are often better than yours.</p>
+<h2>A made-up example</h2>
+<p>A pet groomer posts videos with captions like "Look at this cutie!" They get likes from followers but few new viewers. She starts naming the topic in each caption and on screen: "How to trim a nervous dog's nails" or "Doodle haircut for summer." Over a few months, a growing share of her views come from search, and new local customers say they found her that way.</p>
+<figure data-chart="2"></figure>
+<p>She didn't change her videos at all. She only changed the words around them, so the apps and the people searching could tell what each one was about.</p>
+<h2>Keywords vs hashtags</h2>
+<p>A hashtag is a clickable tag with a # sign. A keyword is plain language anywhere in your post. Hashtags group posts into topics, while keywords help search match your post to what someone typed. They work well together, and a post with good keywords and no hashtags can still be found.</p>
+<figure data-chart="3"></figure>
+<p>Keywords also cost less room. On a short network like X, where a post holds 280 characters, a clear phrase in a normal sentence often does more than a string of tags at the end.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Stuffing a caption with the same phrase over and over, which reads badly and turns viewers away.</li>
+<li>Using clever titles that nobody would ever search for.</li>
+<li>Copying keywords from one network to another where people search differently.</li>
+<li>Hiding the topic until the end of the caption, after the cut.</li>
+<li>Forgetting the profile, where a plain description helps people find you by what you do.</li>
+</ul>
+<p>Write for people first. A caption that answers the question someone searched for is the best keyword plan there is. Check back each month to see which phrases brought views, and use them again.</p>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'Find keywords for a post',
+   'steps': [('Type your topic in search', 'Use the search bar of the app you plan to post on.'),
+             ('Note the suggestions', 'The phrases the app offers are things people really search.'),
+             ('Check top posts', 'Look at the words used in titles and captions that rank well.'),
+             ('Listen to your audience', 'Comments and DMs show how people describe their problems.'),
+             ('Pick one main phrase', 'Put it in the caption, on screen and in what you say.')]},
+  {'type': 'columns', 'title': 'Share of views from search', 'sub': 'Before and after naming the topic in every caption', 'example': True, 'unit': 'Share of views',
+   'rows': [('Jan', 8.0, '8%'), ('Feb', 9.0, '9%'), ('Mar', 15.0, '15%'), ('Apr', 19.0, '19%')], 'highlight': 'Apr', 'labels': 'all',
+   'note': 'Made-up numbers for one account. Captions changed at the start of March.'},
+  {'type': 'versus', 'title': 'Keywords vs hashtags', 'cols': ('Keywords', 'Hashtags'),
+   'rows': [('Needs a # sign', False, True), ('Clickable', False, True), ('Helps search match your post', True, 'Somewhat'),
+            ('Reads as plain language', True, False), ('Where it goes', 'Anywhere in the post', 'Caption or first comment')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Write captions for each network and schedule them from one calendar.'},
+  {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Check that your main phrase fits before the caption gets cut.'},
+  {'name': 'YouTube Studio', 'url': 'https://studio.youtube.com/', 'domain': 'youtube.com', 'line': 'YouTube\'s creator dashboard, where you can see how viewers found your videos.'},
+ ],
+ 'list': 'social-media-scheduling-tools',
+ 'faqs': [
+  ("Do keywords matter on TikTok and Instagram?", "Yes. Both apps have search, and the words in your caption, on-screen text and profile help them match your content to what people type."),
+  ("How many keywords should I use in a caption?", "Focus on one main phrase and maybe a couple of related ones. Use them where they fit naturally."),
+  ("Are keywords better than hashtags?", "They do different jobs. Keywords help search understand your post, and hashtags group it with similar posts. Using both is common."),
+  ("Where do I find keywords for free?", "Start with the search bar suggestions in each app, then read your comments and DMs for the words customers use."),
+ ],
+ 'related': ['hashtag', 'caption', 'alt-text', 'bio', 'social-listening'],
+},
+{
+ 'slug': 'lead-generation',
+ 'short': 'Lead generation is the work of getting potential customers to share their contact details or show interest so you can follow up.',
+ 'body': '''<h2>What is lead generation?</h2>
+<p>A lead is a person who might buy from you and has given you a way to reach them, like an email address or a phone number. Lead generation is everything you do to collect those leads. On social media it usually means trading something useful, such as a free guide, a webinar seat or a discount, for someone's contact details. Then your team can follow up and turn some of those leads into customers.</p>
+<p>It sits between being seen and making a sale. Followers know you exist. Leads have raised their hand and said they want to hear more.</p>
+<p>Lead generation matters most for businesses where people don't buy on the spot, like software, services, training, home repairs or anything with a big price. Those buyers need time, answers and a few nudges. Collecting their details lets you stay in touch while they decide, even if they drift away from social media for a while.</p>
+<h2>How lead generation works on social media</h2>
+<p>Most lead generation follows the same path. Helpful posts build interest by showing people you understand their problem. An offer gives them a reason to act now. A form collects their details, either on a landing page or inside the app. Then follow-up, through emails, calls, texts or DMs, helps the lead decide.</p>
+<p>Each step loses some people. That is normal. The goal is to lose fewer at each step and to make sure the people who stay are a good fit for what you sell.</p>
+<figure data-chart="1"></figure>
+<h2>Ways to generate leads on social</h2>
+<ul>
+<li>Lead form ads that fill in a person's details for them inside the app.</li>
+<li>Free downloads like templates, checklists and guides.</li>
+<li>Webinars and live events that need sign-up.</li>
+<li>Giveaways that ask for an email to enter, following each platform's contest rules.</li>
+<li>DM conversations that start from a comment or a Story reply.</li>
+<li>A link in bio that goes to a simple sign-up page.</li>
+</ul>
+<p>The best choice depends on how much your buyer needs to learn before they talk to you. A quick discount suits a simple product. A webinar or a detailed guide suits something that takes more thought.</p>
+<h2>How to start</h2>
+<figure data-chart="2"></figure>
+<p>Keep the form short. Every extra field costs sign-ups, so ask only for what you will use. An email address is often enough for a first step. You can learn more about each lead later, once they trust you.</p>
+<p>Here is a made-up example. A bookkeeping firm makes a one-page tax deadline checklist for small shop owners. It shares tips from the checklist in a few LinkedIn and Instagram posts over three weeks, each pointing to a sign-up page in the bio. People who download it get a short series of helpful emails, and the last one offers a free call. The firm books new clients from those calls and knows which posts sent them, because every link was tagged.</p>
+<h2>How to measure lead generation</h2>
+<p>Track how many leads you get, where they came from and how many become customers. Two handy numbers are conversion rate (leads ÷ clicks × 100) and cost per lead (ad spend ÷ leads).</p>
+<figure data-chart="3"></figure>
+<p>A cheap lead that never buys isn't a good lead, so look at quality too. Ask your sales team which sources bring the best people, and work out the cost per customer as well as the cost per lead. A source with pricey leads can still win if many of them buy.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Asking for too much information on the first form.</li>
+<li>Offering something so broad that the wrong people sign up.</li>
+<li>Waiting days to follow up, when interest is highest right after sign-up.</li>
+<li>Sending every lead the same sales pitch, no matter what they downloaded.</li>
+<li>Collecting details without saying how you will use them, which can break privacy rules.</li>
+</ul>
+<h2>Tips</h2>
+<p>Match the offer to the network. A detailed report may suit LinkedIn, while a quick discount may suit Instagram. Test two offers against each other for a few weeks and keep the one that brings better leads. Thank people right away when they sign up, with a short note that tells them what happens next. And keep a simple record of every lead source, so when sales come in months later you still know which post started it.</p>''',
+ 'charts': [
+  {'type': 'funnel', 'title': 'From a post to a customer', 'sub': 'One free guide promoted for a month', 'example': True, 'unit': 'People',
+   'stages': [('People reached', 12000, '12,000'), ('Link clicks', 400, '400'), ('Sign-ups', 60, '60'), ('Customers', 9, '9')],
+   'note': 'Made-up numbers to show the shape of a lead funnel.'},
+  {'type': 'steps', 'title': 'Start generating leads',
+   'steps': [('Pick one audience', 'Choose who you most want to reach.'),
+             ('Make one offer', 'A guide, checklist, webinar or discount that solves a clear problem.'),
+             ('Build a short form', 'Ask only for what you will use.'),
+             ('Promote it over weeks', 'Share it in several posts with tagged links.'),
+             ('Follow up fast', 'Reach out while interest is fresh.')]},
+  {'type': 'formula', 'title': 'Cost per lead', 'formula': 'Cost per lead = ad spend ÷ leads',
+   'note': 'Made-up numbers to show the math.', 'result': '5 per lead',
+   'example': [('Ad spend', '300'), ('Leads', '60')]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Link in bio', 'url': '/link-in-bio', 'line': 'A simple page for your profiles that can send people to your sign-up form.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag every link so you know which post brought each lead.'},
+  {'name': 'Typeform', 'url': 'https://www.typeform.com/', 'domain': 'typeform.com', 'line': 'A form builder for collecting sign-ups and questions.'},
+  {'name': 'Mailchimp', 'url': 'https://mailchimp.com/', 'domain': 'mailchimp.com', 'line': 'An email tool for sending follow-up emails to new leads.'},
+ ],
+ 'list': 'social-media-tools-for-small-business',
+ 'faqs': [
+  ("What is a lead in social media marketing?", "A lead is someone who has shown interest in what you sell and given you a way to contact them, such as an email address or phone number."),
+  ("Which social platform is best for lead generation?", "It depends on your buyers. LinkedIn is popular for business buyers, while Facebook and Instagram often suit consumer brands. Go where your customers already spend time."),
+  ("How do I collect leads without ads?", "Share helpful posts that point to a free offer, use a sign-up link in your bio, invite people to webinars and turn comments into DM conversations."),
+  ("Is it legal to collect emails from social media?", "Collecting emails that people choose to give you is normal, but you must follow privacy laws where you and your leads live and each platform's rules. Always say how you will use the details."),
+  ("What is a lead magnet?", "A lead magnet is the free thing you offer in return for contact details, like a guide, checklist, template or webinar seat."),
+ ],
+ 'related': ['b2b-social-media', 'call-to-action', 'link-in-bio', 'conversion-rate', 'customer-journey'],
+},
+{
+ 'slug': 'like',
+ 'short': 'A like is a one-tap reaction, often a heart or a thumbs up, that shows you enjoyed or agree with a post.',
+ 'body': '''<h2>What is a like?</h2>
+<p>A like is the simplest way to react to a post. You tap a heart, a thumbs up or a similar button, and the count on the post goes up by one. On some networks, like Facebook and LinkedIn, you can pick from a set of reactions, such as a heart, a laugh or a clap. On others, double-tapping a photo does the same as tapping the heart. The person who posted usually gets a notice that you liked it.</p>
+<p>Likes go by different names and shapes. Many apps use a heart, while YouTube uses a thumbs up. Bluesky and Mastodon have their own versions, called likes or favorites. The idea is the same everywhere: one tap that says "I enjoyed this."</p>
+<h2>How likes work</h2>
+<p>When you like a post, a few things happen. The count goes up. The poster is told. On many apps, the like also becomes a small signal about your taste, which the app uses to decide what else to show you. Some apps let others see your like too, for example in the list of people who liked a post.</p>
+<p>For the poster, likes add up to a quick read on how a post landed. For the platform, they are one of many signals it weighs when deciding how widely to show a post. Comments, shares, saves and time spent usually count too, and often count for more.</p>
+<h2>Why likes matter</h2>
+<p>Likes give you fast feedback. A post that gets far more likes than usual tells you the topic or style struck a chord. Over a month, your most-liked posts show what your audience enjoys.</p>
+<p>Likes also act as social proof. A new visitor who sees a post with lots of likes assumes it is worth a look, which can make them more willing to stop and read. That is one reason people pay attention to them, even though they are easy to give.</p>
+<h2>Likes vs other engagement</h2>
+<p>A like takes almost no effort, so it says less than other actions. A comment shows someone had something to say. A share means they wanted others to see it. A save means they want to come back to it. That's why many marketers look at the whole picture through engagement rate. Likes alone tell only part of the story.</p>
+<figure data-chart="1"></figure>
+<p>In the made-up post above, likes make up most of the actions. The 60 saves and 22 shares are smaller numbers, but they suggest the post was useful enough to keep and pass on. If you want to grow, those deeper actions are often the ones to aim for.</p>
+<figure data-chart="2"></figure>
+<h2>Hidden like counts</h2>
+<p>Some apps let you hide the number of likes on your own posts or on posts you see. People can still like the post, and you can still see the count in your own stats. Hiding counts can take pressure off and keep attention on the content. If you work with creators, ask for their stats directly, since public counts may not show.</p>
+<h2>How to get more likes the right way</h2>
+<ol>
+<li><b>Post what your audience already enjoys.</b> Check which past posts got the most likes and make more like them.</li>
+<li><b>Make the first moment count.</b> A strong image or opening line gets people to stop.</li>
+<li><b>Post when people are online.</b> Use your analytics to find your active hours.</li>
+<li><b>Like and reply to others.</b> Taking part in your community brings people back to your profile.</li>
+</ol>
+<p>Here is a made-up example. A plant shop notices its photos of single plants on plain backgrounds get twice the likes of its busy shop-floor photos. It switches most posts to the simpler style and keeps the shop-floor shots for Stories, where they feel more at home.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li><b>Buying likes:</b> fake likes come from accounts that will never buy from you, and they can break platform rules.</li>
+<li><b>Like-for-like groups:</b> trading likes with strangers fills your posts with people who aren't your audience.</li>
+<li><b>Chasing likes over goals:</b> a post can get many likes and still bring zero clicks or sales.</li>
+<li><b>Asking for likes too often:</b> "like if you agree" lines can count as engagement bait.</li>
+</ul>
+<p>Treat likes as a quick signal of what people enjoy, then check the actions that matter more for your goals before you decide a post worked.</p>''',
+ 'charts': [
+  {'type': 'columns', 'title': 'What people did on one post', 'sub': 'Likes are the biggest number, but saves say more', 'example': True, 'unit': 'Actions',
+   'rows': [('Likes', 420, '420'), ('Saves', 60, '60'), ('Comments', 35, '35'), ('Shares', 22, '22')], 'highlight': 'Saves', 'labels': 'all',
+   'note': 'Made-up numbers for one post.'},
+  {'type': 'versus', 'title': 'Like vs comment', 'cols': ('Like', 'Comment'),
+   'rows': [('Effort', 'One tap', 'Typing a reply'), ('Tells you why they liked it', False, True), ('Starts a conversation', False, True),
+            ('Poster is notified', True, True), ('Counts toward engagement', True, True)]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See likes next to comments, shares and reach for every channel.'},
+  {'name': 'Engagement rate calculator', 'url': '/tools/engagement-rate-calculator', 'line': 'Turn likes and other actions into an engagement rate you can compare.'},
+ ],
+ 'faqs': [
+  ("Do likes help a post get more reach?", "Likes are one signal platforms look at, along with comments, shares, saves and watch time. A post that people interact with in many ways tends to spread further."),
+  ("Can people see what I like?", "It depends on the platform and your settings. On many apps, the person who posted can see your like, and others may see it in the list of likes on that post."),
+  ("Is buying likes a good idea?", "No. Fake likes don't come from real customers, can hurt trust if people notice and may break the platform's rules."),
+  ("What is the difference between a like and a reaction?", "A reaction is a like with a choice of feeling, such as a heart, a laugh or a clap. Networks like Facebook and LinkedIn offer a set of them."),
+ ],
+ 'related': ['engagement', 'vanity-metrics', 'engagement-rate', 'social-proof', 'saves'],
+},
+{
+ 'slug': 'link-in-bio',
+ 'short': 'Link in bio is the clickable link in a social media profile, often pointing to a simple page that lists several of your links.',
+ 'body': '''<h2>What is link in bio?</h2>
+<p>"Link in bio" is a phrase you'll see at the end of many posts. It tells you the post mentions something you can find through the link on the account's profile. Some apps, like Instagram and TikTok, don't turn web addresses in captions into clickable links. The profile link is often the one reliable place to send people, so it does a lot of work.</p>
+<p>The phrase also names the tool many people use for that link: a simple page with a list of buttons, one for each place you want to send people.</p>
+<h2>How a link in bio page works</h2>
+<p>Since you usually get only a small number of profile links, many people point theirs to a single page that holds a list of buttons. One link can then lead to your shop, latest video, booking page, newsletter and anything else you want to share. You can change the page any time without touching your profile. That is handy when you post on several networks, since one update fixes every profile at once.</p>
+<p>A link in bio page can be a ready-made tool or a page on your own website. A tool is faster to set up. Your own page gives you full control over the look and keeps visitors on your site. Either works, as long as it loads fast on a phone.</p>
+<p>The path goes like this: someone sees a post, taps your profile, taps the link, then taps a button on your page. Each tap loses some people, so a short, clear page keeps more of them.</p>
+<figure data-chart="1"></figure>
+<h2>How to set up a link in bio page</h2>
+<figure data-chart="2"></figure>
+<p>Give each button a clear label that says what happens, like "Book a call" or "Shop new arrivals." Skip vague labels like "Click here." Add UTM tags to each link so your website analytics can show which network sent each visitor, and keep the page's look close to your profile so people know they're in the right place.</p>
+<h2>What to put on it</h2>
+<ul>
+<li>Your newest product or offer</li>
+<li>The post or video you mention most this week</li>
+<li>A sign-up for your email list</li>
+<li>Booking or contact options</li>
+<li>Links to your other social accounts</li>
+</ul>
+<p>Order matters. Put the button you want clicked most at the top, where everyone sees it first. Move things around as your goals change. During a launch, the new product goes first. During a quiet month, your newsletter might.</p>
+<h2>How to measure it</h2>
+<p>Watch how many people tap your bio link and which buttons they pick on the page. Then look at what happens after, like orders or sign-ups. Your profile stats show link taps on many networks. Your link in bio tool or your website analytics shows the rest.</p>
+<figure data-chart="3"></figure>
+<p>In the made-up split above, the shop button gets nearly half the taps. If your newsletter barely gets any, try a clearer label or a reason to join, like a free guide, before you drop it.</p>
+<h2>A made-up example</h2>
+<p>A pottery studio posts a Reel of a new mug glaze and ends the caption with "Shop the mugs, link in bio." Its page lists "New glaze mugs" first, then "Book a wheel class," then "Join the newsletter." The studio sees from its tagged links that most mug orders that week came from Instagram, while class bookings came mostly from TikTok. Next month it leads each network's posts with what that crowd wants, and moves the matching button to the top on launch days.</p>
+<h2>Common mistakes</h2>
+<p>Too many buttons make people freeze and leave, so cut the list to what matters now. Old links to sold-out items or past events look careless. A page that loads slowly on a phone loses visitors before they see anything. And saying "link in bio" when the link doesn't match the post sends people hunting. Update the page the same day you post, and check every button on your own phone once a week.</p>
+<p>Keep the page about the visitor. A short line at the top that says who you are and what you offer helps someone who has never heard of you decide which button to tap. A friendly photo of you or your shop helps too.</p>''',
+ 'charts': [
+  {'type': 'funnel', 'title': 'From profile visit to order', 'sub': 'One month on one network', 'example': True, 'unit': 'People',
+   'stages': [('Profile visits', 3000, '3,000'), ('Taps on the bio link', 450, '450'), ('Button taps on the page', 310, '310'), ('Orders', 24, '24')],
+   'note': 'Made-up numbers to show where people drop off.'},
+  {'type': 'steps', 'title': 'Set up a link in bio page',
+   'steps': [('Pick a tool or page', 'Use a link in bio tool or a simple page on your site.'),
+             ('Add a photo and one line', 'Match your profile so people know they are in the right place.'),
+             ('List your key links', 'Put the one you want clicked most at the top.'),
+             ('Tag every link', 'Add UTM tags so analytics show where visitors came from.'),
+             ('Paste it everywhere', 'Add the page address to the website field on each profile.')]},
+  {'type': 'stack', 'title': 'Which buttons people tap', 'sub': 'Share of taps on one link in bio page', 'example': True,
+   'parts': [('Shop', 45), ('Newest video', 25), ('Book a class', 20), ('Newsletter', 10)],
+   'note': 'Made-up numbers for one page.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Link in bio', 'url': '/link-in-bio', 'line': 'Build a simple page of links for all your profiles.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag each button so you can see which network sent the visit.'},
+  {'name': 'Bitly', 'url': 'https://bitly.com/', 'domain': 'bitly.com', 'line': 'A link shortener for turning long links into short ones.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics that show what visitors from your bio link did next.'},
+ ],
+ 'faqs': [
+  ("Why can't I put links in Instagram captions?", "Instagram doesn't make web addresses in feed captions clickable, so creators point people to the link in their profile instead. Stories can use a link sticker."),
+  ("Is a link in bio page free?", "Many link in bio tools have a free plan, and you can also build a simple page on your own website."),
+  ("How do I track clicks from my link in bio?", "Add UTM tags to each link on the page, then check your website analytics. Many link in bio tools also count clicks for you."),
+  ("How many links should a link in bio page have?", "Only as many as matter right now. A short list with the most important link first is easier for visitors to use."),
+ ],
+ 'related': ['bio', 'profile', 'utm-parameters', 'url-shortener', 'call-to-action'],
+},
+{
+ 'slug': 'linkedin',
+ 'short': 'LinkedIn is a social network for work where people share career news, industry ideas and job posts, and companies build their brand.',
+ 'body': '''<h2>What is LinkedIn?</h2>
+<p>LinkedIn is the main social network built around jobs and careers. Your profile works like an online resume, with your work history, skills and recommendations. Beyond that, LinkedIn has a feed where people post updates, opinions and lessons from their work. Recruiters use it to find candidates, sales teams use it to meet buyers and many professionals use it to keep up with their industry.</p>
+<p>The mood is different from other networks. People expect posts about work, careers and business, written in a friendly but grown-up voice. Personal stories do well when they connect to a lesson someone can use at work.</p>
+<p>LinkedIn suits business-to-business brands especially well, since buyers, partners and future staff are all there in a work frame of mind. Consumer brands use it too, mostly for hiring, company news and building trust with investors and partners.</p>
+<h2>What you can post on LinkedIn</h2>
+<ul>
+<li><b>Text posts:</b> up to 3,000 characters, with only the first few lines showing before "see more."</li>
+<li><b>Images and video:</b> photos, short clips and longer videos.</li>
+<li><b>Document posts:</b> PDF or slide files people swipe through like a carousel.</li>
+<li><b>Polls:</b> a quick question with a few answer options.</li>
+<li><b>Articles and newsletters:</b> longer pieces that live on your profile or page.</li>
+<li><b>Events:</b> online or in-person events people can join.</li>
+</ul>
+<figure data-chart="1"></figure>
+<p>Most strong LinkedIn posts use far less than the full 3,000 characters. What counts is the opening. The first lines decide whether anyone taps "see more."</p>
+<h2>How the LinkedIn feed works</h2>
+<p>LinkedIn shows posts from people you are connected to, people you follow and pages you follow, mixed with posts it thinks you'll find useful. Early reactions and comments help a post reach more of the poster's network and beyond. Thoughtful comments tend to matter more than a quick like. Posts that keep people reading, such as a story that unfolds or a document they swipe through, also tend to travel.</p>
+<p>The exact rules change and aren't public, so focus on posts that would earn a real comment from someone in your field.</p>
+<h2>Personal profiles vs Company Pages</h2>
+<p>A personal profile belongs to a person. A Company Page belongs to a business or school. Posts from people often get more reactions, since others like hearing from a human. Company Pages are better for official news, job posts and paid ads. Many brands use both and encourage staff to share company posts, which is called employee advocacy.</p>
+<figure data-chart="2"></figure>
+<h2>How to post well on LinkedIn</h2>
+<ol>
+<li><b>Write a first line that earns the tap.</b> State a surprising point or a clear promise.</li>
+<li><b>Use short paragraphs</b> with plenty of white space, since long blocks are hard to read in the feed.</li>
+<li><b>Share something you learned</b> or a useful how-to from your work.</li>
+<li><b>End with a question</b> that invites comments.</li>
+<li><b>Stay around after posting</b> to reply to comments while the post is fresh.</li>
+<li><b>Post on a steady schedule</b>, such as a couple of times a week.</li>
+</ol>
+<p>Here is a made-up example. A hiring manager posts: "We rejected our best hire's first resume. Here's what changed our minds." The post tells the story in short lines, shares a few things the team learned about reading resumes and ends with "What's one thing you look for first?" The comments fill with other managers' answers, which keeps the post moving for days.</p>
+<h2>How to measure results</h2>
+<p>LinkedIn shows impressions, reactions, comments, reposts and follower growth for your posts and pages. For a personal profile, profile views and new connection requests show whether your posts make people curious about you. For a Company Page, watch followers and clicks to your website. Compare post types over a month to see which ones your audience responds to.</p>
+<figure data-chart="3"></figure>
+<p>Comments are often the best single sign on LinkedIn, because they show people cared enough to add their own view. A post with fewer reactions but a long, thoughtful thread may do more for you than one with lots of quick likes.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li>Pasting the same post you shared on other networks without adjusting the tone for a work crowd.</li>
+<li>Sending a sales pitch right after someone accepts your connection request.</li>
+<li>Using engagement bait like "comment YES to get the guide," which rarely builds trust.</li>
+<li>Leaving your profile empty or out of date, which makes even great posts less convincing.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'bars', 'title': 'LinkedIn post room next to other networks', 'sub': 'Post text limits', 'unit': 'Characters',
+   'rows': [('YouTube description', 5000, '5,000'), ('LinkedIn', 3000, '3,000'), ('Instagram', 2200, '2,200'), ('Google Business Profile', 1500, '1,500'), ('Threads', 500, '500'), ('Bluesky', 300, '300'), ('X', 280, '280')], 'highlight': 'LinkedIn',
+   'note': "Limits used by Capybaroar's composer, November 2026."},
+  {'type': 'versus', 'title': 'Personal profile vs Company Page', 'cols': ('Personal profile', 'Company Page'),
+   'rows': [('Belongs to', 'A person', 'A business or school'), ('Connections', True, False), ('Followers', True, True),
+            ('Built for job posts and ads', False, True), ('Posts often get more reactions', True, False)]},
+  {'type': 'columns', 'title': 'Average comments by post type', 'sub': 'One profile, averaged over three months', 'example': True, 'unit': 'Comments',
+   'rows': [('Text', 12, '12'), ('Image', 9, '9'), ('Document', 18, '18'), ('Video', 10, '10'), ('Poll', 15, '15')], 'highlight': 'Document', 'labels': 'all',
+   'note': 'Made-up numbers for one profile. Your mix will differ.'},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar LinkedIn scheduler', 'url': '/linkedin-post-scheduler', 'line': 'Write and schedule LinkedIn posts in one calendar with your other channels.'},
+  {'name': 'LinkedIn text formatter', 'url': '/tools/linkedin-text-formatter', 'line': 'Add bold and italic text to your LinkedIn posts.'},
+  {'name': 'LinkedIn banner size', 'url': '/tools/linkedin-banner-size', 'line': 'Get the right size for your profile or Company Page banner.'},
+  {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design app for making document posts, images and banners.'},
+ ],
+ 'list': 'linkedin-post-schedulers',
+ 'faqs': [
+  ("Is LinkedIn free?", "Yes. You can create a profile and post for free. LinkedIn also sells optional paid plans and ads."),
+  ("What is the LinkedIn post character limit?", "A LinkedIn post can be up to 3,000 characters. Only the first lines show before the see more link, so lead with your main point."),
+  ("How often should I post on LinkedIn?", "Many people do well with one to a few posts a week. Choose a pace you can keep up and focus on quality."),
+  ("Can I schedule LinkedIn posts?", "Yes. LinkedIn lets you schedule posts in the app, and approved scheduling tools can also publish for you."),
+  ("What is a LinkedIn document post?", "It is a post with a PDF or slide file attached, which people swipe through page by page like a carousel."),
+ ],
+ 'related': ['linkedin-company-page', 'linkedin-document-post', 'linkedin-newsletter', 'b2b-social-media', 'employee-advocacy'],
+},
+]
