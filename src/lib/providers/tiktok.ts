@@ -1,7 +1,8 @@
 import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type Provider } from "./types";
 
 // TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server. Scopes stay at what the
-// composer and publisher use (user.info.basic, video.publish) until TikTok audits the app.
+// composer and publisher use (user.info.basic, user.info.profile for the username and post links, video.publish)
+// until TikTok audits the app.
 // Who can watch is the person's choice (TikTok requires it); until TikTok audits the app only "Only me" is offered.
 const API = "https://open.tiktokapis.com/v2";
 const key = () => process.env.TIKTOK_CLIENT_ID ?? "";
@@ -63,12 +64,25 @@ export async function creatorInfo(token: string): Promise<CreatorInfo> {
   };
 }
 
+/** The post's address: the video when TikTok gives its id (public posts), else the profile, where private posts show
+ *  for their owner. Never throws: the post is already live. */
+async function postLink(token: string, postId: string | null): Promise<string | null> {
+  try {
+    const u = await tt<{ user: { username?: string } }>(`${API}/user/info/?fields=username`, { headers: { Authorization: `Bearer ${token}` } }, "TikTok profile");
+    const name = u.user.username;
+    if (!name) return null;
+    return postId ? `https://www.tiktok.com/@${name}/video/${postId}` : `https://www.tiktok.com/@${name}`;
+  } catch {
+    return null;
+  }
+}
+
 export const tiktok: Provider = {
   network: "tiktok",
   oauth: {
     configured: () => Boolean(key() && secret()),
     authUrl: ({ state, redirect }) =>
-      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,video.publish", redirect_uri: redirect, state, disable_auto_auth: "1" })}`,
+      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,user.info.profile,video.publish", redirect_uri: redirect, state, disable_auto_auth: "1" })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await call<{ access_token?: string; expires_in: number; refresh_token: string; open_id: string; error?: string; error_description?: string }>(
         `${API}/oauth/token/`,
@@ -77,8 +91,8 @@ export const tiktok: Provider = {
       );
       // TikTok answers a failed exchange with 200 and an error body; say why instead of calling on with no token.
       if (!t.access_token) throw new AuthError(`TikTok sign-in: ${t.error_description || t.error || "no access token returned"}`);
-      const u = await tt<{ user: { open_id: string; display_name: string; avatar_url?: string } }>(
-        `${API}/user/info/?fields=open_id,display_name,avatar_url`,
+      const u = await tt<{ user: { open_id: string; display_name: string; username?: string; avatar_url?: string } }>(
+        `${API}/user/info/?fields=open_id,display_name,username,avatar_url`,
         { headers: { Authorization: `Bearer ${t.access_token}` } },
         "TikTok profile",
       );
@@ -86,7 +100,7 @@ export const tiktok: Provider = {
         {
           accountId: t.open_id,
           name: u.user.display_name,
-          username: null,
+          username: u.user.username ?? null,
           avatar: u.user.avatar_url ?? null,
           accessToken: t.access_token,
           refreshToken: t.refresh_token,
@@ -160,12 +174,12 @@ export const tiktok: Provider = {
       );
       if (st.status === "PUBLISH_COMPLETE") {
         const postId = st.publicaly_available_post_id?.[0];
-        return { id: postId ? String(postId) : init.publish_id, url: null };
+        return { id: postId ? String(postId) : init.publish_id, url: await postLink(token, postId ? String(postId) : null) };
       }
       if (st.status === "FAILED") throw new PostError(`TikTok: ${st.fail_reason ?? "publish failed"}`);
       await sleep(5000);
     }
     // Uploaded and processing: TikTok finishes on its side, so don't upload again.
-    return { id: init.publish_id, url: null };
+    return { id: init.publish_id, url: await postLink(token, null) };
   },
 };

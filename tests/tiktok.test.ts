@@ -100,7 +100,7 @@ test("TikTok error codes come out in plain words", async () => {
 test("sign-in always shows TikTok's approval page, and disconnect revokes the token", async () => {
   const url = String(await tt.oauth!.authUrl({ state: "s", redirect: "https://app.example.com/cb", verifier: "v", input: {} }));
   assert.equal(new URL(url).searchParams.get("disable_auto_auth"), "1");
-  assert.equal(new URL(url).searchParams.get("scope"), "user.info.basic,video.publish");
+  assert.equal(new URL(url).searchParams.get("scope"), "user.info.basic,user.info.profile,video.publish");
   const real = globalThis.fetch;
   const seen: { url: string; body: string }[] = [];
   globalThis.fetch = (async (u: string | URL | Request, init: RequestInit = {}) => {
@@ -114,4 +114,25 @@ test("sign-in always shows TikTok's approval page, and disconnect revokes the to
   }
   assert.match(seen[0].url, /\/v2\/oauth\/revoke\/$/);
   assert.equal(new URLSearchParams(seen[0].body).get("token"), "tok");
+});
+
+test("a published TikTok links to the video, or to the profile when TikTok gives no id (private posts)", async () => {
+  const run = async (ids: number[]) => {
+    const real = globalThis.fetch;
+    globalThis.fetch = (async (u: string | URL | Request) => {
+      const url = String(u);
+      if (url.includes("creator_info")) return Response.json({ data: { privacy_level_options: ["SELF_ONLY", "PUBLIC_TO_EVERYONE"] }, error: { code: "ok" } });
+      if (url.includes("/video/init/")) return Response.json({ data: { publish_id: "p1", upload_url: "https://upload.example.com/x" }, error: { code: "ok" } });
+      if (url.startsWith("https://upload.example.com")) return new Response(null, { status: 201 });
+      if (url.includes("/user/info/")) return Response.json({ data: { user: { username: "crumbandco" } }, error: { code: "ok" } });
+      return Response.json({ data: { status: "PUBLISH_COMPLETE", publicaly_available_post_id: ids }, error: { code: "ok" } });
+    }) as typeof fetch;
+    try {
+      return await tt.publish(secret, "open1", post({ privacy: "SELF_ONLY" }));
+    } finally {
+      globalThis.fetch = real;
+    }
+  };
+  assert.equal((await run([42])).url, "https://www.tiktok.com/@crumbandco/video/42");
+  assert.equal((await run([])).url, "https://www.tiktok.com/@crumbandco");
 });

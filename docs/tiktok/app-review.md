@@ -20,19 +20,21 @@ Everything the TikTok for Developers form asks for, matching what the app does i
 | Product | Scopes | What the app does with it |
 |---|---|---|
 | Login Kit | user.info.basic | Connect TikTok; show the account's name and avatar |
+| Login Kit | user.info.profile | Show the username on the channel; link published posts |
 | Login Kit redirect URI | https://app.capybaroar.com/integrations/social/tiktok | |
 | Content Posting API (turn on Direct Post) | video.publish | Show the creator's options, upload and publish a video now or at a scheduled time |
 
-Remove Display API and the user.info.profile, user.info.stats, video.list and video.upload scopes. The app no longer asks for them; add them back after the Direct Post audit if analytics for TikTok is wanted.
+Remove Display API and the user.info.stats, video.list and video.upload scopes. The app no longer asks for them; add them back after the Direct Post audit if analytics for TikTok is wanted.
 
-## App review text (990/1000)
+## App review text (987/1000)
 
 ```
 Capybaroar is a web app (app.capybaroar.com) where people plan and schedule their own social media posts.
 
-Login Kit, user.info.basic: the user clicks Connect TikTok in Channels, signs in, and we read open_id, display name and avatar to show which account is connected. They can disconnect at any time.
+Login Kit, user.info.basic: the user clicks Connect TikTok, signs in, and we show the connected account's display name and avatar. They can disconnect any time.
+user.info.profile: we show the username on the channel and link each published post to it.
 
-Content Posting API (Direct Post), video.publish: the user uploads one video and writes a caption. For the TikTok channel we call creator_info and show the creator's nickname and avatar, only the privacy options TikTok returns (no default), and Allow comments, Duet and Stitch (off by default, locked off when the account disables them). The user can mark promotional content, which shows TikTok's label, and sees the Music Usage Confirmation (and Branded Content Policy when branded). They post now or at a set time. Our server uploads the file (FILE_UPLOAD), publishes it, checks the status and says the video may take a few minutes to appear. Nothing posts without the user's action.
+Content Posting API (Direct Post), video.publish: the user uploads one video, previews it and writes a caption. We call creator_info and show the creator's nickname and avatar, only the privacy options TikTok returns (no default), and Allow comments, Duet and Stitch (off by default, locked off when the account disables them). Promotional content shows TikTok's label, and the Music Usage Confirmation is shown. They post now or at a set time. Our server uploads the file (FILE_UPLOAD), publishes it, checks the status, says it may take a few minutes to appear and shows the post link. Nothing posts without the user's action.
 ```
 
 ## URL properties
@@ -51,10 +53,10 @@ Set up first:
 Record one take, with the address bar showing app.capybaroar.com:
 1. Open https://app.capybaroar.com and log in.
 2. Channels, Connect TikTok. Sign in to TikTok, approve the scopes, land back on Channels with the TikTok account's name, avatar and username showing.
-3. New post. Upload one video, write a caption, pick the TikTok channel.
+3. New post. Upload one video, write a caption, pick the TikTok channel, and click the video in the preview to play it.
 4. Show the TikTok block: "Posting as" with your TikTok name and avatar, Who can watch (only the options TikTok allows, pick Only me), Allow comments, Allow Duet, Allow Stitch (all off, turn one on), Promotional content (pick Your brand to show the label line, then set it back to No), and the Music Usage Confirmation line.
 5. Post now. Show the "TikTok can take a few minutes" message, then wait for the post to show as published.
-6. Open TikTok on your phone or tiktok.com and show the video on the account.
+6. Open the post again, click "Open post" to go to TikTok, and show the video on the account.
 7. Channels, show how to disconnect TikTok.
 
 Unaudited apps can only post as "Only me". After approval, apply for the Direct Post audit so public posting opens up.

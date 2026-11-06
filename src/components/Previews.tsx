@@ -2,7 +2,7 @@
 
 // Realistic previews of a post on each network, on a phone or in a desktop browser. These copy each network's
 // own look on purpose (rounded corners, their icons and spacing), so they sit inside a device frame and nowhere else.
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Bookmark, ChevronDown, Globe, Heart, MessageCircle, MoreHorizontal, Music2, Play, Repeat2, Send, Share, ThumbsUp } from "lucide-react";
 import { Avatar } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
@@ -35,17 +35,49 @@ function Visual({ m, className = "", fit }: { m: PreviewMedia; className?: strin
   const measured = (w: number, h: number) => fit && w > 0 && h > 0 && setRatio(Math.min(fit[1], Math.max(fit[0], w / h)));
   const style = fit ? { aspectRatio: String(ratio ?? 1) } : undefined;
   return isVideo(m) ? (
-    <div className={`relative bg-black ${className}`} style={style}>
-      <video src={m.thumb ?? undefined} className="size-full object-cover" muted playsInline preload="metadata" onLoadedMetadata={(e) => measured(e.currentTarget.videoWidth, e.currentTarget.videoHeight)} />
-      <span className="absolute inset-0 flex items-center justify-center">
-        <span className="flex size-12 items-center justify-center rounded-full bg-black/50 text-white">
-          <Play size={22} fill="currentColor" />
-        </span>
-      </span>
-    </div>
+    <PreviewVideo m={m} className={className} style={style} onSize={measured} />
   ) : (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={m.thumb ?? ""} alt={m.alt ?? ""} style={style} onLoad={(e) => measured(e.currentTarget.naturalWidth, e.currentTarget.naturalHeight)} className={`bg-neutral-100 object-cover ${className}`} />
+  );
+}
+
+/** A video in a preview: click to play it with sound, click again to pause. */
+function PreviewVideo({ m, className, style, onSize }: { m: PreviewMedia; className: string; style?: React.CSSProperties; onSize: (w: number, h: number) => void }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const toggle = () => {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) {
+      v.muted = false;
+      void v.play().catch(() => {
+        v.muted = true;
+        void v.play().catch(() => {});
+      });
+    } else v.pause();
+  };
+  return (
+    <button type="button" onClick={toggle} aria-label={playing ? "Pause video" : "Play video"} className={`relative block bg-black ${className}`} style={style}>
+      <video
+        ref={ref}
+        src={m.thumb ?? undefined}
+        className="size-full object-cover"
+        playsInline
+        loop
+        preload="metadata"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onLoadedMetadata={(e) => onSize(e.currentTarget.videoWidth, e.currentTarget.videoHeight)}
+      />
+      {!playing ? (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-black/50 text-white">
+            <Play size={22} fill="currentColor" />
+          </span>
+        </span>
+      ) : null}
+    </button>
   );
 }
 
