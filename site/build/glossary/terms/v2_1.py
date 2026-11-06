@@ -241,7 +241,7 @@ TERMS += [
 <p>It is weak at anything that needs fresh facts, taste or trust. It can invent statistics, quote people who never said a thing and miss a joke your audience would get at once. Replies to upset customers, posts about sensitive news and anything legal deserve a person from start to finish.</p>
 <h2>Is AI-generated content bad for reach?</h2>
 <p>Platforms mostly rank posts on how people respond to them. A helpful AI-assisted post can do well. A generic one usually won't, because people scroll past it. Some platforms may also limit content that breaks their rules on misleading media. Use AI as a helper and keep a person in charge of what gets published.</p>
-<p>Watch your own numbers to see how AI-assisted posts compare. For a month, mark which posts started as AI drafts and which you wrote from scratch, then compare saves, shares and comments. If the AI drafts lag behind, the fix is usually more editing and more real detail, rather than dropping the tool.</p>
+<p>Watch your own numbers to see how AI-assisted posts compare. For a month, mark which posts started as AI drafts and which you wrote from scratch, then compare saves, shares and comments. If the AI drafts lag behind, the fix is usually more editing and more real detail. Keep the tool and change how you use it.</p>
 <h2>Common mistakes</h2>
 <ul>
 <li>Posting AI text without reading it, including made-up facts or links</li>
@@ -438,7 +438,7 @@ TERMS += [
 <p>A caption is the text everyone sees next to your post. Alt text is hidden by default and describes the image itself. You need both. The caption gives context and a call to action, while the alt text tells a screen reader user what is in the picture. For videos, closed captions do a similar job for sound.</p>
 <figure data-chart="2"></figure>
 <h2>Alt text across networks</h2>
-<p>Where you add it changes from app to app. On some, you tap an option such as "accessibility" or "advanced settings" before you share. On others, a small "ALT" button sits on the image in the composer. Many apps let you edit alt text after posting, but not all do, so it is safest to add it before you publish.</p>
+<p>Where you add it changes from app to app. On some, you tap an option such as "accessibility" or "advanced settings" before you share. On others, a small "ALT" button sits on the image in the composer. Some apps let you edit alt text after posting and some don't, so it is safest to add it before you publish.</p>
 <p>Some networks show a small ALT badge on images that have a description, and anyone can tap it to read the text. That makes your effort visible. It also makes missing alt text easy to notice.</p>
 <p>The easiest way to keep it up is to make it a habit. Add alt text at the same moment you pick the image, while the reason you chose it is fresh. If you batch posts, write the descriptions in the same session as the captions. Keep a short note in your style guide with a couple of good examples, so everyone on the team writes them the same way. For carousels, number the descriptions in your draft so none get skipped.</p>
 <p>If a description feels hard to write, try saying it out loud as if you were telling a friend on the phone what the picture shows. Whatever you would say first is usually the right start.</p>
@@ -864,7 +864,7 @@ TERMS += [
 <li><b>Give it a clear name.</b> People search the effects gallery by name, so pick something easy to type.</li>
 </ol>
 <h2>How to measure an AR filter</h2>
-<p>Most creator tools show how many times an effect was opened, how many photos or videos were captured with it and how many were shared. The share count matters most, since a capture that never leaves the phone reaches no one. Look at the share of captures that were posted. A low number can mean the effect is fun to try but not flattering enough to share.</p>
+<p>Most creator tools show how many times an effect was opened, how many photos or videos were captured with it and how many were shared. The share count matters most, since a capture that never leaves the phone reaches no one. Look at the share of captures that were posted. A low number can mean the effect is fun to try, yet people don't like how they look in it.</p>
 <p>Search for posts that used your effect too. The comments on them show what people liked and what felt odd.</p>
 <h2>Things to watch for</h2>
 <p>Beauty filters that reshape faces can affect how people see themselves, and some platforms have rules about them. Always follow the platform's effect policies. Be honest in ads when a filter changes how a product looks, and don't use an effect to make a product seem bigger, brighter or better than it really is.</p>''',
