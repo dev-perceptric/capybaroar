@@ -96,3 +96,22 @@ test("TikTok error codes come out in plain words", async () => {
     globalThis.fetch = real;
   }
 });
+
+test("sign-in always shows TikTok's approval page, and disconnect revokes the token", async () => {
+  const url = String(await tt.oauth!.authUrl({ state: "s", redirect: "https://app.example.com/cb", verifier: "v", input: {} }));
+  assert.equal(new URL(url).searchParams.get("disable_auto_auth"), "1");
+  assert.equal(new URL(url).searchParams.get("scope"), "user.info.basic,video.publish");
+  const real = globalThis.fetch;
+  const seen: { url: string; body: string }[] = [];
+  globalThis.fetch = (async (u: string | URL | Request, init: RequestInit = {}) => {
+    seen.push({ url: String(u), body: String(init.body) });
+    return Response.json({});
+  }) as typeof fetch;
+  try {
+    await tt.revoke!(secret);
+  } finally {
+    globalThis.fetch = real;
+  }
+  assert.match(seen[0].url, /\/v2\/oauth\/revoke\/$/);
+  assert.equal(new URLSearchParams(seen[0].body).get("token"), "tok");
+});

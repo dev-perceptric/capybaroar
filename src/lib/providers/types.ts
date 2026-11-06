@@ -129,6 +129,8 @@ export type Provider = {
    * Never throw after the post is live: report later problems (first comment) in `note`, or the retry posts twice.
    */
   publish: (s: Secret, accountId: string, p: Publishable) => Promise<Published>;
+  /** Ends the app's access on the network's side when someone disconnects the channel. Best effort. */
+  revoke?: (s: Secret) => Promise<void>;
   followers?: (s: Secret, accountId: string) => Promise<number | null>;
   /**
    * Results for one published post. `remoteId` is exactly what publish returned as `id`.

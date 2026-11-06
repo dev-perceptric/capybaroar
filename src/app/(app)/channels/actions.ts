@@ -5,7 +5,7 @@ import { unstable_rethrow } from "next/navigation";
 import { isPaused } from "@/lib/networks";
 import { managerCtx, writerCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
-import { saveAccounts } from "@/lib/channels";
+import { readSecret, saveAccounts } from "@/lib/channels";
 import { getBrandCtx, homeBrand, mayUseBrand, moveChannel } from "@/lib/brands";
 import { providerOf } from "@/lib/providers";
 import type { NetworkId } from "@/lib/networks";
@@ -32,8 +32,19 @@ export async function removeChannel(id: string): Promise<{ error?: string }> {
   try {
     const ctx = await writerCtx();
     const db = adminClient();
-    const { data: ch } = await db.from("channels").select("brand_id").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
+    const { data: ch } = await db.from("channels").select("brand_id, network, account_id").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
     if (!ch || !mayUseBrand(ctx, ch.brand_id as string | null)) return { error: "Channel not found" };
+    // End the app's access on the network too (TikTok asks for this), unless another workspace still uses the account.
+    // Best effort: a failed revoke never blocks disconnecting.
+    const p = providerOf(ch.network as string);
+    if (p?.revoke) {
+      try {
+        const { count } = await db.from("channels").select("id", { count: "exact", head: true }).eq("network", ch.network).eq("account_id", ch.account_id).neq("id", id);
+        if (!count) await p.revoke(await readSecret(id));
+      } catch {
+        // The token may already be gone; disconnecting still goes ahead.
+      }
+    }
     const { error } = await db.from("channels").delete().eq("id", id).eq("workspace_id", ctx.workspaceId);
     if (error) return { error: error.message };
   } catch (e) {

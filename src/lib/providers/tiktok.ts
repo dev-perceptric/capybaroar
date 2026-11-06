@@ -68,7 +68,7 @@ export const tiktok: Provider = {
   oauth: {
     configured: () => Boolean(key() && secret()),
     authUrl: ({ state, redirect }) =>
-      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,video.publish", redirect_uri: redirect, state })}`,
+      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,video.publish", redirect_uri: redirect, state, disable_auto_auth: "1" })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await call<{ access_token?: string; expires_in: number; refresh_token: string; open_id: string; error?: string; error_description?: string }>(
         `${API}/oauth/token/`,
@@ -104,6 +104,9 @@ export const tiktok: Provider = {
     );
     if (!t.access_token) throw new AuthError(`TikTok refresh: ${t.error_description ?? t.error}`);
     return { accessToken: t.access_token, refreshToken: t.refresh_token ?? s.refreshToken, expiresAt: new Date(Date.now() + (t.expires_in ?? 86400) * 1000) };
+  },
+  revoke: async (s) => {
+    await call(`${API}/oauth/revoke/`, tokenRequest({ client_key: key(), client_secret: secret(), token: s.accessToken }), { what: "TikTok disconnect" });
   },
   check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "TikTok needs exactly one video" : p.text.length > 2200 ? "TikTok captions are up to 2,200 characters" : p.settings.brand === "branded" && p.settings.privacy === "SELF_ONLY" ? "Branded content can't be set to Only me on TikTok" : null),
   publish: async (s, _openId, p) => {
