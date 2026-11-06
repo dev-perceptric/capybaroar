@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type PostStats, type Provider } from "./types";
+import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type PostStats, type Provider } from "./types";
 
 // TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server.
 // Who can watch is the person's choice (TikTok requires it); until TikTok audits the app only "Only me" is offered.
@@ -18,6 +18,9 @@ async function tt<T>(url: string, init: RequestInit, what: string): Promise<T> {
 }
 
 const CHUNK = 10 * 1024 * 1024;
+// TikTok's token endpoint rejects "application/x-www-form-urlencoded;charset=UTF-8" (what fetch sends for a
+// URLSearchParams body) as malformed, so the type is set exactly and the body sent as a string.
+const tokenRequest = (o: Record<string, string>): RequestInit => ({ method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "Cache-Control": "no-cache" }, body: qs(o) });
 
 export const tiktok: Provider = {
   network: "tiktok",
@@ -28,7 +31,7 @@ export const tiktok: Provider = {
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await call<{ access_token?: string; expires_in: number; refresh_token: string; open_id: string; error?: string; error_description?: string }>(
         `${API}/oauth/token/`,
-        { method: "POST", body: form({ client_key: key(), client_secret: secret(), code, grant_type: "authorization_code", redirect_uri: redirect }) },
+        tokenRequest({ client_key: key(), client_secret: secret(), code, grant_type: "authorization_code", redirect_uri: redirect }),
         { what: "TikTok sign-in" },
       );
       // TikTok answers a failed exchange with 200 and an error body; say why instead of calling on with no token.
@@ -55,7 +58,7 @@ export const tiktok: Provider = {
     if (!s.refreshToken) throw new AuthError("TikTok sign-in expired");
     const t = await call<{ access_token?: string; expires_in?: number; refresh_token?: string; error?: string; error_description?: string }>(
       `${API}/oauth/token/`,
-      { method: "POST", body: form({ client_key: key(), client_secret: secret(), grant_type: "refresh_token", refresh_token: s.refreshToken }) },
+      tokenRequest({ client_key: key(), client_secret: secret(), grant_type: "refresh_token", refresh_token: s.refreshToken }),
       { what: "TikTok refresh" },
     );
     if (!t.access_token) throw new AuthError(`TikTok refresh: ${t.error_description ?? t.error}`);

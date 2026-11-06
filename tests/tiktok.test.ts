@@ -70,8 +70,11 @@ test("branded content can't be private", () => {
 test("a failed sign-in says TikTok's reason instead of calling on with no token", async () => {
   const real = globalThis.fetch;
   const urls: string[] = [];
-  globalThis.fetch = (async (u: string | URL | Request) => {
+  const types: string[] = [];
+  globalThis.fetch = (async (u: string | URL | Request, init: RequestInit = {}) => {
     urls.push(String(u));
+    types.push(new Headers(init.headers).get("content-type") ?? "");
+    assert.equal(typeof init.body, "string", "the body goes as a string so fetch adds no charset");
     return Response.json({ error: "invalid_client", error_description: "Client key or secret is incorrect.", log_id: "x" });
   }) as typeof fetch;
   try {
@@ -80,4 +83,5 @@ test("a failed sign-in says TikTok's reason instead of calling on with no token"
     globalThis.fetch = real;
   }
   assert.equal(urls.length, 1, "no profile call without a token");
+  assert.deepEqual(types, ["application/x-www-form-urlencoded"], "TikTok rejects the type with ;charset=UTF-8");
 });
