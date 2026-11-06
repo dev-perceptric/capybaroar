@@ -126,3 +126,6 @@ exec(open(os.path.join(HERE, 'build_listicles.py')).read())
 
 # ---------- social media glossary ----------
 exec(open(os.path.join(HERE, 'build_glossary.py')).read())
+
+# ---------- help docs ----------
+exec(open(os.path.join(HERE, 'build_docs.py')).read())

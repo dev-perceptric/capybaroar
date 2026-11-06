@@ -1603,7 +1603,7 @@ TERMS += [
   ]},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule posts to Google Business Profile and 11 other networks from one calendar.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule posts to Instagram, Facebook and 10 other networks from one calendar.'},
   {'name': 'Google Business Profile', 'url': 'https://www.google.com/business/', 'domain': 'google.com', 'line': 'Google\'s listing for your business on Search and Maps, where you can add hours, photos and posts.'},
   {'name': 'Instagram story size guide', 'url': '/tools/instagram-story-size', 'line': 'Our free guide gives the size for Stories, so your location sticker sits on a sharp image.'},
  ],

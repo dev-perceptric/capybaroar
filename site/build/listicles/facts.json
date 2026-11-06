@@ -26,14 +26,14 @@
    "facebook",
    "tiktok",
    "linkedin",
+   "linkedin pages",
    "youtube",
    "x",
    "threads",
    "pinterest",
    "bluesky",
    "mastodon",
-   "discord",
-   "google business"
+   "discord"
   ],
   "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 12 networks from one calendar",
   "ai": "An AI agent plans and writes posts as drafts; AI writing, images and video from credits on paid plans",

@@ -12,7 +12,8 @@
     "test": "tsx --test tests/*.test.ts",
     "brand": "python3 brand/src/build.py && node brand/src/render.mjs",
     "site:build": "python3 site/build/build_tools.py",
-    "site:covers": "node site/build/covers.mjs"
+    "site:covers": "node site/build/covers.mjs",
+    "site:shots": "node site/build/app-shots.mjs"
   },
   "engines": {
     "node": ">=22"

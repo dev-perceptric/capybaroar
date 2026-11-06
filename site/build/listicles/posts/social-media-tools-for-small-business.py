@@ -17,7 +17,7 @@ POST = {
 <p>So we looked for a low monthly price for 1 user and a setup you can finish in an afternoon, with the networks a local business uses, like Google Business Profile. We also looked for features that save you time each week, like AI writing or post recycling.</p>
 <p>All prices come from each tool's own pricing page in November 2026. Many show yearly prices first, so we note which ones are billed yearly.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar is built so one person can run social in less time. On paid plans, you tell the agent something like "plan two weeks of posts for our spring sale," and it writes the posts and saves them as drafts for you to check. It covers 12 networks, including Facebook, Instagram and Google Business Profile.</p>
+        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar is built so one person can run social in less time. On paid plans, you tell the agent something like "plan two weeks of posts for our spring sale," and it writes the posts and saves them as drafts for you to check. It covers 12 networks, including Facebook, Instagram, TikTok and Pinterest.</p>
 <p>Creator is $29 a month, or $290 a year, for 1 member, 8 channels, unlimited posts and 1,000 AI credits. The Free plan covers 3 channels and 30 posts a month, and every plan has one inbox for comments, analytics and a link in bio page. You can also try Pro free for 14 days with 200 AI credits and no card.</p>'''},
         {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer is simple to set up and cheap for a business on 2 or 3 networks. You pay $5 a month per channel on Essentials, billed yearly, so Facebook, Instagram and Google Business Profile cost $15 a month. The free plan covers 3 channels with 10 scheduled posts per channel.</p>
 <p>The AI Assistant on all plans helps you write and reuse posts, and the community inbox lets you reply to comments. Buffer also has iOS and Android apps. The bill grows with each channel you add, so it gets less cheap past 5 or 6.</p>'''},
@@ -50,7 +50,7 @@ POST = {
         ('What is the best social media tool for a small business?', 'For most small businesses, Capybaroar. Its agent drafts your posts, and Creator is $29 a month for 8 channels and unlimited posts. Buffer is cheaper if you only use 2 or 3 networks.'),
         ('How much should a small business pay for a social media tool?', 'Most tools for one person cost between $5 and $30 a month. Buffer starts at $5 per channel billed yearly, Zoho Social at US$10 billed yearly and Capybaroar Creator at $29.'),
         ('Is there a free social media tool for small business?', 'Yes. Capybaroar, Buffer, Zoho Social, Metricool, Publer and Pallyy all have free plans. They cover a few channels and a limited number of posts each month.'),
-        ('Which tools post to Google Business Profile?', 'Capybaroar, Buffer, Zoho Social, Metricool, Publer and Pallyy all list Google Business Profile. Later does not include it in its social set.'),
+        ('Which tools post to Google Business Profile?', 'Buffer, Zoho Social, Metricool, Publer and Pallyy all list Google Business Profile. Later does not include it in its social set.'),
         ('Can one person run social media for a business?', 'Yes, with a scheduler. Plan and load a week of posts in one sitting, then check the inbox for a few minutes a day. AI writing tools cut the planning time further.'),
     ],
 }

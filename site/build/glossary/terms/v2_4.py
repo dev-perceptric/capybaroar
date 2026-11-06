@@ -45,7 +45,6 @@ TERMS += [
              ('Add photos and ask for reviews', 'Show the place and the team, then send happy customers a review link.')]},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule Google Business Profile posts in the same calendar as your other social channels.'},
   {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Check that a post fits the 1,500 character limit before you publish it.'},
   {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Tag the website link on your profile so your analytics show visits from it.'},
   {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design app for making clean photos and graphics for your posts.'},

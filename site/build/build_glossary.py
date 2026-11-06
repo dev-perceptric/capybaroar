@@ -40,7 +40,7 @@ CAP = {
     'api': ('Build on Capybaroar', 'The REST API and the MCP server run the same actions as the app, on every plan.', '/api', 'Read the API docs'),
     'approvals': ('Get posts approved first', "On Pro and Agency, teammates and clients approve posts before they go out. Clients who only approve don't take a seat.", '/pricing', 'See plans'),
     'reports': ('Send reports with your brand', 'On Agency, reports carry your logo and color, and you share them by link, PDF or email.', '/social-media-analytics', 'See reports'),
-    'gbp': ('Post to Google Business Profile', 'Schedule Google Business Profile posts next to your social posts in one Capybaroar calendar.', '/social-media-scheduler', 'See the scheduler'),
+    'gbp': ('Plan the rest of your social in Capybaroar', 'Schedule posts to Instagram, Facebook and 10 more networks from one calendar, next to your Google Business Profile updates.', '/social-media-scheduler', 'See the scheduler'),
 }
 
 

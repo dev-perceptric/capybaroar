@@ -1,0 +1,35 @@
+# Capybaroar
+
+> Capybaroar is an agentic social media platform: an AI agent plans and writes posts, and people schedule them to 12 networks (Instagram, Facebook, TikTok, LinkedIn profiles and Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon, Discord) from one calendar. It has an MCP server and REST API on every plan.
+
+## Get started
+- [What is Capybaroar?](https://capybaroar.com/docs/welcome.md): Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 12 networks from one calendar.
+- [Create your account](https://capybaroar.com/docs/create-account.md): Sign up with your email in under a minute. You start on 14 days of Pro, free, with no card.
+- [Connect your first channel](https://capybaroar.com/docs/connect-a-channel.md): A channel is one social account Capybaroar can post to, like your Instagram account or your LinkedIn Page.
+- [Schedule your first post](https://capybaroar.com/docs/schedule-your-first-post.md): Write a post once, check how it looks on each network, then schedule it, queue it or post it now.
+
+## Channels
+- [Instagram](https://capybaroar.com/docs/instagram.md): How to connect Instagram, what you can post there and how to fix a post it turns down.
+- [Facebook](https://capybaroar.com/docs/facebook.md): How to connect Facebook, what you can post there and how to fix a post it turns down.
+- [TikTok](https://capybaroar.com/docs/tiktok.md): How to connect TikTok, what you can post there and how to fix a post it turns down.
+- [LinkedIn](https://capybaroar.com/docs/linkedin.md): How to connect LinkedIn, what you can post there and how to fix a post it turns down.
+- [YouTube](https://capybaroar.com/docs/youtube.md): How to connect YouTube, what you can post there and how to fix a post it turns down.
+- [X (Twitter)](https://capybaroar.com/docs/x.md): How to connect X (Twitter), what you can post there and how to fix a post it turns down.
+- [Threads](https://capybaroar.com/docs/threads.md): How to connect Threads, what you can post there and how to fix a post it turns down.
+- [Pinterest](https://capybaroar.com/docs/pinterest.md): How to connect Pinterest, what you can post there and how to fix a post it turns down.
+- [Bluesky](https://capybaroar.com/docs/bluesky.md): How to connect Bluesky, what you can post there and how to fix a post it turns down.
+- [Mastodon](https://capybaroar.com/docs/mastodon.md): How to connect Mastodon, what you can post there and how to fix a post it turns down.
+- [Discord](https://capybaroar.com/docs/discord.md): How to connect Discord, what you can post there and how to fix a post it turns down.
+
+## AI agent and MCP
+- [The AI agent](https://capybaroar.com/docs/agent.md): The agent is Claude with every Capybaroar action. Tell it what you need and it plans and writes posts, makes pictures and checks your results.
+- [Plan a week of posts with the agent](https://capybaroar.com/docs/plan-a-week.md): One message, five days of drafts. Here is how to ask so the first try is close to right.
+- [AI credits](https://capybaroar.com/docs/ai-credits.md): Everything AI in Capybaroar draws from one credit balance: the agent, writing help, pictures, videos and voiceovers.
+- [Rewrite and fit posts with AI](https://capybaroar.com/docs/rewrite-with-ai.md): In the post editor, AI can rewrite your text, fit it to each network and suggest replies in the Inbox.
+- [Use Capybaroar from Claude, ChatGPT or Cursor](https://capybaroar.com/docs/mcp.md): Capybaroar has an MCP server, so the AI you already use can plan, write and schedule posts in your account. It is on every plan, Free too.
+
+## More
+- [Pricing](https://capybaroar.com/pricing)
+- [API docs](https://capybaroar.com/api)
+- [MCP](https://capybaroar.com/mcp)
+- [Social media terms](https://capybaroar.com/social-media-terms)

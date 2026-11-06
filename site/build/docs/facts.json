@@ -1,0 +1,449 @@
+[
+ {
+  "id": "linkedin",
+  "name": "LinkedIn",
+  "limit": 3000,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": false,
+  "fields": [
+   {
+    "key": "first_comment",
+    "label": "First comment",
+    "kind": "textarea"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": false,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "linkedin-page",
+  "name": "LinkedIn Page",
+  "limit": 3000,
+  "needsMedia": false,
+  "inbox": {
+   "like": true
+  },
+  "paused": false,
+  "fields": [
+   {
+    "key": "first_comment",
+    "label": "First comment",
+    "kind": "textarea"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "facebook",
+  "name": "Facebook",
+  "limit": 63206,
+  "needsMedia": false,
+  "inbox": {
+   "like": true,
+   "hide": true
+  },
+  "paused": false,
+  "fields": [
+   {
+    "key": "format",
+    "label": "Format",
+    "kind": "select",
+    "initial": "post",
+    "options": [
+     "Post",
+     "Reel",
+     "Story"
+    ]
+   },
+   {
+    "key": "first_comment",
+    "label": "First comment",
+    "kind": "textarea"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "instagram",
+  "name": "Instagram",
+  "limit": 2200,
+  "needsMedia": true,
+  "inbox": {
+   "hide": true
+  },
+  "paused": false,
+  "fields": [
+   {
+    "key": "format",
+    "label": "Format",
+    "kind": "select",
+    "initial": "post",
+    "options": [
+     "Post",
+     "Reel",
+     "Story"
+    ]
+   },
+   {
+    "key": "cover",
+    "label": "Reel cover",
+    "kind": "cover",
+    "when": {
+     "key": "format",
+     "value": "reel"
+    }
+   },
+   {
+    "key": "first_comment",
+    "label": "First comment",
+    "kind": "textarea"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "threads",
+  "name": "Threads",
+  "limit": 500,
+  "needsMedia": false,
+  "inbox": {
+   "hide": true
+  },
+  "paused": false,
+  "fields": [],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "tiktok",
+  "name": "TikTok",
+  "limit": 2200,
+  "needsMedia": true,
+  "inbox": null,
+  "paused": false,
+  "fields": [
+   {
+    "key": "privacy",
+    "label": "Who can watch",
+    "kind": "select",
+    "required": true,
+    "options": [
+     "Everyone",
+     "Friends",
+     "Followers",
+     "Only me"
+    ]
+   },
+   {
+    "key": "comments",
+    "label": "Allow comments",
+    "kind": "select",
+    "initial": "off",
+    "options": [
+     "On",
+     "Off"
+    ]
+   },
+   {
+    "key": "duet",
+    "label": "Allow Duet",
+    "kind": "select",
+    "initial": "off",
+    "options": [
+     "On",
+     "Off"
+    ]
+   },
+   {
+    "key": "stitch",
+    "label": "Allow Stitch",
+    "kind": "select",
+    "initial": "off",
+    "options": [
+     "On",
+     "Off"
+    ]
+   },
+   {
+    "key": "brand",
+    "label": "Promotional content",
+    "kind": "select",
+    "initial": "off",
+    "options": [
+     "No",
+     "Your brand",
+     "Branded content"
+    ]
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": false,
+  "hasStats": false,
+  "hasRevoke": true
+ },
+ {
+  "id": "youtube",
+  "name": "YouTube",
+  "limit": 5000,
+  "needsMedia": true,
+  "inbox": {
+   "hide": true,
+   "hideOnce": true
+  },
+  "paused": false,
+  "fields": [
+   {
+    "key": "title",
+    "label": "Title",
+    "kind": "text",
+    "required": true
+   },
+   {
+    "key": "tags",
+    "label": "Tags",
+    "kind": "tags"
+   },
+   {
+    "key": "privacy",
+    "label": "Visibility",
+    "kind": "select",
+    "initial": "public",
+    "options": [
+     "Public",
+     "Unlisted",
+     "Private"
+    ]
+   },
+   {
+    "key": "for_kids",
+    "label": "Made for kids",
+    "kind": "select",
+    "initial": "no",
+    "options": [
+     "No",
+     "Yes"
+    ]
+   },
+   {
+    "key": "cover",
+    "label": "Thumbnail",
+    "kind": "cover"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "x",
+  "name": "X",
+  "limit": 280,
+  "needsMedia": false,
+  "inbox": {
+   "like": true,
+   "hide": true
+  },
+  "paused": false,
+  "fields": [],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "pinterest",
+  "name": "Pinterest",
+  "limit": 500,
+  "needsMedia": true,
+  "inbox": null,
+  "paused": false,
+  "fields": [
+   {
+    "key": "board",
+    "label": "Board",
+    "kind": "text",
+    "required": true
+   },
+   {
+    "key": "title",
+    "label": "Title",
+    "kind": "text"
+   },
+   {
+    "key": "link",
+    "label": "Link",
+    "kind": "text"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "reddit",
+  "name": "Reddit",
+  "limit": 40000,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": true,
+  "fields": [
+   {
+    "key": "subreddit",
+    "label": "Subreddit",
+    "kind": "text",
+    "required": true
+   },
+   {
+    "key": "title",
+    "label": "Title",
+    "kind": "text",
+    "required": true
+   }
+  ],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "bluesky",
+  "name": "Bluesky",
+  "limit": 300,
+  "needsMedia": false,
+  "inbox": {
+   "like": true
+  },
+  "paused": false,
+  "fields": [],
+  "connect": "form",
+  "asks": [],
+  "formFields": [
+   "Handle",
+   "App password"
+  ],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "mastodon",
+  "name": "Mastodon",
+  "limit": 500,
+  "needsMedia": false,
+  "inbox": {
+   "like": true
+  },
+  "paused": false,
+  "fields": [
+   {
+    "key": "visibility",
+    "label": "Visibility",
+    "kind": "select",
+    "initial": "public",
+    "options": [
+     "Public",
+     "Quiet public",
+     "Followers"
+    ]
+   },
+   {
+    "key": "spoiler",
+    "label": "Content warning",
+    "kind": "text"
+   }
+  ],
+  "connect": "oauth",
+  "asks": [
+   "Server"
+  ],
+  "formFields": [],
+  "hasFollowers": true,
+  "hasStats": true,
+  "hasRevoke": false
+ },
+ {
+  "id": "telegram",
+  "name": "Telegram",
+  "limit": 4096,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": true,
+  "fields": [],
+  "connect": "form",
+  "asks": [],
+  "formFields": [
+   "Channel or group"
+  ],
+  "hasFollowers": true,
+  "hasStats": false,
+  "hasRevoke": false
+ },
+ {
+  "id": "discord",
+  "name": "Discord",
+  "limit": 2000,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": false,
+  "fields": [],
+  "connect": "form",
+  "asks": [],
+  "formFields": [
+   "Webhook URL"
+  ],
+  "hasFollowers": false,
+  "hasStats": false,
+  "hasRevoke": false
+ },
+ {
+  "id": "gbp",
+  "name": "Google Business",
+  "limit": 1500,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": true,
+  "fields": [],
+  "connect": "oauth",
+  "asks": [],
+  "formFields": [],
+  "hasFollowers": false,
+  "hasStats": false,
+  "hasRevoke": false
+ }
+]

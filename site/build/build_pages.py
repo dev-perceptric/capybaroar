@@ -34,7 +34,7 @@ CHANNELS_NAV = [
     ('/mastodon-scheduler', 'mastodon', 'Mastodon', 'Posts'),
     ('/discord-message-scheduler', 'discord', 'Discord', 'Messages'),
 ]
-RESOURCES = [('/blog', 'i-file', 'Blog', 'Guides and news'), ('/social-media-terms', 'i-text', 'Social media terms', '200 terms from A to Z'), ('/api', 'i-layers', 'API docs', 'REST API, MCP and webhooks')]
+RESOURCES = [('/docs', 'i-layers', 'Docs', 'Step-by-step guides'), ('/blog', 'i-file', 'Blog', 'Guides and news'), ('/social-media-terms', 'i-text', 'Social media terms', '200 terms from A to Z'), ('/api', 'i-layers', 'API docs', 'REST API, MCP and webhooks')]
 UTILITIES = [('/tools/font-generator', 'i-text', 'Font generator', 'Fonts for Instagram and more'), ('/tools/character-counter', 'i-text', 'Character counter', 'Fits on every network?'),
              ('/tools/emoji-copy-paste', 'i-smile', 'Emoji copy and paste', 'Every emoji, one click'), ('/tools/linkedin-text-formatter', 'i-pen', 'LinkedIn formatter', 'Bold and lists for LinkedIn'),
              ('/tools/instagram-post-size', 'i-image', 'Instagram post size', 'Check and resize pictures'), ('/tools/best-time-to-post', 'i-clock', 'Best time to post', 'Your audience\'s hours, your time'),
@@ -66,7 +66,7 @@ def sheet_group(title, items, logo=False, cols=1):
 SHEET = (sheet_group('Platform', PLATFORM) + sheet_group('Channels', CHANNELS_NAV, logo=True, cols=2)
          + sheet_group('Resources', RESOURCES) + sheet_group('Utilities', UTILITIES, cols=2)
          + '<div class="sh-g sh-end"><a href="/pricing">Pricing</a><a href="https://app.capybaroar.com/login">Log in</a></div>')
-FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/pricing">Pricing</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
+FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/pricing">Pricing</a></li><li><a href="/docs">Docs</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
 NAV_IDS = ['i-calendar', 'i-inbox', 'i-chart', 'i-link', 'i-spark', 'i-bot', 'i-file', 'i-layers', 'i-grid', 'i-arrow', 'i-smile', 'i-text', 'i-pen', 'i-image', 'i-clock'] + [f'n-{c[1]}' for c in CHANNELS_NAV]
 
 
