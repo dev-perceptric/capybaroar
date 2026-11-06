@@ -34,7 +34,8 @@
    "mastodon",
    "discord",
    "google business"
-  ]
+  ],
+  "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 12 networks from one calendar"
  },
  "agorapulse": {
   "id": "agorapulse",
@@ -124,7 +125,8 @@
   "freeShort": "Yes",
   "freeLine": "A free plan is offered after the trial; limits are not listed on the pricing page",
   "trialShort": "30 days",
-  "vendorBestFor": "Business teams proving social media ROI"
+  "vendorBestFor": "Business teams proving social media ROI",
+  "kind": "a social media management platform for business teams, with one inbox and ROI reports"
  },
  "buffer": {
   "id": "buffer",
@@ -202,7 +204,8 @@
   "freeShort": "3 channels",
   "freeLine": "Up to 3 channels, 10 scheduled posts per channel, 1 user",
   "trialShort": "14 days",
-  "vendorBestFor": "Solo creators through to multi-brand agencies"
+  "vendorBestFor": "Solo creators through to multi-brand agencies",
+  "kind": "a social media scheduler that charges per channel, with a free plan for up to 3 channels"
  },
  "contentstudio": {
   "id": "contentstudio",
@@ -321,7 +324,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "7 days",
-  "vendorBestFor": "Anyone managing one brand or dozens"
+  "vendorBestFor": "Anyone managing one brand or dozens",
+  "kind": "a unified social media management tool with AI for text, images and video"
  },
  "hootsuite": {
   "id": "hootsuite",
@@ -398,7 +402,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Social media pros and brand teams"
+  "vendorBestFor": "Social media pros and brand teams",
+  "kind": "a social media management platform for teams, priced per user, with an AI teammate called Wisdom"
  },
  "hypefury": {
   "id": "hypefury",
@@ -478,7 +483,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "7 days",
-  "vendorBestFor": "Creators building an audience that pays them"
+  "vendorBestFor": "Creators building an audience that pays them",
+  "kind": "a creator tool for planning posts across platforms, with Instagram auto DMs"
  },
  "later": {
   "id": "later",
@@ -555,7 +561,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Social media managers"
+  "vendorBestFor": "Social media managers",
+  "kind": "a social media management and influencer marketing platform with Link in Bio on every plan"
  },
  "loomly": {
   "id": "loomly",
@@ -634,7 +641,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "7 days",
-  "vendorBestFor": "Modern marketing teams"
+  "vendorBestFor": "Modern marketing teams",
+  "kind": "a social media management platform for marketing teams, with approval workflows on every plan"
  },
  "metricool": {
   "id": "metricool",
@@ -728,7 +736,8 @@
   "freeShort": "1 brand",
   "freeLine": "1 brand, 20 posts a month, 30 days of analytics, no LinkedIn or X",
   "trialShort": null,
-  "vendorBestFor": "Social media managers"
+  "vendorBestFor": "Social media managers",
+  "kind": "a social media management tool with deep analytics, priced per brand"
  },
  "pallyy": {
   "id": "pallyy",
@@ -817,7 +826,8 @@
   "freeShort": "1 social set",
   "freeLine": "1 social set, 15 scheduled posts a month, image posts only",
   "trialShort": null,
-  "vendorBestFor": "Agencies managing many clients"
+  "vendorBestFor": "Agencies managing many clients",
+  "kind": "a social media scheduler for agencies, priced per client"
  },
  "planable": {
   "id": "planable",
@@ -889,7 +899,8 @@
   "freeShort": "50 posts",
   "freeLine": "Your first 50 posts are free, with no time limit",
   "trialShort": null,
-  "vendorBestFor": "Marketing teams that plan social together"
+  "vendorBestFor": "Marketing teams that plan social together",
+  "kind": "a collaboration-first social media management tool where teams review and approve posts together"
  },
  "postiz": {
   "id": "postiz",
@@ -973,7 +984,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "7 days",
-  "vendorBestFor": "AI-first marketers, developers and automation teams"
+  "vendorBestFor": "AI-first marketers, developers and automation teams",
+  "kind": "an agentic social media scheduling platform with an MCP server, CLI and API on every plan"
  },
  "publer": {
   "id": "publer",
@@ -1076,7 +1088,8 @@
   "freeShort": "3 accounts",
   "freeLine": "1 user, 3 social accounts (no X), 10 scheduled posts per account",
   "trialShort": "7 to 14 days",
-  "vendorBestFor": "Creators, small businesses and agencies"
+  "vendorBestFor": "Creators, small businesses and agencies",
+  "kind": "a low-cost social media scheduling tool with a free forever plan"
  },
  "sendible": {
   "id": "sendible",
@@ -1166,7 +1179,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Agencies and multi-location teams"
+  "vendorBestFor": "Agencies and multi-location teams",
+  "kind": "a social media management tool for agencies with unlimited users on every plan"
  },
  "socialbee": {
   "id": "socialbee",
@@ -1254,7 +1268,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Solo users, small teams and agencies"
+  "vendorBestFor": "Solo users, small teams and agencies",
+  "kind": "an AI-powered social media management tool built around content categories and recycling"
  },
  "socialpilot": {
   "id": "socialpilot",
@@ -1341,7 +1356,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Scaling marketing agencies and brands"
+  "vendorBestFor": "Scaling marketing agencies and brands",
+  "kind": "a social media management and scheduling tool for agencies and growing brands"
  },
  "sprout": {
   "id": "sprout",
@@ -1435,7 +1451,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "30 days",
-  "vendorBestFor": "Small teams up to large enterprises"
+  "vendorBestFor": "Small teams up to large enterprises",
+  "kind": "a social media management suite for small teams up to large enterprises, priced per seat, with the Trellis AI agent"
  },
  "tailwind": {
   "id": "tailwind",
@@ -1515,7 +1532,8 @@
   "freeShort": "Yes",
   "freeLine": "Free to start with no card; free limits not listed",
   "trialShort": null,
-  "vendorBestFor": "Creators and businesses growing Pinterest traffic"
+  "vendorBestFor": "Creators and businesses growing Pinterest traffic",
+  "kind": "a Pinterest growth tool for keyword research, Pin creation and scheduling"
  },
  "taplio": {
   "id": "taplio",
@@ -1590,7 +1608,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "7 days",
-  "vendorBestFor": "People growing their brand on LinkedIn"
+  "vendorBestFor": "People growing their brand on LinkedIn",
+  "kind": "an AI tool for growing your brand on LinkedIn"
  },
  "typefully": {
   "id": "typefully",
@@ -1671,7 +1690,8 @@
   "freeShort": "10 posts/mo",
   "freeLine": "1 social set, 1 user, 10 posts a month",
   "trialShort": null,
-  "vendorBestFor": "Writers, creators, marketing teams and agencies"
+  "vendorBestFor": "Writers, creators, marketing teams and agencies",
+  "kind": "a writing and scheduling tool for X, LinkedIn, Threads, Bluesky and Mastodon"
  },
  "vistasocial": {
   "id": "vistasocial",
@@ -1774,7 +1794,8 @@
   "freeShort": null,
   "freeLine": null,
   "trialShort": "14 days",
-  "vendorBestFor": "Teams and agencies running many brands"
+  "vendorBestFor": "Teams and agencies running many brands",
+  "kind": "an AI-powered social media management platform for teams that run many brands"
  },
  "zoho": {
   "id": "zoho",
@@ -1871,6 +1892,7 @@
   "freeShort": "1 brand",
   "freeLine": "1 brand (6 channels), 1 team member, 5 AI credits",
   "trialShort": "15 days",
-  "vendorBestFor": "Businesses and agencies"
+  "vendorBestFor": "Businesses and agencies",
+  "kind": "the social media management tool in the Zoho suite, with a forever free plan"
  }
 }

@@ -57,6 +57,49 @@ def cell(v):
     return esc(v) if v else '<span class="no">&ndash;</span>'
 
 
+# ---------- links inside the copy ----------
+# Capybaroar's own pages, linked where Capybaroar is reviewed (its item, the intro and the bottom line).
+CAPY_LINKS = [
+    (r'\bAI agent\b|\bagent\b', '/#agents'), (r'\bMCP server\b|\bMCP\b', '/mcp'), (r'\bREST API\b', '/api'),
+    (r'\binbox\b', '/social-media-inbox'), (r'\banalytics\b', '/social-media-analytics'), (r'\b[Ll]ink in bio\b', '/link-in-bio'),
+    (r'\bcalendar\b', '/social-media-scheduler'), (r'\b(?:Creator|Pro|Agency)(?= (?:is|costs|plan)\b)', '/pricing'),
+    (r'\bCapybaroar\b', '/'),
+]
+NET_LINKS = [(r'\b' + n + r'\b', u) for u, _, n, _ in CHANNELS_NAV if n != 'X'] + [(r'\bX \(Twitter\)', '/x-post-scheduler')]
+# Other lists, linked when the copy names their topic.
+POST_LINKS = [
+    (r'\bBuffer alternatives?\b', 'buffer-alternatives'), (r'\bHootsuite alternatives?\b', 'hootsuite-alternatives'),
+    (r'\bSprout Social alternatives?\b', 'sprout-social-alternatives'), (r'\bBuffer vs\.? Hootsuite\b', 'buffer-vs-hootsuite'),
+    (r'\bfree plans?\b', 'free-social-media-management-tools'), (r'\bagenc(?:y|ies)\b', 'social-media-tools-for-agencies'),
+    (r'\bsmall business(?:es)?\b', 'social-media-tools-for-small-business'), (r'\bAI\b', 'ai-social-media-scheduling-tools'),
+]
+TAG = re.compile(r'(<[^>]+>)')
+
+
+def autolink(html, rules, used, skip_href=None):
+    """Links the first match of each rule in text that isn't already a link, a heading or a tag."""
+    out, in_a, in_h = [], 0, 0
+    for part in TAG.split(html):
+        if part.startswith('<'):
+            t = part.lower()
+            in_a += 1 if t.startswith('<a ') or t == '<a>' else -1 if t.startswith('</a') else 0
+            in_h += 1 if re.match(r'<h[1-6]\b', t) else -1 if re.match(r'</h[1-6]', t) else 0
+            out.append(part)
+            continue
+        if in_a > 0 or in_h > 0:
+            out.append(part)
+            continue
+        for rx, href in rules:
+            if href in used or href == skip_href:
+                continue
+            m = re.search(rx, part)
+            if m:
+                used.add(href)
+                part = part[:m.start()] + f'<a href="{href}">{m.group(0)}</a>' + part[m.end():]
+        out.append(part)
+    return ''.join(out)
+
+
 def compare(items):
     rows = ''
     for k, it in enumerate(items, 1):
@@ -79,9 +122,17 @@ def ul(items, cls):
     return f'<ul class="{cls}">' + ''.join(f'<li>{x}</li>' for x in items) + '</ul>'
 
 
-def item(k, it):
+def item(k, it, used):
     f = FACTS[it['id']]
     tid = it['id']
+    text = it['text']
+    # The "is a" line names the tool, so the first paragraph goes on with "It".
+    name = re.escape(f['name'])
+    text = re.sub(r'^(\s*<p>)' + name + r' is ', r"\1It's ", text, count=1)
+    text = re.sub(r'^(\s*<p>)' + name + r' (was|calls itself|has)\b', r'\1It \2', text, count=1)
+    if tid == 'capybaroar':
+        used.update(re.findall(r'href="(/[^"]*)"', f['kind']))
+        text = autolink(text, CAPY_LINKS + NET_LINKS, used)
     price = f.get('priceLine') or f.get('priceShort') or ''
     meta = [('Price', price)]
     if f.get('freeLine'):
@@ -99,7 +150,8 @@ def item(k, it):
 <h2 id="{tid}-h"><span class="lx-n">{k}</span>{logo(tid, 36)}<span>{esc(f["name"])}</span></h2>
 <p class="lx-best">Best for {esc(it.get("bestFor") or f.get("bestFor", ""))}</p>
 {shot(tid, it.get("shot", "pricing"))}
-{it["text"]}
+<p class="lx-is"><b>{esc(f["name"])}</b> is {f["kind"]}.</p>
+{text}
 <dl class="lx-meta">{dl}</dl>
 <div class="lx-pc"><div><h3>What we like</h3>{ul(pros, "lx-pros")}</div><div><h3>What to know</h3>{ul(cons, "lx-cons")}</div></div>
 <p class="lx-go">{go}</p>
@@ -110,10 +162,49 @@ def cover_of(p):
     return {'slug': p['slug'], **p['cover']}
 
 
+SIGNUP = '''<aside class="lx-signup" aria-label="Try Capybaroar">
+<img src="/icon.svg" alt="" width="48" height="48">
+<div><h2>Try Capybaroar free</h2><p>Tell the agent what you want, and it plans and writes a week of posts. Review them, then schedule to 12 networks from one calendar.</p>
+<p class="lx-note">Free forever plan. 14 days of Pro free. No card needed.</p></div>
+<div class="lx-cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="/pricing">See pricing</a></div>
+</aside>'''
+TOC_JS = '''<script>(function(){
+var d=document.querySelector('.lx-toc details');if(d&&matchMedia('(max-width:1100px)').matches)d.open=false;
+var links=[].slice.call(document.querySelectorAll('.lx-toc a[href^="#"]')),by={},on=null;
+if(!links.length||!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;if(on)on.classList.remove('on');on=by[e.target.id];on.classList.add('on')})},{rootMargin:'-15% 0px -75% 0px'});
+links.forEach(function(a){var t=document.getElementById(a.getAttribute('href').slice(1));if(t){by[t.id]=a;io.observe(t)}});
+})();</script>'''
+
+
+def related_posts(p):
+    mine = {i['id'] for i in p['items']}
+    scored = sorted((len(mine & {i['id'] for i in q['items']}) / len(mine | {i['id'] for i in q['items']}), q['order'], q) for q in POSTS if q is not p)
+    picked = [q for _, _, q in sorted(scored, key=lambda x: (-x[0], x[1]))[:4]]
+    li = ''.join(f'<li><a href="/blog/{q["slug"]}"><img src="/img/blog/{q["slug"]}.webp" width="2400" height="1260" alt="" loading="lazy"><span>{esc(q["title"])}</span></a></li>' for q in picked)
+    return f'<h2 id="more">Keep comparing</h2><ul class="lx-more">{li}</ul>'
+
+
+def toc(p):
+    rows = [('picks', 'Our picks'), ('compared', f'All {len(p["items"])} compared')]
+    rows += [(it['id'], f'{k}. {FACTS[it["id"]]["name"]}') for k, it in enumerate(p['items'], 1)]
+    rows += [('how', 'How we picked'), ('bottom-line', 'The bottom line'), ('faq', 'Questions')]
+    li = ''.join(f'<li><a href="#{a}">{esc(b)}</a></li>' for a, b in rows)
+    mini = ('<div class="lx-mini"><img src="/icon.svg" alt="" width="32" height="32"><b>Try Capybaroar free</b>'
+            '<p>An AI agent that plans your week of posts.</p><a class="btn sm" href="https://app.capybaroar.com/signup">Start free</a></div>')
+    return (f'<aside class="lx-toc"><details open><summary>On this page</summary><nav aria-label="On this page"><ol>{li}</ol></nav></details>{mini}</aside>')
+
+
 cards = []
 for p in POSTS:
     slug = '/blog/' + p['slug']
     n = len(p['items'])
+    used = set()
+    here = slug
+    intro = autolink(p['intro'], CAPY_LINKS[-1:] + NET_LINKS + [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
+    items_html = ''.join(item(k, it, used) for k, it in enumerate(p['items'], 1))
+    verdict = autolink(p['verdict'], CAPY_LINKS + [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
+    how = autolink(p['how'], [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
     body = f'''<section class="hero f-hero lx-hero">
 <div class="hero-bg dots" aria-hidden="true"></div>
 <div class="wrap hero-text">
@@ -124,17 +215,19 @@ for p in POSTS:
 </div>
 <div class="wrap"><img class="lx-cover" src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt=""></div>
 </section>
-<section id="list" aria-label="The list"><div class="wrap"><article class="t-read lx">
-{p["intro"]}
-<h2>Our picks</h2>
+<section id="list" aria-label="The list"><div class="wrap lx-layout">{toc(p)}<article class="t-read lx">
+{intro}
+<h2 id="picks">Our picks</h2>
 {picks(p)}
-<h2>All {n} compared</h2>
+<h2 id="compared">All {n} compared</h2>
 {compare(p["items"])}
-{"".join(item(k, it) for k, it in enumerate(p["items"], 1))}
-<h2>How we picked</h2>
-{p["how"]}
-<h2>The bottom line</h2>
-{p["verdict"]}
+{SIGNUP}
+{items_html}
+<h2 id="how">How we picked</h2>
+{how}
+<h2 id="bottom-line">The bottom line</h2>
+{verdict}
+{related_posts(p)}
 </article></div></section>'''
     html = page(slug, 'sched', p['title'], p['desc'], body, p['faqs'])
     html = html.replace('content="https://capybaroar.com/img/og.jpg"', f'content="https://capybaroar.com/img/blog/{p["slug"]}.jpg"')
@@ -150,7 +243,7 @@ for p in POSTS:
         {"@type": "ListItem", "position": 3, "name": p['title'], "item": "https://capybaroar.com" + slug}]}
     ld = ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (art, lst, crumbs))
     html = html.replace('</head>', ld + '</head>', 1)
-    html = with_promo(html, 'index')
+    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + '\n</body>', 1)
     os.makedirs(P + 'blog', exist_ok=True)
     open(P + 'blog/' + p['slug'] + '.html', 'w').write(html)
     cards.append(f'<li><a href="{slug}"><img src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt="" loading="lazy"><h2>{esc(p["title"])}</h2><p>{esc(p["desc"])}</p></a></li>')
