@@ -1,0 +1,1876 @@
+{
+ "capybaroar": {
+  "id": "capybaroar",
+  "name": "Capybaroar",
+  "home": "https://capybaroar.com",
+  "pricing": "https://capybaroar.com/pricing",
+  "captured": "November 2026",
+  "priceShort": "$29/mo",
+  "priceLine": "Creator $29, Pro $49 and Agency $149 a month; yearly plans get 2 months free",
+  "freeShort": "3 channels",
+  "freeLine": "3 channels, 30 scheduled posts a month, 1 member, free forever",
+  "trialShort": "14 days",
+  "bestFor": "teams that want an AI agent to run social",
+  "pros": [
+   "An agent plans and writes a week of posts from one message, then saves them for your review",
+   "MCP server and REST API on every plan, Free included, so you can post from Claude, ChatGPT or Cursor",
+   "One inbox, analytics and link in bio come with every plan"
+  ],
+  "cons": [
+   "Newer than the big names, with fewer integrations so far",
+   "AI features need a paid plan; Free covers scheduling only"
+  ],
+  "mcp": "MCP server on every plan",
+  "networks": [
+   "instagram",
+   "facebook",
+   "tiktok",
+   "linkedin",
+   "youtube",
+   "x",
+   "threads",
+   "pinterest",
+   "bluesky",
+   "mastodon",
+   "discord",
+   "google business"
+  ]
+ },
+ "agorapulse": {
+  "id": "agorapulse",
+  "plans": [
+   {
+    "name": "Standard",
+    "price": "US $79 per user /month",
+    "billing": "unclear",
+    "limits": "10 social profiles, priced per user, unlimited posts"
+   },
+   {
+    "name": "Professional",
+    "price": "US $119 per user /month",
+    "billing": "unclear",
+    "limits": "10 social profiles, priced per user, unlimited posts"
+   },
+   {
+    "name": "Advanced",
+    "price": "US $149 per user /month",
+    "billing": "unclear",
+    "limits": "10 social profiles, priced per user, unlimited posts"
+   },
+   {
+    "name": "Custom",
+    "price": "Tailored Pricing",
+    "billing": "unclear",
+    "limits": "Unlimited social profiles, SSO, custom roles"
+   }
+  ],
+  "priceFrom": "US $79 per user /month",
+  "priceFromBilling": "unclear",
+  "freePlan": "A free plan is named after the trial, but its limits are not listed",
+  "trial": "30-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "instagram",
+   "linkedin",
+   "x",
+   "youtube",
+   "tiktok",
+   "pinterest",
+   "threads",
+   "bluesky",
+   "reddit",
+   "google business"
+  ],
+  "ai": "AI writing assistant, AI reply suggestions, sentiment tags, translation, report summaries, and Archie to turn content into posts",
+  "mcp": "Connect Claude, ChatGPT, or Copilot Studio or business tools like Notion to Agorapulse.",
+  "approvals": "Simple approval workflows; multi-step approvals on Custom",
+  "inbox": "One inbox for messages and organic comments on every plan",
+  "analytics": "Basic reports on Standard; advanced reports, ROI and competitor benchmarks on Advanced",
+  "reports": "Branded report export on Standard; white-label and scheduled report emails listed",
+  "mobileApp": "Mobile app for iOS and Android",
+  "bestFor": "business teams that report on ROI",
+  "pros": [
+   "Unlimited post scheduling on every paid plan",
+   "Inbox for messages and comments on every plan",
+   "MCP connector for Claude, ChatGPT and Copilot Studio"
+  ],
+  "cons": [
+   "Priced per user, so costs grow with team size",
+   "Paid self-serve plans cap at 10 social profiles; X is sold as an add-on"
+  ],
+  "quotes": {
+   "plans": "US $79 | per user /month | US $119 | US $149 | Social profiles | 10\t10\t10\tUnlimited",
+   "priceFrom": "US $79 | per user /month",
+   "freePlan": "You’ll pick a paid plan if you’re ready, or keep using the free plan for as long as you need.",
+   "trial": "Free For 30 Days, No Credit Card Required",
+   "networks": "Agorapulse works with Facebook, Instagram, LinkedIn, X (Twitter), YouTube, TikTok, Pinterest, Threads, Bluesky, Reddit, and Google Business Profile.",
+   "ai": "It suggests replies to direct messages, tags the sentiment of comments and mentions, translates messages, filters off-topic mentions out of listening searches, and explains your reports in plain language. Writing Assistant helps you draft and polish captions.",
+   "mcp": "Connect Claude, ChatGPT, or Copilot Studio or business tools like Notion to Agorapulse.",
+   "approvals": "Simple approval workflows | Collaborate at an enterprise level with SSO, custom roles, and multi-step approval workflows",
+   "inbox": "Manage all messages and organic comments from one inbox",
+   "analytics": "Access basic reports on your audience and top content, and export branded reports | Level up your reporting with advanced reports, ads reports, ROI analysis, and competitor benchmarking",
+   "reports": "Access basic reports on your audience and top content, and export branded reports | White-label reporting | Scheduled report emails",
+   "mobileApp": "Mobile app for iOS and Android",
+   "bestFor": "so you can grow your audience and prove your return on social media.",
+   "cons": "per user /month | X Lite | X Plus"
+  },
+  "name": "Agorapulse",
+  "home": "https://www.agorapulse.com",
+  "pricing": "https://www.agorapulse.com/pricing/",
+  "domain": "agorapulse.com",
+  "captured": "November 2026",
+  "priceShort": "$79/mo per user",
+  "priceLine": "US $79 per user a month",
+  "freeShort": "Yes",
+  "freeLine": "A free plan is offered after the trial; limits are not listed on the pricing page",
+  "trialShort": "30 days",
+  "vendorBestFor": "Business teams proving social media ROI"
+ },
+ "buffer": {
+  "id": "buffer",
+  "plans": [
+   {
+    "name": "Essentials",
+    "price": "$5/month per channel",
+    "billing": "yearly",
+    "limits": "Per channel, 1 user, unlimited scheduled posts per channel"
+   },
+   {
+    "name": "Team",
+    "price": "$10/month per channel",
+    "billing": "yearly",
+    "limits": "Per channel, unlimited team members, unlimited scheduled posts per channel"
+   }
+  ],
+  "priceFrom": "$5/month per channel",
+  "priceFromBilling": "yearly",
+  "freePlan": "Up to 3 channels, 10 scheduled posts per channel, 1 user",
+  "trial": "14-day free trial",
+  "networks": [
+   "instagram",
+   "facebook",
+   "tiktok",
+   "linkedin",
+   "youtube",
+   "x",
+   "threads",
+   "pinterest",
+   "bluesky",
+   "mastodon",
+   "google business",
+   "substack"
+  ],
+  "ai": "AI Assistant on all plans to write and repurpose posts, plus AI reply suggestions and AI takeaways on results",
+  "mcp": "Connect Buffer to Claude or ChatGPT and manage your whole workflow from a conversation.",
+  "approvals": "Approval workflows on the Team plan only",
+  "inbox": "Community inbox to reply to comments on all plans",
+  "analytics": "Insights on all plans (30-day history on Free), more analytics on paid plans",
+  "reports": "Export reports as CSV, PDF or markdown on paid plans; branded reports on Team only",
+  "mobileApp": "iOS and Android apps",
+  "bestFor": "solo creators and small teams",
+  "pros": [
+   "Free plan for up to 3 channels",
+   "Pay only for the channels you use",
+   "Unlimited team members on the Team plan"
+  ],
+  "cons": [
+   "Price grows with every channel you add",
+   "Approvals and branded reports only on the Team plan"
+  ],
+  "quotes": {
+   "plans": "1 channel · $120 billed yearly (save 2 months)",
+   "priceFrom": "1 channel · $60 billed yearly (save 2 months)",
+   "freePlan": "10 scheduled posts per channel - refill anytime",
+   "trial": "Start 14-day free trial",
+   "networks": "Schedule your content to the most popular platforms including Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X and Substack.",
+   "ai": "Refine and repurpose your content using AI. Unlimited credits.",
+   "mcp": "Connect Buffer to Claude or ChatGPT and manage your whole workflow from a conversation.",
+   "approvals": "Manage who can draft and approve posts across your team.",
+   "inbox": "Reply to comments on your Instagram, Facebook, LinkedIn, Threads, Bluesky, X, TikTok, Google Business Profile, YouTube, and Mastodon posts.",
+   "analytics": "Follower growth, engagement, impressions, and post performance",
+   "reports": "Export your data as CSV, PDF, or markdown to use anywhere",
+   "mobileApp": "Manage your social media accounts from anywhere.",
+   "bestFor": "For solo creators through to multi-brand agencies."
+  },
+  "name": "Buffer",
+  "home": "https://buffer.com",
+  "pricing": "https://buffer.com/pricing",
+  "domain": "buffer.com",
+  "captured": "November 2026",
+  "priceShort": "$5/mo per channel",
+  "priceLine": "$5 a month per channel, billed yearly",
+  "freeShort": "3 channels",
+  "freeLine": "Up to 3 channels, 10 scheduled posts per channel, 1 user",
+  "trialShort": "14 days",
+  "vendorBestFor": "Solo creators through to multi-brand agencies"
+ },
+ "contentstudio": {
+  "id": "contentstudio",
+  "plans": [
+   {
+    "name": "Standard",
+    "price": "$19/month",
+    "billing": "yearly",
+    "limits": "5 social accounts, 1 workspace, 1 user, unlimited posts"
+   },
+   {
+    "name": "Standard",
+    "price": "$29 month to month",
+    "billing": "monthly",
+    "limits": "5 social accounts, 1 workspace, 1 user, unlimited posts"
+   },
+   {
+    "name": "Advanced",
+    "price": "$49/month",
+    "billing": "yearly",
+    "limits": "10 social accounts, 2 workspaces, 2 users, unlimited posts"
+   },
+   {
+    "name": "Advanced",
+    "price": "$69 month to month",
+    "billing": "monthly",
+    "limits": "10 social accounts, 2 workspaces, 2 users, unlimited posts"
+   },
+   {
+    "name": "Agency Unlimited",
+    "price": "$99/month",
+    "billing": "yearly",
+    "limits": "Starts at 25 social accounts, unlimited workspaces and users, unlimited posts"
+   },
+   {
+    "name": "Agency Unlimited",
+    "price": "$139 month to month",
+    "billing": "monthly",
+    "limits": "Starts at 25 social accounts, unlimited workspaces and users, unlimited posts"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "yearly",
+    "limits": "Custom social accounts, unlimited workspaces, users and clients"
+   },
+   {
+    "name": "API plan",
+    "price": "$15/month",
+    "billing": "yearly",
+    "limits": "Developer API plan: 1 workspace, 1 user, 15 GB media storage"
+   }
+  ],
+  "priceFrom": "$19/month",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "7-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "x",
+   "instagram",
+   "linkedin",
+   "youtube",
+   "tiktok",
+   "pinterest",
+   "bluesky",
+   "threads"
+  ],
+  "ai": "AI Studio for text, images and video; AI brand voice; AI captions and hashtags; AI replies from Advanced",
+  "mcp": "MCP integration on every plan, plus an MCP server and CLI",
+  "approvals": "Approval workflow from Advanced, with no-login client review",
+  "inbox": "Social inbox from Advanced; not on Standard",
+  "analytics": "Social media analytics on every plan; competitor analytics from Advanced",
+  "reports": "Exports and scheduled reports from Advanced; branded reports for agencies",
+  "mobileApp": "iOS and Android apps",
+  "bestFor": "content teams that curate and post",
+  "pros": [
+   "Unlimited posting on every plan",
+   "MCP and API access from the Standard plan",
+   "Agency tools: client workspaces, EasyConnect and white-label add-on"
+  ],
+  "cons": [
+   "Inbox and approvals not on Standard",
+   "No free plan, only a 7-day trial"
+  ],
+  "quotes": {
+   "plans": "Standard ($19 per month billed annually, or $29 month to month) is for solo creators and freelancers managing one brand. Advanced ($49 per month billed annually, or $69 month to month) suits growing teams that need a social inbox, approval workflows, automation and competitor analytics across multiple workspaces. Agency Unlimited ($99 per month billed annually, or $139 month to month) is built for agencies, with unlimited users and workspaces and social accounts that scale affordably.",
+   "priceFrom": "$228 billed annually",
+   "agencyAccounts": "Standard includes 5, Advanced includes 10, and Agency Unlimited starts at 25 with room to scale.",
+   "apiPlan": "$180 billed annually",
+   "trial": "7-day free trial - No credit card required.",
+   "networks": "Facebook\nX (Twitter)\nInstagram\nLinkedin\nYoutube\nTiktok\nPinterest\nBluesky\nThreads",
+   "ai": "AI Studio (text, image, video)",
+   "aiVoice": "AI brand knowledge & voice",
+   "mcp": "MCP Integration",
+   "mcpServer": "MCP Server",
+   "approvals": "Simplify social media approvals. Share posts, gather feedback in one place, and empower clients with secure, no-login access for quick review and sign-off.",
+   "approvalsPlan": "Approval workflow",
+   "inbox": "The Unified Social Inbox is not available on the Standard plan. To access this feature, you will need to upgrade to either the Advanced or Agency Unlimited plan.",
+   "analytics": "Social media analytics",
+   "analyticsCompetitor": "Competitor analytics",
+   "reports": "Exports and scheduled reports",
+   "mobileApp": "Manage social on the go using ContentStudio's mobile apps",
+   "mobileAppTable": "iOS mobile app\nAndroid mobile app",
+   "bestFor": "Whether you manage one brand or dozens, ContentStudio fits your workflow.",
+   "prosPosting": "Unlimited social posting",
+   "consFree": "No. ContentStudio doesn't offer a free forever plan or lifetime (LTD) deals. The only free option is the 7-day trial, after which a paid plan keeps your account active."
+  },
+  "name": "ContentStudio",
+  "home": "https://contentstudio.io",
+  "pricing": "https://contentstudio.io/pricing",
+  "domain": "contentstudio.io",
+  "captured": "November 2026",
+  "priceShort": "$19/mo",
+  "priceLine": "$19 a month billed yearly, or $29 billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "7 days",
+  "vendorBestFor": "Anyone managing one brand or dozens"
+ },
+ "hootsuite": {
+  "id": "hootsuite",
+  "plans": [
+   {
+    "name": "Standard",
+    "price": "$99 per user/month",
+    "billing": "yearly",
+    "limits": "Up to 10 social accounts, 1+ user seats, unlimited posts"
+   },
+   {
+    "name": "Professional",
+    "price": "$199 per user/month",
+    "billing": "yearly",
+    "limits": "Unlimited social accounts, 1+ user seats"
+   },
+   {
+    "name": "Advanced",
+    "price": "$399 per user/month",
+    "billing": "yearly",
+    "limits": "Unlimited social accounts, 1+ user seats, team approvals"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "unclear",
+    "limits": "Unlimited social accounts, custom seats"
+   }
+  ],
+  "priceFrom": "$99 per user/month",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "14-day free trial",
+  "networks": [
+   "instagram"
+  ],
+  "ai": "Wisdom AI teammate on every plan; generates posts and images",
+  "mcp": "Plus, use Hootsuite MCP connectors to manage your social media workflows right from your favorite AI tools, including ChatGPT, Claude, Copilot, and Gemini.",
+  "approvals": "Team review and approval on Advanced and up",
+  "inbox": "One inbox for messages and comments on all plans; inbox automation from Professional",
+  "analytics": "Competitor tracking and best times to post; trend forecasts from Professional",
+  "reports": "Custom performance reports from Professional",
+  "mobileApp": null,
+  "bestFor": "social media pros and brand teams",
+  "pros": [
+   "Unlimited scheduled posts on all plans",
+   "MCP connectors for ChatGPT, Claude, Copilot and Gemini",
+   "Brand and competitor monitoring from Standard"
+  ],
+  "cons": [
+   "Priced per user, from $99 a month",
+   "No free plan; approvals only on the $399 Advanced plan"
+  ],
+  "quotes": {
+   "plans": "Manage up to 10 social media accounts from one calendar.",
+   "priceFrom": "*Prices displayed in USD, based on annual billing, but do not include applicable taxes.",
+   "trial": "Free 14-day trial",
+   "networks": "automated Instagram DMs",
+   "ai": "Generate posts and images with AI",
+   "mcp": "Plus, use Hootsuite MCP connectors to manage your social media workflows right from your favorite AI tools, including ChatGPT, Claude, Copilot, and Gemini.",
+   "approvals": "Review and approve content with your team",
+   "inbox": "Respond to messages from one inbox",
+   "analytics": "Track the performance, posting frequency, and strategies of your competitors across all media types.",
+   "reports": "Build custom performance reports",
+   "bestFor": "Our AI was designed by social pros for social pros."
+  },
+  "name": "Hootsuite",
+  "home": "https://www.hootsuite.com",
+  "pricing": "https://www.hootsuite.com/plans",
+  "domain": "hootsuite.com",
+  "captured": "November 2026",
+  "priceShort": "$99/mo per user",
+  "priceLine": "$99 per user a month, billed yearly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Social media pros and brand teams"
+ },
+ "hypefury": {
+  "id": "hypefury",
+  "plans": [
+   {
+    "name": "Flexible",
+    "price": "$6/month per platform",
+    "billing": "monthly",
+    "limits": "1 platform (add more for $6 each), 1 workspace, 10 short links"
+   },
+   {
+    "name": "Creator",
+    "price": "$19/month",
+    "billing": "monthly",
+    "limits": "All 6 platforms, 2 workspaces, 20 short links"
+   },
+   {
+    "name": "Pro",
+    "price": "$39/month",
+    "billing": "monthly",
+    "limits": "All 6 platforms, up to 5 workspaces, up to 2 ghostwriters or managers, 50 short links"
+   }
+  ],
+  "priceFrom": "$6/month per platform",
+  "priceFromBilling": "monthly",
+  "freePlan": null,
+  "trial": "7-day free trial of the Creator plan, no card needed",
+  "networks": [
+   "instagram",
+   "facebook",
+   "threads",
+   "linkedin",
+   "tiktok",
+   "bluesky"
+  ],
+  "ai": "AI writes posts in your voice, suggests replies, drafts replies for social listening and writes Autoplug variations",
+  "mcp": "MCP on every plan: use Hypefury from Claude or ChatGPT",
+  "approvals": "You approve each AI-written post before it goes out",
+  "inbox": null,
+  "analytics": "Analytics for Instagram, Threads and LinkedIn; best posts ranked; short link clicks",
+  "reports": null,
+  "mobileApp": null,
+  "bestFor": "creators who sell to their audience",
+  "pros": [
+   "Unlimited Instagram auto DMs with no fee per DM",
+   "Pay only for the platforms you use on Flexible",
+   "MCP for Claude and ChatGPT on every plan"
+  ],
+  "cons": [
+   "No free plan; all 3 plans are paid",
+   "Social listening and team members only on Pro"
+  ],
+  "quotes": {
+   "plans": "Billed monthly",
+   "priceFrom": "$6/month per platform",
+   "yearly": "Pay yearly and get 12 months for the price of 10.",
+   "trial": "3 plans. Each one starts with a 7-day free trial of the Creator plan.",
+   "trialCard": "No card needed. Cancel anytime from the app.",
+   "networks": "Instagram, Facebook, Threads, LinkedIn, TikTok, Bluesky",
+   "ai": "Hypefury learns your voice, writes your posts, picks the time and publishes them. You approve, it does the rest.",
+   "aiAutoplug": "Global Autoplug with AI-written variations",
+   "mcp": "MCP: Use Hypefury from Claude or ChatGPT",
+   "approvals": "Hypefury reads your best posts and writes your first ones in your voice. Nothing goes out without your OK.",
+   "analytics": "Analytics (Instagram, Threads, LinkedIn)",
+   "bestFor": "BUILD AN AUDIENCE THAT PAYS YOU.",
+   "prosDms": "Instagram auto DMs, no fee per DM",
+   "prosFlexible": "Pay only for the platforms you use",
+   "consPro": "Invite up to 2 ghostwriters or managers"
+  },
+  "name": "Hypefury",
+  "home": "https://hypefury.com",
+  "pricing": "https://hypefury.com/pricing/",
+  "domain": "hypefury.com",
+  "captured": "November 2026",
+  "priceShort": "$6/mo per platform",
+  "priceLine": "$6 a month per platform, billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "7 days",
+  "vendorBestFor": "Creators building an audience that pays them"
+ },
+ "later": {
+  "id": "later",
+  "plans": [
+   {
+    "name": "Starter",
+    "price": "$18.75 USD/month",
+    "billing": "yearly",
+    "limits": "1 social set (8 profiles), 1 user, 30 posts per profile a month"
+   },
+   {
+    "name": "Growth",
+    "price": "$37.50 USD/month",
+    "billing": "yearly",
+    "limits": "2 social sets (16 profiles), 2 users, 180 posts per profile a month"
+   },
+   {
+    "name": "Scale",
+    "price": "$82.50 USD/month",
+    "billing": "yearly",
+    "limits": "6 social sets (48 profiles), 4 users, unlimited posts"
+   }
+  ],
+  "priceFrom": "$18.75 USD/month",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "14-day free trial",
+  "networks": [
+   "instagram",
+   "facebook",
+   "tiktok",
+   "pinterest",
+   "linkedin",
+   "youtube",
+   "threads",
+   "snapchat"
+  ],
+  "ai": "AI content tools with 5, 50 or 100 AI credits a month by plan",
+  "mcp": null,
+  "approvals": "Internal and external approvals from Growth",
+  "inbox": "Social inbox from Growth",
+  "analytics": "Platform analytics from 3 months to 2 years of data; competitive benchmarking on Scale",
+  "reports": null,
+  "mobileApp": "iOS and Android app on all plans",
+  "bestFor": "Instagram-first brands and creators",
+  "pros": [
+   "Link in Bio on every plan",
+   "Each social set covers 8 networks, Snapchat included",
+   "Mobile app on all plans"
+  ],
+  "cons": [
+   "Starter allows only 30 posts per profile a month",
+   "Approvals and social inbox start at Growth"
+  ],
+  "quotes": {
+   "plans": "1 social set (8 profiles total)",
+   "priceFrom": "Billed yearly",
+   "trial": "Start 14-day free trial",
+   "networks": "A Social Set includes one of each profile we support: Instagram, Facebook, TikTok, Pinterest, LinkedIn, YouTube, Threads and Snapchat.",
+   "ai": "AI content tools (5 AI credits /month)",
+   "approvals": "Internal & External collaboration and approvals",
+   "inbox": "Social inbox",
+   "analytics": "Platform analytics (Up to 3 months)",
+   "mobileApp": "Mobile app for iOS and Android",
+   "bestFor": "For social media managers"
+  },
+  "name": "Later",
+  "home": "https://later.com",
+  "pricing": "https://later.com/pricing/",
+  "domain": "later.com",
+  "captured": "November 2026",
+  "priceShort": "$18.75/mo",
+  "priceLine": "$18.75 a month, billed yearly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Social media managers"
+ },
+ "loomly": {
+  "id": "loomly",
+  "plans": [
+   {
+    "name": "Starter",
+    "price": "$49 Per month, billed yearly ($588 per year)",
+    "billing": "yearly",
+    "limits": "12 social accounts, 3 users, unlimited calendars, unlimited scheduling"
+   },
+   {
+    "name": "Beyond",
+    "price": "$249 Per month, billed yearly ($2,988 per year)",
+    "billing": "yearly",
+    "limits": "60 social accounts, unlimited users, unlimited calendars"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "unclear",
+    "limits": "61+ social accounts, unlimited users, unlimited calendars"
+   }
+  ],
+  "priceFrom": "$49 Per month, billed yearly ($588 per year)",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "7-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "instagram",
+   "linkedin",
+   "tiktok",
+   "youtube",
+   "pinterest",
+   "google business",
+   "threads"
+  ],
+  "ai": "AI Assistant chat, post generation, AI captions, reply with AI and AI analytics, with a monthly AI usage limit",
+  "mcp": null,
+  "approvals": "Approval workflows and roles on Starter; custom roles and workflows on Beyond",
+  "inbox": "Reply to interactions, saved replies and assign conversations",
+  "analytics": "Post analytics dashboard and advanced analytics",
+  "reports": "Export reports and schedule reports",
+  "mobileApp": "iOS and Android apps",
+  "bestFor": "marketing teams that need approvals",
+  "pros": [
+   "Approval workflows and roles start on the lowest plan",
+   "AI helps write posts, captions and replies",
+   "iOS and Android apps"
+  ],
+  "cons": [
+   "Yearly plans cannot be ended early",
+   "Starter allows only 3 users and 2 social listening searches a month"
+  ],
+  "quotes": {
+   "plans": "12 social accounts | 3 users | Per month, billed yearly ($588 per year) | 60 social accounts | Per month, billed yearly ($2,988 per year) | 61+ social accounts",
+   "priceFrom": "Per month, billed yearly ($588 per year)",
+   "trial": "No credit card needed. You'll have 7 days to explore everything Loomly can do, at no cost.",
+   "networks": "Facebook\nInstagram\nLinkedIn\nTikTok\nYouTube\nPinterest\nGoogle Business Profile\nThreads",
+   "ai": "AI Assistant chat | Post generation | Reply with AI | AI analytics | AI captions | Limited monthly usage",
+   "approvals": "Approval workflows and roles | Custom roles & workflows",
+   "inbox": "Replying to interactions\nSaved replies\nAssign conversations",
+   "analytics": "Post analytics dashboard | Advanced analytics",
+   "reports": "Export reports | Schedule reports",
+   "mobileApp": "iOS and Android apps",
+   "bestFor": "a workflow built for modern marketing teams",
+   "cons": "Please note that you will not be able to terminate early with our yearly plans. | Social listening\n2 per month"
+  },
+  "name": "Loomly",
+  "home": "https://www.loomly.com",
+  "pricing": "https://www.loomly.com/pricing",
+  "domain": "loomly.com",
+  "captured": "November 2026",
+  "priceShort": "$49/mo",
+  "priceLine": "$49 a month, billed yearly ($588 a year)",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "7 days",
+  "vendorBestFor": "Modern marketing teams"
+ },
+ "metricool": {
+  "id": "metricool",
+  "plans": [
+   {
+    "name": "Starter",
+    "price": "From $20/month",
+    "billing": "yearly",
+    "limits": "Up to 5 brands for $20/month or 10 brands for $36/month, unlimited posts"
+   },
+   {
+    "name": "Starter (monthly)",
+    "price": "From $25/month",
+    "billing": "monthly",
+    "limits": "Up to 5 brands for $25/month or 10 brands for $45/month, unlimited posts"
+   },
+   {
+    "name": "Advanced",
+    "price": "From $53/month",
+    "billing": "yearly",
+    "limits": "15 brands for $53/month, up to 50 brands for $159/month, team and roles"
+   },
+   {
+    "name": "Advanced (monthly)",
+    "price": "From $67/month",
+    "billing": "monthly",
+    "limits": "15 brands for $67/month, up to 50 brands for $210/month, team and roles"
+   },
+   {
+    "name": "Custom",
+    "price": "Let's talk!",
+    "billing": "unclear",
+    "limits": "Custom number of brands, white label"
+   }
+  ],
+  "priceFrom": "From $20/month",
+  "priceFromBilling": "yearly",
+  "freePlan": "1 brand, 20 posts a month, 30 days of analytics; no LinkedIn or X",
+  "trial": null,
+  "networks": [
+   "facebook",
+   "instagram",
+   "threads",
+   "x",
+   "bluesky",
+   "pinterest",
+   "tiktok",
+   "youtube",
+   "twitch",
+   "linkedin",
+   "google business"
+  ],
+  "ai": "AI social media assistant with 5 to 35 credits per brand a month; AI alt text",
+  "mcp": "Metricool MCP",
+  "approvals": "Post approval system on Advanced",
+  "inbox": "Inbox for messages and comments; X needs an add-on",
+  "analytics": "30 days on Free, unlimited history on paid plans; competitor analysis",
+  "reports": "PDF and PPT reports from Starter; custom report templates on Advanced",
+  "mobileApp": "Apps on Google Play and the Apple Store",
+  "bestFor": "social media managers who live in analytics",
+  "pros": [
+   "Free plan for 1 brand",
+   "Priced by brand, not per network or user",
+   "Built-in MCP plus Claude and ChatGPT connectors"
+  ],
+  "cons": [
+   "X needs a $10/month add-on per account",
+   "Approvals and API only on Advanced"
+  ],
+  "quotes": {
+   "plans": "Up to 5 brands for $20/month",
+   "priceFrom": "Annual (save up to 24%)",
+   "freePlan": "Schedule up to 20 posts per month",
+   "networks": "No. Metricool doesn’t charge per network, so you can connect as many as you like. The only exceptions are X, which needs an add-on, and LinkedIn, which is only available on Starter and Advanced plans.",
+   "ai": "Use the AI assistant and say goodbye to blank pages.",
+   "mcp": "Metricool MCP",
+   "approvals": "Post approval system",
+   "inbox": "All your messages and comments, neatly in one place.",
+   "analytics": "Analytics with unlimited history",
+   "reports": "PDF and PPT reports",
+   "mobileApp": "Download our app",
+   "bestFor": "Every week, thousands of Social Media Managers get 12 hours of their life back"
+  },
+  "name": "Metricool",
+  "home": "https://metricool.com",
+  "pricing": "https://metricool.com/pricing/",
+  "domain": "metricool.com",
+  "captured": "November 2026",
+  "priceShort": "$20/mo",
+  "priceLine": "From $20 a month billed yearly, or $25 billed monthly",
+  "freeShort": "1 brand",
+  "freeLine": "1 brand, 20 posts a month, 30 days of analytics, no LinkedIn or X",
+  "trialShort": null,
+  "vendorBestFor": "Social media managers"
+ },
+ "pallyy": {
+  "id": "pallyy",
+  "plans": [
+   {
+    "name": "Free",
+    "price": "Free",
+    "billing": "unclear",
+    "limits": "1 social set, 1 user, 15 scheduled posts a month, image posts only"
+   },
+   {
+    "name": "Pro",
+    "price": "$25 /mo",
+    "billing": "monthly",
+    "limits": "1 social set (+$10/mo per extra set), 1 user, unlimited posts"
+   },
+   {
+    "name": "Agency",
+    "price": "$99 /mo",
+    "billing": "monthly",
+    "limits": "10 social sets, 3 users, unlimited posts; $79 per month billed yearly"
+   },
+   {
+    "name": "Scale",
+    "price": "$199 /mo",
+    "billing": "monthly",
+    "limits": "30 social sets, 10 users, unlimited posts; $165 per month billed yearly"
+   }
+  ],
+  "priceFrom": "$25 /mo",
+  "priceFromBilling": "monthly",
+  "freePlan": "1 social set, 15 scheduled posts a month, image posts only, no card needed",
+  "trial": "Free trial offered; length not stated",
+  "networks": [
+   "instagram",
+   "facebook",
+   "x",
+   "linkedin",
+   "google business",
+   "pinterest",
+   "tiktok",
+   "youtube",
+   "threads",
+   "bluesky"
+  ],
+  "ai": "AI captions on paid plans",
+  "mcp": "Schedule posts from ChatGPT and Claude",
+  "approvals": "Client and team approvals; clients approve from a shared link with no account",
+  "inbox": "Social inbox on paid plans for DMs, comments and reviews",
+  "analytics": "Instagram, Facebook and LinkedIn analytics, kept 5 years on paid plans",
+  "reports": "Custom per-client reports with PDF export on Agency and Scale",
+  "mobileApp": null,
+  "bestFor": "agencies that bill per client",
+  "pros": [
+   "Priced per client, not per channel",
+   "Clients approve posts from a link without an account",
+   "Free plan to start"
+  ],
+  "cons": [
+   "Pro has 1 user and no extra users",
+   "Custom reports only on Agency and Scale"
+  ],
+  "quotes": {
+   "plans": "1 Social Set\n+$10/mo per extra set\nUnlimited Posts\n1 User | 10 Social Sets\n+$10/mo per extra set\nUnlimited Posts\n3 Users | 30 Social Sets\nMore sets on custom pricing\nUnlimited Posts\n10 Users | $79 per month billed yearly. | $165 per month billed yearly.",
+   "priceFrom": "$25 /mo",
+   "freePlan": "Free plan. One social set, 15 scheduled posts a month, image posts only. No card needed.",
+   "trial": "Start free trial",
+   "networks": "Instagram\nFacebook\nX (Twitter)\nLinkedIn\nGoogle My Business\nPinterest\nTikTok\nYouTube\nThreads\nBluesky",
+   "ai": "AI captions",
+   "mcp": "Schedule posts from ChatGPT and Claude",
+   "approvals": "Clients preview, comment, and approve posts from a shared link. No account needed.",
+   "inbox": "Social inbox | Instagram DMs | Facebook reviews | Google reviews",
+   "analytics": "Analytics retention\n\t30 days\t5 years\t5 years\t5 years | Instagram analytics | Facebook analytics | LinkedIn analytics",
+   "reports": "Build per-client reports from their own analytics and export them as PDFs at month end.",
+   "bestFor": "Pallyy Pricing: Per-Client Plans for Agencies",
+   "pros": "pay per client, not per channel",
+   "cons": "Extra users not available | Custom reports"
+  },
+  "name": "Pallyy",
+  "home": "https://pallyy.com",
+  "pricing": "https://pallyy.com/pricing",
+  "domain": "pallyy.com",
+  "captured": "November 2026",
+  "priceShort": "$25/mo",
+  "priceLine": "$25 a month",
+  "freeShort": "1 social set",
+  "freeLine": "1 social set, 15 scheduled posts a month, image posts only",
+  "trialShort": null,
+  "vendorBestFor": "Agencies managing many clients"
+ },
+ "planable": {
+  "id": "planable",
+  "plans": [
+   {
+    "name": "Basic",
+    "price": "$33 per workspace per month",
+    "billing": "unclear",
+    "limits": "60 posts per workspace a month, unlimited users, 4 social pages per workspace"
+   },
+   {
+    "name": "Pro",
+    "price": "$49 per workspace per month",
+    "billing": "unclear",
+    "limits": "150 posts per workspace a month, unlimited users, 10 social pages per workspace"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom pricing",
+    "billing": "unclear",
+    "limits": "Unlimited posts, 50 social pages per workspace"
+   }
+  ],
+  "priceFrom": "$33 per workspace per month",
+  "priceFromBilling": "unclear",
+  "freePlan": "First 50 posts are free, with no time limit and no credit card",
+  "trial": null,
+  "networks": [
+   "x"
+  ],
+  "ai": "AI post rewrite, AI post generate, and AI replies in the inbox add-on",
+  "mcp": "MCP Connector",
+  "approvals": "2 approval types on Basic, 3 on Pro, multi-level on Enterprise",
+  "inbox": "Paid add-on for comments and DMs on Basic and Pro; included on Enterprise",
+  "analytics": "Paid add-on on Basic and Pro; included on Enterprise",
+  "reports": "Custom reports for stakeholders, part of the analytics add-on",
+  "mobileApp": null,
+  "bestFor": "teams that review posts together",
+  "pros": [
+   "Unlimited users on every plan",
+   "Approval workflows with suggestions and annotations",
+   "MCP connector on every plan"
+  ],
+  "cons": [
+   "Priced per workspace, with post caps per workspace",
+   "Inbox, analytics and listening cost extra below Enterprise"
+  ],
+  "quotes": {
+   "plans": "60 posts/ workspace/ month | Unlimited users | 4 social pages/ workspace | 150 posts/ workspace/ month | 10 social pages/ workspace | Custom pricing | 50/workspace",
+   "priceFrom": "$33\nper workspace\nper month",
+   "freePlan": "The first 50 posts are free.\nNo time limit & no credit card required.",
+   "networks": "Publish tweets",
+   "ai": "AI post rewrite | AI post generate | AI generated replies",
+   "mcp": "MCP Connector",
+   "approvals": "2 types of approval | 3 types of approval | Multi-level approvals",
+   "inbox": "Social inbox\n\n($7.5/workspace/month) | Social inbox add-on included | Comments & DMs inbox",
+   "analytics": "Analytics\n\n($12/workspace/month) | Analytics add-on included",
+   "reports": "Check your social analytics & create custom reports for stakeholders",
+   "bestFor": "Plan social like a team",
+   "cons": "per workspace | Social listening\n\n($82.5/workspace/month)"
+  },
+  "name": "Planable",
+  "home": "https://planable.io",
+  "pricing": "https://planable.io/pricing/",
+  "domain": "planable.io",
+  "captured": "November 2026",
+  "priceShort": "$33/mo per workspace",
+  "priceLine": "$33 per workspace a month",
+  "freeShort": "50 posts",
+  "freeLine": "Your first 50 posts are free, with no time limit",
+  "trialShort": null,
+  "vendorBestFor": "Marketing teams that plan social together"
+ },
+ "postiz": {
+  "id": "postiz",
+  "plans": [
+   {
+    "name": "Standard",
+    "price": "$29/mo",
+    "billing": "unclear",
+    "limits": "5 channels, unlimited posts, no team support"
+   },
+   {
+    "name": "Team",
+    "price": "$39/mo",
+    "billing": "unclear",
+    "limits": "10 channels, unlimited posts, unlimited team members"
+   },
+   {
+    "name": "Pro",
+    "price": "$49/mo",
+    "billing": "unclear",
+    "limits": "30 channels, unlimited posts, unlimited team members"
+   },
+   {
+    "name": "Ultimate",
+    "price": "$99/mo",
+    "billing": "unclear",
+    "limits": "100 channels, unlimited posts, unlimited team members"
+   }
+  ],
+  "priceFrom": "$29/mo",
+  "priceFromBilling": "unclear",
+  "freePlan": null,
+  "trial": "7-day free trial",
+  "networks": [
+   "x",
+   "linkedin",
+   "tiktok",
+   "bluesky",
+   "telegram"
+  ],
+  "ai": "AI agents plan, write and schedule posts; AI copilot, AI images and videos, AI video clipping, Smart Agent",
+  "mcp": "Every plan includes the MCP server, CLI and API for Claude, ChatGPT or any agent",
+  "approvals": null,
+  "inbox": null,
+  "analytics": "Shows which posts and channels perform best",
+  "reports": null,
+  "mobileApp": null,
+  "bestFor": "developers and AI-first marketers",
+  "pros": [
+   "MCP server, CLI and API on every plan",
+   "Unlimited posts on every plan",
+   "Open-source option as well as hosted cloud"
+  ],
+  "cons": [
+   "Standard plan has no team support",
+   "AI images not included on the Standard plan"
+  ],
+  "quotes": {
+   "plans": "Unlimited posts per month",
+   "priceFrom": "Agentic Scheduling from $29/month",
+   "billing": "Save with yearly billing!",
+   "trial": "Start with a 7-day free trial.",
+   "networks": "Connect the channels you already use, from X and LinkedIn to TikTok, Bluesky, and Telegram, and manage them all from one calendar.",
+   "ai": "Postiz is the agentic social media scheduler: AI agents plan, generate and schedule posts to 30+ networks, and you review everything in one visual calendar.",
+   "mcp": "Every plan includes the MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule for you.",
+   "analytics": "See which posts and channels perform best, then double down on what works.",
+   "bestFor": "AI-first marketers",
+   "bestForDevelopers": "Build your own posting app on top of Postiz. With OAuth2, an SDK, and a public API, your users connect once and publish everywhere.",
+   "bestForAutomation": "Connect Postiz to n8n or Make.com and let your workflows draft, approve, and publish posts across all 30+ channels, hands-free.",
+   "prosOpenSource": "Agentic social media scheduler (cloud / open-source)",
+   "consTeam": "No team support",
+   "consAiImages": "100 AI images per month"
+  },
+  "name": "Postiz",
+  "home": "https://postiz.com",
+  "pricing": "https://postiz.com/pricing",
+  "domain": "postiz.com",
+  "captured": "November 2026",
+  "priceShort": "$29/mo",
+  "priceLine": "From $29 a month",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "7 days",
+  "vendorBestFor": "AI-first marketers, developers and automation teams"
+ },
+ "publer": {
+  "id": "publer",
+  "plans": [
+   {
+    "name": "Free",
+    "price": "$0.00",
+    "billing": "unclear",
+    "limits": "1 user, 1 workspace, 3 social accounts (no X), 10 scheduled posts per account"
+   },
+   {
+    "name": "Professional",
+    "price": "$5.00 / month",
+    "billing": "monthly",
+    "limits": "Unlimited scheduling and workspaces; price depends on social accounts and members picked"
+   },
+   {
+    "name": "Professional",
+    "price": "$4.00 / month billed yearly",
+    "billing": "yearly",
+    "limits": "Same as Professional monthly"
+   },
+   {
+    "name": "Business",
+    "price": "$10.00 / month",
+    "billing": "monthly",
+    "limits": "All of Professional plus AI, analytics, API and MCP; price depends on accounts and members"
+   },
+   {
+    "name": "Business",
+    "price": "$8.00 / month billed yearly",
+    "billing": "yearly",
+    "limits": "Same as Business monthly"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "yearly",
+    "limits": "All of Business plus volume discounts and 1:1 onboarding"
+   }
+  ],
+  "priceFrom": "$5.00 / month",
+  "priceFromBilling": "monthly",
+  "freePlan": "1 user, 1 workspace, 3 social accounts (no X), 10 scheduled posts per account, 25 drafts, 24-hour post history",
+  "trial": "7-day free trial on Professional, 14-day free trial on Business",
+  "networks": [
+   "facebook",
+   "instagram",
+   "tiktok",
+   "x",
+   "threads",
+   "linkedin",
+   "pinterest",
+   "mastodon",
+   "google business",
+   "youtube",
+   "telegram",
+   "bluesky",
+   "wordpress"
+  ],
+  "ai": "AI Assist writes posts, makes images and helps reply to comments; unlimited AI prompts on Business",
+  "mcp": "Publer MCP: Connect AI assistants to Publer to create & schedule content, manage your posts, and access analytics insights through MCP.",
+  "approvals": "Approval workflows for your team and outside clients",
+  "inbox": null,
+  "analytics": "Analytics insights, best times to post and competitor analysis on Business",
+  "reports": "Analytics insights and reports on Business",
+  "mobileApp": "Mobile app to schedule posts from your phone",
+  "bestFor": "creators on a tight budget",
+  "pros": [
+   "Free forever plan",
+   "Low starting price with a cheaper yearly option",
+   "Supports many networks, including Telegram, Bluesky and WordPress"
+  ],
+  "cons": [
+   "Free plan cannot connect X accounts",
+   "Analytics, unlimited AI and MCP need the Business plan"
+  ],
+  "quotes": {
+   "plans": "Free forever\n$0.00 | $5.00\n/ month\n$4.00\n/ month\nbilled yearly | $10.00\n/ month\n$8.00\n/ month\nbilled yearly | Billed yearly\nCustom",
+   "priceFrom": "$5.00\n/ month",
+   "freePlan": "3 social accounts (except 𝕏) | 10 scheduled posts per account | 25 saved drafts | 24-hour post history",
+   "trial": "Start a free 7-day trial | Start a free 14-day trial",
+   "networks": "You can use Publer for the Facebook Profiles, Pages, Locations & Groups, Instagram Business & Creator accounts, Threads accounts, TikTok Personal & Business accounts, Twitter / X accounts, Mastodon accounts from any server, Bluesky accounts, LinkedIn Profiles & Pages, Pinterest Personal & Business accounts, Google Business Profiles, YouTube channels, WordPress sites and Telegram Groups & Channels that you manage.",
+   "ai": "Generate content with ease, complete text instantly, create stunning photos, and respond to comments like a pro with Publer's AI Assist tool. | Unlimited AI prompts",
+   "mcp": "Connect AI assistants to Publer to create & schedule content, manage your posts, and access analytics insights through MCP.",
+   "approvals": "Create approval workflows with real-time notifications and notes, both internally within your team and/or for your external clients.",
+   "analytics": "Analytics insights & reports | Best times to post | Competitor analysis",
+   "reports": "Analytics insights & reports",
+   "mobileApp": "Schedule all your social media posts from the comfort of your phone",
+   "bestFor": "Best for solopreneurs and creators | Best for SME and agencies",
+   "cons": "You cannot connect Twitter / X accounts in the free version. | Access to Publer API & MCP"
+  },
+  "name": "Publer",
+  "home": "https://publer.com",
+  "pricing": "https://publer.com/plans",
+  "domain": "publer.com",
+  "captured": "November 2026",
+  "priceShort": "$5/mo",
+  "priceLine": "From $5 a month",
+  "freeShort": "3 accounts",
+  "freeLine": "1 user, 3 social accounts (no X), 10 scheduled posts per account",
+  "trialShort": "7 to 14 days",
+  "vendorBestFor": "Creators, small businesses and agencies"
+ },
+ "sendible": {
+  "id": "sendible",
+  "plans": [
+   {
+    "name": "Core",
+    "price": "$35/mo",
+    "billing": "monthly",
+    "limits": "1 workspace, 6 social profiles, unlimited users, 100 sends a day"
+   },
+   {
+    "name": "Plus",
+    "price": "$99/mo",
+    "billing": "monthly",
+    "limits": "3 workspaces, 18 social profiles, unlimited users, 200 sends a day"
+   },
+   {
+    "name": "Premium",
+    "price": "$199/mo",
+    "billing": "monthly",
+    "limits": "7 workspaces, 42 social profiles, unlimited users, 300 sends a day"
+   },
+   {
+    "name": "Elite",
+    "price": "$299/mo",
+    "billing": "monthly",
+    "limits": "15 workspaces, 90 social profiles, unlimited users, 500 sends a day"
+   },
+   {
+    "name": "Enterprise",
+    "price": "$750/mo",
+    "billing": "monthly",
+    "limits": "50 workspaces, 300 social profiles, unlimited users, 500 sends a day"
+   }
+  ],
+  "priceFrom": "$35/mo",
+  "priceFromBilling": "monthly",
+  "freePlan": null,
+  "trial": "14-day free trial, no card required",
+  "networks": [
+   "instagram",
+   "facebook",
+   "x",
+   "tiktok",
+   "linkedin",
+   "youtube",
+   "google business",
+   "threads",
+   "bluesky"
+  ],
+  "ai": "AI Assist with unlimited AI credits on all plans",
+  "mcp": null,
+  "approvals": "Assignment and approvals from Plus",
+  "inbox": "Monitor and reply to comments on all plans; no Instagram DMs",
+  "analytics": "Insights on best posts and quick reports including Google Analytics",
+  "reports": "Standard reports on all plans; custom branded reports from Premium",
+  "mobileApp": null,
+  "bestFor": "agencies that want unlimited users",
+  "pros": [
+   "Unlimited users on every plan",
+   "Unlimited scheduling and AI credits",
+   "White label add-on on Elite and Enterprise"
+  ],
+  "cons": [
+   "Cannot answer Instagram direct messages",
+   "Branded reports and content libraries start at $199/mo"
+  ],
+  "quotes": {
+   "plans": "Unlimited users on all plans.",
+   "priceFrom": "Sendible offers 5 flexible pricing plans billed monthly (with a 15% discount available on annual billing). Unlimited users are included on all plans:",
+   "trial": "14-day free trial",
+   "networks": "Instagram\n\nFacebook\n\nTwitter\n\nTikTok\n\nLinkedin\n\nYouTube\n\nGoogle Business\n\nThreads\n\nBluesky",
+   "ai": "Unlimited AI credits",
+   "approvals": "Assignment & approvals",
+   "inbox": "Unfortunately, we don't support answering direct messages on Instagram at the moment.",
+   "analytics": "Quick reports including GA",
+   "reports": "Custom branded reports",
+   "bestFor": "Social media management for agencies and multi-location teams."
+  },
+  "name": "Sendible",
+  "home": "https://www.sendible.com",
+  "pricing": "https://www.sendible.com/pricing",
+  "domain": "sendible.com",
+  "captured": "November 2026",
+  "priceShort": "$35/mo",
+  "priceLine": "$35 a month billed monthly, 15% off yearly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Agencies and multi-location teams"
+ },
+ "socialbee": {
+  "id": "socialbee",
+  "plans": [
+   {
+    "name": "Bootstrap",
+    "price": "$24.20/month",
+    "billing": "yearly",
+    "limits": "5 social profiles, 1 user, 1 workspace"
+   },
+   {
+    "name": "Bootstrap (monthly)",
+    "price": "$29/month",
+    "billing": "monthly",
+    "limits": "5 social profiles, 1 user, 1 workspace"
+   },
+   {
+    "name": "Accelerate",
+    "price": "$40.80/month",
+    "billing": "yearly",
+    "limits": "10 social profiles, 1 user, 1 workspace"
+   },
+   {
+    "name": "Accelerate (monthly)",
+    "price": "$49/month",
+    "billing": "monthly",
+    "limits": "10 social profiles, 1 user, 1 workspace"
+   },
+   {
+    "name": "Pro",
+    "price": "$82.50/month",
+    "billing": "yearly",
+    "limits": "25 social profiles, 3 users per workspace, 5 workspaces"
+   },
+   {
+    "name": "Pro (monthly)",
+    "price": "$99/month",
+    "billing": "monthly",
+    "limits": "25 social profiles, 3 users per workspace, 5 workspaces"
+   }
+  ],
+  "priceFrom": "$24.20/month",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "14-day free trial, no credit card",
+  "networks": [
+   "instagram"
+  ],
+  "ai": "Copilot AI builds a content plan and posts; unlimited AI content generation on all plans",
+  "mcp": null,
+  "approvals": "Post approval system on Accelerate and Pro",
+  "inbox": "Manage comments, mentions and DMs in one place",
+  "analytics": "3 months of data on Bootstrap, 2 years on higher plans",
+  "reports": "Export branded analytics reports on Pro",
+  "mobileApp": null,
+  "bestFor": "evergreen content and recycling",
+  "pros": [
+   "Unlimited AI content generation on all plans",
+   "Content categories and recycling for evergreen posts",
+   "30-day money-back guarantee"
+  ],
+  "cons": [
+   "Only 1 user on Bootstrap and Accelerate",
+   "No free plan; report exports only on Pro"
+  ],
+  "quotes": {
+   "plans": "$29/ month, billed monthly",
+   "priceFrom": "$24.20",
+   "trial": "14 days free. No card required.",
+   "networks": "Instagram grid preview",
+   "ai": "Unlimited AI content generation",
+   "approvals": "Post approval system",
+   "inbox": "Manage comments, mentions, and DMs",
+   "analytics": "Analytics up to 3 months of data",
+   "reports": "Export analytics reports",
+   "bestFor": "Our social media management pricing packages are built around how you actually work; solo, in a small team, or running an agency."
+  },
+  "name": "SocialBee",
+  "home": "https://socialbee.com",
+  "pricing": "https://socialbee.com/pricing/",
+  "domain": "socialbee.com",
+  "captured": "November 2026",
+  "priceShort": "$24.20/mo",
+  "priceLine": "$24.20 a month billed yearly, or $29 billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Solo users, small teams and agencies"
+ },
+ "socialpilot": {
+  "id": "socialpilot",
+  "plans": [
+   {
+    "name": "Essentials",
+    "price": "$25.50/mo",
+    "billing": "yearly",
+    "limits": "7 social accounts, 1 user, 500 AI credits"
+   },
+   {
+    "name": "Standard",
+    "price": "$42.50/mo",
+    "billing": "yearly",
+    "limits": "15 social accounts, 3 users, 1000 AI credits"
+   },
+   {
+    "name": "Premium",
+    "price": "$85/mo",
+    "billing": "yearly",
+    "limits": "25 social accounts, 6 users, 5000 AI credits"
+   },
+   {
+    "name": "Ultimate",
+    "price": "$170/mo",
+    "billing": "yearly",
+    "limits": "50 social accounts, unlimited users, unlimited AI credits"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Contact Sales",
+    "billing": "unclear",
+    "limits": "Custom accounts, unlimited users, API access, SSO"
+   }
+  ],
+  "priceFrom": "$25.50/mo",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "14-day free trial, no credit card",
+  "networks": [
+   "instagram",
+   "linkedin"
+  ],
+  "ai": "AI Pilot writes posts, with AI credits per plan (500 to unlimited)",
+  "mcp": "MCP Server Integration",
+  "approvals": "Manager approval on Standard; client approval on Premium",
+  "inbox": "Social media inbox from Standard up",
+  "analytics": "Analytics from Standard; advanced analytics on Premium",
+  "reports": "PDF reports; white label reports from Premium",
+  "mobileApp": "Mobile app listed in plan features",
+  "bestFor": "agencies on a budget",
+  "pros": [
+   "Many social accounts for the price (7 on the lowest plan)",
+   "Client approvals and white label reports for agencies",
+   "Bulk scheduling of 500+ posts at once"
+  ],
+  "cons": [
+   "Lowest plan has no inbox or analytics",
+   "Shown prices are billed yearly; extra accounts cost $4 per month"
+  ],
+  "quotes": {
+   "plans": "7 Social Media Accounts\n1 User\n500 AI Credits | 15 Social Media Accounts\n3 Users\n1000 AI Credits | 25 Social Media Accounts\n6 Users\n5000 AI Credits | 50 Social Media Accounts\nUnlimited Users\nUnlimited AI Credits | $85\n/mo | $170\n/mo | Billed annually (Save 15%)",
+   "priceFrom": "$25\n.50/mo | Billed annually (Save 15%)",
+   "trial": "Start Your Free 14-Day Trial Now | No credit card required",
+   "networks": "LinkedIn Document Publishing | Instagram Image Tagging",
+   "ai": "Breakthrough the creative barriers and generate engaging content. | AI Credits\t500\t1000\t5000\tUnlimited",
+   "mcp": "MCP Server Integration",
+   "approvals": "Manager Approval | Client Approval",
+   "inbox": "Social Media Inbox",
+   "analytics": "Analytics\nTeam Collaboration | Advanced Analytics",
+   "reports": "PDF Reports | White Label Reports",
+   "mobileApp": "Mobile App",
+   "bestFor": "for Scaling Marketing Agencies and Brands",
+   "pros": "Manage the social calendar with 500+ posts scheduled at once.",
+   "cons": "Extra Accounts – $4 per month | Billed annually (Save 15%)"
+  },
+  "name": "SocialPilot",
+  "home": "https://www.socialpilot.co",
+  "pricing": "https://www.socialpilot.co/plans",
+  "domain": "socialpilot.co",
+  "captured": "November 2026",
+  "priceShort": "$25.50/mo",
+  "priceLine": "$25.50 a month, billed yearly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Scaling marketing agencies and brands"
+ },
+ "sprout": {
+  "id": "sprout",
+  "plans": [
+   {
+    "name": "Essentials",
+    "price": "$79 per seat/month",
+    "billing": "yearly",
+    "limits": "5 social profiles, priced per seat"
+   },
+   {
+    "name": "Essentials (billed monthly)",
+    "price": "$99 per seat/month",
+    "billing": "monthly",
+    "limits": "5 social profiles, priced per seat"
+   },
+   {
+    "name": "Standard",
+    "price": "$199 per seat/month",
+    "billing": "unclear",
+    "limits": "5 social profiles, priced per seat"
+   },
+   {
+    "name": "Professional",
+    "price": "$299 per seat/month",
+    "billing": "unclear",
+    "limits": "Unlimited social profiles, priced per seat"
+   },
+   {
+    "name": "Advanced",
+    "price": "$399 per seat/month",
+    "billing": "unclear",
+    "limits": "Unlimited social profiles, priced per seat"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "unclear",
+    "limits": "Custom plan"
+   }
+  ],
+  "priceFrom": "$79 per seat/month",
+  "priceFromBilling": "yearly",
+  "freePlan": null,
+  "trial": "30-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "x",
+   "instagram",
+   "linkedin",
+   "threads",
+   "pinterest",
+   "tiktok"
+  ],
+  "ai": "Trellis AI agent on all plans (100 credits per seat a month); drafts replies and post variations",
+  "mcp": null,
+  "approvals": null,
+  "inbox": "Consolidated inbox on Standard and up",
+  "analytics": "Competitor, tag and paid insights from Professional; Premium Analytics is an add-on",
+  "reports": "Profile and post-level reporting; team and customer care reports on Advanced",
+  "mobileApp": "iOS and Android app on all plans",
+  "bestFor": "larger teams with a big budget",
+  "pros": [
+   "30-day free trial with no credit card",
+   "Mobile app on every plan",
+   "Trellis AI agent included on all plans"
+  ],
+  "cons": [
+   "Priced per seat, from $79 to $399 a month",
+   "No free plan; unlimited profiles start at $299 Professional"
+  ],
+  "quotes": {
+   "plans": "$99 per seat/month billed monthly.",
+   "priceFrom": "$79per seat/month",
+   "trial": "Try Sprout free for 30 days",
+   "networks": "Integrations\nFacebook\nX\nInstagram\nLinkedIn\nThreads\nPinterest\nTikTok",
+   "ai": "Drafted replies and post variations",
+   "inbox": "Consolidated inbox and collaboration tools",
+   "analytics": "Extensive competitor, tag and paid insights",
+   "reports": "Track performance with profile and post-level reporting",
+   "mobileApp": "Mobile app for iOS and Android",
+   "bestFor": "Perfect for small teams managing a few profiles across social networks"
+  },
+  "name": "Sprout Social",
+  "home": "https://sproutsocial.com",
+  "pricing": "https://sproutsocial.com/pricing/",
+  "domain": "sproutsocial.com",
+  "captured": "November 2026",
+  "priceShort": "$79/mo per seat",
+  "priceLine": "$79 per seat a month billed yearly, or $99 billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "30 days",
+  "vendorBestFor": "Small teams up to large enterprises"
+ },
+ "tailwind": {
+  "id": "tailwind",
+  "plans": [
+   {
+    "name": "Pin Scheduling & Creation",
+    "price": "$17.99/mo",
+    "billing": "unclear",
+    "limits": "Per Pinterest account, 300 Tailwind credits/mo; $29.99/mo also shown"
+   },
+   {
+    "name": "Pinterest SEO",
+    "price": "$11.99/mo",
+    "billing": "unclear",
+    "limits": "Per Pinterest account, 50 credits/mo, no Pin scheduling; $14.99/mo also shown"
+   },
+   {
+    "name": "Pinterest Engagement",
+    "price": "$11.99/mo",
+    "billing": "unclear",
+    "limits": "Per Pinterest account, 50 credits/mo, no Pin scheduling; $14.99/mo also shown"
+   },
+   {
+    "name": "Bundle (all three)",
+    "price": "$29.98/mo",
+    "billing": "unclear",
+    "limits": "Scheduling, SEO and Engagement for one Pinterest account"
+   }
+  ],
+  "priceFrom": "$11.99/mo",
+  "priceFromBilling": "unclear",
+  "freePlan": "Free to start with no credit card; free limits not listed",
+  "trial": null,
+  "networks": [
+   "pinterest"
+  ],
+  "ai": "Creates and writes Pins for you; SmartPin makes new Pins with titles and descriptions each week",
+  "mcp": "Tailwind MCP is listed under Resources",
+  "approvals": null,
+  "inbox": null,
+  "analytics": "Pinterest keyword research and rank tracking (Pinterest SEO product)",
+  "reports": null,
+  "mobileApp": null,
+  "bestFor": "growing Pinterest traffic",
+  "pros": [
+   "Pinterest's longest standing developer partner, since 2012",
+   "Makes and schedules new Pins automatically each week",
+   "Buy only the Pinterest tools you need"
+  ],
+  "cons": [
+   "Pinterest only",
+   "Priced per Pinterest account, and scheduling is sold apart from SEO and engagement"
+  ],
+  "quotes": {
+   "plans": "All plans are per Pinterest account. Need more credits? Buy 100 for $10 anytime, or turn on auto-refill.",
+   "billingToggle": "Save 40%",
+   "priceFrom": "$11.99",
+   "scheduling": "$17.99",
+   "freePlan": "Get started for free. No credit card required.",
+   "networks": "Grow your Pinterest traffic with Tailwind",
+   "ai": "SmartPin turns those keywords into fresh, ready-to-publish Pins automatically every week.",
+   "aiPlan": "Creates and writes Pins for you",
+   "mcp": "Tailwind MCP",
+   "analytics": "Find the Pinterest keywords your audience is actually searching, track rankings, and see what each Pin ranks for.",
+   "bestFor": "What creators and businesses say about Tailwind",
+   "prosPartner": "Pinterest's longest standing developer partner — since 2012",
+   "prosPick": "Pick only the Pinterest tools you need, or save with the bundle.",
+   "consNoScheduling": "Doesn't include Pin scheduling."
+  },
+  "name": "Tailwind",
+  "home": "https://www.tailwindapp.com",
+  "pricing": "https://www.tailwindapp.com/pricing",
+  "domain": "tailwindapp.com",
+  "captured": "November 2026",
+  "priceShort": "$11.99/mo",
+  "priceLine": "From $11.99 a month; Pin scheduling from $17.99",
+  "freeShort": "Yes",
+  "freeLine": "Free to start with no card; free limits not listed",
+  "trialShort": null,
+  "vendorBestFor": "Creators and businesses growing Pinterest traffic"
+ },
+ "taplio": {
+  "id": "taplio",
+  "plans": [
+   {
+    "name": "Starter",
+    "price": "$39/mo",
+    "billing": "monthly",
+    "limits": "LinkedIn scheduling and analytics; seats and post limits not stated"
+   },
+   {
+    "name": "Growth",
+    "price": "$69/mo",
+    "billing": "monthly",
+    "limits": "Adds AI writing and team collaboration; seats not stated"
+   },
+   {
+    "name": "Pro",
+    "price": "$199/mo",
+    "billing": "monthly",
+    "limits": "10x more AI usage than Growth, unlimited comments, lead outreach"
+   }
+  ],
+  "priceFrom": "$39/mo",
+  "priceFromBilling": "monthly",
+  "freePlan": null,
+  "trial": "7-day free trial with every Pro feature and limited AI usage",
+  "networks": [
+   "linkedin"
+  ],
+  "ai": "AI post writing in your voice, Ask Taplio, carousel generator, AI images and AI smart replies",
+  "mcp": "MCP integration and official Claude connector",
+  "approvals": null,
+  "inbox": null,
+  "analytics": "Advanced post and engagement analytics on every plan",
+  "reports": null,
+  "mobileApp": null,
+  "bestFor": "founders growing on LinkedIn",
+  "pros": [
+   "Built only for LinkedIn, with 5M+ viral posts to search",
+   "MCP and an official Claude connector on every plan",
+   "Auto first comment and comment replies on every plan"
+  ],
+  "cons": [
+   "LinkedIn only",
+   "No free plan, and AI writing starts on Growth at $69/mo"
+  ],
+  "quotes": {
+   "plans": "Cancel anytime, billed monthly",
+   "priceFrom": "$39",
+   "yearly": "-25%",
+   "trial": "The 7-day free trial gives you every Pro feature, with limited AI usage to get a taste.",
+   "networks": "Taplio is the only all-in-one AI-powered tool to grow your brand on LinkedIn. Create viral posts, schedule them, engage with your network, and track results, all in minutes a day.",
+   "ai": "Taplio's AI, trained on 3 million+ posts, helps you turn it into a scroll-stopping post in your voice, ready to schedule.",
+   "aiGrowth": "Write viral posts with AI",
+   "mcp": "Control Taplio from Claude, ChatGPT & more. Per-plan limits.",
+   "mcpConnector": "Taplio is an official connector",
+   "analytics": "Go deep on your posts and engagement, and share your results.",
+   "bestFor": "Taplio is the only all-in-one AI-powered tool to grow your brand on LinkedIn.",
+   "prosViral": "Search by topic, likes, comments and followers. Save the best in collections.",
+   "prosFirstComment": "Automatic first comment on your posts",
+   "prosReplies": "Reply to comments on your posts",
+   "proPlan": "10x more AI usage than Growth"
+  },
+  "name": "Taplio",
+  "home": "https://taplio.com",
+  "pricing": "https://taplio.com/pricing",
+  "domain": "taplio.com",
+  "captured": "November 2026",
+  "priceShort": "$39/mo",
+  "priceLine": "$39 a month, billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "7 days",
+  "vendorBestFor": "People growing their brand on LinkedIn"
+ },
+ "typefully": {
+  "id": "typefully",
+  "plans": [
+   {
+    "name": "Free",
+    "price": "Free",
+    "billing": "unclear",
+    "limits": "1 social set, 1 user, 10 posts/month, limited media uploads"
+   },
+   {
+    "name": "Creator",
+    "price": null,
+    "billing": "yearly",
+    "limits": "1 social set, 1 user, 1000 posts/month"
+   },
+   {
+    "name": "Business",
+    "price": null,
+    "billing": "yearly",
+    "limits": "Up to 50 social sets, unlimited users, 1500 posts/month; priced per social set"
+   }
+  ],
+  "priceFrom": null,
+  "priceFromBilling": "unclear",
+  "freePlan": "1 social set, 1 user, 10 posts/month, limited media uploads",
+  "trial": null,
+  "networks": [
+   "x",
+   "linkedin",
+   "bluesky",
+   "threads",
+   "mastodon",
+   "substack"
+  ],
+  "ai": "AI writing assistant that learns your voice; rewrite and improve; AI image descriptions (paid plans)",
+  "mcp": "Agents, API and MCP on the Free plan; Claude and ChatGPT listed as integrations",
+  "approvals": null,
+  "inbox": null,
+  "analytics": "X analytics on paid plans: detailed metrics, profile conversion rate, CSV download",
+  "reports": null,
+  "mobileApp": null,
+  "bestFor": "writers who post on X and LinkedIn",
+  "pros": [
+   "Free plan includes scheduling, API and MCP",
+   "Cross-posts to X, LinkedIn, Bluesky, Threads and Mastodon",
+   "Team tools on Business: comments, roles and Slack notifications"
+  ],
+  "cons": [
+   "Creator plan is annual billing only",
+   "Business plan is priced per social set"
+  ],
+  "quotes": {
+   "freePlan": "10 posts/month",
+   "freePlanSets": "1 social set",
+   "creatorBilling": "Annual billing only",
+   "businessBilling": "Billed yearly",
+   "businessPrice": "/ mo per social set",
+   "businessLimits": "Up to 50 social sets",
+   "networks": "Effortlessly cross-post to X, LinkedIn, Bluesky, Threads, and Mastodon.",
+   "networksSubstack": "Substack",
+   "ai": "Brainstorm, rewrite, and expand drafts with AI that learns how you actually write.",
+   "aiPlan": "AI writing features",
+   "mcp": "Agents, API, MCP",
+   "analytics": "X analytics",
+   "analyticsDetail": "Profile Conversion Rate",
+   "bestFor": "For individual writers and creators that are serious about their content.",
+   "bestForTeams": "For modern marketing teams and agencies that collaborate.",
+   "prosTeam": "Comments & Slack notifications"
+  },
+  "name": "Typefully",
+  "home": "https://typefully.com",
+  "pricing": "https://typefully.com/pricing",
+  "domain": "typefully.com",
+  "captured": "November 2026",
+  "priceShort": "Free to start",
+  "priceLine": "Free plan; paid plans billed yearly",
+  "freeShort": "10 posts/mo",
+  "freeLine": "1 social set, 1 user, 10 posts a month",
+  "trialShort": null,
+  "vendorBestFor": "Writers, creators, marketing teams and agencies"
+ },
+ "vistasocial": {
+  "id": "vistasocial",
+  "plans": [
+   {
+    "name": "Professional",
+    "price": "$80/month",
+    "billing": "monthly",
+    "limits": "15 social profiles, 2 users"
+   },
+   {
+    "name": "Professional",
+    "price": "$950/year",
+    "billing": "yearly",
+    "limits": "15 social profiles, 2 users"
+   },
+   {
+    "name": "Advanced",
+    "price": "$160/month",
+    "billing": "monthly",
+    "limits": "30 social profiles, 3 users"
+   },
+   {
+    "name": "Advanced",
+    "price": "$1,910/year",
+    "billing": "yearly",
+    "limits": "30 social profiles, 3 users"
+   },
+   {
+    "name": "Scale",
+    "price": "$360/month",
+    "billing": "monthly",
+    "limits": "70 social profiles, 4 users"
+   },
+   {
+    "name": "Scale",
+    "price": "$4,310/year",
+    "billing": "yearly",
+    "limits": "70 social profiles, 4 users"
+   },
+   {
+    "name": "Enterprise",
+    "price": "Custom",
+    "billing": "unclear",
+    "limits": "Unlimited profiles, 8+ users"
+   }
+  ],
+  "priceFrom": "$80/month",
+  "priceFromBilling": "monthly",
+  "freePlan": null,
+  "trial": "14-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "instagram",
+   "linkedin",
+   "x",
+   "threads",
+   "tiktok",
+   "youtube",
+   "pinterest"
+  ],
+  "ai": "Ask Vista AI agents for recurring social work, AI training and knowledge, AI credits",
+  "mcp": "Ask Vista + MCP",
+  "approvals": null,
+  "inbox": "Engagement tools on every plan",
+  "analytics": "Reports on Professional, advanced reporting on Advanced, premium analytics on Enterprise",
+  "reports": "Reports on every plan; white label setup on Scale",
+  "mobileApp": "iOS and Android apps",
+  "bestFor": "teams running many brands",
+  "pros": [
+   "15 social profiles on the lowest plan",
+   "Ask Vista AI and MCP on every plan",
+   "Apps for iOS, Android, Mac and Windows"
+  ],
+  "cons": [
+   "X (Twitter) is a $29/month add-on",
+   "Lowest plan includes only 2 users"
+  ],
+  "quotes": {
+   "plans": "$80/month\n$160/month\n$360/month | $950/year\n$1,910/year\n$4,310/year | 15 social profiles\n\n2 users | 30 social profiles\n\n3 Users | 70 social profiles\n\n4 Users | Unlimited profiles\n\n8+ users",
+   "priceFrom": "$80/month",
+   "trial": "Try Vista Social free for 14 days\n\nNo credit card required.",
+   "networks": "Facebook\nInstagram\nLinkedIn\nX (Twitter)\nThreads\nTikTok\nYouTube\nPinterest",
+   "ai": "Ask Vista: AI agents that run your recurring social work | AI Training & Knowledge | Scalable AI credits",
+   "mcp": "Ask Vista + MCP",
+   "inbox": "Engagement tools",
+   "analytics": "Reports | Advanced reporting | Premium analytics",
+   "reports": "Reports | White label setup",
+   "mobileApp": "Apps\niOS\nAndroid",
+   "bestFor": "For teams and agencies looking for advanced features and power tools. | AI agents turn that into capacity, so your team takes on more clients, bigger brands, and more work than it could before.",
+   "cons": "$29/month (publishing, boosting, automations and analytics) | 15 social profiles\n\n2 users"
+  },
+  "name": "Vista Social",
+  "home": "https://vistasocial.com",
+  "pricing": "https://vistasocial.com/pricing/",
+  "domain": "vistasocial.com",
+  "captured": "November 2026",
+  "priceShort": "$80/mo",
+  "priceLine": "$80 a month",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "vendorBestFor": "Teams and agencies running many brands"
+ },
+ "zoho": {
+  "id": "zoho",
+  "plans": [
+   {
+    "name": "Free",
+    "price": "US$0/month",
+    "billing": "yearly",
+    "limits": "1 brand (6 channels), 1 team member, 5 AI credits"
+   },
+   {
+    "name": "Standard",
+    "price": "US$10/month",
+    "billing": "yearly",
+    "limits": "1 brand (14 channels), 1 team member, 40 AI credits"
+   },
+   {
+    "name": "Professional",
+    "price": "US$30/month",
+    "billing": "yearly",
+    "limits": "1 brand (14 channels), 1 team member, 40 AI credits"
+   },
+   {
+    "name": "Premium",
+    "price": "US$40/month",
+    "billing": "yearly",
+    "limits": "1 brand (16 channels), 3 team members, 80 AI credits"
+   }
+  ],
+  "priceFrom": "US$10/month",
+  "priceFromBilling": "yearly",
+  "freePlan": "Forever free plan: 1 brand (6 channels), 1 team member, 5 AI credits, limited features",
+  "trial": "15-day free trial, no credit card",
+  "networks": [
+   "facebook",
+   "x",
+   "linkedin",
+   "instagram",
+   "whatsapp",
+   "google business",
+   "youtube",
+   "pinterest",
+   "tiktok",
+   "mastodon",
+   "threads",
+   "bluesky",
+   "telegram",
+   "snapchat",
+   "arattai"
+  ],
+  "ai": "AI picks best times to post, spots engagement spikes and turns comments into CRM leads; Zia AI assistant; AI credits on every plan",
+  "mcp": "Zoho Social MCP is listed under Developer Tools",
+  "approvals": "Content approvals and workflow on the Premium plan",
+  "inbox": "Inbox on the Premium plan",
+  "analytics": "Audience and engagement analytics with pre-built or custom reports; post insights from Professional",
+  "reports": "Summary reports on Standard; custom and shared reports on Premium",
+  "mobileApp": "Apps for Android and iOS",
+  "bestFor": "businesses already on Zoho",
+  "pros": [
+   "Forever free plan after the 15-day trial",
+   "Long list of networks, including WhatsApp, Telegram and Bluesky",
+   "Apps for Android and iOS"
+  ],
+  "cons": [
+   "Inbox and approvals only on the top Premium plan",
+   "Only 1 team member below Premium; extra members cost US$10 each per month"
+  ],
+  "quotes": {
+   "plans": "/month billed annually",
+   "priceFrom": "US$10",
+   "freePlan": "Once the trial-period expires, your account will be moved to a forever free plan with lifetime validity and limited features.",
+   "freePlanLimits": "1 Brand (6 Channels)",
+   "trial": "15-day free trial and no credit card required",
+   "networks": "Facebook\nX (formerly Twitter)\nLinkedIn\nInstagram\nWhatsApp\nGoogle Business Profile\nYouTube\nPinterest\nTikTok\nMastodon\nThreads\nBluesky\nTelegram\nSnapchatNEW\nArattaiNEW",
+   "ai": "Zoho Social's AI predicts the best time to post, spots engagement spikes before they peak, and turns every comment into a CRM lead, automatically.",
+   "aiAssistant": "Zia -AI Assistant",
+   "mcp": "Zoho Social MCP",
+   "approvals": "Content approvals & workflow",
+   "inbox": "InboxNew",
+   "analytics": "Understand who your audience is and how they engage with you on social media. Go with pre-built reports, or create new ones from scratch based on the stats that matter to you.",
+   "reports": "Custom reports",
+   "reportsStandard": "Summary Reports",
+   "mobileApp": "Zoho Social for Android and iOS",
+   "bestFor": "For BusinessesFor Agencies",
+   "consMembers": "Team Members at US$10"
+  },
+  "name": "Zoho Social",
+  "home": "https://www.zoho.com/social/",
+  "pricing": "https://www.zoho.com/social/pricing.html",
+  "domain": "zoho.com",
+  "captured": "November 2026",
+  "priceShort": "US$10/mo",
+  "priceLine": "US$10 a month, billed yearly",
+  "freeShort": "1 brand",
+  "freeLine": "1 brand (6 channels), 1 team member, 5 AI credits",
+  "trialShort": "15 days",
+  "vendorBestFor": "Businesses and agencies"
+ }
+}

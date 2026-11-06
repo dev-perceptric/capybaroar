@@ -1,0 +1,436 @@
+https://postiz.com/pricing
+captured 2026-11-06
+
+AI Agents
+Dev Docs
+Channels
+News
+Blog
+Pricing
+Log In
+Start for $0
+Postiz Pricing
+: Agentic Scheduling from $29/month
+
+Every plan includes the MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule for you. Start with a 7-day free trial.
+
+Monthly
+
+Yearly
+
+Standard
+
+$29/mo
+
+Best for content creators
+
+5 channels
+
+Unlimited posts per month
+
+Advanced Picture Editor
+
+AI copilot
+
+3 AI videos per month
+
+60 minutes of AI video clipping per month
+
+Custom Integrations
+
+API
+
+Webhooks
+
+Post comments
+
+Repeated posts
+
+Post delays
+
+Any channel
+
+Smart Agent
+
+Cross posting
+
+Internal Plugs
+
+Global Plugs
+
+Analytics
+
+Customer groups
+
+Calendar views
+
+Dark / Light mode
+
+RSS auto-post
+
+Posting sets
+
+Signatures
+
+Start for $0
+
+Team
+
+$39/mo
+
+Best for small brands
+
+10 channels
+
+Unlimited posts per month
+
+Unlimited team members
+
+Advanced Picture Editor
+
+AI copilot
+
+100 AI images per month
+
+10 AI videos per month
+
+120 minutes of AI video clipping per month
+
+Custom Integrations
+
+API
+
+Webhooks
+
+Post comments
+
+Repeated posts
+
+Post delays
+
+Any channel
+
+Smart Agent
+
+Cross posting
+
+Internal Plugs
+
+Global Plugs
+
+Analytics
+
+Customer groups
+
+Calendar views
+
+Dark / Light mode
+
+RSS auto-post
+
+Posting sets
+
+Signatures
+
+Start for $0
+
+Pro
+
+$49/mo
+
+Best for large businesses
+
+30 channels
+
+Unlimited posts per month
+
+Unlimited team members
+
+Advanced Picture Editor
+
+AI copilot
+
+300 AI images per month
+
+30 AI videos per month
+
+300 minutes of AI video clipping per month
+
+Custom Integrations
+
+API
+
+Webhooks
+
+Post comments
+
+Repeated posts
+
+Post delays
+
+Any channel
+
+Smart Agent
+
+Cross posting
+
+Internal Plugs
+
+Global Plugs
+
+Analytics
+
+Customer groups
+
+Calendar views
+
+Dark / Light mode
+
+RSS auto-post
+
+Posting sets
+
+Signatures
+
+Start for $0
+
+Popular
+
+Ultimate
+
+$99/mo
+
+Best for agencies
+
+100 channels
+
+Unlimited posts per month
+
+Unlimited team members
+
+Advanced Picture Editor
+
+AI copilot
+
+500 AI images per month
+
+60 AI videos per month
+
+600 minutes of AI video clipping per month
+
+Custom Integrations
+
+API
+
+Webhooks
+
+Post comments
+
+Repeated posts
+
+Post delays
+
+Any channel
+
+Smart Agent
+
+Cross posting
+
+Internal Plugs
+
+Global Plugs
+
+Analytics
+
+Customer groups
+
+Calendar views
+
+Dark / Light mode
+
+RSS auto-post
+
+Posting sets
+
+Signatures
+
+Start for $0
+Compare and explore the features of each plan
+Plans:
+
+Save with yearly billing!
+
+Monthly
+
+Yearly
+
+Standard
+
+$29
+
+per month
+
+Get Started
+
+No team support
+
+Team
+
+$39
+
+per month
+
+Get Started
+
+Pro
+
+$49
+
+per month
+
+Get Started
+
+Popular
+
+Ultimate
+
+$99
+
+per month
+
+Get Started
+Channels
+5
+10
+30
+100
+Posts per month
+Team members
+Picture Editor
+AI Copilot
+AI Images per month
+100
+300
+500
+AI Videos per month
+3
+10
+30
+60
+AI Video clipping minutes per month
+60
+120
+300
+600
+Custom Integrations
+API
+Webhooks
+Post comments
+Repeated posts
+Post delays
+Any channel
+Smart Agent
+Cross posting
+Internal Plugs
+Global Plugs
+Analytics
+Customer groups
+Calendar views
+Dark / Light mode
+RSS auto-post
+Posting sets
+Signatures
+Frequently asked questions
+Can I use Postiz for free?
+Which AI agents are included on every plan?
+How much does Postiz cost?
+Can I get a refund for Postiz?
+What social media platforms does Postiz support?
+What is the Smart Agent and how does it work?
+What is AI video clipping and how are the minutes counted?
+How does cross-posting work?
+What are Internal Plugs and Global Plugs?
+How do repeated posts work?
+What is RSS auto-posting?
+What are Sets and how do they help with posting?
+How do Signatures work?
+What analytics does Postiz provide?
+Can I schedule comments and threads?
+What is the delay feature between posts?
+How do webhooks work in Postiz?
+Can I organize channels by clients or brands?
+Can I self-host Postiz myself?
+When using the self-hosted service, where will my app be deployed?
+I want the self-hosted service. Why do I need to pay for app approval?
+Why are there different prices for social media app approval?
+Ready to get started?
+
+Grow your social media presence with Postiz.
+Schedule, analyze, and engage with your audience.
+
+Start for $0
+
+Agentic social media scheduler (cloud / open-source)
+
+Tools
+
+API
+N8N Custom Node
+Make.com integration
+Free Marketing Tools
+
+AI Agents
+
+ChatGPT
+OpenAI dots
+Claude
+Claude Cowork
+Claude Code
+Codex
+Cursor
+Gemini
+OpenClaw
+Hermes Agent
+Grok Bot
+Grok Build
+DeepSeek
+Kimi K3
+Muse
+Manus
+Cue
+Perplexity Computer
+nanoclaw
+Paperclip
+MCP Server
+AI Agents CLI
+
+Resources
+
+Blog
+GitHub
+Docs
+Channels
+Compare
+Alternatives
+Reviews
+Roadmap
+Discord
+Affiliate
+
+Company
+
+About
+Contact
+Enterprise
+Pricing
+Terms of service
+Privacy Policy
+Data Processor
+Uptime Monitor
+We are hiring
+
+© Postiz, 2026. All rights reserved.
+
+Designed by
+
+Hosted cloud + open-source ❤️

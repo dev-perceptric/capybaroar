@@ -75,11 +75,11 @@ function tile(cx, cy, s, kind, o = {}) {
   let out = "";
   if (o.glow) out += glow(cx, cy, s * 0.95, o.glowColor || colorOf(kind));
   if (kind === "capybaroar") return out + box(x, y, s, s, "tile mark", MARK, `border-radius:${r1(s * 0.27)}px`);
-  if (TOOL[kind]) return out + box(x, y, s, s, "tile fill", `<img src="${toolLogo(kind)}" alt="">`, `border-radius:${r1(s * 0.24)}px`);
+  if (kind.includes(".")) return out + box(x, y, s, s, "tile fill", `<img src="${toolLogo(kind)}" alt="">`, `border-radius:${r1(s * 0.24)}px`);
   const id = NET[kind] ? `n-${kind}` : `a-${kind}`;
   return out + box(x, y, s, s, "tile", `<svg viewBox="0 0 24 24" style="width:${o.pad ?? 54}%;height:${o.pad ?? 54}%"><use href="#${id}"/></svg>`, `border-radius:${r1(s * 0.24)}px`);
 }
-const colorOf = (kind) => (kind === "capybaroar" ? C.y : NET[kind] || AI[kind] || TOOL[kind] || C.gray);
+const colorOf = (kind) => (kind === "capybaroar" ? C.y : NET[kind] || AI[kind] || TOOL[kind] || "#d4d4d0");
 
 // A small network badge, for the corner of a post or a face.
 const badge = (x, y, s, net) => box(x, y, s, s, "badge", `<svg viewBox="0 0 24 24"><use href="#n-${net}"/></svg>`);

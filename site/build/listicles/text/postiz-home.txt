@@ -1,0 +1,579 @@
+https://postiz.com
+captured 2026-11-06
+
+AI Agents
+Dev Docs
+Channels
+News
+Blog
+Pricing
+Log In
+Start for $0
+Run your social media on
+autopilot with 
+AI agents
+ChatGPT
+Claude
+Claude Code
+Grok Bot
+Muse
+OpenAI dots
+OpenClaw
+Hermes Agent
+AI agents
+AI agents
+
+Postiz is the agentic social media scheduler: AI agents plan, generate and schedule posts to 30+ networks, and you review everything in one visual calendar.
+
+Start a 7-day trial for $0
+I need agentic scheduling
+I need classic scheduling
+
+Trusted by customers all over the world
+
+x2
+
+Boost in engagement rate
+
+Lisa Anders
+
+x4
+
+Increase in traffic
+
+Cindy Goodman
+
++15%
+
+Followers
+
+Larry Williams
+
++50%
+
+Increase in followers
+
+Paula Wright
+
++3k
+
+Saved per month
+
+Gilbert Ward
+
++20%
+
+Followers
+
+Sherry Porter
+
++10%
+
+Grew following
+
+Raymond Harrison
+
+x2
+
+Boost in engagement rate
+
+Lisa Anders
+
+x4
+
+Increase in traffic
+
+Cindy Goodman
+
++15%
+
+Followers
+
+Larry Williams
+
++50%
+
+Increase in followers
+
+Paula Wright
+
++3k
+
+Saved per month
+
+Gilbert Ward
+
++20%
+
+Followers
+
+Sherry Porter
+
++10%
+
+Grew following
+
+Raymond Harrison
+
++3k
+
+Followers
+
+Frank Grant
+
+2k
+
+Saved per month
+
+Bernice Wilson
+
++10%
+
+Increase in impressions
+
+Joel Johnson
+
++15%
+
+Increase in engagement
+
+Jason Smith
+
+2x
+
+Boost in engagement rate
+
+Sherry Porter
+
+3x
+
+Increase in traffic
+
+Betty McGee
+
+3k
+
+Saved per month
+
+Jonathan Turner
+
++3k
+
+Followers
+
+Frank Grant
+
+2k
+
+Saved per month
+
+Bernice Wilson
+
++10%
+
+Increase in impressions
+
+Joel Johnson
+
++15%
+
+Increase in engagement
+
+Jason Smith
+
+2x
+
+Boost in engagement rate
+
+Sherry Porter
+
+3x
+
+Increase in traffic
+
+Betty McGee
+
+3k
+
+Saved per month
+
+Jonathan Turner
+
+Who is Postiz for?
+AI-first marketers
+
+Prompt Postiz from Claude, ChatGPT, Codex, or OpenClaw. Your agent uses our CLI and MCP server to draft and schedule posts for you.
+
+Developers
+
+Build your own posting app on top of Postiz. With OAuth2, an SDK, and a public API, your users connect once and publish everywhere.
+
+Automation teams
+
+Connect Postiz to n8n or Make.com and let your workflows draft, approve, and publish posts across all 30+ channels, hands-free.
+
+See Postiz in action
+
+Watch how Postiz plans, schedules, and publishes your posts.
+
+Power Your Content
+with AI
+ and Automation
+Via ChatGPT
+
+Generate and refine social media posts using ChatGPT with simple prompts.
+
+Via Claude
+
+Connect Claude to Postiz through MCP to plan, create, and schedule posts.
+
+Via Claude Code
+
+Create and schedule posts directly from your terminal using Claude Code.
+
+Via Grok Bot
+
+Use Grok Bot with Postiz to create and schedule social content automatically.
+
+Via Hermes / OpenClaw
+
+Automate content creation and scheduling through Telegram with simple workflows.
+
+Via Muse
+
+Use Muse with Postiz to plan, create, and schedule social content from everyday goals and tasks.
+
+Automate everything
+
+Postiz helps you automate your social media marketing using a Public API, n8n, Make.com or Zapier.
+
+All the tools you need for social media growth in one place
+
+PLANNING
+
+Schedule everywhere at once
+
+Write a post once and publish it to every channel you pick, on the schedule you set. Preview it all in a visual calendar before it goes out.
+
+AI AGENTS
+
+Work with AI agents
+
+Use Claude, ChatGPT, Claude Code, GrokBot, Hermes, or Muse to create and manage content through Postiz.
+
+AI IMAGE
+
+Design it with AI
+
+Design post images in a built-in, Canva-like editor, or generate them from a prompt with AI.
+
+ORGANIZING
+
+Built for teams
+
+Invite your team, assign posts, and keep every channel organized in one workspace.
+
+PLUGS
+
+Auto actions
+
+Set a milestone, like 100 likes on a post, and Postiz will auto-post, auto-like, or auto-comment for you, so your best content keeps picking up engagement.
+
+ANALYTICS
+
+Comprehensive analytics
+
+See which posts and channels perform best, then double down on what works.
+
+Publish to 30+ social media channels
+
+Connect the channels you already use, from X and LinkedIn to TikTok, Bluesky, and Telegram, and manage them all from one calendar.
+
+Ready to get started?
+
+Connect your channels and schedule your first post in minutes. Your first 7 days cost $0.
+
+Start for $0
+Wall of love
+
+My agent content pipeline is coming along!!
+
+It uses Postiz and Vercel's @eve!
+
+Problem:
+I record a video each week, but I only post it to YT and sometimes X.
+
+I should be sharing it across every social media channel, but it's too much work.
+
+Each platform has its own format and limitations:
+
+- YT is video only.
+- X is text + video.
+- LinkedIn is text + max 15-min video.
+- An article on dev .to is long-form and needs screenshots.
+
+And I write differently on X and LinkedIn.
+
+Solution:
+My eve agent adapts the content to each platform and then publishes a draft using Postiz unified API.
+
+The agent takes the YouTube video as input and generates posts for each platform in the required format.
+
+This includes trimming the video, writing the copy, and generating screenshots.
+
+The agent has access to my voice on each platform so it writes like me and doesn't sound like AI slop.
+
+Everything it creates is a draft, and it's one click for me to publish.
+
+I'm more careful with what I post on LinkedIn and X, so I don't let it autopost (yet), but having done 80% of the work for me is helpful regardless. I would never have the energy to cut a video down to 15 mins myself, for example.
+
+Elie Steinbock
+
+@elie2222
+
+People keep asking me what tools I use.
+
+Here's my actual stack:
+→ OpenClaw (AI business brain)
+→ Notion (systems + planning)
+→ Postiz (social media scheduling)
+
+That's it. Three tools. One person. A business that runs like it has a team.
+
+Sophie Demar
+
+@nextbysophie
+
+Well deserved! 👏
+
+I've been using Postiz for a while now, and I'll keep using it for as long as I possibly can.
+
+Amazing product.
+
+Tony
+
+@EnvolDev
+
+I love postiz why? Because my agents can post, every other posting company made it extremely hard to plugin
+
+G Bains
+
+@gbains_aio
+
+Man, hands down use Postiz, is way better and works amazing with agents.
+
+Ruben R
+
+@nexgen_ruben
+
+Everyone's quote-tweeting the $1 AI video part of this post.
+
+They're all missing the better half.
+
+The same Postiz skill that schedules your whole week can also read the results back.
+
+Here is the loop:
+
+batch 20 clips, drop the folder in Claude Code, and say "schedule these to TikTok + IG, 8 hours apart, all week."
+
+It uploads and schedules every one in about a minute.
+
+Then friday: "pull last week's views per post and tell me the top 3."
+
+The skill has an analytics command, so Claude ranks your clips and tells you which hooks to make 20 more of.
+
+Cheap to make, auto-posted, and it grades its own homework.
+
+Ziwen
+
+@ziwenxu_
+
+🚀 My good friend @_nevodavid just launched the Postiz Agent on @ProductHunt!
+
+I’ve been personally using it for a while - it’s genuinely fantastic.
+
+One of the coolest parts: it uses @CopilotKit + @mastra to generate and serve the user social media posts intelligently.
+
+If you’re into content automation, it's worth checking out.
+
+Nathan Tarbert
+
+@nathan_tarbert
+
+Postiz stands out because it's so AI-agent-friendly + connects to soooo many platforms. You're right about the open-source option being a good way to get attention too, because I'm one of those who first thought I'd take that route with Postiz and then went 'yeah, nah, it's just easier to subscribe'. Very glad I did. My agents love it and said to say hi ;)
+
+Jo McKee
+
+@McKeeCreative1
+
+Quick take.. Postiz = my new social media command center.
+
+Set up a week’s worth of content, hit schedule, walk away.
+
+Except this post.. this is from my app 😂
+
+iAmDon
+
+@iAmDon_eth
+
+The social media piece of that admin pile is exactly what I fixed with Claude and Postiz. Claude writes the posts, Postiz schedules and publishes them, and that one task goes from a daily chore to a five minute review.
+
+Dmitrii Zaev
+
+@dmitr2ii
+
+Postiz is really good and saves me so much time every day!
+
+Prashanth Vaidya
+
+@thecodemarathon
+
+what actually happens:
+
+1. i create and post on X
+2. my distribution agent picks it up
+3. it judges whether its worth cross-posting
+4. if yes, one CLI call sends it to LinkedIn, Threads, and Bluesky
+
+postiz posts:create -c "adapted content" -s "4h later" -i "linkedin,threads,bluesky"
+
+i dont copy paste. i dont even open those apps. the agent decides and executes.
+
+1.3 million views on a post. zero people saw it on LinkedIn. the problem was never the content. it was that good content stayed trapped where it was born.
+
+Vox
+
+@Voxyz_ai
+
+shoutout to Postiz, been sleeping on it way too long ngl.
+
+I run content for multiple ambassador projects and used to just forget to post half the time. now everything's in one calendar, 30+ platforms, and I can queue a post once so it auto-repeats and my best content keeps working without me copy-pasting it every week
+the AI agent drafting captions and generating images from one prompt is what actually sold me tho.
+
+if you're juggling more than one account and still doing this manually, you're wasting time for no reason
+
+Dev03 🪐
+
+@Hec_77
+
+I’ve helped companies go to $1mil+/mo by optimizing. I’ve done marketing for 20yrs at the highest levels.
+
+You have something great. I’m a user myself, self-hosted. It’s brilliant. Best social management tool out there by miles.
+
+Postiz could go really far. 🤑
+
+Justin Brooke ❤️‍🔥
+
+@IMJustinBrooke
+
+there is nothing stopping you from making 50 ugc videos tonight.
+
+send a text message to hermes agent / @openclaw and ask for 50 ugc videos.
+
+then use the postiz cli to schedule across every platform.
+
+Matthew Berman
+
+@TheMattBerman
+
+Wow!!!! That tool is totally a game changer 🤩
+
+I am using Postiz from the day first and the interesting thing is I create one post and then publish it to 9 channels at once.
+
+Hamza Khalid
+
+@humzaakhalid
+
+Auto-posting Claude + fal + Postiz carousels to promote http://aesty.ai organically - one just hit 100k views! Let’s goo 🚀
+
+Nadia Zueva
+
+@nestymee
+
+Frequently asked questions
+What is Postiz?
+Can AI agents like Claude or ChatGPT post to social media through Postiz?
+What social media channels does Postiz support?
+Can Postiz auto-repeat or recycle evergreen posts?
+Does Postiz have a public API and webhooks?
+What analytics does Postiz provide?
+Can I cross-post the same content to multiple platforms at once?
+What AI features does Postiz include?
+Can I manage multiple brands or clients from a single Postiz account?
+How many team members can I invite, and what can they do?
+How much does Postiz cost, and what’s included in each plan?
+Can I swap or change my connected channels after choosing a plan?
+If I connect 3 Facebook pages, does that count as 1 channel or 3?
+Is Postiz free?
+Is Postiz open-source?
+Ready to get started?
+
+Grow your social media presence with Postiz.
+Schedule, analyze, and engage with your audience.
+
+Start for $0
+
+Agentic social media scheduler (cloud / open-source)
+
+Tools
+
+API
+N8N Custom Node
+Make.com integration
+Free Marketing Tools
+
+AI Agents
+
+ChatGPT
+OpenAI dots
+Claude
+Claude Cowork
+Claude Code
+Codex
+Cursor
+Gemini
+OpenClaw
+Hermes Agent
+Grok Bot
+Grok Build
+DeepSeek
+Kimi K3
+Muse
+Manus
+Cue
+Perplexity Computer
+nanoclaw
+Paperclip
+MCP Server
+AI Agents CLI
+
+Resources
+
+Blog
+GitHub
+Docs
+Channels
+Compare
+Alternatives
+Reviews
+Roadmap
+Discord
+Affiliate
+
+Company
+
+About
+Contact
+Enterprise
+Pricing
+Terms of service
+Privacy Policy
+Data Processor
+Uptime Monitor
+We are hiring
+
+© Postiz, 2026. All rights reserved.
+
+Designed by
+
+Hosted cloud + open-source ❤️

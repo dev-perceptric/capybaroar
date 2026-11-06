@@ -1,0 +1,23 @@
+[
+  {"id": "buffer", "name": "Buffer", "domain": "buffer.com", "home": "https://buffer.com", "pricing": "https://buffer.com/pricing"},
+  {"id": "hootsuite", "name": "Hootsuite", "domain": "hootsuite.com", "home": "https://www.hootsuite.com", "pricing": "https://www.hootsuite.com/plans"},
+  {"id": "sprout", "name": "Sprout Social", "domain": "sproutsocial.com", "home": "https://sproutsocial.com", "pricing": "https://sproutsocial.com/pricing/"},
+  {"id": "later", "name": "Later", "domain": "later.com", "home": "https://later.com", "pricing": "https://later.com/pricing/"},
+  {"id": "metricool", "name": "Metricool", "domain": "metricool.com", "home": "https://metricool.com", "pricing": "https://metricool.com/pricing/"},
+  {"id": "socialbee", "name": "SocialBee", "domain": "socialbee.com", "home": "https://socialbee.com", "pricing": "https://socialbee.com/pricing/"},
+  {"id": "sendible", "name": "Sendible", "domain": "sendible.com", "home": "https://www.sendible.com", "pricing": "https://www.sendible.com/pricing"},
+  {"id": "agorapulse", "name": "Agorapulse", "domain": "agorapulse.com", "home": "https://www.agorapulse.com", "pricing": "https://www.agorapulse.com/pricing/"},
+  {"id": "loomly", "name": "Loomly", "domain": "loomly.com", "home": "https://www.loomly.com", "pricing": "https://www.loomly.com/pricing"},
+  {"id": "planable", "name": "Planable", "domain": "planable.io", "home": "https://planable.io", "pricing": "https://planable.io/pricing/"},
+  {"id": "publer", "name": "Publer", "domain": "publer.com", "home": "https://publer.com", "pricing": "https://publer.com/plans"},
+  {"id": "vistasocial", "name": "Vista Social", "domain": "vistasocial.com", "home": "https://vistasocial.com", "pricing": "https://vistasocial.com/pricing/"},
+  {"id": "socialpilot", "name": "SocialPilot", "domain": "socialpilot.co", "home": "https://www.socialpilot.co", "pricing": "https://www.socialpilot.co/plans"},
+  {"id": "pallyy", "name": "Pallyy", "domain": "pallyy.com", "home": "https://pallyy.com", "pricing": "https://pallyy.com/pricing"},
+  {"id": "zoho", "name": "Zoho Social", "domain": "zoho.com", "home": "https://www.zoho.com/social/", "pricing": "https://www.zoho.com/social/pricing.html"},
+  {"id": "postiz", "name": "Postiz", "domain": "postiz.com", "home": "https://postiz.com", "pricing": "https://postiz.com/pricing"},
+  {"id": "typefully", "name": "Typefully", "domain": "typefully.com", "home": "https://typefully.com", "pricing": "https://typefully.com/pricing"},
+  {"id": "hypefury", "name": "Hypefury", "domain": "hypefury.com", "home": "https://hypefury.com", "pricing": "https://hypefury.com/pricing/"},
+  {"id": "taplio", "name": "Taplio", "domain": "taplio.com", "home": "https://taplio.com", "pricing": "https://taplio.com/pricing"},
+  {"id": "tailwind", "name": "Tailwind", "domain": "tailwindapp.com", "home": "https://www.tailwindapp.com", "pricing": "https://www.tailwindapp.com/pricing"},
+  {"id": "contentstudio", "name": "ContentStudio", "domain": "contentstudio.io", "home": "https://contentstudio.io", "pricing": "https://contentstudio.io/pricing"}
+]

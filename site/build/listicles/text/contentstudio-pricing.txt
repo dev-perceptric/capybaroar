@@ -1,0 +1,792 @@
+https://contentstudio.io/pricing
+captured 2026-11-06
+
+ContentStudio API plan is now available. Create automations using Claude, Zapier, n8n, make, etc. Explore plan!
+
+Simple pricing that grows with your team
+
+Choose the plan that matches your goals today, with room to grow as your team, clients, and social presence expand.
+
+Monthly
+Quarterly
+-14%
+Yearly
+-34%
+No credit card required
+•
+7-day free trial
+•
+Cancel anytime
+Standard
+-34%
+$
+19
+/month
+
+$228 billed annually
+
+Save $120/yr
+Start free trial
+5 social accounts
+1 workspace
+1 user
+25,000 AI text credits
+25 AI image credits
+100 AI video credits
+100 AI video clipping credits
+1,500 API requests
+Features Included
+AI Studio (text, image, video)
+AI brand knowledge & voice
+Unlimited social posting
+Multi-view content planner
+Social media analytics
+Media and assets library
+Audio library
+X threads & LinkedIn carousels
+Auto first comment
+MCP Integration
+API access
+Automate via 3rd party tools
+Smart scheduling
+Multilingual interface
+Show All Features
+Advanced
+-29%
+$
+49
+/month
+
+$588 billed annually
+
+Save $240/yr
+Start free trial
+10 social accounts
+2 workspaces
+2 users
+50,000 AI text credits
+50 AI image credits
+200 AI video credits
+100 AI auto replies
+200 AI video clipping credits
+3,000 API requests
+Everything in 'Standard', plus:
+Social inbox
+Competitor analytics
+Campaign and label analytics
+Meta Ads Analytics
+Google Ads Analytics
+Post recycling (evergreen)
+Bulk scheduling via CSV
+RSS autoposting
+Team collaboration
+Approval workflow
+Exports and scheduled reports
+Show All Features
+Add Ons
+Social listening
+
+$99/month or $950/year
+
+Track 3 topics and monitor up to 5,000 mentions from one listening dashboard.
+
+Extra social account
+
+$5/month per extra account
+
+Add additional social accounts/pages beyond your plan limit.
+
+Extra user
+
+$10/month per extra user
+
+Add additional team members beyond your plan limit.
+
+Extra workspace
+
+$10/month per extra workspace
+
+Add additional workspaces beyond your plan limit.
+
+Best Value
+Agency Unlimited
+-29%
+$
+99
+/month
+
+$1,188 billed annually
+
+Save $480/yr
+Start free trial
+accounts
+Unlimited workspaces
+Unlimited users
+125,000 AI text credits
+125 AI image credits
+500 AI video credits
+250 AI auto replies
+500 AI video clipping credits
+7,500 API requests
+Everything in 'Advanced', plus:
+EasyConnect
+Complete client management
+Live training
+Priority support
+Guided onboarding
+Dedicated account manager
+Show All Features
+Add Ons
+Social listening
+
+$150/month or $1,440/year
+
+Monitor 5 topics and up to 10,000 mentions with deeper listening coverage.
+
+White-label
+
+$50/month or $500/year
+
+Brand the platform with your own logo, domain, email identity, and client dashboard experience.
+
+SSO (SAML)
+
+$150/month or $1,440/year
+
+Connect your identity provider for centralized login and stronger access control.
+
+White-label reseller
+
+$50/month or $500/year
+
+Resell ContentStudio as your own branded social media management platform.
+
+Enterprise
+Custom
+
+billed annually
+
+Contact Sales
+Custom social accounts
+Unlimited workspaces
+Unlimited users
+Unlimited clients
+Custom AI text credits
+Custom AI image credits
+Custom AI video credits
+Custom API requests
+Everything in 'Agency', plus:
+Dedicated account manager
+Migration and onboarding support
+SSO (SAML)
+Full API access
+White-label options
+See machine-readable pricing (for AI agents)
+Social media API built for developers and automation builders
+
+Schedule, publish, and manage content programmatically from any workflow. Set up in minutes, no complex configuration required.
+
+What's Included
+1 Workspace & 1 User
+15 GB Media Storage
+Dedicated API Dashboard
+Zapier, Make, n8n, Pabbly
+Other Features
+API key management & activity logs
+Usage alerts at 80% & 90%
+Content Library
+Publisher module
+Flexible API request add-ons
+Secure API key management
+Supported Integrations
+Monthly
+Quarterly
+-11%
+Yearly
+-21%
+$
+15
+/month
+
+$180 billed annually
+
+Save $48/yr
+Social Accounts
+10
+50
+API Requests
+3,000
+3,000
+50,000
+Start free trial
+
+No credit card required • 7-day free trial • Cancel anytime
+
+Add-ons built for agencies and growing teams
+
+Keep your plan flexible with add-ons that grow alongside your business. Expand your limits, upgrade only the features you need, and pay only for the extras you actually use.
+
+Social listening
+
+Monitor 5 topics and up to 10,000 mentions with deeper listening coverage.
+
+Advanced
+Agency Unlimited
+$150
+/month
+$1,800
+$1,440
+/year
+20% OFF
+White-label
+
+Make the platform truly yours with full white-label customization. Use your own domain, branding, and email setup.
+
+$50
+/month
+$500
+/year
+SSO (SAML)
+
+Secure team access with SAML-based single sign-on. Let users log in through your identity provider for safer access control.
+
+$150
+/month
+$1,440
+/year
+White-label reseller
+
+Resell ContentStudio to clients as a complete social media management platform under your brand.
+
+$50
+/month
+$500
+/year
+4.2M
+Post Scheduled
+Increase in productivity with ContentStudio
+50%
+Productivity Boost
+Increase in productivity with ContentStudio
+$1,000+
+Cost Savings
+saved monthly on social media management costs
+5h/week
+Time Saved
+saved on content planning and scheduling
+The perfect tool for agency-client collaboration and content approvals.
+
+Erin Ricchiazzi,
+
+VP of Marketing@The Modern Firm
+
+5.0
+
+Feature-Rich, Easy Social Media Management. I find ContentStudio incredibly easy to use, which is a major plus, especially when managing multiple social media profiles. I love the scheduling feature, as it enhances efficiency by streamlining the process of planning and publishing content across different platforms. The ability to link all relevant social media accounts simplifies the management task significantly, relieving my social media manager from the burden of dealing with multiple credentials.
+
+Nichole M.
+
+Field Manager
+
+5.0
+
+ContentStudio is Better Than The Big Boys. I love the way all of the social/content marketing modules are tightly integrated. There are still a few rough edges as far as UI/UX, but the tool is SO much better than other more widely recognized tools.
+
+Dennis L.
+
+Advisor, Marketing and Advertising
+
+4.0
+
+An amazing all-in-one social media platform. It has more or less all the features you could ask for in a social media platform. It feels like a very mature platform with excellent UI and a lot of unique elements that make it stand out from similar social media schedulers.
+
+Lawrence G.
+
+Marketing Coordinator
+
+5.0
+
+Social media planning, scheduling, and monitoring is a breeze. ContentStudio is easily my favourite social media content planner. The analytics that come with the content planner make the platform a very complete offering. Integrations with the major social media platforms are seamless. The ability to schedule posts to multiple platforms at one time with features such as 'first comment' are priceless.
+
+Jason B.
+
+Proprietor, Music
+
+5.0
+
+"ContentStudio is a must-have!!!" ContentStudio is an excellent platform for content management and social media scheduling. I particularly like using it because of its user-friendly interface, which allows me to easily plan, create, and distribute engaging content across multiple channels. I highly recommend it to anyone looking to elevate their content game!
+
+Nelson W.
+
+President, Insurance
+
+5.0
+
+ContentStudio is our go-to for content ideas, research, and syndication across platforms. ContentStudio takes what used to be the multi-day chore of content creation and syndication and condenses it into a mere 15-30 minute session every couple of days. I couldn't be more pleased with the amount of time saved and the cost/benefit ratio.
+
+Ken I.
+
+Marketing and Advertising
+
+5.0
+
+"ContentStudio excellent performance" ContentStudio simplifies my company's content publishing schedule, it is safe to use and easy. It guarantees me the automation and satisfies my requirements, it is an excellent software. I have nothing negative to comment about ContentStudio, it is excellent and easy to use.
+
+Romina S.
+
+Telecommunications Engineer
+
+5.0
+
+ContentStudio the best tool for network management. ContentStudio is an easy to use platform, it adapts my needs for my company, manages my social networks and makes it easy for me to address my audience in a simple and empathetic way. I do not dislike any features of ContentStudio, on the contrary I am fascinated.
+
+Thomas S.
+
+Digital Marketing Specialist, Marketing and Advertising
+
+5.0
+
+Feature-Rich, Easy Social Media Management. I find ContentStudio incredibly easy to use, which is a major plus, especially when managing multiple social media profiles. I love the scheduling feature, as it enhances efficiency by streamlining the process of planning and publishing content across different platforms. The ability to link all relevant social media accounts simplifies the management task significantly, relieving my social media manager from the burden of dealing with multiple credentials.
+
+Nichole M.
+
+Field Manager
+
+5.0
+
+ContentStudio is Better Than The Big Boys. I love the way all of the social/content marketing modules are tightly integrated. There are still a few rough edges as far as UI/UX, but the tool is SO much better than other more widely recognized tools.
+
+Dennis L.
+
+Advisor, Marketing and Advertising
+
+4.0
+
+An amazing all-in-one social media platform. It has more or less all the features you could ask for in a social media platform. It feels like a very mature platform with excellent UI and a lot of unique elements that make it stand out from similar social media schedulers.
+
+Lawrence G.
+
+Marketing Coordinator
+
+5.0
+
+Social media planning, scheduling, and monitoring is a breeze. ContentStudio is easily my favourite social media content planner. The analytics that come with the content planner make the platform a very complete offering. Integrations with the major social media platforms are seamless. The ability to schedule posts to multiple platforms at one time with features such as 'first comment' are priceless.
+
+Jason B.
+
+Proprietor, Music
+
+5.0
+
+"ContentStudio is a must-have!!!" ContentStudio is an excellent platform for content management and social media scheduling. I particularly like using it because of its user-friendly interface, which allows me to easily plan, create, and distribute engaging content across multiple channels. I highly recommend it to anyone looking to elevate their content game!
+
+Nelson W.
+
+President, Insurance
+
+5.0
+
+ContentStudio is our go-to for content ideas, research, and syndication across platforms. ContentStudio takes what used to be the multi-day chore of content creation and syndication and condenses it into a mere 15-30 minute session every couple of days. I couldn't be more pleased with the amount of time saved and the cost/benefit ratio.
+
+Ken I.
+
+Marketing and Advertising
+
+5.0
+
+"ContentStudio excellent performance" ContentStudio simplifies my company's content publishing schedule, it is safe to use and easy. It guarantees me the automation and satisfies my requirements, it is an excellent software. I have nothing negative to comment about ContentStudio, it is excellent and easy to use.
+
+Romina S.
+
+Telecommunications Engineer
+
+5.0
+
+ContentStudio the best tool for network management. ContentStudio is an easy to use platform, it adapts my needs for my company, manages my social networks and makes it easy for me to address my audience in a simple and empathetic way. I do not dislike any features of ContentStudio, on the contrary I am fascinated.
+
+Thomas S.
+
+Digital Marketing Specialist, Marketing and Advertising
+
+Publishing & Scheduling
+Workspaces
+1
+2 ($10 per extra)
+Unlimited workspaces
+Social accounts
+5
+10 ($5 per extra)
+25
+Users
+1 User
+2 Users ($10 per extra)
+Unlimited users
+Posts per month
+Unlimited
+Unlimited
+Unlimited
+Social networks
+Media storage
+10 GB
+15 GB
+25 GB
+Post customization per network
+AI assistant
+AI content library
+AI text credits (words)
+25,000
+50,000
+125,000
+AI image credits
+25
+50
+125
+AI video credits
+100
+200
+500
+AI video clipping credits
+100
+200
+500
+ContentStudio API request limits
+1,500
+3,000
+7,500
+Audio library
+Best time to post recommendation
+Hashtag suggestions
+Recurring posts
+Labels
+Unlimited
+Unlimited
+Unlimited
+Content categories
+-
+Canva & VistaCreate integration
+Feedly integration
+-
+Third party integrations (PostNitro, Bit.Ly, Pocket, Replug)
+EasyConnect
+-
+-
+Sign in with Gmail
+Custom link shortener
+Custom video thumbnails
+Auto first comment
+Evergreen campaigns for automated posting
+-
+Auto-posting via RSS Feeds
+-
+Bulk upload via CSV
+-
+Planning & Collaboration
+Calendar view
+Shareable post link
+-
+List view
+Feed view
+Instagram grid view
+-
+Instagram collaboration post
+-
+TikTok grid view
+-
+Planner notes
+Approval workflow system
+-
+Invite clients/team
+-
+Approver or client dashboard
+-
+Analytics & Reporting
+Performance overview
+Individual network analytics
+Historical data
+Demographics insights
+Usermaven web analytics dashboard
+Boosted post insights
+Labels & campaigns analytics
+-
+Competitor benchmark analytics
+-
+Export reports in PDF
+-
+Schedule reports via email
+-
+Whitelabel reports
+-
+Social Inbox
+Monitor and reply to incoming messages
+-
+Monitor and reply to comments on posts
+-
+Inbox integration on mobile app (iOS)
+-
+Team assignment
+-
+Tagging & labels
+-
+AI replies
+-
+AI auto replies
+-
+100
+250
+Saved replies
+-
+Internal notes
+-
+RSS Feed Management
+Search feeds
+-
+Import feeds via OPML file
+-
+Follow feed topics
+-
+Essentials & Support
+iOS mobile app
+Android mobile app
+Chrome extension
+Self-service knowledgebase
+Live training
+On-demand
+On-demand
+2 hours onboarding & training session with full team
+Customer support
+Standard
+Standard
+Priority
+Trusted by 16,500+ SMM teams to move businesses forward
+
+See how ContentStudio makes an impact
+
+$1,000+
+
+saved monthly
+
+Read customer story
+
+7x
+
+faster response time
+
+Read customer story
+
+40%
+
+increase in productivity
+
+Read customer story
+
+$900+
+
+saved monthly
+
+Read customer story
+
+60%
+
+reduction in email volume
+
+Read customer story
+
+40%
+
+productivity increase
+
+Read customer story
+
+An amazing tool for agencies! Our client experience has improved tremendously with ContentStudio's seamless collaboration and approval features.
+
+Erin Ricchiazzi
+VP of marketing at The Modern Firm
+
+ContentStudio has been a game-changer for us. Managing content across multiple platforms is now incredibly easy, saving us loads of time while ensuring consistency. We can now engage more effectively and maintain a strong online presence.
+
+Marco Cevoli
+Managing director at Qabiria
+
+ContentStudio has made a huge difference to our social media management! We particularly appreciate the easy scheduling, Canva integration, and streamlined approval process.
+
+Netta Pegler
+Project manager
+Which plan is right for me?
+Standard ($19 per month billed annually, or $29 month to month) is for solo creators and freelancers managing one brand. Advanced ($49 per month billed annually, or $69 month to month) suits growing teams that need a social inbox, approval workflows, automation and competitor analytics across multiple workspaces. Agency Unlimited ($99 per month billed annually, or $139 month to month) is built for agencies, with unlimited users and workspaces and social accounts that scale affordably. Enterprise pricing is custom and adds bespoke limits, SSO, full API access, white-label branding and priority support. Not sure? Book a free 30 minute call and we'll help you pick.
+Do you charge per user or per seat?
+No. We don't multiply your whole plan price by every team member the way per seat tools do. Standard includes a single user and doesn't offer seat extras. Advanced includes a set number of users, with additional seats available as a low cost extra. Agency Unlimited and Enterprise include unlimited users. Your team can grow without your bill jumping a full tier for every person.
+How much do I save with annual billing?
+Paying yearly saves you up to 34% versus paying month to month. Standard drops from $29 to $19 per month, Advanced from $69 to $49, and Agency Unlimited from $139 to $99. You pay once for the year up front and lock in the lower rate.
+Can I switch between monthly and annual billing?
+Yes. You can move from monthly to annual at any time to capture the discount, and the change is reflected on your next charge.
+Can I upgrade or downgrade my plan anytime?
+Yes. You can change plans whenever your needs change, right from your billing settings. Upgrades and extras are prorated within your current billing cycle, so you only pay for the difference. To downgrade, you can remove add-ons or move the whole plan down to a lower tier, and any remaining balance is refunded.
+How does billing work and what payment methods do you accept?
+Subscriptions are billed securely through Paddle, our payment provider, on a monthly or yearly cycle. We accept major credit and debit cards, and you can view and download every invoice from Settings → Billing & Plan. Any applicable tax or VAT is calculated automatically at checkout based on your location.
+What counts as a social account?
+Each connected profile counts as one, so a Facebook page, an Instagram profile and a LinkedIn page are three social accounts. Standard includes 5, Advanced includes 10, and Agency Unlimited starts at 25 with room to scale.
+What happens when I reach my plan's limits?
+Your work stays put. Nothing is deleted or cut off. On Advanced and Agency Unlimited you can add more capacity instantly, or move up a plan if that's a better fit.
+Can I add more accounts, users or workspaces without changing plans?
+Yes, on Advanced and Agency Unlimited (Standard doesn't include extras, so you'd upgrade to Advanced first). You can add capacity directly from billing settings, with pricing shown in real time before you confirm and prorated to your billing cycle. On the Agency Unlimited plan, users and workspaces are already unlimited, and extra social accounts use tiered pricing that gets cheaper as you scale.
+Is ContentStudio a good fit for agencies managing multiple clients?
+Yes, it's built for it. Agency Unlimited gives you unlimited workspaces (one clean dashboard per client), unlimited team members, white-label options, approval workflows and client management, with social accounts that get cheaper per account the more you add.
+How does the free trial work? Do I need a credit card?
+You get a one time 7-day free trial with full access to the entire ContentStudio suite, with no credit card required to start. Add payment details whenever you're ready, during or after the trial.
+What happens when my trial ends?
+If you haven't added payment details, nothing is charged. To keep going, just choose a plan and your workspaces, connected accounts and scheduled content carry straight over.
+Is there a free forever plan?
+No. ContentStudio doesn't offer a free forever plan or lifetime (LTD) deals. The only free option is the 7-day trial, after which a paid plan keeps your account active.
+Can I pause my subscription?
+Yes. If you need a break, you can pause billing instead of cancelling. Your data, workspaces and settings stay safe, and you can resume anytime with full access restored. Pausing takes effect immediately or at the end of your current billing cycle, your choice.
+Can I cancel anytime, and do you offer refunds?
+Yes, you can cancel anytime from your billing settings (cancellation is handled by the account's Super Admin). You keep access through the end of your paid period, and your data is retained. We also offer a 30 day money back guarantee for first time subscribers, starting from your initial paid subscription date. Contact support and we'll handle eligible refunds. You can find the full details in our Terms and Condition.
+Is my data safe?
+Absolutely. We take data security seriously. ContentStudio is GDPR compliant, hosted on top tier European data centers with SSL encryption, and independently assessed through Google's CASA security program every year. Your data is managed securely and can be deleted on request.
+Do you offer custom or enterprise plans?
+Yes. Enterprise includes custom account limits, unlimited users and workspaces, SSO (SAML), full API access, white-label options and a dedicated account manager. Contact sales or book a demo for a tailored quote.
+Can I purchase extra API credits as well as AI credits?
+Yes. Additional API credits can be purchased on Annual plans, Agency Unlimited plans, and dedicated API plans. Additional AI credits can also be purchased separately based on your usage requirements.
+Are AI credits for images different from AI credits for videos?
+Yes. Image generation and video generation use different AI providers and models, each with its own credit consumption. Keeping them separate allows for more accurate usage tracking and billing.
+Do you offer an affiliate program and how can I earn rewards?
+Yes. You can earn a 30% recurring commission for the first year by referring ContentStudio to your network. Once your referral becomes a paying customer, you'll receive recurring commissions based on their subscription payments. You can find the full details in our Affiliate Program Terms and Conditions.
+I cannot access the Unified Social Inbox. Why?
+The Unified Social Inbox is not available on the Standard plan. To access this feature, you will need to upgrade to either the Advanced or Agency Unlimited plan.
+Can I retain my account data if I don't pay for the subscription before the due date?
+Yes. ContentStudio retains account data for up to 90 days after subscription expiration. After this period, the data is permanently deleted and cannot be recovered.
+What plan includes customer support? Is it an add-on?
+Customer support is included with all ContentStudio plans at no additional cost. Enterprise customers may also receive access to dedicated support resources depending on their agreement.
+Need an onboarding session for ContentStudio. How can I schedule one?
+You can book an onboarding or consultation session through our website or by reaching out to our support team, and we'll be happy to assist.
+
+Powerful social media management software
+
+Start free trial
+Book a demo
+
+7-day free trial - No credit card required.
+
+Grow faster on social, every
+single week
+
+Get insights, emerging platform trends, AI strategies, and product updates trusted by 100,000+ marketers.
+
+Subscribe
+100,000+ marketers subscribed
+
+ContentStudio
+
+5.3K subscribers
+
+•
+Step-by-step tutorial and how-tos
+•
+Product deep dives and launch demos
+Subscribe on YouTube
+
+One scheduler for every social network
+
+Social Media Schedulers
+→
+Facebook
+X (Twitter)
+Instagram
+Linkedin
+Youtube
+Tiktok
+Pinterest
+Bluesky
+Threads
+
+Product
+
+Publishing
+AI Studio
+Analytics
+Inbox
+Social Listening
+Discover
+
+Features
+
+Content Calendar
+Smart Scheduling
+Automation
+Content Composer
+Approval Workflow
+AI Library
+See all features
+
+Developers
+
+Integrations
+API
+MCP Server
+ContentStudio CLI
+Zapier
+Make
+n8n
+
+AI Agents
+
+ChatGPT
+Claude
+Gemini
+Grok Bot
+Hermes Agent
+Cursor
+Codex
+OpenClaw
+
+Upgrade from
+
+Hootsuite
+Buffer
+Sprout Social
+Sendible
+Agorapulse
+Metricool
+SocialPilot
+See all
+
+Resources
+
+Blog
+Help Docs
+Changelog
+Glossary
+Free Tools
+Case Studies
+Mobile App
+Chrome Extension
+
+Company
+
+About Us
+Plans & Pricing
+Reviews
+Careers
+Write for Us
+Affiliate Program
+Brand Assets
+Contact Us
+4.7
+
+16,500+ brands trust ContentStudio
+
+© 2026 ContentStudio. All Rights Reserved.
+
+Privacy
+|
+Terms
+|
+GDPR
+|
+System status
+|
+Security policy
+|
+Child safety
+|
+Sitemap

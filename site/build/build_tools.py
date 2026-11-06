@@ -120,3 +120,6 @@ if '/pricing<' not in sm:
     sm = sm.replace('  <url><loc>https://capybaroar.com/</loc></url>\n', '  <url><loc>https://capybaroar.com/</loc></url>\n  <url><loc>https://capybaroar.com/pricing</loc></url>\n', 1)
     open(P + 'sitemap.xml', 'w').write(sm)
 print('pricing nav refreshed')
+
+# ---------- blog listicles ----------
+exec(open(os.path.join(HERE, 'build_listicles.py')).read())
