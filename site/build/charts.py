@@ -4,7 +4,7 @@ One look everywhere (dataviz method): thin marks with 4px rounded data ends, hai
 a 2px white gap between touching marks. One series is gray with the one thing that matters in yellow. Charts with
 parts use the validated palette (blue, orange, aqua, yellow) in that fixed order, always with a legend that names
 each part and its value, plus a table for screen readers. Every mark has a hover tip (data-tip, see CHART_JS).
-Numbers that aren't facts carry an "Example" tag.
+
 
 Spec types (dicts): bars, columns, line, funnel, stack, steps, versus, formula. See render_chart()."""
 import html as _H
@@ -23,12 +23,15 @@ def _fmt(v):
 
 
 def _head(spec):
-    tag = '<span class="ch-ex">Example</span>' if spec.get('example') else ''
+    tag = ''
     sub = f'<p class="ch-sub">{_e(spec["sub"])}</p>' if spec.get('sub') else ''
     return f'<figcaption class="ch-head"><b>{_e(spec["title"])}</b>{tag}{sub}</figcaption>'
 
 
 def _note(spec):
+    # Notes on example charts only said the numbers were examples; those stay off the page.
+    if spec.get('example'):
+        return ''
     return f'<p class="ch-note">{_e(spec["note"])}</p>' if spec.get('note') else ''
 
 

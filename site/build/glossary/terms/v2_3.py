@@ -34,7 +34,7 @@ TERMS += [
 <p>You don't need a fancy report. A few simple counts tell you most of what you need: how many chats come in each week, how long the first reply takes, how many are solved, and which topics come up again and again.</p>
 <p>The topic count is the most useful. If half your messages ask about shipping, that answer belongs in your bio, your pinned post or your website's FAQ. Every question you answer in public is one fewer chat to handle by hand.</p>
 <figure data-chart="2"></figure>
-<p>In the made-up example above, shipping questions lead by a wide margin. A shop seeing this pattern could add delivery times to its link-in-bio page and pin a post about them, then check a month later to see whether those chats drop.</p>
+<p>In the example above, shipping questions lead by a wide margin. A shop seeing this pattern could add delivery times to its link-in-bio page and pin a post about them, then check a month later to see whether those chats drop.</p>
 <h2>DM etiquette</h2>
 <ul>
 <li>Skip cold sales pitches to strangers. They look like spam and can get your account limited.</li>
@@ -61,7 +61,7 @@ TERMS += [
   {'type': 'columns', 'title': 'What people DM a small shop about', 'sub': 'Chats in one month, sorted by topic', 'example': True,
    'rows': [('Shipping', 46, '46'), ('Sizes', 31, '31'), ('Prices', 22, '22'), ('Order problems', 18, '18'), ('Returns', 12, '12'), ('Other', 9, '9')],
    'highlight': 'Shipping', 'labels': 'all', 'unit': 'Chats',
-   'note': 'Made-up numbers for one shop. Count your own topics for a month.'},
+   'note': 'numbers for one shop. Count your own topics for a month.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Answer comments and mentions from your channels in one place, so public questions get a reply before they turn into DMs.'},
@@ -101,7 +101,7 @@ TERMS += [
 <p>This makes Discord a poor tool for finding new fans and a great one for keeping the ones you have. People come to talk with each other and with you. Think of it as the clubhouse you invite people into after they find you somewhere else.</p>
 <h2>Why Discord matters for brands and creators</h2>
 <p>A Discord server gives you a direct line to your most engaged fans. You can test ideas before launch, run live Q&amp;A sessions in voice channels, answer support questions and give members early news. Because everything happens in one shared space, members help each other too, which saves you time.</p>
-<p>For example, a made-up indie game studio might run channels for announcements, bug reports, fan art and general chat. Players report bugs in the right place, the team replies in threads, and fans post art that the studio can share elsewhere with permission.</p>
+<p>For example, an indie game studio might run channels for announcements, bug reports, fan art and general chat. Players report bugs in the right place, the team replies in threads, and fans post art that the studio can share elsewhere with permission.</p>
 <h2>How to set up a Discord server for your community</h2>
 <ol>
 <li><b>Start with a handful of channels.</b> Announcements, general chat, help and introductions are enough at first.</li>
@@ -160,7 +160,7 @@ TERMS += [
 <p>The finished duet is a new video on your account. It plays the original for its full length next to yours. Your followers see it in their feeds, and people who loved the original may find it too, since it is tied to that video.</p>
 <h2>Why duets matter</h2>
 <p>Duets turn one video into a chain of conversations. They help you join a trend, answer a question or add your own spin without starting from scratch. You borrow the setup from a video people already enjoy and add the punchline, the reaction or the expert view.</p>
-<p>For brands, duets are a friendly way to react to customer videos, thank fans, or show a product next to a creator's review. For example, a made-up skincare shop could duet a customer's "first week using this" video and add a quick tip on how to apply the product. The customer feels seen, and viewers get useful advice.</p>
+<p>For brands, duets are a friendly way to react to customer videos, thank fans, or show a product next to a creator's review. For example, a skincare shop could duet a customer's "first week using this" video and add a quick tip on how to apply the product. The customer feels seen, and viewers get useful advice.</p>
 <h2>How to make a duet, step by step</h2>
 <figure data-chart="1"></figure>
 <ol>
@@ -242,7 +242,7 @@ TERMS += [
 <p>Likes and comments take effort, so most people never leave them. Time is a softer signal that almost everyone sends without thinking. If lots of people stop to read your post, it suggests they find it interesting even when they don't react.</p>
 <p>High dwell time also often means people actually took in your message. Someone who read your whole caption is far more likely to remember your brand than someone who saw only the first word.</p>
 <figure data-chart="1"></figure>
-<p>The made-up chart above shows a common pattern for a ten-slide carousel. Most people see the first slide, and the share still looking drops with each swipe. The steep fall after slide two is the place to fix first, since that is where most people decide to leave.</p>
+<p>The chart above shows a common pattern for a ten-slide carousel. Most people see the first slide, and the share still looking drops with each swipe. The steep fall after slide two is the place to fix first, since that is where most people decide to leave.</p>
 <h2>How to increase dwell time, step by step</h2>
 <ol>
 <li><b>Open with a strong hook.</b> The first line of text or first second of video decides whether people stop at all.</li>
@@ -270,7 +270,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Who is still looking at each slide', 'sub': 'Share of viewers who reach each slide of a ten-slide carousel', 'example': True, 'suffix': '%', 'unit': 'Viewers still looking',
    'points': [('Slide 1', 100), ('2', 78), ('3', 52), ('4', 46), ('5', 42), ('6', 39), ('7', 36), ('8', 34), ('9', 32), ('10', 31)],
-   'note': 'Made-up numbers to show the pattern. Your own drop-off will differ.'},
+   'note': 'numbers to show the pattern. Your own drop-off will differ.'},
   {'type': 'versus', 'title': 'Dwell time vs watch time', 'cols': ['Dwell time', 'Watch time'], 'rows': [
     ('Covers text and images', True, False),
     ('Covers video', True, True),
@@ -309,7 +309,7 @@ TERMS += [
 <li><b>Shared media</b> is sometimes split out for social sharing and community posts that sit between owned and earned.</li>
 </ul>
 <figure data-chart="1"></figure>
-<p>The made-up mix above shows a brand where earned media makes up about a third of the attention it got in a month. Every brand's mix looks different. The point is to know your own, so you can see which part is growing and which is stuck.</p>
+<p>The mix above shows a brand where earned media makes up about a third of the attention it got in a month. Every brand's mix looks different. The point is to know your own, so you can see which part is growing and which is stuck.</p>
 <h2>Why earned media matters</h2>
 <p>People trust other people more than they trust ads. A friend's photo of your café carries more weight than a banner from the café. Earned media also costs nothing per view, so it can stretch a small budget. And because it comes from outside, it often reaches groups you would never find on your own.</p>
 <p>The trade-off is control. You can't choose what people say, when they say it or whether it is kind. That is why earned media works best on top of a good product and solid service. Hype without substance tends to earn the wrong kind of attention.</p>
@@ -339,7 +339,7 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'Where one brand\'s attention came from', 'sub': 'Share of views in one month by media type', 'example': True,
    'parts': [('Owned', 38), ('Earned', 31), ('Paid', 22), ('Shared', 9)],
-   'note': 'Made-up numbers for one brand. Your mix will differ.'},
+   'note': 'numbers for one brand. Your mix will differ.'},
   {'type': 'versus', 'title': 'Earned media vs paid media', 'cols': ['Earned media', 'Paid media'], 'rows': [
     ('You pay for each view', False, True),
     ('You control the message', False, True),
@@ -390,7 +390,7 @@ TERMS += [
 <li>In your website editor, add an HTML or embed block and paste the code.</li>
 <li>Preview the page on a phone and a computer to check that it loads and fits.</li>
 </ol>
-<p>For example, a made-up bakery might embed its three best customer reviews from different networks on its "About us" page, plus one short video of the morning bake. The page feels alive without the owner writing a word.</p>
+<p>For example, a bakery might embed its three best customer reviews from different networks on its "About us" page, plus one short video of the morning bake. The page feels alive without the owner writing a word.</p>
 <h2>Embed vs link vs screenshot</h2>
 <p>There are three common ways to show a post on your site. A <b>link</b> sends people away to see the content. A <b>screenshot</b> is a picture of the post, and an <b>embed</b> shows the real post right on your page.</p>
 <figure data-chart="2"></figure>
@@ -508,7 +508,7 @@ TERMS += [
 <h2>How employee advocacy works</h2>
 <p>Every person on your team has their own network of friends, past coworkers, customers and people in their field. Most of those people don't follow your company page. When an employee shares a post, it lands in front of their network with a real face and name attached.</p>
 <p>Many marketers find that posts from personal profiles travel further than the same message from a brand page, since networks tend to favor people over companies in the feed. A short personal comment on top of the post makes it feel like a recommendation instead of an ad.</p>
-<p>Here is a made-up example. A software company announces a new feature on its page. An engineer who built it reshares the post with two lines about the hardest bug they fixed along the way. A sales rep shares it with a note about which customers asked for it. The same news now reaches people who would never visit the company page, each time with a reason to care that fits the person sharing it.</p>
+<p>Here is an example. A software company announces a new feature on its page. An engineer who built it reshares the post with two lines about the hardest bug they fixed along the way. A sales rep shares it with a note about which customers asked for it. The same news now reaches people who would never visit the company page, each time with a reason to care that fits the person sharing it.</p>
 <h2>Why employee advocacy matters</h2>
 <ul>
 <li>More reach for company news without paying for ads.</li>
@@ -528,7 +528,7 @@ TERMS += [
 </ol>
 <h2>How to measure employee advocacy</h2>
 <p>Track how many people take part and how often, then follow what their posts bring in. Tag every shared link with UTM parameters so your website analytics can tell which clicks came from staff posts. Watch job applications and inbound leads too, and ask new hires where they first heard about you.</p>
-<p>Participation tends to shrink at each stage, as the made-up funnel below shows. Your job is to make each step easier, so more people move from "joined" to "shares every month."</p>
+<p>Participation tends to shrink at each stage, as the funnel below shows. Your job is to make each step easier, so more people move from "joined" to "shares every month."</p>
 <figure data-chart="2"></figure>
 <p>In this example, plenty of people signed up, but fewer than half kept sharing. A team seeing this could send a short weekly note with a few ready posts, so busy people have something to share in a minute.</p>
 <h2>Common mistakes</h2>
@@ -551,7 +551,7 @@ TERMS += [
   ]},
   {'type': 'funnel', 'title': 'Where participation drops off', 'sub': 'Staff at each stage of one company\'s program', 'example': True, 'unit': 'People',
    'stages': [('Invited', 120, '120'), ('Joined', 64, '64'), ('Shared at least once', 41, '41'), ('Shares every month', 22, '22')],
-   'note': 'Made-up numbers for one company to show the pattern.'},
+   'note': 'numbers for one company to show the pattern.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar LinkedIn scheduler', 'url': '/linkedin-post-scheduler', 'line': 'Plan and schedule your company and personal LinkedIn posts on one calendar.'},
@@ -585,10 +585,10 @@ TERMS += [
 <h2>How engagement works</h2>
 <p>Different actions tell you different things. A like is quick and easy, so it shows mild interest. A comment shows someone cared enough to type. A save says the post is useful enough to come back to. A share means someone is willing to put their own name behind your post. Many marketers give more weight to the actions that take more effort.</p>
 <figure data-chart="1"></figure>
-<p>In the made-up post above, likes far outnumber everything else, which is normal. The saves and shares are the more telling part. A post with lots of saves is a sign to make more posts like it.</p>
+<p>In the post above, likes far outnumber everything else, which is normal. The saves and shares are the more telling part. A post with lots of saves is a sign to make more posts like it.</p>
 <h2>Why engagement matters</h2>
 <p>Engagement shows that your content connects with people. It also feeds the algorithm. When a post gets early interaction, many platforms show it to more people. Over time, accounts with steady engagement tend to keep stronger reach, while accounts that post and get silence see their reach shrink.</p>
-<p>Think of a made-up candle shop. Its posts about new scents get plenty of likes, but its post on how to make a candle burn evenly gets five times the saves and a long thread of questions. That tells the shop two things. People want care tips, and the comments hold ideas for the next five posts.</p>
+<p>Think of a candle shop. Its posts about new scents get plenty of likes, but its post on how to make a candle burn evenly gets five times the saves and a long thread of questions. That tells the shop two things. People want care tips, and the comments hold ideas for the next five posts.</p>
 <p>Engagement is also how you learn. Comments tell you what people want next. Shares show what they think their friends need to see. Clicks tell you which offers are worth a closer look.</p>
 <h2>How to measure engagement</h2>
 <p>Start with total engagements for each post. Then turn that into a rate so you can compare posts and accounts of different sizes.</p>
@@ -617,9 +617,9 @@ TERMS += [
   {'type': 'columns', 'title': 'Engagement on one post, by action', 'sub': 'Counts for a single carousel post', 'example': True,
    'rows': [('Likes', 320, '320'), ('Comments', 42, '42'), ('Shares', 28, '28'), ('Saves', 64, '64'), ('Link clicks', 51, '51')],
    'highlight': 'Saves', 'labels': 'all', 'unit': 'Actions',
-   'note': 'Made-up numbers for one post.'},
+   'note': 'numbers for one post.'},
   {'type': 'formula', 'title': 'Turning engagement into a rate', 'formula': 'Engagement rate = total engagements ÷ followers × 100',
-   'note': 'Made-up numbers to show the math, using the post above.', 'result': '5.05%',
+   'note': 'numbers to show the math, using the post above.', 'result': '5.05%',
    'example': [('Engagements', '505'), ('Followers', '10,000')]},
  ],
  'tools': [
@@ -659,7 +659,7 @@ TERMS += [
 <h2>Why platforms push it down</h2>
 <p>Platforms want feeds full of posts people actually enjoy. Bait gets taps without giving much back, which makes the feed feel spammy. Facebook has said openly that it lowers the reach of posts that ask for likes, shares, comments or tags in this way, and other networks look for similar patterns. A trick that works once can hurt your account over months.</p>
 <figure data-chart="1"></figure>
-<p>The made-up chart above shows how this often plays out for an account that leans on bait every week. Early posts get a bump. Then the average reach per post slides as the platform and the audience both lose interest.</p>
+<p>The chart above shows how this often plays out for an account that leans on bait every week. Early posts get a bump. Then the average reach per post slides as the platform and the audience both lose interest.</p>
 <p>Bait looks a little different on each network. On Facebook it is often reaction votes and tag-a-friend posts. On Instagram and TikTok it shows up as "comment a word and I'll DM you" hooks, which some creators use honestly and some overuse. On X and Threads it tends to be ragebait, posts written to make people angry enough to reply. The details vary, but the pattern is the same everywhere: a request that helps the poster's numbers and gives the reader nothing.</p>
 <h2>Engagement bait vs a real call to action</h2>
 <p>Asking for engagement is fine when the request fits the content and gives something back. A good call to action invites people into a real conversation or gives them a reason to act.</p>
@@ -688,7 +688,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Reach per post when an account leans on bait', 'sub': 'Average reach per post, by week', 'example': True, 'unit': 'Reach per post',
    'points': [('Week 1', 4200), ('2', 5100), ('3', 4800), ('4', 4100), ('5', 3600), ('6', 3100), ('7', 2700), ('8', 2400)],
-   'note': 'Made-up numbers to show a common pattern.'},
+   'note': 'numbers to show a common pattern.'},
   {'type': 'versus', 'title': 'Engagement bait vs a real call to action', 'cols': ['Engagement bait', 'Real call to action'], 'rows': [
     ('Asks for a specific tap', True, 'Sometimes'),
     ('The answer gets used', False, True),
@@ -728,7 +728,7 @@ TERMS += [
 <p>Most social posts get nearly all their views in the first day or two, then fade. Timely posts follow that curve sharply. Evergreen posts fade too, but because the topic stays useful, you can share them again and again. Each new share starts a fresh curve with people who missed it, and new followers who joined since the last time.</p>
 <p>On your website and on search-friendly networks like YouTube and Pinterest, evergreen pieces can keep pulling views for months, since people keep searching the same questions.</p>
 <figure data-chart="1"></figure>
-<p>The made-up chart above compares the monthly views of one evergreen how-to video. It never has a huge spike, but it keeps bringing in steady views month after month, with small bumps when it is shared again.</p>
+<p>The chart above compares the monthly views of one evergreen how-to video. It never has a huge spike, but it keeps bringing in steady views month after month, with small bumps when it is shared again.</p>
 <h2>Why evergreen content matters</h2>
 <p>Evergreen posts save time. You make one strong piece and get value from it many times. They also help new followers catch up. Someone who followed you last week has never seen your best post from last spring.</p>
 <p>They also give you a safety net. On weeks when you are busy, sick or short on ideas, a library of evergreen posts keeps your calendar full without a rushed post you will regret.</p>
@@ -743,7 +743,7 @@ TERMS += [
 <li><b>Mix them in.</b> Blend evergreen posts with timely ones so your feed still feels current.</li>
 </ol>
 <p>Many teams keep evergreen posts in a queue that fills open slots in their calendar.</p>
-<p>Here is a made-up example. A dog groomer posts a carousel on how to brush a double coat. It does well, so she saves it to her library. Four months later she reposts it with a new first slide that says "Shedding season is here." Six months after that she turns the same tips into a short video. One idea has now become three posts, each reaching people who missed the others.</p>
+<p>Here is an example. A dog groomer posts a carousel on how to brush a double coat. It does well, so she saves it to her library. Four months later she reposts it with a new first slide that says "Shedding season is here." Six months after that she turns the same tips into a short video. One idea has now become three posts, each reaching people who missed the others.</p>
 <h2>Evergreen vs timely content</h2>
 <p>Timely content ties to a trend, a holiday or a news event. It can spike fast and then disappear. Evergreen content grows slowly and lasts. A healthy content plan uses both. Timely posts grab attention now, and evergreen posts keep working in the background.</p>
 <p>A useful trick is to pair them. When a trend touches your topic, post the timely take and link to your evergreen guide for people who want more.</p>
@@ -760,7 +760,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Monthly views of one evergreen how-to video', 'sub': 'Views per month after posting', 'example': True, 'unit': 'Views',
    'points': [('Month 1', 2400), ('2', 1900), ('3', 1800), ('4', 2100), ('5', 1900), ('6', 1850), ('7', 2200), ('8', 2000)],
-   'note': 'Made-up numbers. Small bumps show months when the video was shared again.'},
+   'note': 'numbers. Small bumps show months when the video was shared again.'},
   {'type': 'steps', 'title': 'The evergreen refresh cycle', 'steps': [
     ('Find', 'Spot older posts that still earn saves and clicks.'),
     ('Refresh', 'New hook, new cover, updated details.'),
@@ -801,7 +801,7 @@ TERMS += [
 <h2>Why the Explore page matters</h2>
 <p>Most of your posts reach people who already follow you. The Explore page is one of the main ways to reach people who don't. When a post lands there, it can bring a wave of new views, profile visits and followers. For small accounts, this kind of discovery can make a big difference.</p>
 <figure data-chart="1"></figure>
-<p>The made-up mix above shows where one account's reach came from in a month. Followers' feeds were the biggest part, but Explore brought nearly a quarter of the views, almost all from new people. Instagram's insights show a similar breakdown for your own posts, which tells you how much discovery you are getting.</p>
+<p>The mix above shows where one account's reach came from in a month. Followers' feeds were the biggest part, but Explore brought nearly a quarter of the views, almost all from new people. Instagram's insights show a similar breakdown for your own posts, which tells you how much discovery you are getting.</p>
 <p>Explore also feeds the rest of the app. Someone who taps your post there may see your Reels in their Reels tab later, or your next post in their main feed once they follow. One good Explore post can keep paying off for weeks after it fades from the grid.</p>
 <h2>How to get on the Explore page, step by step</h2>
 <ol>
@@ -815,7 +815,7 @@ TERMS += [
 <h2>What happens after someone finds you</h2>
 <p>Landing on Explore is only the start. A viewer from Explore taps your post, maybe visits your profile and decides in a few seconds whether to follow. That is why your profile matters as much as the post.</p>
 <figure data-chart="2"></figure>
-<p>In the made-up funnel above, few viewers go on to follow. A clear bio, a grid that shows what you post and a pinned post that explains your account all help more of them stay. For example, a made-up plant shop that pins "Start here: easy plants for dark rooms" gives new visitors an instant reason to follow.</p>
+<p>In the funnel above, few viewers go on to follow. A clear bio, a grid that shows what you post and a pinned post that explains your account all help more of them stay. For example, a plant shop that pins "Start here: easy plants for dark rooms" gives new visitors an instant reason to follow.</p>
 <h2>How to measure Explore reach</h2>
 <p>In Instagram's insights, open a post and look at where its views came from. You will often see a split between home feed, profile, Explore, hashtags and other sources. Track the Explore share for your posts over a month. Then look at follows from those posts. A post that reached many people on Explore but brought no follows may have attracted the wrong crowd.</p>
 <h2>Common mistakes</h2>
@@ -828,10 +828,10 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'Where one account\'s reach came from', 'sub': 'Share of views in one month by source', 'example': True,
    'parts': [('Followers\' feeds', 48), ('Explore', 23), ('Reels tab', 19), ('Hashtags and search', 10)],
-   'note': 'Made-up numbers for one account. Check your own insights.'},
+   'note': 'numbers for one account. Check your own insights.'},
   {'type': 'funnel', 'title': 'From Explore view to new follower', 'sub': 'One post that landed on Explore', 'example': True, 'unit': 'People',
    'stages': [('Saw it on Explore', 18000, '18,000'), ('Opened the post', 3600, '3,600'), ('Visited the profile', 900, '900'), ('Followed', 240, '240')],
-   'note': 'Made-up numbers to show the pattern.'},
+   'note': 'numbers to show the pattern.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Instagram scheduler', 'url': '/instagram-post-scheduler', 'line': 'Plan and schedule Instagram posts on a calendar, with a preview of how each one will look.'},
@@ -871,7 +871,7 @@ TERMS += [
 <figure data-chart="1"></figure>
 <h2>Why Facebook matters for businesses</h2>
 <p>Facebook's users span many age groups, which makes it useful when your customers aren't on newer apps. A Page gives your business a place to share news, hours, reviews and offers. Groups let you build a community around your product or local area. Many people also check a business's Page before visiting, the same way they would check its website.</p>
-<p>For example, a made-up neighborhood gym might post class times on its Page, run a Group where members share progress and answer questions in Messenger. Each part does a different job, and together they keep members close.</p>
+<p>For example, a neighborhood gym might post class times on its Page, run a Group where members share progress and answer questions in Messenger. Each part does a different job, and together they keep members close.</p>
 <p>Facebook also connects to the rest of Meta's apps. You can link your Page to an Instagram account, share Reels and Stories to both and answer messages from both in one place. Many small businesses run their Facebook and Instagram side by side for this reason, posting similar content with small changes for each app's style. Facebook audiences often respond well to longer captions, local news and community posts, while Instagram leans more on strong visuals.</p>
 <h2>How to post well on Facebook, step by step</h2>
 <ol>
@@ -943,7 +943,7 @@ TERMS += [
 <li>Create a space where fans help each other</li>
 <li>Show you the words customers use, which helps your other posts</li>
 </ul>
-<p>For example, a made-up company that sells sewing patterns might run a group where customers post what they made, ask for help with tricky steps and vote on the next pattern. The company learns what to make next, and members who get help from each other stay loyal.</p>
+<p>For example, a company that sells sewing patterns might run a group where customers post what they made, ask for help with tricky steps and vote on the next pattern. The company learns what to make next, and members who get help from each other stay loyal.</p>
 <h2>Facebook Group vs Facebook Page</h2>
 <p>A Page is like a storefront where the business speaks to followers. A Group is like a club where members speak to each other. Many brands run both, and each has its own strengths.</p>
 <figure data-chart="1"></figure>
@@ -960,7 +960,7 @@ TERMS += [
 <h2>How to measure and grow a group</h2>
 <p>Admins of larger groups can see group insights with numbers on growth, active members and the posts that get the most talk. Growth alone can mislead. A group of a few hundred people who post every week can be worth more than a silent group of thousands.</p>
 <figure data-chart="2"></figure>
-<p>The made-up chart above shows a common shape. Growth is slow for the first months while the founder invites people one by one, then speeds up once members start inviting friends and the group shows up in search. Most groups that grow this way have a steady rhythm of posts, like a weekly question or a monthly show and tell, so members know when to come back.</p>
+<p>The chart above shows a common shape. Growth is slow for the first months while the founder invites people one by one, then speeds up once members start inviting friends and the group shows up in search. Most groups that grow this way have a steady rhythm of posts, like a weekly question or a monthly show and tell, so members know when to come back.</p>
 <h2>Common mistakes</h2>
 <ul>
 <li><b>No rules.</b> A group without rules can fill with spam and arguments fast.</li>
@@ -981,7 +981,7 @@ TERMS += [
   ]},
   {'type': 'line', 'title': 'Member growth for one new group', 'sub': 'Total members at the end of each month', 'example': True, 'unit': 'Members',
    'points': [('Month 1', 40), ('2', 85), ('3', 130), ('4', 210), ('5', 340), ('6', 520), ('7', 730), ('8', 960)],
-   'note': 'Made-up numbers to show a common growth shape.'},
+   'note': 'numbers to show a common growth shape.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Facebook scheduler', 'url': '/facebook-post-scheduler', 'line': 'Schedule posts to your Facebook Page, so it keeps pointing people to your group while you focus on members.'},
@@ -1029,7 +1029,7 @@ TERMS += [
 </ol>
 <h2>What to post on your Page</h2>
 <p>Share a mix of updates, behind-the-scenes photos, short videos, customer stories, tips and offers. Posts can be long, up to 63,206 characters, but most people skim, so get to the point in the first line or two. Use Stories and Reels for quick, casual content and live video for events or Q&amp;As.</p>
-<p>Your insights will show which kinds of posts reach the most people. The made-up chart below shows one café's results over a month.</p>
+<p>Your insights will show which kinds of posts reach the most people. The chart below shows one café's results over a month.</p>
 <figure data-chart="2"></figure>
 <p>In this example, Reels reached the most people, while link posts reached the fewest. The café can keep sharing links, mixed in with Reels and photos. It might also try sharing a blog post as a photo with the link in the text, then compare the reach with its plain link posts. Small tests like this, run for a few weeks, tell you more than any general rule.</p>
 <h2>How to measure your Page</h2>
@@ -1055,7 +1055,7 @@ TERMS += [
   {'type': 'columns', 'title': 'Average reach by post type for one café', 'sub': 'People reached per post, averaged over a month', 'example': True,
    'rows': [('Reel', 2300, '2,300'), ('Photo', 1400, '1,400'), ('Live video', 1100, '1,100'), ('Text', 650, '650'), ('Link', 480, '480')],
    'highlight': 'Reel', 'labels': 'all', 'unit': 'People reached',
-   'note': 'Made-up numbers for one Page. Your mix will differ.'},
+   'note': 'numbers for one Page. Your mix will differ.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Facebook scheduler', 'url': '/facebook-post-scheduler', 'line': 'Plan and schedule your Page posts on a calendar, next to the rest of your channels.'},
@@ -1080,7 +1080,7 @@ TERMS += [
 <p>Because Facebook and Instagram are both owned by Meta, you can often share a Reel to both apps at once. Meta has changed the maximum length of Reels more than once, so check the app when you record to see the current limit.</p>
 <h2>How Facebook Reels work</h2>
 <p>When you post a Reel, Facebook shows it to some of your followers and to a group of people who don't follow you but like similar videos. It watches how they respond. Do they watch to the end? Do they replay it, comment, share or follow you? Strong signals mean more people see it. Weak signals mean it stops spreading.</p>
-<p>That is why the first second matters so much. People decide almost right away whether to keep watching or swipe. The share who stay drops over the length of the video, as the made-up chart below shows.</p>
+<p>That is why the first second matters so much. People decide almost right away whether to keep watching or swipe. The share who stay drops over the length of the video, as the chart below shows.</p>
 <figure data-chart="1"></figure>
 <p>In this example, a big chunk of viewers leave in the first three seconds. The fix is to cut slow openings and start with the most interesting moment. A cooking Reel might open on the finished dish, then show how it was made. A shop might open on the product in use, with the price and name as text on screen, then show the details. Watch your own Reels back with the sound off and ask whether the first second would make you stop.</p>
 <h2>Why Facebook Reels matter</h2>
@@ -1114,7 +1114,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Viewers still watching one 30-second Reel', 'sub': 'Share of viewers still watching at each point', 'example': True, 'suffix': '%', 'unit': 'Still watching',
    'points': [('0s', 100), ('3s', 64), ('6s', 52), ('10s', 45), ('15s', 39), ('20s', 34), ('25s', 30), ('30s', 27)],
-   'note': 'Made-up numbers to show a common drop-off shape.'},
+   'note': 'numbers to show a common drop-off shape.'},
   {'type': 'versus', 'title': 'Facebook Reels vs Facebook Stories', 'cols': ['Reels', 'Stories'], 'rows': [
     ('Stays on your Page', True, 'Gone after a day'),
     ('Suggested to strangers', True, 'Rarely'),
@@ -1158,14 +1158,14 @@ TERMS += [
 <li>Share it, and add more frames if you have more to say.</li>
 </ol>
 <h2>How to read Story results</h2>
-<p>Your Story insights show how many people saw each frame. Views almost always drop from the first frame to the last, as the made-up chart below shows. A sharp drop at one frame tells you that frame lost people.</p>
+<p>Your Story insights show how many people saw each frame. Views almost always drop from the first frame to the last, as the chart below shows. A sharp drop at one frame tells you that frame lost people.</p>
 <figure data-chart="1"></figure>
 <p>In this example, most viewers stayed through the first three frames, then many left at frame four. If frame four was a wall of text, the next story could swap it for a short video or split the text into two frames. Also check replies and sticker taps, since those show who actually took part.</p>
 <h2>Facebook Stories vs feed posts</h2>
 <p>Stories and feed posts work side by side. Each fits a different kind of content.</p>
 <figure data-chart="2"></figure>
 <p>Use feed posts for content you want people to find again, like a menu, a guide or a big announcement. Use Stories for timely updates and light, everyday moments. You can also share a feed post to your story to give it a second push.</p>
-<p>For example, a made-up bike shop might post its new opening hours as a feed post, so people can find them later. That same morning it could share a story with a photo of the new sign, a line about the first late night and a poll asking which day people would like the shop to stay open late next. The feed post holds the facts, and the story gets people talking.</p>
+<p>For example, a bike shop might post its new opening hours as a feed post, so people can find them later. That same morning it could share a story with a photo of the new sign, a line about the first late night and a poll asking which day people would like the shop to stay open late next. The feed post holds the facts, and the story gets people talking.</p>
 <h2>Ideas and common mistakes</h2>
 <ul>
 <li>A quick look at a new product before it launches</li>
@@ -1180,7 +1180,7 @@ TERMS += [
   {'type': 'columns', 'title': 'Views per frame in one six-frame story', 'sub': 'People who saw each frame', 'example': True,
    'rows': [('Frame 1', 820, '820'), ('Frame 2', 760, '760'), ('Frame 3', 710, '710'), ('Frame 4', 430, '430'), ('Frame 5', 400, '400'), ('Frame 6', 380, '380')],
    'highlight': 'Frame 4', 'labels': 'all', 'unit': 'Views',
-   'note': 'Made-up numbers. The drop at frame 4 is the one to fix.'},
+   'note': 'numbers. The drop at frame 4 is the one to fix.'},
   {'type': 'versus', 'title': 'Facebook Stories vs feed posts', 'cols': ['Stories', 'Feed posts'], 'rows': [
     ('Stays on your profile or Page', 'One day', True),
     ('Full screen', True, False),
@@ -1219,10 +1219,10 @@ TERMS += [
 <h2>What fills a typical feed</h2>
 <p>On most ranked feeds, posts from people you follow are only part of what you see. The rest is suggested posts, ads and posts from groups or communities you joined. The mix varies a lot by app and person.</p>
 <figure data-chart="2"></figure>
-<p>The made-up split above shows one person's feed over a day. Fewer than half the posts came from accounts they follow. That is good news for brands that want to reach new people, since a strong post can show up for people who have never heard of you. It also means your followers won't see every post you make.</p>
+<p>The split above shows one person's feed over a day. Fewer than half the posts came from accounts they follow. That is good news for brands that want to reach new people, since a strong post can show up for people who have never heard of you. It also means your followers won't see every post you make.</p>
 <h2>Why the feed matters for brands</h2>
 <p>For anyone posting on social media, the feed is where you compete for attention. Your post sits next to friends' updates, news and countless other brands. To be seen, it needs to stop the scroll quickly. To keep being shown, it needs people to engage with it.</p>
-<p>For example, a made-up bookshop posts a plain photo of its storefront and a short reel of a staff member picking three favorite reads for the week. The storefront gets scrolled past. The reel gets comments with people's own picks, so the app shows it to more people, including some who don't follow the shop.</p>
+<p>For example, a bookshop posts a plain photo of its storefront and a short reel of a staff member picking three favorite reads for the week. The storefront gets scrolled past. The reel gets comments with people's own picks, so the app shows it to more people, including some who don't follow the shop.</p>
 <h2>How to show up in more feeds, step by step</h2>
 <ol>
 <li><b>Post when your audience is online.</b> Check your analytics for the hours your followers are active.</li>
@@ -1253,7 +1253,7 @@ TERMS += [
   ]},
   {'type': 'stack', 'title': 'What filled one person\'s feed in a day', 'sub': 'Share of posts by where they came from', 'example': True,
    'parts': [('Accounts they follow', 42), ('Suggested posts', 33), ('Ads', 15), ('Groups and communities', 10)],
-   'note': 'Made-up numbers for one person. Every feed is different.'},
+   'note': 'numbers for one person. Every feed is different.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Preview how each post will look in the feed of every network before you schedule it.'},
@@ -1291,11 +1291,11 @@ TERMS += [
 <h2>Filter vs editing</h2>
 <p>A filter and manual editing can get you to the same place by different roads.</p>
 <figure data-chart="1"></figure>
-<p>Many creators start with a filter and then fine-tune it by hand. For example, a made-up travel creator might use the same warm filter on every photo, then lower the brightness on beach shots that come out too pale. The feed still looks like one set, and each photo looks its best.</p>
+<p>Many creators start with a filter and then fine-tune it by hand. For example, a travel creator might use the same warm filter on every photo, then lower the brightness on beach shots that come out too pale. The feed still looks like one set, and each photo looks its best.</p>
 <h2>Why filters matter</h2>
 <p>A consistent filter style can make a feed look unified, which helps people spot your posts while scrolling. Playful AR filters can lift engagement because people enjoy trying them and sharing the results. Some brands make their own filters as a fun way to get users to spread their name, since every person who posts with the filter shows it to their friends.</p>
 <p>Habits differ by network. Instagram and Snapchat have long been homes for AR face effects and camera games. TikTok effects are often tied to trends, so a filter can be everywhere for a week and then vanish. On LinkedIn and Facebook Pages, people mostly use light color tweaks, since heavy effects can look out of place next to work news. Pinterest pins tend to look best with bright, clear photos that show the idea at a glance.</p>
-<p>A made-up juice bar, for example, might build a simple AR effect that drops cartoon fruit around the user's head. Customers try it in Stories while they wait in line, tag the shop, and their friends see the brand without the shop paying for a single ad.</p>
+<p>A juice bar, for example, might build a simple AR effect that drops cartoon fruit around the user's head. Customers try it in Stories while they wait in line, tag the shop, and their friends see the brand without the shop paying for a single ad.</p>
 <h2>How to pick and use a filter style, step by step</h2>
 <figure data-chart="2"></figure>
 <ol>
@@ -1368,7 +1368,7 @@ TERMS += [
 <figure data-chart="1"></figure>
 <h2>Does a first comment help reach?</h2>
 <p>The effect is not well proven, and it can change as platforms update. Many people believe hashtags and links work better in a comment on some networks. Platforms rarely confirm details like this. The safest approach is to test it on your own account.</p>
-<p>For example, a made-up interior designer could post eight similar room photos over a month. Four have hashtags in the caption and four have them in the first comment. She then compares the average reach and saves of each group. If one wins clearly over a few rounds, she has her answer for her account. If the results are close, she can pick whichever looks tidier.</p>
+<p>For example, an interior designer could post eight similar room photos over a month. Four have hashtags in the caption and four have them in the first comment. She then compares the average reach and saves of each group. If one wins clearly over a few rounds, she has her answer for her account. If the results are close, she can pick whichever looks tidier.</p>
 <h2>How to use a first comment, step by step</h2>
 <figure data-chart="2"></figure>
 <ol>
@@ -1436,7 +1436,7 @@ TERMS += [
 <h2>How followers grow over time</h2>
 <p>Most accounts grow slowly at first, then faster as more people share their posts. A single post that travels far can add a jump, followed by a steadier pace.</p>
 <figure data-chart="1"></figure>
-<p>In the made-up chart above, the account grows a little each month until month seven, when one video spreads well beyond its followers. Growth after that stays faster, since the new followers share posts with their own friends.</p>
+<p>In the chart above, the account grows a little each month until month seven, when one video spreads well beyond its followers. Growth after that stays faster, since the new followers share posts with their own friends.</p>
 <h2>How to grow your followers, step by step</h2>
 <ol>
 <li><b>Pick a clear niche</b> so people know what they will get by following.</li>
@@ -1446,8 +1446,8 @@ TERMS += [
 <li><b>Collaborate</b> with other accounts in your space through collab posts, takeovers or duets.</li>
 <li><b>Reply and join in.</b> Answer comments and take part in conversations in your niche.</li>
 </ol>
-<p>Here is a made-up example. A home cook with a few hundred followers starts posting one short recipe video every Tuesday and Friday. She replies to every comment and teams up with a local farm for a collab post each month. Growth is slow for a while. Then a video on a five-minute pasta sauce gets shared widely, and people who land on her profile see a full grid of quick recipes. Many of them follow, because the profile promises more of what they just enjoyed.</p>
-<p>Check where new followers come from. Your analytics often show which posts brought follows. The made-up breakdown below shows one account where short videos did most of the work.</p>
+<p>Here is an example. A home cook with a few hundred followers starts posting one short recipe video every Tuesday and Friday. She replies to every comment and teams up with a local farm for a collab post each month. Growth is slow for a while. Then a video on a five-minute pasta sauce gets shared widely, and people who land on her profile see a full grid of quick recipes. Many of them follow, because the profile promises more of what they just enjoyed.</p>
+<p>Check where new followers come from. Your analytics often show which posts brought follows. The breakdown below shows one account where short videos did most of the work.</p>
 <figure data-chart="2"></figure>
 <h2>How to measure followers</h2>
 <p>Track a few numbers together over time: total followers, net new followers each week, engagement rate and the follows each post brought in. Net new followers is follows minus unfollows, and it tells you more than the total. If your total rises but engagement falls, you may be gaining followers who don't care about your topic. Look for the posts that brought both follows and comments, and make more like them.</p>
@@ -1461,10 +1461,10 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Follower growth for one account', 'sub': 'Total followers at the end of each month', 'example': True, 'unit': 'Followers',
    'points': [('Jan', 1200), ('Feb', 1350), ('Mar', 1500), ('Apr', 1640), ('May', 1800), ('Jun', 1950), ('Jul', 3100), ('Aug', 3600), ('Sep', 4050), ('Oct', 4500)],
-   'note': 'Made-up numbers. The jump in July comes from one video that spread widely.'},
+   'note': 'numbers. The jump in July comes from one video that spread widely.'},
   {'type': 'bars', 'title': 'Where new followers came from', 'sub': 'Follows in one month, by the post type that brought them', 'example': True, 'unit': 'New followers',
    'rows': [('Short videos', 380, '380'), ('Carousels', 190, '190'), ('Collab posts', 140, '140'), ('Single photos', 70, '70'), ('Stories', 40, '40')],
-   'highlight': 'Short videos', 'note': 'Made-up numbers for one account.'},
+   'highlight': 'Short videos', 'note': 'numbers for one account.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Track followers, reach and engagement for every channel side by side.'},
@@ -1495,7 +1495,7 @@ TERMS += [
 <li>In marketing, to describe offers that create urgency</li>
 <li>As an excuse, as in "I only bought it because of FOMO"</li>
 </ul>
-<p>Here are a couple of made-up examples:</p>
+<p>Here are a couple of examples:</p>
 <p>"Couldn't make it to the beach trip this weekend and the group chat is giving me serious FOMO. Save me a spot next time!"</p>
 <p>"Everyone's posting from the food festival and I'm home with a cold. Major FOMO."</p>
 <h2>Why social media feeds FOMO</h2>
@@ -1510,12 +1510,12 @@ TERMS += [
 <li>Showing how many people bought or signed up</li>
 <li>Limited editions and one-time events</li>
 </ul>
-<p>Used honestly, these help people decide. A real deadline tells a buyer when to make up their mind. Fake countdowns or made-up stock limits break trust, and in many places they can break consumer protection rules too.</p>
+<p>Used honestly, these help people decide. A real deadline tells a buyer when to make up their mind. Fake countdowns or stock limits break trust, and in many places they can break consumer protection rules too.</p>
 <figure data-chart="1"></figure>
-<p>For example, a made-up pottery studio opens ten seats in a weekend class and posts "4 seats left" when four are truly left. That is fair urgency. If the same studio posted "last chance" every week for a class that never fills, followers would stop believing it.</p>
+<p>For example, a pottery studio opens ten seats in a weekend class and posts "4 seats left" when four are truly left. That is fair urgency. If the same studio posted "last chance" every week for a class that never fills, followers would stop believing it.</p>
 <h2>FOMO on different networks</h2>
 <p>FOMO shows up in different forms depending on the app. On Instagram and Facebook, it is often Stories from a party, a trip or a concert. On TikTok, it can be a trend everyone seems to be doing, or a product that sells out after a viral video. On X, Threads and Bluesky, it might be a big live event that the whole feed is talking about while you are offline. On Discord, it can be a voice chat you missed. In each case, the feeling is the same: everyone else seems to be in on something.</p>
-<p>That is also why "limited drops" work so well on social media. A made-up sneaker shop that posts "50 pairs, Saturday at noon" in Stories gets people talking, setting reminders and tagging friends. When the limit is real and the shop keeps its word, the buzz builds trust for the next drop.</p>
+<p>That is also why "limited drops" work so well on social media. A sneaker shop that posts "50 pairs, Saturday at noon" in Stories gets people talking, setting reminders and tagging friends. When the limit is real and the shop keeps its word, the buzz builds trust for the next drop.</p>
 <h2>FOMO vs JOMO</h2>
 <p>JOMO, the "joy of missing out," is the opposite. People use it when they happily skip an event to stay home, rest or do their own thing. A cozy photo of a blanket and a book captioned "JOMO" is a common sight on a busy Saturday night.</p>
 <figure data-chart="2"></figure>
@@ -1561,7 +1561,7 @@ TERMS += [
 <li><b>Context.</b> A location helps viewers understand the story behind a photo.</li>
 <li><b>Community.</b> Customers who tag your location spread the word for you.</li>
 </ul>
-<p>For example, a made-up taco truck that tags the park where it parks each day lets people check the location page and see that the truck is there today. Customers who post photos tagged at the same spot add more proof that the food is worth the walk.</p>
+<p>For example, a taco truck that tags the park where it parks each day lets people check the location page and see that the truck is there today. Customers who post photos tagged at the same spot add more proof that the food is worth the walk.</p>
 <h2>How to use geotags well, step by step</h2>
 <figure data-chart="1"></figure>
 <ol>
@@ -1575,7 +1575,7 @@ TERMS += [
 <h2>Geotag vs location hashtag</h2>
 <p>Geotags and local hashtags both help people find posts by place, and they work best together.</p>
 <figure data-chart="2"></figure>
-<p>A post with a geotag for your shop and a couple of hashtags for your neighborhood covers both kinds of search. Keep the hashtags real. Tags people actually use, like the name of your town or district, beat long made-up ones nobody types.</p>
+<p>A post with a geotag for your shop and a couple of hashtags for your neighborhood covers both kinds of search. Keep the hashtags real. Tags people actually use, like the name of your town or district, beat long ones nobody types.</p>
 <p>To see whether geotags help, open the location page for your business every week or two. Count how many new public posts are tagged there and how many come from customers. Compare reach on your own posts with and without a location over a month. For a shop or café, also ask new customers how they found you. Answers like "I saw it on the map" or "my friend tagged you" tell you the tags are working.</p>
 <h2>Geotag privacy and safety</h2>
 <p>Geotags can reveal more than you expect. Tagging your home, your child's school or your live location lets strangers know where you are. A safer habit is to tag places after you have left, or to use a broad area like a city. Businesses should ask staff and guests before tagging them at private events, and creators should be careful about patterns, like tagging the same gym at the same time every day.</p>
@@ -1627,7 +1627,7 @@ TERMS += [
 <p>Most apps that offer GIFs pull them from big online GIF libraries through a search box. Many apps also turn GIFs into short silent videos behind the scenes so they load faster. To you, they still look and act like GIFs.</p>
 <h2>Why GIFs matter on social media</h2>
 <p>A GIF can say in a second what would take a sentence to write. People use them to react in comments and messages, show emotion or add humor. Many apps have a built-in GIF search, so you can drop one into a reply with a couple of taps.</p>
-<p>Brands use GIFs to sound friendlier, to show quick product demos and to make replies feel human. For example, a made-up bakery might answer "Are the cinnamon rolls back?" with a GIF of a tray coming out of the oven. That reply gets more smiles than a plain "Yes."</p>
+<p>Brands use GIFs to sound friendlier, to show quick product demos and to make replies feel human. For example, a bakery might answer "Are the cinnamon rolls back?" with a GIF of a tray coming out of the oven. That reply gets more smiles than a plain "Yes."</p>
 <h2>How to use GIFs in your posts</h2>
 <ul>
 <li>Reply to comments with a GIF to add warmth and humor.</li>

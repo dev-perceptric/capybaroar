@@ -37,14 +37,14 @@ TERMS = [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Engagement rate by followers', 'formula': 'Engagement rate = (likes + comments + shares + saves) ÷ followers × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '4%',
+   'note': 'numbers to show the math.', 'result': '4%',
    'example': [('Engagements', '480'), ('Followers', '12,000')]},
   {'type': 'bars', 'title': 'One post, three engagement rates', 'sub': 'The same 480 engagements divided by three different bases', 'example': True,
    'rows': [('By reach (6,000 reached)', 8.0, '8%'), ('By followers (12,000)', 4.0, '4%'), ('By impressions (16,000)', 3.0, '3%')], 'highlight': 'By reach (6,000 reached)', 'unit': 'Engagement rate',
-   'note': 'Made-up numbers. Always say which base you used.'},
+   'note': 'numbers. Always say which base you used.'},
   {'type': 'columns', 'title': 'Track your own average by format', 'sub': 'Engagement rate by followers, averaged over a month', 'example': True,
    'rows': [('Single photo', 2.1, '2.1%'), ('Carousel', 4.6, '4.6%'), ('Reel', 3.8, '3.8%'), ('Text post', 1.2, '1.2%')], 'highlight': 'Carousel', 'labels': 'all', 'unit': 'Engagement rate',
-   'note': 'Made-up numbers for one account. Your mix will differ.'},
+   'note': 'numbers for one account. Your mix will differ.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See engagement, reach and followers for every channel side by side, with your best times to post.'},

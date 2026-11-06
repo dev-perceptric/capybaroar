@@ -12,7 +12,7 @@
 ## Rules
 
 - Every term page opens with "What is <term>?" and has at least one chart or diagram.
-- Numbers in charts are made up for teaching and carry the Example tag, except the network text limits from `src/lib/networks.ts`.
+- Charts carry no "example" or "made up" wording. Only the network text limits from `src/lib/networks.ts` and real price data get a source note.
 - Tools that help: Capybaroar first when a feature fits, then our free tools, then well-known outside software described only by its purpose. No competitors; the `list` card links to the blog post that compares them.
 - The build links other terms the first time they come up (8 per page at most) and adds the Capybaroar block for the term's `cap`.
 

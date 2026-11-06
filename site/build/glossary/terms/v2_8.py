@@ -31,7 +31,7 @@ TERMS += [
 <li><b>Don't feed it.</b> If there is no real issue and no rule broken, the best reply is often none at all.</li>
 <li><b>Mute, block or report.</b> Mute or block repeat offenders. Report accounts that harass people or break the platform's rules.</li>
 </ol>
-<p>Here is a made-up example. A bakery posts a photo of a new cake. Someone comments that the bakery "poisons people" and tags a dozen friends. The bakery checks its records and finds no order from this person. It hides the comment under its rule against false claims, blocks the account and moves on. A day later, a real customer comments that her cake arrived squashed. The bakery replies within the hour, says sorry and offers a fresh cake. Two comments that both look negative, two very different answers.</p>
+<p>Here is an example. A bakery posts a photo of a new cake. Someone comments that the bakery "poisons people" and tags a dozen friends. The bakery checks its records and finds no order from this person. It hides the comment under its rule against false claims, blocks the account and moves on. A day later, a real customer comments that her cake arrived squashed. The bakery replies within the hour, says sorry and offers a fresh cake. Two comments that both look negative, two very different answers.</p>
 <h2>Trolls on different networks</h2>
 <p>Every network gives you some tools, but they vary. Most let you hide or delete comments on your own posts and block accounts. Many have keyword filters that hold back comments with words you choose. Some let you limit who can reply to a post, such as only people you follow. Video and live apps often let you assign moderators who can remove comments while you are on air. Check each app's settings page, since these options change over time.</p>
 <h2>Set up your defenses</h2>
@@ -88,10 +88,10 @@ TERMS += [
 <h2>How to measure unfollows</h2>
 <p>Most apps show net change, which is new followers minus the people who left. Some also show the two numbers apart. Work out both so you can tell a growth problem from a churn problem.</p>
 <figure data-chart="1"></figure>
-<p>An unfollow rate turns the raw number into a percent you can compare month to month. If you start a month with 8,000 followers and 120 people leave, your unfollow rate is 1.5% for that month. Those are made-up numbers to show the math. Track your own rate for a few months and you will learn what normal looks like for you.</p>
+<p>An unfollow rate turns the raw number into a percent you can compare month to month. If you start a month with 8,000 followers and 120 people leave, your unfollow rate is 1.5% for that month. Track your own rate for a few months and you will learn what normal looks like for you.</p>
 <figure data-chart="2"></figure>
-<p>In the chart above, the made-up account grows each week until one week shows a sharp drop. That is the week to study. Open your analytics, find the posts from those days and look for what changed.</p>
-<p>Say the made-up account is a fitness coach who usually posts workout tips. In week five she ran a long run of posts about a paid course, five in two days. Comments on those posts were few and short. The next week she went back to tips, mentioned the course once and the count started rising again. One look at the timing told her more than any guess could.</p>
+<p>In the chart above, the account grows each week until one week shows a sharp drop. That is the week to study. Open your analytics, find the posts from those days and look for what changed.</p>
+<p>Say the account is a fitness coach who usually posts workout tips. In week five she ran a long run of posts about a paid course, five in two days. Comments on those posts were few and short. The next week she went back to tips, mentioned the course once and the count started rising again. One look at the timing told her more than any guess could.</p>
 <p>Keep a short note each week next to your numbers: what you posted, how often and anything unusual, like a sale or a trip. When a drop comes, the note often explains it in seconds.</p>
 <h2>Why people unfollow</h2>
 <ul>
@@ -124,11 +124,11 @@ TERMS += [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Unfollow rate', 'formula': 'Unfollow rate = unfollows in the period ÷ followers at the start × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '1.5%',
+   'note': 'numbers to show the math.', 'result': '1.5%',
    'example': [('Unfollows this month', '120'), ('Followers on day one', '8,000')]},
   {'type': 'line', 'title': 'Follower count by week', 'sub': 'Steady growth, then one week with a wave of unfollows', 'example': True,
    'points': [('Wk 1', 8000), ('Wk 2', 8140), ('Wk 3', 8290), ('Wk 4', 8420), ('Wk 5', 8010), ('Wk 6', 8090), ('Wk 7', 8210), ('Wk 8', 8340)], 'unit': 'Followers',
-   'note': 'Made-up numbers for one account.'},
+   'note': 'numbers for one account.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Watch follower numbers for every channel side by side and spot the week something changed.'},
@@ -170,7 +170,7 @@ TERMS += [
 <h2>How to read a click report</h2>
 <p>A click report lists each short link with its total clicks, and often a chart of clicks by day. Some tools also show the rough country or the app the click came from. Look for the day clicks peaked and match it to when you posted. A link that keeps getting clicks weeks later is pointing to something people want, so share it again.</p>
 <p>Click counts and website visits rarely match exactly. A person may click twice, or close the page before it loads. Use the shortener for a quick read and your website analytics for the full story.</p>
-<p>For example, a made-up shoe shop shares one sale page in four places: an Instagram story, an X post, an email and a shop window poster. It makes four short links. A week later, the poster link has more clicks than the shop expected, so it puts posters in two more windows.</p>
+<p>For example, a shoe shop shares one sale page in four places: an Instagram story, an X post, an email and a shop window poster. It makes four short links. A week later, the poster link has more clicks than the shop expected, so it puts posters in two more windows.</p>
 <p><b>Branded short links.</b> A branded short link uses a short domain you own instead of a generic one. People can see who the link belongs to, which builds trust. It also keeps working if you switch shortener tools, as long as you still control the domain and point it at the new tool.</p>
 <p>To set one up, you buy a short domain, then connect it to your shortener in its settings. Most tools walk you through the steps.</p>
 <h2>Short links vs link in bio</h2>
@@ -240,7 +240,7 @@ TERMS += [
 <li>If you paid or gave something for the post, make sure it is labeled as paid or gifted.</li>
 <li>Keep a simple record of who said yes, when and for what use.</li>
 </ul>
-<p>Here is a made-up example. A plant shop finds a customer's photo of a fern on a sunny shelf, tagged with the shop's name. The shop comments, "We love this. Can we share it on our page with credit?" The customer says yes in a reply. The shop reposts it, tags her and saves a screenshot of the reply. Later the shop wants the photo for an ad, so it sends a short written request first, because ad use is a bigger ask.</p>
+<p>Here is an example. A plant shop finds a customer's photo of a fern on a sunny shelf, tagged with the shop's name. The shop comments, "We love this. Can we share it on our page with credit?" The customer says yes in a reply. The shop reposts it, tags her and saves a screenshot of the reply. Later the shop wants the photo for an ad, so it sends a short written request first, because ad use is a bigger ask.</p>
 <h2>UGC on different networks, and how to measure it</h2>
 <p>Each network makes sharing a little different. Some have a built-in way to reshare a post you were tagged in to your story. Some have a duet or stitch feature for reacting to a customer's video. Review sites and map listings hold written UGC. Wherever you find it, the same rules apply: ask, credit and label.</p>
 <p>To see if UGC is working for you, compare it with your own posts. Track the engagement rate of reposted customer content next to brand-made posts for a month. Count how many new tagged posts you get each week, and watch whether that number grows after you start featuring people. If you use UGC in ads, compare its clicks with your studio ads.</p>
@@ -255,7 +255,7 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'One month of posts for a small brand', 'sub': 'Where the content came from', 'example': True,
    'parts': [('Made by the brand', 18), ('Customer posts (UGC)', 8), ('Paid UGC creators', 4), ('Reposted reviews', 2)],
-   'note': 'Made-up numbers for one brand. Your mix will differ.'},
+   'note': 'numbers for one brand. Your mix will differ.'},
   {'type': 'versus', 'title': 'Organic UGC vs paid UGC', 'cols': ['Organic UGC', 'Paid UGC'],
    'rows': [('Made by', 'Real customers', 'Hired creators'), ('Paid for', False, True), ('Brand controls the brief', False, True), ('Needs permission to reuse', True, 'Set in the contract'), ('Needs a paid label', False, True)]},
   {'type': 'steps', 'title': 'Reposting a customer post', 'steps': [
@@ -311,7 +311,7 @@ TERMS += [
 <li><b>Shorten it if needed.</b> A short link keeps your post tidy and carries the tags along.</li>
 <li><b>Read the results.</b> In your analytics, sort visits by campaign, source or content after the post goes live.</li>
 </ol>
-<p><b>A made-up example.</b> A small coffee brand launches a new blend. It posts on Instagram, Facebook and LinkedIn, and sends one email. Each link gets the same campaign name, new_blend, with its own source. The Instagram post and story get different utm_content values, post and story. After a week, the brand's analytics show the story sent more visits than the feed post, so the brand plans more stories for the next launch. It also sees that the email brought fewer visits than the story but more orders per visit, which tells the team that both channels earn their place.</p>
+<p><b>An example.</b> A small coffee brand launches a new blend. It posts on Instagram, Facebook and LinkedIn, and sends one email. Each link gets the same campaign name, new_blend, with its own source. The Instagram post and story get different utm_content values, post and story. After a week, the brand's analytics show the story sent more visits than the feed post, so the brand plans more stories for the next launch. It also sees that the email brought fewer visits than the story but more orders per visit, which tells the team that both channels earn their place.</p>
 <figure data-chart="3"></figure>
 <h2>Where tagged links go on each network</h2>
 <p>Each network gives you different spots for a link, and each spot deserves its own tag. On most networks you can put a link in your profile. Some allow links in the post itself, some in stories, some only in comments or in ads. Video apps often have a link spot in the description. If you use a link in bio page, tag each link on that page too, so you can see which button got the click.</p>
@@ -335,7 +335,7 @@ TERMS += [
  'charts': [
   {'type': 'bars', 'title': 'Where one month of social visits showed up', 'sub': 'The same posts, before and after the team tagged its links', 'example': True,
    'rows': [('Untagged: counted as direct', 62, '62%'), ('Untagged: counted as social', 38, '38%'), ('Tagged: counted by campaign', 91, '91%'), ('Tagged: still direct', 9, '9%')], 'highlight': 'Tagged: counted by campaign', 'unit': 'Share of visits',
-   'note': 'Made-up numbers to show the idea. Your split will differ.'},
+   'note': 'numbers to show the idea. Your split will differ.'},
   {'type': 'steps', 'title': 'Building a tagged link', 'steps': [
    ('Naming rule', 'Write down how you spell each source and medium.'),
    ('Page address', 'Copy the exact page you want people to land on.'),
@@ -344,7 +344,7 @@ TERMS += [
    ('Share and read', 'Post it, then sort visits by campaign in analytics.')]},
   {'type': 'columns', 'title': 'Visits by link in one campaign', 'sub': 'Each link had its own source or content tag', 'example': True,
    'rows': [('IG story', 410), ('IG post', 240), ('Facebook', 180), ('LinkedIn', 150), ('Email', 320)], 'highlight': 'IG story', 'labels': 'all', 'unit': 'Visits',
-   'note': 'Made-up numbers for one launch.'},
+   'note': 'numbers for one launch.'},
  ],
  'tools': [
   {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder adds source, medium and campaign tags to any link.'},
@@ -374,7 +374,7 @@ TERMS += [
 <p>A post can get lots of likes and send zero visitors to your site. A giveaway can add hundreds of followers who never open another post. A trending sound can pile up views from people who will never be customers. Each of these looks like a win on a dashboard.</p>
 <p>Chasing these numbers can also push you toward bad habits. Bait posts, bought followers and follow-for-follow groups all raise counts without bringing real customers. Worse, they can hurt later, because a big audience that doesn't care drags down your engagement rate and tells the apps your posts aren't worth showing.</p>
 <figure data-chart="1"></figure>
-<p>In this made-up example, post A won on likes by a wide margin. Post B sent more people to the shop and made more sales. If the team only looked at likes, it would make more posts like A and fewer like B.</p>
+<p>In this example, post A won on likes by a wide margin. Post B sent more people to the shop and made more sales. If the team only looked at likes, it would make more posts like A and fewer like B.</p>
 <h2>Vanity metrics vs actionable metrics</h2>
 <p>Actionable metrics connect to a decision or a goal. They tell you what to do next. Here are some swaps:</p>
 <figure data-chart="2"></figure>
@@ -388,7 +388,7 @@ TERMS += [
 <h2>Follow the funnel</h2>
 <p>A good way to see the gap is to line your numbers up as a funnel. Each step is smaller than the one before. The top steps are where vanity metrics live. The bottom steps are the ones that pay the bills.</p>
 <figure data-chart="3"></figure>
-<p>The made-up funnel above starts with 40,000 impressions and ends with 36 sales. Both numbers are true. Only one of them tells the owner whether the campaign was worth the time. The steps in the middle show where people dropped out, so you know what to fix: a weak call to action, a slow page or a confusing checkout.</p>
+<p>The funnel above starts with 40,000 impressions and ends with 36 sales. Both numbers are true. Only one of them tells the owner whether the campaign was worth the time. The steps in the middle show where people dropped out, so you know what to fix: a weak call to action, a slow page or a confusing checkout.</p>
 <h2>How to move past vanity metrics</h2>
 <ol>
 <li><b>Write down one main goal.</b> Leads, sales, sign-ups, bookings or store visits. Pick the one that matters most this quarter.</li>
@@ -412,12 +412,12 @@ TERMS += [
  'charts': [
   {'type': 'bars', 'title': 'Two posts, two stories', 'sub': 'Likes vs sales from the same week', 'example': True,
    'rows': [('Post A: likes', 1400), ('Post B: likes', 310), ('Post A: sales', 2), ('Post B: sales', 19)], 'highlight': 'Post B: sales', 'unit': 'Count',
-   'note': 'Made-up numbers to show how likes and sales can point in different directions.'},
+   'note': 'numbers to show how likes and sales can point in different directions.'},
   {'type': 'versus', 'title': 'Vanity metric vs actionable metric', 'cols': ['Vanity metric', 'Actionable metric'],
    'rows': [('Example', 'Follower count', 'Sign-ups from social'), ('Easy to see', True, False), ('Tied to a goal', False, True), ('Tells you what to change', False, True), ('Can be faked', True, 'Much harder')]},
   {'type': 'funnel', 'title': 'From impressions to sales', 'sub': 'One campaign, every step counted', 'example': True,
    'stages': [('Impressions', 40000), ('Likes and comments', 1800), ('Link clicks', 600), ('Added to cart', 90), ('Sales', 36)], 'unit': 'People',
-   'note': 'Made-up numbers for one campaign.'},
+   'note': 'numbers for one campaign.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See reach, engagement and followers for every channel side by side, with reports on the Pro and Agency plans.'},
@@ -451,7 +451,7 @@ TERMS += [
 <li>Some platforms give verified accounts extra support or security features.</li>
 <li>On some apps, paid verification comes with other perks, such as longer posts or more ways to customize a profile.</li>
 </ul>
-<p>Think of a made-up candle shop that gets copied. A scam account uses its logo, posts its photos and sends messages offering huge discounts if people pay by bank transfer. Customers who know the real shop has a badge can spot the fake at a glance. That alone can save the shop a lot of angry emails.</p>
+<p>Think of a candle shop that gets copied. A scam account uses its logo, posts its photos and sends messages offering huge discounts if people pay by bank transfer. Customers who know the real shop has a badge can spot the fake at a glance. That alone can save the shop a lot of angry emails.</p>
 <h2>How to get verified, step by step</h2>
 <ol>
 <li><b>Read the platform's own help page.</b> Rules and routes change, so start with the current official page.</li>
@@ -508,7 +508,7 @@ TERMS += [
 <h2>Why video views matter</h2>
 <p>Views show how many times your video reached people's screens. They are a quick way to see if a hook, cover or thumbnail is grabbing attention. For creators who earn from ads or bonuses, views can tie to income. For brands, views are an early signal, but they don't show if people stayed or acted.</p>
 <figure data-chart="1"></figure>
-<p>The made-up funnel above shows why views are only the start. Of 20,000 people who saw the video in their feed, 8,000 counted as views. Only 1,400 watched to the end. The biggest drop is between the start and the halfway mark, which points to a slow middle.</p>
+<p>The funnel above shows why views are only the start. Of 20,000 people who saw the video in their feed, 8,000 counted as views. Only 1,400 watched to the end. The biggest drop is between the start and the halfway mark, which points to a slow middle.</p>
 <h2>Views vs reach vs watch time</h2>
 <ul>
 <li><b>Views</b> count plays, so one person watching twice can add two.</li>
@@ -528,7 +528,7 @@ TERMS += [
 <li><b>Post when your audience is online.</b> Early views can help a video get shown to more people.</li>
 <li><b>Share it more than once.</b> Put it in your stories, your newsletter and a pinned post.</li>
 </ol>
-<p>Here is a made-up example. A dog groomer posts the same before-and-after clip twice, a week apart. The first version opens with the dog walking in. The second opens on the finished, fluffy dog, then shows how it got there. The second version gets far more views, because the first second gives people a reason to stay.</p>
+<p>Here is an example. A dog groomer posts the same before-and-after clip twice, a week apart. The first version opens with the dog walking in. The second opens on the finished, fluffy dog, then shows how it got there. The second version gets far more views, because the first second gives people a reason to stay.</p>
 <h2>Views on different networks</h2>
 <p>Short video apps tend to count views fast, so numbers climb quickly. Long video sites usually ask for a real watch before counting, and they may take time to confirm counts. Social feeds that autoplay can show big view counts for short glances. Stories count views as people tap through. Check each app's help page for its current rule, and keep separate records for each.</p>
 <h2>Common mistakes</h2>
@@ -542,9 +542,9 @@ TERMS += [
  'charts': [
   {'type': 'funnel', 'title': 'From feed to the final second', 'sub': 'One short video, followed step by step', 'example': True,
    'stages': [('Saw it in the feed', 20000), ('Counted as a view', 8000), ('Watched half', 3100), ('Watched to the end', 1400)], 'unit': 'People',
-   'note': 'Made-up numbers for one video.'},
+   'note': 'numbers for one video.'},
   {'type': 'formula', 'title': 'Average view duration', 'formula': 'Average view duration = total watch time ÷ views',
-   'note': 'Made-up numbers to show the math.', 'result': '45 seconds',
+   'note': 'numbers to show the math.', 'result': '45 seconds',
    'example': [('Total watch time', '100 hours'), ('Views', '8,000')]},
  ],
  'tools': [
@@ -571,7 +571,7 @@ TERMS += [
 <h2>How a post goes viral</h2>
 <p>Most apps show a new post to a small group first. If that group reacts strongly by watching to the end, sharing or commenting, the app shows it to a bigger group. If the bigger group reacts the same way, the circle grows again. At the same time, people share it in chats and on other apps, which brings in viewers the algorithm never picked.</p>
 <figure data-chart="1"></figure>
-<p>The made-up chart above shows a typical shape. Views are low for the first day, jump hard over the next two and then fade. Most viral posts burn bright for a short time. The fade is normal and doesn't mean you did anything wrong.</p>
+<p>The chart above shows a typical shape. Views are low for the first day, jump hard over the next two and then fade. Most viral posts burn bright for a short time. The fade is normal and doesn't mean you did anything wrong.</p>
 <h2>Why viral posts happen</h2>
 <p>Content tends to spread when it makes people feel something strong, like laughter, surprise or awe. It also spreads when it says something people want to repeat, or when sharing it makes them look funny, smart or kind. Timing plays a part. A post that fits a moment everyone is talking about has a head start.</p>
 <p>Luck is a big part too. Two posts that look almost the same can do very differently, because of who saw them first. That is why most creators who have gone viral can't tell you exactly why.</p>
@@ -593,7 +593,7 @@ TERMS += [
 <li>Watch for bad reactions and moderate if needed. Big crowds bring trolls.</li>
 <li>Check where the new viewers came from and which of them followed.</li>
 </ul>
-<p>Here is a made-up example. A small bike repair shop posts a clip of a mechanic fixing a chain in ten seconds. It spreads far beyond the town. The shop pins a comment with its opening hours, replies to the best questions and posts a second clip the next morning showing another quick fix. Most viewers move on, but a few hundred follow, and some of them are local.</p>
+<p>Here is an example. A small bike repair shop posts a clip of a mechanic fixing a chain in ten seconds. It spreads far beyond the town. The shop pins a comment with its opening hours, replies to the best questions and posts a second clip the next morning showing another quick fix. Most viewers move on, but a few hundred follow, and some of them are local.</p>
 <h2>Going viral on different networks</h2>
 <p>Short video apps often push posts to people who don't follow you, so a new account can go viral fast. Networks built around who you follow tend to spread posts through shares and reposts instead. Professional networks reward posts that spark long comment threads. Private chats spread things too, but you can't see it happening, so a post can be passed around far more than your numbers show.</p>
 <h2>Common mistakes</h2>
@@ -607,7 +607,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'Views per day for one viral post', 'sub': 'A slow start, a sharp jump, then a long fade', 'example': True,
    'points': [('Day 1', 900), ('Day 2', 14000), ('Day 3', 52000), ('Day 4', 31000), ('Day 5', 12000), ('Day 6', 5200), ('Day 7', 2400)], 'unit': 'Views',
-   'note': 'Made-up numbers for one post.'},
+   'note': 'numbers for one post.'},
   {'type': 'steps', 'title': 'The first day after a post takes off', 'steps': [
    ('Reply', 'Answer the best comments while they are fresh.'),
    ('Pin', 'Pin a comment that says who you are and what you do.'),
@@ -658,7 +658,7 @@ TERMS += [
 <li><b>Edit hard.</b> Cut slow parts. Jump cuts keep things moving.</li>
 <li><b>Add a thumbnail and title</b> that say what happens in the video, then schedule it for a time your viewers are around.</li>
 </ol>
-<p>Here is a made-up example. A baker starts a weekly vlog about opening her first cafe. Episode one is signing the lease. Episode two is painting the walls with friends. Each video ends with a small question, like "Will the oven arrive in time?" Viewers come back to find out, and by opening day many of them visit in person.</p>
+<p>Here is an example. A baker starts a weekly vlog about opening her first cafe. Episode one is signing the lease. Episode two is painting the walls with friends. Each video ends with a small question, like "Will the oven arrive in time?" Viewers come back to find out, and by opening day many of them visit in person.</p>
 <h2>Where the time goes</h2>
 <p>Most new vloggers are surprised by how much time editing takes. Filming a day might take a few hours spread out. Turning that into a tight story can take longer than the filming did.</p>
 <figure data-chart="2"></figure>
@@ -684,7 +684,7 @@ TERMS += [
    ('Schedule', 'Post when your viewers are around.')]},
   {'type': 'stack', 'title': 'Where the hours go on one vlog', 'sub': 'Time spent on a ten-minute video', 'example': True,
    'parts': [('Editing', 6), ('Filming', 4), ('Thumbnail and title', 1.5), ('Planning', 1)],
-   'note': 'Made-up numbers for one creator.'},
+   'note': 'numbers for one creator.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar YouTube scheduler', 'url': '/youtube-video-scheduler', 'line': 'Schedule your vlog uploads on a calendar so episodes go out on the same day each week.'},
@@ -726,12 +726,12 @@ TERMS += [
 <li><b>Add captions.</b> Many people watch with the sound off, so put your words on screen too.</li>
 </ol>
 <h2>How long should the script be?</h2>
-<p>Most people speak at a steady pace when reading a script. A handy habit is to time yourself reading a paragraph, then use that pace to plan. If your clip is 30 seconds long and you read about two words a second, your script should be around 60 words. Those are made-up numbers to show the math. Time your own pace, since everyone is different.</p>
+<p>Most people speak at a steady pace when reading a script. A handy habit is to time yourself reading a paragraph, then use that pace to plan. If your clip is 30 seconds long and you read about two words a second, your script should be around 60 words. Time your own pace, since everyone is different.</p>
 <p>Leave room to breathe. A script that fills every second sounds rushed. Short gaps let the pictures do some of the talking.</p>
 <h2>Human voice vs AI voice</h2>
 <figure data-chart="2"></figure>
 <p>Text-to-speech and AI voices can be quick and handy, and some sound very natural. A real human voice still tends to feel warmer and more trusted, especially when people want to get to know you. If you use an AI voice, pick one that fits your brand and check how it says names and tricky words. Never use an AI copy of a real person's voice without their clear permission.</p>
-<p>Here is a made-up example. A hardware store makes a weekly "fix it in a minute" video. For a while it uses a computer voice, and comments keep asking who the person is. The store switches to one of its staff, a friendly woman who has worked there for years. Now people ask for her by name in the shop.</p>
+<p>Here is an example. A hardware store makes a weekly "fix it in a minute" video. For a while it uses a computer voice, and comments keep asking who the person is. The store switches to one of its staff, a friendly woman who has worked there for years. Now people ask for her by name in the shop.</p>
 <h2>Voiceovers on different networks</h2>
 <p>Short video apps usually let you record a voiceover right in the editing screen while the clip plays. Many offer voice effects and text-to-speech too. Long video sites expect you to add the voice in an editor before upload. Some networks play videos muted in the feed until someone taps, which makes captions even more important. Check each app's editing tools, since they change often.</p>
 <h2>Common mistakes</h2>
@@ -795,7 +795,7 @@ TERMS += [
 <li><b>A bump upward</b> means people rewound to watch something again. That part is gold.</li>
 <li><b>A drop near the end</b> is normal once people feel the video is wrapping up.</li>
 </ul>
-<p>In the made-up graph above, the video keeps most viewers until about the two-minute mark, then loses many at once. The creator checks that moment and finds a long sponsor read. Next time, she moves it later and keeps it short.</p>
+<p>In the graph above, the video keeps most viewers until about the two-minute mark, then loses many at once. The creator checks that moment and finds a long sponsor read. Next time, she moves it later and keeps it short.</p>
 <h2>How to increase watch time</h2>
 <ol>
 <li><b>Start strong.</b> Tell viewers right away what they will get, and show a taste of it.</li>
@@ -805,7 +805,7 @@ TERMS += [
 <li><b>Keep the promise.</b> Make sure the title and thumbnail match what the video delivers.</li>
 <li><b>Point to the next video.</b> End with an end screen or playlist so viewers keep watching your channel.</li>
 </ol>
-<p>Here is another made-up case. A cooking channel used to open every video with a minute of chat about its week. Retention graphs showed a steep drop in that first minute, again and again. The creator moved the chat to the end and opened on the finished dish instead. Average view duration went up on the next five videos, and so did total watch time, even though the videos were a little shorter.</p>
+<p>Here is another case. A cooking channel used to open every video with a minute of chat about its week. Retention graphs showed a steep drop in that first minute, again and again. The creator moved the chat to the end and opened on the finished dish instead. Average view duration went up on the next five videos, and so did total watch time, even though the videos were a little shorter.</p>
 <p>Small changes add up. Trimming ten seconds from a slow intro may not feel like much, but across thousands of views it keeps many more people around for the good part.</p>
 <h2>Watch time on different networks</h2>
 <p>On long video sites, total watch time across a channel is a big deal for growth and earning. On short video apps, the share of a clip people watch, and whether they replay it, tends to matter more than total minutes. Social feeds that autoplay may count very short watches, so average time can look low. Compare watch time within one app and one format, never across them.</p>
@@ -819,11 +819,11 @@ TERMS += [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Average view duration', 'formula': 'Average view duration = watch time ÷ views',
-   'note': 'Made-up numbers to show the math.', 'result': '3 minutes',
+   'note': 'numbers to show the math.', 'result': '3 minutes',
    'example': [('Watch time', '500 hours'), ('Views', '10,000')]},
   {'type': 'line', 'title': 'Audience retention for one video', 'sub': 'Share of viewers still watching at each point', 'example': True, 'suffix': '%',
    'points': [('0:00', 100), ('0:30', 78), ('1:00', 70), ('1:30', 66), ('2:00', 63), ('2:30', 44), ('3:00', 41), ('3:30', 38), ('4:00', 30)], 'unit': 'Still watching',
-   'note': 'Made-up numbers. The dip after two minutes is the part to fix.'},
+   'note': 'numbers. The dip after two minutes is the part to fix.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar YouTube scheduler', 'url': '/youtube-video-scheduler', 'line': 'Plan and schedule your YouTube uploads on one calendar with your other channels.'},
@@ -870,7 +870,7 @@ TERMS += [
 <li><b>Broadcast lists</b> send a message from you to many contacts, who each get it as a private chat.</li>
 <li><b>Communities</b> bundle several related groups together under one name.</li>
 </ul>
-<p><b>What to post, with a made-up example.</b></p>
+<p><b>What to post, with an example.</b></p>
 <p>A local bookshop starts a channel. On Mondays it posts the week's new arrivals with one photo each. On Wednesdays it runs a poll, such as "Which author should we invite next?" On Fridays it shares a short note from a staff member about a book they love. When an author visit is booked, the shop posts a reminder the day before. Followers react most to the staff notes, so the shop adds a second one each week.</p>
 <p>Good channel posts are short and easy to read on a phone. One clear idea per post works better than a long block of text. Use polls to ask simple questions, and pictures to break up the feed.</p>
 <h2>How to measure a channel</h2>
@@ -926,7 +926,7 @@ TERMS += [
 <li><b>Set the schedule.</b> Many tools can build the report each week or month on their own.</li>
 <li><b>Review and send.</b> Someone checks the numbers, adds a short summary and sends it to the client.</li>
 </ol>
-<p>Here is a made-up example. A two-person agency handles social media for six local businesses. Each month it sends every client a report with the agency's logo on the cover, a one-page summary and charts for each network. The clients never see the tool's name. They see a steady, tidy report from the agency they hired, and they ask fewer "how are we doing?" emails.</p>
+<p>Here is an example. A two-person agency handles social media for six local businesses. Each month it sends every client a report with the agency's logo on the cover, a one-page summary and charts for each network. The clients never see the tool's name. They see a steady, tidy report from the agency they hired, and they ask fewer "how are we doing?" emails.</p>
 <h2>What goes in a good client report</h2>
 <ul>
 <li>A short summary at the top in plain words: what went well and what you will try next.</li>
@@ -1015,7 +1015,7 @@ TERMS += [
 <li>Extra payment for ad use, separate from the post itself.</li>
 <li>Whether you can see the ad results.</li>
 </ul>
-<p>Here is a made-up example. A skin care brand pays a creator for one video about its new cream. The deal adds a fee for 30 days of ad use. The brand runs the video as an ad from the creator's account to people who like skin care. Comments come in under the creator's name, so the two agree that the brand answers product questions and the creator handles anything personal. On day 31, the creator removes the brand's access.</p>
+<p>Here is an example. A skin care brand pays a creator for one video about its new cream. The deal adds a fee for 30 days of ad use. The brand runs the video as an ad from the creator's account to people who like skin care. Comments come in under the creator's name, so the two agree that the brand answers product questions and the creator handles anything personal. On day 31, the creator removes the brand's access.</p>
 <h2>Whitelisting on different networks</h2>
 <p>Each big ad platform has its own version and its own name for it. Most work the same way at heart: the creator approves the brand inside the app, and the brand runs ads from the creator's post. The steps, labels and limits differ, so read each platform's help page before you start. Make sure the ad carries the paid partnership label the platform offers.</p>
 <h2>Common mistakes</h2>
@@ -1063,7 +1063,7 @@ TERMS += [
 <p>People trust recommendations from people they know more than they trust ads. A tip from a friend comes with their reputation attached. That makes word of mouth strong at turning interest into buying. It also costs little, since customers do the telling.</p>
 <p>It keeps going, too. One happy customer tells two friends. If one of those friends loves it, they tell someone else. Each new customer is a chance for the chain to continue.</p>
 <figure data-chart="1"></figure>
-<p>In the made-up chain above, 200 happy customers lead to 22 new ones in a month. That may look small, but those new customers came at almost no cost, and some of them will start their own chain.</p>
+<p>In the chain above, 200 happy customers lead to 22 new ones in a month. That may look small, but those new customers came at almost no cost, and some of them will start their own chain.</p>
 <h2>Where word of mouth happens online</h2>
 <ul>
 <li><b>Private chats and messages.</b> Links sent to a friend or a family group. This is often called dark social, and it is hard to see in your numbers.</li>
@@ -1081,7 +1081,7 @@ TERMS += [
 <li><b>Show customer stories.</b> Share user-generated content and reviews on your own accounts, with permission.</li>
 <li><b>Reply to people who mention you.</b> A quick thank you makes them feel heard and more likely to share again.</li>
 </ol>
-<p>Here is a made-up example. A dog walking service in one town gives every new client a small bag of treats with a card: "Know a dog who needs a walk? Give them this card for a free first walk, and you get one too." The cards are easy to pass along at the park. Within a few months, the owner notices that most new clients mention a friend when they book.</p>
+<p>Here is an example. A dog walking service in one town gives every new client a small bag of treats with a card: "Know a dog who needs a walk? Give them this card for a free first walk, and you get one too." The cards are easy to pass along at the park. Within a few months, the owner notices that most new clients mention a friend when they book.</p>
 <h2>How to measure word of mouth</h2>
 <p>Much of it happens out of sight, so you need a mix of signals. None of them is perfect on its own.</p>
 <ul>
@@ -1092,7 +1092,7 @@ TERMS += [
 <li>Track reviews: how many new ones each month and what they say.</li>
 </ul>
 <figure data-chart="2"></figure>
-<p>A simple "how did you hear about us" question can be eye-opening. In the made-up answers above, friends and family beat every social channel. A shop that only looked at its social analytics would never see that.</p>
+<p>A simple "how did you hear about us" question can be eye-opening. In the answers above, friends and family beat every social channel. A shop that only looked at its social analytics would never see that.</p>
 <h2>Good and bad word of mouth</h2>
 <p>Unhappy customers talk too, and often louder. A bad review or an angry post can spread as fast as praise. The answer is to fix the problem and reply in public with care, so other readers see you take it seriously. A complaint handled well can turn into good word of mouth of its own.</p>
 <h2>Common mistakes</h2>
@@ -1106,10 +1106,10 @@ TERMS += [
  'charts': [
   {'type': 'funnel', 'title': 'One month of word of mouth', 'sub': 'From happy customers to new ones', 'example': True,
    'stages': [('Happy customers', 200), ('Told a friend', 120), ('Friends who looked you up', 60), ('Friends who bought', 22)], 'unit': 'People',
-   'note': 'Made-up numbers for one small business.'},
+   'note': 'numbers for one small business.'},
   {'type': 'stack', 'title': 'How did you hear about us?', 'sub': 'Answers from new customers at checkout', 'example': True,
    'parts': [('A friend or family member', 41), ('A social media post', 27), ('Search', 22), ('Something else', 10)],
-   'note': 'Made-up answers for one shop. Ask your own customers.'},
+   'note': 'answers for one shop. Ask your own customers.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Catch comments and mentions from every channel in one place and thank people fast.'},
@@ -1153,7 +1153,7 @@ TERMS += [
 <li><b>Add a picture or short video.</b> It helps a post stand out in a fast feed.</li>
 <li><b>Check your analytics.</b> See which posts get replies and reposts, then do more of that.</li>
 </ol>
-<p>Here is a made-up example. A small coffee roaster posts a photo of a new bag each week and gets little response. It starts replying to coffee writers' posts with short, useful notes about brewing. A few months later, its own posts get more replies, because people now know who it is. The roaster didn't post more. It just showed up where the talk was already happening.</p>
+<p>Here is an example. A small coffee roaster posts a photo of a new bag each week and gets little response. It starts replying to coffee writers' posts with short, useful notes about brewing. A few months later, its own posts get more replies, because people now know who it is. The roaster didn't post more. It just showed up where the talk was already happening.</p>
 <h2>X terms to know</h2>
 <ul>
 <li><b>Post:</b> a message on X, once called a tweet.</li>
@@ -1215,7 +1215,7 @@ TERMS += [
 <li><b>Post what fits.</b> Share tips, questions or useful finds that suit the group.</li>
 <li><b>Keep it up.</b> Show up often. Members trust people they see again and again.</li>
 </ol>
-<p>Here is a made-up example. A freelance designer joins a community about small business branding. For a month, she only answers questions about logos and colors. Members start tagging her when someone asks for help. When she finally posts a short guide to picking brand colors, it gets more replies than anything on her own profile, and a few members ask about hiring her.</p>
+<p>Here is an example. A freelance designer joins a community about small business branding. For a month, she only answers questions about logos and colors. Members start tagging her when someone asks for help. When she finally posts a short guide to picking brand colors, it gets more replies than anything on her own profile, and a few members ask about hiring her.</p>
 <h2>Starting your own community</h2>
 <p>If you want to run one, pick a clear topic that is narrow enough to feel special but wide enough to keep people talking. Write a short set of rules on day one. Invite a few active people to help moderate, so it isn't all on you. Post a welcome message and a few questions to get the first conversations going. Check X's help pages for who can create a community, since the rules can change.</p>
 <h2>X Communities vs Facebook Groups</h2>
@@ -1280,7 +1280,7 @@ TERMS += [
 <li>Is your audience on X large or growing? If you rarely post, the plan may sit unused.</li>
 <li>Are you posting for a business? X has separate options for organizations that may fit better.</li>
 </ul>
-<p>Here is a made-up example. A tech writer posts on X every day and links to her newsletter. She keeps writing threads of six or seven posts to explain one idea. With Premium, she can write longer posts and edit typos, and she finds that some ideas read better in one post. Her friend, who posts once a month, tries Premium and cancels after a month, because he barely used it.</p>
+<p>Here is an example. A tech writer posts on X every day and links to her newsletter. She keeps writing threads of six or seven posts to explain one idea. With Premium, she can write longer posts and edit typos, and she finds that some ideas read better in one post. Her friend, who posts once a month, tries Premium and cancels after a month, because he barely used it.</p>
 <h2>Long posts vs short posts</h2>
 <p>Being able to write long posts doesn't mean you should every time. X is still a fast feed, and many people skim. A short, clear post often travels further than a long one. Use the extra room when the idea truly needs it, and lead with your main point in the first line so people see it before the "show more" cut.</p>
 <figure data-chart="2"></figure>
@@ -1340,7 +1340,7 @@ TERMS += [
 <li><b>Schedule your uploads.</b> A steady day and time helps subscribers know when to come back.</li>
 <li><b>Check YouTube Studio.</b> See watch time, retention and where viewers come from, then adjust.</li>
 </ol>
-<p>Here is a made-up example. A home gardener starts a channel answering one question per video, like "why are my tomato leaves yellow?" Each title matches what people type into search. The first few videos get few views. After a year of weekly uploads, the older videos keep getting found every day, and new videos start getting suggested next to them.</p>
+<p>Here is an example. A home gardener starts a channel answering one question per video, like "why are my tomato leaves yellow?" Each title matches what people type into search. The first few videos get few views. After a year of weekly uploads, the older videos keep getting found every day, and new videos start getting suggested next to them.</p>
 <h2>Long videos vs Shorts</h2>
 <figure data-chart="2"></figure>
 <p>Many channels use both. Shorts get them discovered by new people, and long videos build a real bond with the viewers who stay. Linking a Short to a related long video helps move people from one to the other. Some creators cut a strong moment from each long video into a Short, which saves filming time and gives every upload two chances to be found.</p>
@@ -1357,7 +1357,7 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'Where one channel\'s views came from', 'sub': 'Traffic sources over one month', 'example': True,
    'parts': [('YouTube search', 38), ('Suggested videos', 31), ('Home page', 19), ('Everything else', 12)],
-   'note': 'Made-up numbers for one how-to channel. Check your own in YouTube Studio.'},
+   'note': 'numbers for one how-to channel. Check your own in YouTube Studio.'},
   {'type': 'versus', 'title': 'Long videos vs Shorts', 'cols': ['Long videos', 'Shorts'],
    'rows': [('Shape', 'Wide', 'Vertical'), ('Found through search', 'Often', 'Less often'), ('Reaches new viewers fast', 'Sometimes', True), ('Room to teach in depth', True, False), ('Builds loyal subscribers', True, 'Some')]},
  ],
@@ -1401,7 +1401,7 @@ TERMS += [
 <li><b>Video links:</b> point people to an older video that fits a current topic.</li>
 </ul>
 <figure data-chart="1"></figure>
-<p>The made-up chart above is from one channel's posts over a month. Polls drew the most responses because they take one tap. Text posts drew the fewest but often had the longest comments. Track your own mix, since every audience is different.</p>
+<p>The chart above is from one channel's posts over a month. Polls drew the most responses because they take one tap. Text posts drew the fewest but often had the longest comments. Track your own mix, since every audience is different.</p>
 <h2>How to make a community post, step by step</h2>
 <figure data-chart="2"></figure>
 <ol>
@@ -1411,7 +1411,7 @@ TERMS += [
 <li><b>Choose when it goes out.</b> Post now, or schedule it for a set day and time.</li>
 <li><b>Come back to it.</b> Read the comments and poll results, reply to a few and act on what you learn.</li>
 </ol>
-<p>Here is a made-up example. A travel channel is editing a long video about a trip and has nothing new to show for two weeks. It posts a poll asking which city viewers want to see first. Then it posts a photo from the trip with the line "Guess where this is." A few days later, it posts a short note saying the video drops on Friday. When the video goes live, many of the people who voted come to watch the city they picked.</p>
+<p>Here is an example. A travel channel is editing a long video about a trip and has nothing new to show for two weeks. It posts a poll asking which city viewers want to see first. Then it posts a photo from the trip with the line "Guess where this is." A few days later, it posts a short note saying the video drops on Friday. When the video goes live, many of the people who voted come to watch the city they picked.</p>
 <h2>Ideas for community posts</h2>
 <ul>
 <li>A poll asking which topic your next video should cover.</li>
@@ -1432,7 +1432,7 @@ TERMS += [
  'charts': [
   {'type': 'columns', 'title': 'Responses by post type', 'sub': 'Average likes, votes and comments per post over one month', 'example': True,
    'rows': [('Poll', 640), ('Image', 410), ('Quiz', 380), ('Video link', 190), ('Text', 150)], 'highlight': 'Poll', 'labels': 'all', 'unit': 'Responses per post',
-   'note': 'Made-up numbers for one channel. Your mix will differ.'},
+   'note': 'numbers for one channel. Your mix will differ.'},
   {'type': 'steps', 'title': 'Making a community post', 'steps': [
    ('Open the editor', 'Create a post in YouTube Studio or the app.'),
    ('Pick a type', 'Text, image, poll, quiz or video link.'),
@@ -1465,7 +1465,7 @@ TERMS += [
 <h2>Why Shorts matter</h2>
 <p>Shorts can reach new people fast. A good Short can bring viewers who then watch your longer videos and subscribe. Shorts are also quicker to make, so you can post more often and test ideas before you spend days on a full video.</p>
 <figure data-chart="1"></figure>
-<p>The made-up funnel above shows the path most creators hope for. Of 50,000 people who saw a Short, a small share visited the channel, fewer watched a long video and fewer still subscribed. That may look like a steep drop, but those subscribers came from people who had never heard of the channel before.</p>
+<p>The funnel above shows the path most creators hope for. Of 50,000 people who saw a Short, a small share visited the channel, fewer watched a long video and fewer still subscribed. That may look like a steep drop, but those subscribers came from people who had never heard of the channel before.</p>
 <p>Creators in the YouTube Partner Program can earn a share of ad money from Shorts. The rules for this differ from long videos, so check YouTube's current terms.</p>
 <h2>How to make a good Short, step by step</h2>
 <figure data-chart="2"></figure>
@@ -1477,7 +1477,7 @@ TERMS += [
 <li><b>Loop the ending.</b> If the last frame leads back to the first, replays feel smooth.</li>
 <li><b>Link a related long video.</b> Give viewers who want more a place to go.</li>
 </ol>
-<p>Here is a made-up example. A woodworking channel posts a long video each month. From each one, it cuts three Shorts: the most surprising cut, the final reveal and a quick tip. Each Short links to the full video. The Shorts reach people who don't know the channel, and some of them sit down to watch the full 20-minute build.</p>
+<p>Here is an example. A woodworking channel posts a long video each month. From each one, it cuts three Shorts: the most surprising cut, the final reveal and a quick tip. Each Short links to the full video. The Shorts reach people who don't know the channel, and some of them sit down to watch the full 20-minute build.</p>
 <h2>Shorts vs long videos</h2>
 <figure data-chart="3"></figure>
 <p>Many channels use both on purpose. Shorts bring people in. Long videos give them a reason to stay and subscribe.</p>
@@ -1495,7 +1495,7 @@ TERMS += [
  'charts': [
   {'type': 'funnel', 'title': 'From a Short to a subscriber', 'sub': 'One Short, followed through the channel', 'example': True,
    'stages': [('Saw the Short', 50000), ('Visited the channel', 2400), ('Watched a long video', 900), ('Subscribed', 260)], 'unit': 'People',
-   'note': 'Made-up numbers for one Short.'},
+   'note': 'numbers for one Short.'},
   {'type': 'steps', 'title': 'Making a Short', 'steps': [
    ('Hook', 'Start with the most interesting moment.'),
    ('Vertical frame', 'Keep the action in the middle.'),
@@ -1557,7 +1557,7 @@ TERMS += [
 <li><b>Traffic sources:</b> search, suggested videos, the home page, outside links and more.</li>
 <li><b>Audience:</b> when your viewers are on YouTube, and how many are returning vs new.</li>
 </ul>
-<p>Here is a made-up example. A fitness channel sees that one video has a high click-through rate but a steep drop in retention after 20 seconds. The thumbnail promised a "5-minute workout," but the video spent the first minute on a warm-up talk. The creator trims the talk and moves the workout up front in her next video. Retention holds much better.</p>
+<p>Here is an example. A fitness channel sees that one video has a high click-through rate but a steep drop in retention after 20 seconds. The thumbnail promised a "5-minute workout," but the video spent the first minute on a warm-up talk. The creator trims the talk and moves the workout up front in her next video. Retention holds much better.</p>
 <p>Compare each video with your own past videos, since every channel and audience is different. Studio shows how a new video is doing next to your usual results for the same time after upload. A video that beats your normal pace in its first day is worth promoting more. One that falls behind may need a new thumbnail or title. Give a change a few days before you judge it, so you aren't reacting to noise.</p>
 <h2>Tips for using YouTube Studio well</h2>
 <ol>
@@ -1578,7 +1578,7 @@ TERMS += [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Click-through rate in YouTube Studio', 'formula': 'Click-through rate = clicks ÷ impressions × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '5%',
+   'note': 'numbers to show the math.', 'result': '5%',
    'example': [('Clicks on the thumbnail', '1,500'), ('Impressions', '30,000')]},
   {'type': 'steps', 'title': 'Uploading a video in Studio', 'steps': [
    ('Upload', 'Click Create and pick your file.'),
@@ -1627,7 +1627,7 @@ TERMS += [
 <li><b>Make it easy to scan.</b> Short lines, white space and numbered steps help on a phone.</li>
 <li><b>Add a link only if needed.</b> Put it after the value, like in a reply or at the very end.</li>
 </ol>
-<p>Here is a made-up example. A payroll consultant used to post "New blog: 5 payroll mistakes to avoid" with a link, and got a few likes. She switched to writing all five mistakes in the post itself, each with a one-line fix. The new post got far more comments and saves. Several people messaged her to ask about her services, and she never had to send them to the blog.</p>
+<p>Here is an example. A payroll consultant used to post "New blog: 5 payroll mistakes to avoid" with a link, and got a few likes. She switched to writing all five mistakes in the post itself, each with a one-line fix. The new post got far more comments and saves. Several people messaged her to ask about her services, and she never had to send them to the blog.</p>
 <h2>Examples of zero-click posts</h2>
 <ul>
 <li>A post listing the questions a hiring manager asks, with a tip for each answer.</li>
@@ -1651,7 +1651,7 @@ TERMS += [
  'charts': [
   {'type': 'funnel', 'title': 'What a zero-click post leads to', 'sub': 'Signals to track when clicks are not the goal', 'example': True,
    'stages': [('Saw the post', 12000), ('Read or watched it through', 4200), ('Saved, shared or commented', 520), ('Visited the profile', 260), ('Followed', 90)], 'unit': 'People',
-   'note': 'Made-up numbers for one post.'},
+   'note': 'numbers for one post.'},
   {'type': 'bars', 'title': 'Room to write by network', 'sub': 'Characters allowed in one post or caption',
    'rows': [('LinkedIn', 3000), ('Instagram', 2200), ('TikTok', 2200), ('Threads', 500), ('Bluesky', 300), ('X', 280)], 'highlight': 'LinkedIn', 'unit': 'Characters',
    'note': "Limits used by Capybaroar's composer, November 2026."},
@@ -1702,7 +1702,7 @@ TERMS += [
 <li><b>Store answers with care.</b> Keep them safe and follow the privacy laws where your customers live.</li>
 <li><b>Use what you learn.</b> Act on the answers and tell people you did.</li>
 </ol>
-<h2>A made-up example</h2>
+<h2>An example</h2>
 <p>A tea brand runs a story poll: "Which do you drink more, green or black tea?" Then it links to a short quiz on its site that asks about taste and caffeine, and gives each person a tea match. People who take the quiz can choose to get emails about their match. A month later, the brand sees that most quiz takers prefer low caffeine, so it plans a series of posts on calming evening teas.</p>
 <figure data-chart="3"></figure>
 <p>Note that the poll in this example lives on social media, where you see results in total. The quiz on your own site is where you can tie answers to a person who chose to share their email.</p>
@@ -1734,7 +1734,7 @@ TERMS += [
    ('Store and use', 'Keep it safe and act on it.')]},
   {'type': 'stack', 'title': 'Tea quiz results', 'sub': 'What quiz takers said they prefer', 'example': True,
    'parts': [('Low caffeine', 46), ('Strong and bold', 24), ('Fruity', 18), ('Not sure yet', 12)],
-   'note': 'Made-up answers for one brand.'},
+   'note': 'answers for one brand.'},
  ],
  'tools': [
   {'name': 'Typeform', 'url': 'https://www.typeform.com/', 'domain': 'typeform.com', 'line': 'A form and quiz builder for asking customers what they prefer.'},

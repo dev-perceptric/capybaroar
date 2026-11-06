@@ -54,7 +54,7 @@ TERMS += [
    ('Log and repeat', 'Write down the result, then test the next idea.')]},
   {'type': 'bars', 'title': 'Version B wins on click-through rate', 'sub': 'Version A has more clicks, but B turns more of its views into clicks', 'example': True,
    'rows': [('Version A (300 clicks from 20,000 views)', 1.5, '1.5%'), ('Version B (250 clicks from 10,000 views)', 2.5, '2.5%')], 'highlight': 'Version B (250 clicks from 10,000 views)', 'unit': 'Click-through rate',
-   'note': 'Made-up numbers to show why you compare rates.'},
+   'note': 'numbers to show why you compare rates.'},
   {'type': 'versus', 'title': 'Organic test vs ad test', 'cols': ('Organic test', 'Ad test'), 'rows': [
    ('Each person sees only one version', False, True),
    ('Costs money', False, True),
@@ -120,7 +120,7 @@ TERMS += [
  'charts': [
   {'type': 'funnel', 'title': 'From post to commission', 'sub': 'How one affiliate post might turn views into sales', 'example': True,
    'stages': [('Saw the post', 20000, '20,000'), ('Clicked the link', 600, '600'), ('Bought', 18, '18')], 'unit': 'People',
-   'note': 'Made-up numbers for one post. Your rates will differ.'},
+   'note': 'numbers for one post. Your rates will differ.'},
   {'type': 'versus', 'title': 'Affiliate marketing vs sponsored content', 'cols': ('Affiliate', 'Sponsored'), 'rows': [
    ('Paid when people buy', True, False),
    ('Paid a set fee for the post', False, True),
@@ -150,7 +150,7 @@ TERMS += [
 <h2>How an AI agent works</h2>
 <p>Most agents follow the same loop. They look at the goal, decide on a next step, take it, look at what happened and decide again. That loop keeps going until the job is done or the agent needs you.</p>
 <figure data-chart="1"></figure>
-<p>Here is a made-up example. You ask an agent to "plan next week's posts for our bakery." It reads your last month of posts and sees that photos of fresh bread did well. It checks your calendar and finds a farmers market on Saturday. It writes five drafts, one of them a market reminder, and suggests times based on when your followers are active. Then it stops and asks you to review before anything is scheduled.</p>
+<p>Here is an example. You ask an agent to "plan next week's posts for our bakery." It reads your last month of posts and sees that photos of fresh bread did well. It checks your calendar and finds a farmers market on Saturday. It writes five drafts, one of them a market reminder, and suggests times based on when your followers are active. Then it stops and asks you to review before anything is scheduled.</p>
 <h2>What AI agents can do for social media</h2>
 <ul>
 <li>Turn a blog post or video into short posts for several networks</li>
@@ -174,7 +174,7 @@ TERMS += [
 <li><b>Check the output for a few weeks.</b> Note what you change each time and add those notes to its instructions.</li>
 </ol>
 <h2>How to use an AI agent safely</h2>
-<p>Treat an agent like a new team member. Give it small tasks first, where a mistake is easy to fix, such as drafts. Read what it writes, since AI models can state wrong facts with confidence. Watch for made-up statistics, wrong dates and links that go nowhere.</p>
+<p>Treat an agent like a new team member. Give it small tasks first, where a mistake is easy to fix, such as drafts. Read what it writes, since AI models can state wrong facts with confidence. Watch for statistics, wrong dates and links that go nowhere.</p>
 <p>Check which accounts and data the agent can reach, and give it only the access it needs. If it can publish, make sure you can see a record of every action it took. Turn off access you no longer use.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -234,7 +234,7 @@ TERMS += [
 <li><b>Follow labeling rules.</b> Many platforms ask you to label realistic AI images, video or audio, especially of real people or events.</li>
 </ol>
 <h2>What a good edit looks like</h2>
-<p>Here is a made-up example. An AI draft for a bike shop says: "Discover the joy of cycling with our amazing range of bikes for every rider!" It is fine and forgettable. After an edit, it reads: "Mia rode her first 20 km on Saturday on a bike we fitted in ten minutes. Want the same fit? Drop in before noon." The second version has a name, a number and a clear next step. The shop supplied those. The tool could never guess them.</p>
+<p>Here is an example. An AI draft for a bike shop says: "Discover the joy of cycling with our amazing range of bikes for every rider!" It is fine and forgettable. After an edit, it reads: "Mia rode her first 20 km on Saturday on a bike we fitted in ten minutes. Want the same fit? Drop in before noon." The second version has a name, a number and a clear next step. The shop supplied those. The tool could never guess them.</p>
 <figure data-chart="2"></figure>
 <h2>Where AI helps most, and where it doesn't</h2>
 <p>AI is strong at the parts of the job that repeat. It can turn one long video into several short captions, rewrite a post to fit a 300 character Bluesky limit, suggest hashtags or translate a post for another market. It is also handy for writing alt text drafts that you then check.</p>
@@ -244,7 +244,7 @@ TERMS += [
 <p>Watch your own numbers to see how AI-assisted posts compare. For a month, mark which posts started as AI drafts and which you wrote from scratch, then compare saves, shares and comments. If the AI drafts lag behind, the fix is usually more editing and more real detail. Keep the tool and change how you use it.</p>
 <h2>Common mistakes</h2>
 <ul>
-<li>Posting AI text without reading it, including made-up facts or links</li>
+<li>Posting AI text without reading it, including facts or links</li>
 <li>Using the same tone and structure in every post until the feed feels robotic</li>
 <li>Making images that look like real people without their consent</li>
 <li>Skipping a label when the platform requires one</li>
@@ -326,7 +326,7 @@ TERMS += [
    ('Widen', 'Show posts that do well to more and more people.')]},
   {'type': 'line', 'title': 'Reach in the first day after posting', 'sub': 'People reached, counted every few hours', 'example': True,
    'points': [('1h', 300), ('2h', 700), ('4h', 2100), ('8h', 5200), ('12h', 7400), ('24h', 8900)], 'unit': 'People reached',
-   'note': 'Made-up numbers for one post that kept getting shown to new groups.'},
+   'note': 'numbers for one post that kept getting shown to new groups.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See reach and engagement for every channel side by side, so you can spot which posts the feed favored.'},
@@ -347,7 +347,7 @@ TERMS += [
  'slug': 'algospeak',
  'short': "Algospeak is coded slang people use online to swap out words they think will get a post hidden or removed by moderation systems.",
  'body': '''<h2>What is algospeak?</h2>
-<p>Algospeak is a way of talking around filters. People replace words they believe automated moderation will flag with look-alike spellings and made-up terms. The word comes from "algorithm" plus "speak." It grew on short video apps, where creators worried that certain words would limit their reach or cut their earnings.</p>
+<p>Algospeak is a way of talking around filters. People replace words they believe automated moderation will flag with look-alike spellings and terms. The word comes from "algorithm" plus "speak." It grew on short video apps, where creators worried that certain words would limit their reach or cut their earnings.</p>
 <p>A well-known example is "unalive" in place of words about death or suicide. Others include "seggs" for sex and "le dollar bean" for lesbian, which came from a text filter turning the word into odd symbols. Some terms fade within months. Others spread so far that people use them in everyday speech, far from any filter.</p>
 <p>Nobody official decides what counts as algospeak. Terms start in one corner of an app, get copied in comments and spread when a big creator picks them up.</p>
 <h2>How algospeak works</h2>
@@ -363,7 +363,7 @@ TERMS += [
 <p>You will see it most on TikTok, Instagram Reels and YouTube Shorts, where much of the reach comes from recommendations and creators feel the most pressure to stay "safe." It shows up in captions, on-screen text, hashtags and comments. Creators who talk about health, news, money or hard personal topics use it most, because those subjects are more likely to be reviewed.</p>
 <p>Text-heavy networks see it less often, though it still appears in comment sections and replies. On open networks such as Mastodon, people more often use content warnings, which hide a post behind a short label until the reader taps to open it.</p>
 <h2>An example of algospeak</h2>
-<p>Here is a made-up example post: "That movie scene where the dog gets unalived had me crying for an hour #movietok." The writer chose "unalived" to avoid a word they feared would push the video down. A viewer who knows algospeak reads it right away. Someone new to the app might be confused. A screen reader would read it out as written, which may make little sense to a listener.</p>
+<p>Here is an example post: "That movie scene where the dog gets unalived had me crying for an hour #movietok." The writer chose "unalived" to avoid a word they feared would push the video down. A viewer who knows algospeak reads it right away. Someone new to the app might be confused. A screen reader would read it out as written, which may make little sense to a listener.</p>
 <figure data-chart="1"></figure>
 <h2>Why algospeak matters for brands</h2>
 <p>Even if you never use it, algospeak changes how people talk about topics near your brand. That affects how you listen and how you moderate.</p>
@@ -505,10 +505,10 @@ TERMS += [
 </ol>
 <h2>How to measure an ambassador program</h2>
 <p>Give each ambassador a unique code or tracked link, so you can see the sales and visits each one drives. Count the posts and Stories they share, and how many of those you could reuse with permission. Watch mentions of your brand from their followers too.</p>
-<p>Expect a drop-off. Many people sign up full of energy and post a few times, and a smaller group keeps going for months. That smaller group is your program. Here is a made-up example of how the numbers can thin out between first interest and a steady core.</p>
+<p>Expect a drop-off. Many people sign up full of energy and post a few times, and a smaller group keeps going for months. That smaller group is your program. Here is an example of how the numbers can thin out between first interest and a steady core.</p>
 <figure data-chart="3"></figure>
 <p>Use the numbers to find your best ambassadors, then spend more time on them. Ask what helps them post, send them new products first and invite them to shape the next season of the program.</p>
-<h2>A made-up example</h2>
+<h2>An example</h2>
 <p>A running shoe shop invites customers who already tag it in race photos. Each ambassador gets a code worth a discount for their followers, a free pair each season and a spot in a monthly group run. In return, they post about their training twice a month and bring friends to the group runs. After six months, the shop reposts their race photos every week, and the group run has become its best source of new customers.</p>
 <h2>Common mistakes</h2>
 <ul>
@@ -535,7 +535,7 @@ TERMS += [
    ('Keep in touch', 'A group chat or monthly email.')]},
   {'type': 'funnel', 'title': 'From sign-ups to a steady core', 'sub': 'How one program might thin out over six months', 'example': True,
    'stages': [('Applied', 400, '400'), ('Accepted', 120, '120'), ('Posted in month one', 90, '90'), ('Still posting at month six', 35, '35')], 'unit': 'Ambassadors',
-   'note': 'Made-up numbers to show a typical shape.'},
+   'note': 'numbers to show a typical shape.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'See comments and mentions from every channel in one place, so ambassador posts never slip by.'},
@@ -606,14 +606,14 @@ TERMS += [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Click-through rate', 'formula': 'Click-through rate = link clicks ÷ impressions × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '1.2%',
+   'note': 'numbers to show the math.', 'result': '1.2%',
    'example': [('Link clicks', '240'), ('Impressions', '20,000')]},
   {'type': 'funnel', 'title': 'From reach to sign-ups', 'sub': 'One month of posts for a small online shop', 'example': True,
    'stages': [('Reached', 50000, '50,000'), ('Engaged', 2500, '2,500'), ('Clicked to the site', 800, '800'), ('Signed up', 60, '60')], 'unit': 'People',
-   'note': 'Made-up numbers to show where people drop off.'},
+   'note': 'numbers to show where people drop off.'},
   {'type': 'line', 'title': 'Followers over six months', 'sub': 'Total followers at the end of each month', 'example': True,
    'points': [('Jan', 4200), ('Feb', 4350), ('Mar', 4600), ('Apr', 4900), ('May', 5150), ('Jun', 5500)], 'unit': 'Followers',
-   'note': 'Made-up numbers for one account with steady growth.'},
+   'note': 'numbers for one account with steady growth.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'See reach, engagement and followers for every channel side by side, with reports on Pro and Agency.'},
@@ -649,7 +649,7 @@ TERMS += [
 <li><b>AI agents.</b> Agents use APIs, or protocols built on them such as MCP, to take real actions.</li>
 </ul>
 <h2>What you can build with a scheduling API</h2>
-<p>If your social tool has its own API, your developers can connect it to the rest of your business. Here are a few made-up examples. An online shop could create a draft post each time it adds a product. A news site could queue a post for every new article. An agency could pull post results into its own client dashboard every morning. A team could load a spreadsheet of posts from its own system instead of typing each one.</p>
+<p>If your social tool has its own API, your developers can connect it to the rest of your business. Here are a few examples. An online shop could create a draft post each time it adds a product. A news site could queue a post for every new article. An agency could pull post results into its own client dashboard every morning. A team could load a spreadsheet of posts from its own system instead of typing each one.</p>
 <p>No-code tools such as Zapier sit in the middle for people who don't write code. They connect two apps' APIs with a few clicks, so a trigger in one app causes an action in another.</p>
 <h2>API vs MCP</h2>
 <p>An API is written for programs and developers. MCP, the Model Context Protocol, is a standard way to describe tools so AI assistants can find and use them. An MCP server often sits on top of an existing API and turns its actions into tools an AI model can call.</p>
@@ -747,7 +747,7 @@ TERMS += [
    ('Publish', 'The approved post goes into the schedule and goes live on time.')]},
   {'type': 'columns', 'title': 'More reviewers, longer waits', 'sub': 'Average days from draft to approved', 'example': True,
    'rows': [('1 reviewer', 0.5, '0.5 days'), ('2 reviewers', 1.4, '1.4 days'), ('3 reviewers', 2.6, '2.6 days'), ('4 reviewers', 4.1, '4.1 days')], 'highlight': '2 reviewers', 'labels': 'all', 'unit': 'Days to approve',
-   'note': 'Made-up numbers for one team. Track your own.'},
+   'note': 'numbers for one team. Track your own.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Approvals', 'url': '/pricing', 'line': 'Send posts for review before they are scheduled, on the Pro and Agency plans.'},
@@ -784,7 +784,7 @@ TERMS += [
 <li><b>Study top posts.</b> Look at which topics and formats get the most saves or shares.</li>
 <li><b>Look at similar accounts.</b> See who comments on accounts in your niche and what they respond to.</li>
 </ol>
-<p>Write what you learn into a short audience profile. Give the person a made-up name, a job, a few goals and the questions they would ask you. When you plan a post, ask whether that person would stop scrolling for it.</p>
+<p>Write what you learn into a short audience profile. Give the person a name, a job, a few goals and the questions they would ask you. When you plan a post, ask whether that person would stop scrolling for it.</p>
 <p>Many accounts have more than one kind of person in the audience. A design studio may speak to clients, to students and to other designers. That is fine. Give each group its own profile and decide which one each post is for.</p>
 <h2>Why your audience matters</h2>
 <p>Every choice you make on social media gets easier when you know who you're talking to. Your topics, your tone, your posting times and even your choice of networks depend on it. A clear picture of your audience also helps you say no to ideas that don't fit, which keeps your feed focused.</p>
@@ -808,7 +808,7 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'Where one month of views came from', 'sub': 'Share of views by source for one account', 'example': True,
    'parts': [('Recommendations', 52), ('Followers', 30), ('Search', 11), ('Shares and other', 7)],
-   'note': 'Made-up numbers. Your analytics show your own split.'},
+   'note': 'numbers. Your analytics show your own split.'},
   {'type': 'versus', 'title': 'Audience vs target audience', 'cols': ('Audience', 'Target audience'), 'rows': [
    ('Who it is', 'People who actually see you', 'People you aim to reach'),
    ('Where you find it', 'Your analytics', 'Your plan'),
@@ -906,7 +906,7 @@ TERMS += [
 <p>That trust shows up in what people do. They comment more, recommend you to friends and forgive you faster when something goes wrong. A brand that has been honest for years can survive a bad week. A brand caught faking it often can't.</p>
 <p>Authenticity also makes your work easier. When you post what is true, you never have to keep track of a story. New team members can join in, because the voice is just how the team already talks. And when a customer asks a hard question, you can answer it straight.</p>
 <h2>What authentic content looks like</h2>
-<p>Here is a made-up comparison for one small brand. Over a month, it tracked engagement on different kinds of posts. The behind-the-scenes clips and customer stories pulled well ahead of the stock-style product shots.</p>
+<p>Here is a comparison for one small brand. Over a month, it tracked engagement on different kinds of posts. The behind-the-scenes clips and customer stories pulled well ahead of the stock-style product shots.</p>
 <figure data-chart="1"></figure>
 <ul>
 <li>A bakery posting a short video of a cake that collapsed, with a laugh and the fix</li>
@@ -942,7 +942,7 @@ TERMS += [
  'charts': [
   {'type': 'columns', 'title': 'Engagement by post type for one brand', 'sub': 'Average engagement rate by followers over one month', 'example': True,
    'rows': [('Behind the scenes', 4.8, '4.8%'), ('Customer story', 4.1, '4.1%'), ('Team photo', 3.3, '3.3%'), ('Stock-style product shot', 1.4, '1.4%')], 'highlight': 'Behind the scenes', 'labels': 'all', 'unit': 'Engagement rate',
-   'note': 'Made-up numbers for one account. Test your own mix.'},
+   'note': 'numbers for one account. Test your own mix.'},
   {'type': 'versus', 'title': 'Authentic vs staged', 'cols': ('Authentic', 'Staged'), 'rows': [
    ('Shows real people and work', True, 'Sometimes'),
    ('Owns mistakes in public', True, False),
@@ -1132,7 +1132,7 @@ TERMS += [
 <figure data-chart="2"></figure>
 <p>Tag your links with UTM parameters so your website analytics shows which posts sent the visits that turned into demo requests. Ask new leads how they heard about you too. Many will name a post or a person, even when the click data can't show it.</p>
 <h2>How to plan a B2B posting week</h2>
-<p>A simple rhythm helps busy teams keep going. Pick two or three themes that match your buyers' biggest problems, then give each day a job. Here is one made-up plan for a small team:</p>
+<p>A simple rhythm helps busy teams keep going. Pick two or three themes that match your buyers' biggest problems, then give each day a job. Here is one plan for a small team:</p>
 <ul>
 <li>Monday: a short tip on one problem your buyers face</li>
 <li>Wednesday: a customer story or a behind-the-scenes look at how you work</li>
@@ -1149,7 +1149,7 @@ TERMS += [
 <li>A poll asking peers how they handle a common task</li>
 <li>A post sharing a template or checklist people can use right away</li>
 </ul>
-<p>Here is a made-up example. A payroll software company has a finance lead post every Tuesday about one small tax rule, in plain words. The posts aren't about the product. After a few months, accountants start tagging her when the topic comes up, and the sales team hears her name on calls.</p>
+<p>Here is an example. A payroll software company has a finance lead post every Tuesday about one small tax rule, in plain words. The posts aren't about the product. After a few months, accountants start tagging her when the topic comes up, and the sales team hears her name on calls.</p>
 <h2>Common mistakes</h2>
 <ul>
 <li>Posting only product news and press releases, which buyers scroll past</li>
@@ -1167,7 +1167,7 @@ TERMS += [
    ('Key goal', 'Leads and conversations', 'Sales and loyalty')]},
   {'type': 'funnel', 'title': 'From LinkedIn posts to demo requests', 'sub': 'One quarter of posts for a small software company', 'example': True,
    'stages': [('Impressions', 120000, '120,000'), ('Profile and page visits', 3600, '3,600'), ('Website clicks', 900, '900'), ('Demo requests', 27, '27')], 'unit': 'Count',
-   'note': 'Made-up numbers to show where B2B buyers drop off.'},
+   'note': 'numbers to show where B2B buyers drop off.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar for LinkedIn', 'url': '/linkedin-post-scheduler', 'line': 'Plan and schedule LinkedIn posts alongside your other channels on one calendar.'},
@@ -1198,7 +1198,7 @@ TERMS += [
 <li><b>Lowers stress.</b> No more scrambling for an idea at 9 p.m.</li>
 <li><b>Frees your days.</b> Outside your batch sessions, you can focus on replies, clients or the rest of your job.</li>
 </ul>
-<p>Here is a made-up comparison for one person who posts five times a week. Making each post on the day it goes out took far longer than doing the same work in two blocks.</p>
+<p>Here is a comparison for one person who posts five times a week. Making each post on the day it goes out took far longer than doing the same work in two blocks.</p>
 <figure data-chart="1"></figure>
 <h2>How to batch your social media content</h2>
 <ol>
@@ -1230,7 +1230,7 @@ TERMS += [
  'charts': [
   {'type': 'columns', 'title': 'Hours per week, daily vs batched', 'sub': 'Time to make five posts a week', 'example': True,
    'rows': [('Made each day', 7.5, '7.5 h'), ('Batched in two sessions', 4.0, '4 h')], 'highlight': 'Batched in two sessions', 'labels': 'all', 'unit': 'Hours',
-   'note': 'Made-up numbers for one person. Time yourself for a fair picture.'},
+   'note': 'numbers for one person. Time yourself for a fair picture.'},
   {'type': 'steps', 'title': 'One way to batch a week', 'steps': [
    ('Monday', 'Brainstorm ten post ideas and pick seven.'),
    ('Tuesday', 'Write all seven captions.'),
@@ -1270,7 +1270,7 @@ TERMS += [
 <li><b>Recheck every few months.</b> Habits change with seasons and school terms.</li>
 </ol>
 <h2>What your data might show</h2>
-<p>Here is a made-up example from one account. It posted at different times for a month and averaged the engagement rate for each slot. The evening slot came out ahead. A different account could see the opposite.</p>
+<p>Here is an example from one account. It posted at different times for a month and averaged the engagement rate for each slot. The evening slot came out ahead. A different account could see the opposite.</p>
 <figure data-chart="1"></figure>
 <p>Days matter as well as hours. Some accounts see weekdays and weekends behave very differently. A recipe account might do best on Sunday, when people plan meals. A business tips account might do best midweek. Group your posts by day and compare averages the same way.</p>
 <figure data-chart="2"></figure>
@@ -1293,10 +1293,10 @@ TERMS += [
  'charts': [
   {'type': 'columns', 'title': 'Engagement by posting time', 'sub': 'Average engagement rate by followers for one account over a month', 'example': True,
    'rows': [('7 a.m.', 2.4, '2.4%'), ('10 a.m.', 2.9, '2.9%'), ('1 p.m.', 3.1, '3.1%'), ('4 p.m.', 2.7, '2.7%'), ('7 p.m.', 4.2, '4.2%'), ('10 p.m.', 3.0, '3.0%')], 'highlight': '7 p.m.', 'labels': 'all', 'unit': 'Engagement rate',
-   'note': 'Made-up numbers for one account. Your best time will differ.'},
+   'note': 'numbers for one account. Your best time will differ.'},
   {'type': 'columns', 'title': 'Engagement by day of the week', 'sub': 'Same account, same month', 'example': True,
    'rows': [('Mon', 2.6, '2.6%'), ('Tue', 3.0, '3.0%'), ('Wed', 3.4, '3.4%'), ('Thu', 3.1, '3.1%'), ('Fri', 2.5, '2.5%'), ('Sat', 2.2, '2.2%'), ('Sun', 3.8, '3.8%')], 'highlight': 'Sun', 'unit': 'Engagement rate',
-   'note': 'Made-up numbers. Group your own posts by day to find your pattern.'},
+   'note': 'numbers. Group your own posts by day to find your pattern.'},
   {'type': 'steps', 'title': 'Test your posting times', 'steps': [
    ('Pick three or four slots', 'Choose windows your analytics say are busy.'),
    ('Rotate for a few weeks', 'Post in each slot several times with a mix of formats.'),
@@ -1516,7 +1516,7 @@ TERMS += [
    ('Custom audiences and detailed goals', 'Limited', True),
    ('Ads that never appear on your page', False, True)]},
   {'type': 'formula', 'title': 'Cost per result', 'formula': 'Cost per result = amount spent ÷ number of results',
-   'note': 'Made-up numbers to show the math.', 'result': '0.40 per click',
+   'note': 'numbers to show the math.', 'result': '0.40 per click',
    'example': [('Amount spent', '50'), ('Link clicks', '125')]},
  ],
  'tools': [
@@ -1581,14 +1581,14 @@ TERMS += [
 <p>Tie creative ideas back to your product or message. The best awareness posts are ones people can describe to a friend afterward, with your name in the sentence.</p>''',
  'charts': [
   {'type': 'formula', 'title': 'Share of voice', 'formula': 'Share of voice = mentions of your brand ÷ mentions of all brands in your market × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '24%',
+   'note': 'numbers to show the math.', 'result': '24%',
    'example': [('Your mentions', '360'), ('All brands\' mentions', '1,500')]},
   {'type': 'stack', 'title': 'Share of voice in one market', 'sub': 'Mentions over one month', 'example': True,
    'parts': [('Your brand', 24), ('Brand A', 38), ('Brand B', 21), ('Others', 17)],
-   'note': 'Made-up numbers for a small market.'},
+   'note': 'numbers for a small market.'},
   {'type': 'line', 'title': 'Brand mentions per month', 'sub': 'Posts and comments that name the brand', 'example': True,
    'points': [('Jan', 180), ('Feb', 210), ('Mar', 340), ('Apr', 260), ('May', 300), ('Jun', 360)], 'unit': 'Mentions',
-   'note': 'Made-up numbers. The March spike was a launch, and the base kept rising after it.'},
+   'note': 'numbers. The March spike was a launch, and the base kept rising after it.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Track reach and follower growth for every channel in one place.'},
@@ -1633,7 +1633,7 @@ TERMS += [
 </ol>
 <h2>Examples</h2>
 <p>A budget airline might write: "Cheap seats, big views. Grab a window before Friday." A private bank might write: "Plan your next chapter with a dedicated advisor." Both are clear. They just sound like very different brands, because they serve very different people.</p>
-<p>Here is how one made-up brand, a bike repair shop with a "friendly and direct" voice, might handle two moments. A tip post: "Squeaky brakes? Nine times out of ten it's dirt. Wipe the rim, test, done." A reply to a complaint: "Sorry your repair took longer than we said. That's on us. Can we call you today to sort it out?" Same voice. Different tone.</p>
+<p>Here is how one brand, a bike repair shop with a "friendly and direct" voice, might handle two moments. A tip post: "Squeaky brakes? Nine times out of ten it's dirt. Wipe the rim, test, done." A reply to a complaint: "Sorry your repair took longer than we said. That's on us. Can we call you today to sort it out?" Same voice. Different tone.</p>
 <h2>How to use brand voice with AI tools</h2>
 <p>AI writing tools pick up voice from what you give them. Paste your voice guide, a handful of your best posts and your list of words to avoid into the instructions. Ask for a draft, then compare it with your examples. If it drifts, point out the exact line and say why it's off. Keep edited drafts as new examples, so the guide gets better over time.</p>
 <p>The same goes for agencies and freelancers. Send your guide before their first draft, along with a few of your best posts and one or two that missed the mark.</p>

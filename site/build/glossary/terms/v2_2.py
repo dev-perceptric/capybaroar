@@ -11,7 +11,7 @@ TERMS += [
 <h2>How bulk scheduling works</h2>
 <p>Behind the scenes, the scheduler turns each row into a draft post. It checks the row against the rules of the network you picked, such as text length and file type. Rows that pass become scheduled posts. Rows that fail get flagged so you can fix them before anything goes live.</p>
 <figure data-chart="1"></figure>
-<p>Here is a made-up example. A bakery plans a month of posts in a shared sheet: 20 rows for Instagram, 20 for Facebook and 12 for Pinterest. One upload puts all 52 posts on the calendar. Two rows come back with errors, a missing time and a Pinterest description over the 500 character limit. The owner fixes both in a few minutes and uploads them again.</p>
+<p>Here is an example. A bakery plans a month of posts in a shared sheet: 20 rows for Instagram, 20 for Facebook and 12 for Pinterest. One upload puts all 52 posts on the calendar. Two rows come back with errors, a missing time and a Pinterest description over the 500 character limit. The owner fixes both in a few minutes and uploads them again.</p>
 <h2>Why bulk scheduling matters</h2>
 <ul>
 <li><b>Big time savings.</b> Planning a month of posts in one sitting is faster than logging in every day to write one.</li>
@@ -92,7 +92,7 @@ TERMS += [
 <h2>Business account vs personal and creator accounts</h2>
 <p>A personal account is for people sharing with friends, and it can often be set to private. A creator account suits influencers, artists and public figures, with tools for growth and brand deals. A business account suits shops, service providers and companies, with more focus on contact details, ads and selling.</p>
 <figure data-chart="1"></figure>
-<p>Here is a made-up example. Dana runs a dog grooming shop from her personal Instagram. Customers keep asking for her phone number in the comments. After she switches to a business account, a Call button and her address sit right on the profile. She can also see which posts brought the most profile visits, so she knows what to post more of.</p>
+<p>Here is an example. Dana runs a dog grooming shop from her personal Instagram. Customers keep asking for her phone number in the comments. After she switches to a business account, a Call button and her address sit right on the profile. She can also see which posts brought the most profile visits, so she knows what to post more of.</p>
 <h2>How to switch to a business account</h2>
 <figure data-chart="2"></figure>
 <ol>
@@ -105,7 +105,7 @@ TERMS += [
 </ol>
 <h2>How to use the data you get</h2>
 <p>The best reason to switch is the insight. Once your account has a few weeks of data, look for patterns. Which posts brought profile visits? Which ones led to taps on your contact buttons or website link? When are your followers online? Write down your averages each month so you can tell whether changes help. Data about where your followers live and how old they are can also shape what you post and when you post it.</p>
-<p>For example, a made-up cafe might notice that posts about its weekend specials bring twice the website taps of posts about coffee beans. That is a clear hint to put the specials up front on Fridays. Keep a simple log in a spreadsheet with the date, the post topic and the numbers you care about, then look at it once a month. Over time you build your own benchmark, which beats any general rule you read online.</p>
+<p>For example, a cafe might notice that posts about its weekend specials bring twice the website taps of posts about coffee beans. That is a clear hint to put the specials up front on Fridays. Keep a simple log in a spreadsheet with the date, the post topic and the numbers you care about, then look at it once a month. Over time you build your own benchmark, which beats any general rule you read online.</p>
 <h2>Things to know before you switch</h2>
 <ul>
 <li>Business accounts are public, so anyone can see your posts.</li>
@@ -165,7 +165,7 @@ TERMS += [
 <p>Each one names a single action and adds a reason or a place. "Save this for your next trip" works because it tells people why they would want the post later. "Send this to a friend who just started running" works because it puts a specific person in the reader's head. The clearer the picture, the easier the action feels.</p>
 <h2>Why calls to action matter</h2>
 <p>People are busy, and many will only do what you clearly ask. A CTA turns attention into action. It can drive clicks to your website, grow your email list, start conversations or bring the saves and shares that help a post travel further. It also gives you something to measure. If you asked for clicks, you can check your click-through rate to see whether it worked.</p>
-<p>Small wording changes can open a big gap. The chart below uses made-up numbers for one account that tried four CTAs on similar posts.</p>
+<p>Small wording changes can open a big gap. The chart below uses numbers for one account that tried four CTAs on similar posts.</p>
 <figure data-chart="1"></figure>
 <h2>How to write a strong CTA</h2>
 <ol>
@@ -183,7 +183,7 @@ TERMS += [
 <figure data-chart="2"></figure>
 <h2>How to measure and avoid mistakes</h2>
 <p>Pick the number that matches the ask. Link clicks for "tap the link," comments for a question, saves for "save this." Track it for each CTA over a few weeks and keep the wording that wins.</p>
-<p>Follow the action all the way to the goal. For example, a made-up yoga studio might find that "Book your free class" gets fewer clicks than "See the class times," yet brings more real bookings. The click count alone would have picked the wrong CTA.</p>
+<p>Follow the action all the way to the goal. For example, a yoga studio might find that "Book your free class" gets fewer clicks than "See the class times," yet brings more real bookings. The click count alone would have picked the wrong CTA.</p>
 <ul>
 <li><b>Using the same CTA on every post.</b> People stop seeing it. Rotate the wording and the action.</li>
 <li><b>Asking for a click when the link is hard to find.</b> If people have to hunt, most give up.</li>
@@ -193,7 +193,7 @@ TERMS += [
  'charts': [
   {'type': 'bars', 'title': 'Clicks by CTA wording', 'sub': 'Click-through rate on four similar posts from one account', 'example': True,
    'rows': [('"Click here"', 0.6, '0.6%'), ('"Learn more"', 0.9, '0.9%'), ('"Book your free class"', 1.8, '1.8%'), ('"Get the free checklist"', 2.4, '2.4%')],
-   'highlight': '"Get the free checklist"', 'unit': 'Click-through rate', 'note': 'Made-up numbers for one account. Test your own wording.'},
+   'highlight': '"Get the free checklist"', 'unit': 'Click-through rate', 'note': 'numbers for one account. Test your own wording.'},
   {'type': 'versus', 'title': 'Call to action vs engagement bait', 'cols': ('Call to action', 'Engagement bait'), 'rows': [
    ('Fits what the post is about', True, False),
    ('Gives people a reason to act', True, False),
@@ -228,7 +228,7 @@ TERMS += [
 <h2>The parts of a good caption</h2>
 <p>Most strong captions follow a simple shape. You don't need every part every time, but it helps to know them.</p>
 <figure data-chart="2"></figure>
-<p>Here is a made-up example for a plant shop: "Yellow leaves on your monstera? It's usually water, and it's easy to fix. Press a finger into the soil before you water. If it's still damp, wait a few more days. Save this for your next plant check." Then two hashtags at the end. The hook names the problem, the middle gives the fix and the last line asks for a save.</p>
+<p>Here is an example for a plant shop: "Yellow leaves on your monstera? It's usually water, and it's easy to fix. Press a finger into the soil before you water. If it's still damp, wait a few more days. Save this for your next plant check." Then two hashtags at the end. The hook names the problem, the middle gives the fix and the last line asks for a save.</p>
 <p>The first line does most of the work. Before you post, cover everything below it and ask whether that line alone would make you tap "more." If not, rewrite it. Strong first lines often name a problem, promise a result or open in the middle of a story.</p>
 <h2>How to write a caption step by step</h2>
 <ol>
@@ -285,7 +285,7 @@ TERMS += [
 <p>A carousel post bundles several slides into one post. Viewers swipe sideways to move from one image or video to the next, and dots or a counter show how many slides there are. Instagram made the format popular. Facebook, LinkedIn, TikTok photo posts and others have their own versions, though they work a little differently. Each platform sets its own slide limit, and those limits change, so check the app when you post.</p>
 <h2>How carousels work</h2>
 <p>Each slide is a separate image or clip, but the post shares one caption, one set of likes and one comment thread. When someone swipes, they spend more time on your post. On some apps, a person who skipped the post may later see it again starting on a different slide, which gives you a second chance to catch them.</p>
-<p>Not everyone swipes to the end. Most carousels lose viewers with each slide, which is why the first few slides matter most. The chart below uses made-up numbers to show a common shape.</p>
+<p>Not everyone swipes to the end. Most carousels lose viewers with each slide, which is why the first few slides matter most. The chart below shows a common shape.</p>
 <figure data-chart="1"></figure>
 <h2>Why carousel posts matter</h2>
 <ul>
@@ -315,7 +315,7 @@ TERMS += [
 <li><b>Close with a clear ask.</b> Invite people to save, share or tap the link on the last slide.</li>
 <li><b>Write alt text for each slide.</b> Every image needs its own description.</li>
 </ol>
-<p>For example, a made-up budgeting coach might post eight slides: a hook slide reading "Where did my paycheck go?", five slides with one money habit each, a recap and a final slide asking people to save the post.</p>
+<p>For example, a budgeting coach might post eight slides: a hook slide reading "Where did my paycheck go?", five slides with one money habit each, a recap and a final slide asking people to save the post.</p>
 <h2>Carousel vs LinkedIn document post</h2>
 <p>On LinkedIn, many people build carousels by uploading a PDF as a document post. Each page becomes a slide. It behaves much like an Instagram carousel, but the whole thing is one file, which makes it handy for guides and slide decks you already have. You can reuse a deck from a talk or a sales call, as long as the text is big enough to read on a phone.</p>
 <figure data-chart="2"></figure>
@@ -330,7 +330,7 @@ TERMS += [
  'charts': [
   {'type': 'line', 'title': 'How many viewers reach each slide', 'sub': 'Share of people who saw slide 1', 'example': True, 'suffix': '%', 'unit': 'Viewers',
    'points': [('Slide 1', 100), ('Slide 2', 72), ('Slide 3', 58), ('Slide 4', 49), ('Slide 5', 43), ('Slide 6', 39), ('Slide 7', 36), ('Slide 8', 34)],
-   'note': 'Made-up numbers for one eight-slide carousel.'},
+   'note': 'numbers for one eight-slide carousel.'},
   {'type': 'versus', 'title': 'Instagram carousel vs LinkedIn document post', 'cols': ('Instagram carousel', 'LinkedIn document post'), 'rows': [
    ('How you build it', 'Upload images or videos', 'Upload one PDF'),
    ('Can hold video slides', True, False),
@@ -373,7 +373,7 @@ TERMS += [
 </ul>
 <p>You will rarely see it on Instagram, TikTok or X. Each network has its own habits, and CFBR grew out of LinkedIn's culture of people helping each other find work.</p>
 <h2>An example of CFBR</h2>
-<p>Here is a made-up example. Someone posts: "After six great years, my role was cut this week. I'm looking for product design jobs in Denver or remote. Any leads are welcome!" One former coworker comments only "CFBR." Another writes: "CFBR. Maria is one of the most thoughtful designers I've worked with, and she ran our whole mobile redesign." The second comment tells a hiring manager something real. It also gives other readers a reason to reply. If you are the one commenting, aim for the second style.</p>
+<p>Here is an example. Someone posts: "After six great years, my role was cut this week. I'm looking for product design jobs in Denver or remote. Any leads are welcome!" One former coworker comments only "CFBR." Another writes: "CFBR. Maria is one of the most thoughtful designers I've worked with, and she ran our whole mobile redesign." The second comment tells a hiring manager something real. It also gives other readers a reason to reply. If you are the one commenting, aim for the second style.</p>
 <figure data-chart="1"></figure>
 <h2>Does CFBR work?</h2>
 <p>Comments are one of the signals LinkedIn uses to judge interest, so a burst of them can help a post reach more people. Very short comments may count for less than real replies, though. Platforms in general try to reward real conversation and spot low-effort engagement. Nobody outside LinkedIn knows exactly how much weight a four-letter comment carries, and the system changes over time.</p>
@@ -429,7 +429,7 @@ TERMS += [
 <p>CTR sits between two other numbers. Impressions tell you how many times your post was shown. Conversions tell you how many people did what you hoped after the click. CTR is the bridge that tells you whether the post made people curious enough to leave the feed.</p>
 <h2>How to calculate CTR</h2>
 <figure data-chart="1"></figure>
-<p>With made-up numbers: a post was shown 2,000 times and got 40 link clicks. 40 ÷ 2,000 × 100 = 2%. If the next post gets 60 clicks from 2,000 impressions, its CTR is 3%. The same number of showings brought half again as many clicks.</p>
+<p>With numbers: a post was shown 2,000 times and got 40 link clicks. 40 ÷ 2,000 × 100 = 2%. If the next post gets 60 clicks from 2,000 impressions, its CTR is 3%. The same number of showings brought half again as many clicks.</p>
 <p>Some tools divide by reach instead of impressions. Reach counts people and impressions count showings, so CTR by reach is usually higher. Pick one base and stick with it when you compare.</p>
 <h2>What counts as a click?</h2>
 <p>This differs by platform, so read the labels. Some reports count only link clicks, which are taps that open your website. Others count every click on the post, such as opening the image, tapping "more" or tapping your name. For website traffic, link clicks are the number to watch. On YouTube, CTR usually means how often people chose your video after seeing its thumbnail, so it measures the thumbnail and title more than the video itself.</p>
@@ -437,7 +437,7 @@ TERMS += [
 <h2>Why CTR matters</h2>
 <p>Reach tells you how many people saw your post. CTR tells you whether it made them act. A post can reach thousands of people and still send almost no one to your site. Watching CTR helps you see which hooks, images and calls to action move people. On ad platforms, a higher CTR can also be a sign that your ad is relevant to the people seeing it, which may help it perform better over time.</p>
 <figure data-chart="2"></figure>
-<p>The funnel shows where CTR sits in a made-up journey. Most people drop off between seeing and clicking, which is why a small gain in CTR can change your results a lot further down.</p>
+<p>The funnel shows where CTR sits in a journey. Most people drop off between seeing and clicking, which is why a small gain in CTR can change your results a lot further down.</p>
 <h2>How to improve your click-through rate</h2>
 <ol>
 <li><b>Write a clear hook.</b> Tell people what they get in the first line.</li>
@@ -447,7 +447,7 @@ TERMS += [
 <li><b>Make the link easy to find.</b> Point to the link in bio or the button when links can't be tapped in captions.</li>
 <li><b>Test versions.</b> Run A/B tests on headlines and images, one change at a time.</li>
 </ol>
-<p>For example, a made-up gardening account changes only its first line, from "New blog post is up" to "The one mistake that kills tomato seedlings." With the same image and link, CTR on similar posts rises from 1.1% to 2.6%. One clear promise did the work.</p>
+<p>For example, a gardening account changes only its first line, from "New blog post is up" to "The one mistake that kills tomato seedlings." With the same image and link, CTR on similar posts rises from 1.1% to 2.6%. One clear promise did the work.</p>
 <h2>CTR vs conversion rate</h2>
 <p>CTR measures the click. Conversion rate measures what happens after, such as a sale or a sign-up. A high CTR with a low conversion rate often means the post promised something the landing page didn't deliver. A low CTR with a high conversion rate can mean you have a great offer that too few people notice. Track both, ideally with UTM parameters, so you know which posts sent which visitors.</p>
 <figure data-chart="3"></figure>
@@ -461,10 +461,10 @@ TERMS += [
 </ul>''',
  'charts': [
   {'type': 'formula', 'title': 'Click-through rate', 'formula': 'CTR = clicks ÷ impressions × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '2%', 'example': [('Link clicks', '40'), ('Impressions', '2,000')]},
+   'note': 'numbers to show the math.', 'result': '2%', 'example': [('Link clicks', '40'), ('Impressions', '2,000')]},
   {'type': 'funnel', 'title': 'From seeing a post to signing up', 'sub': 'One post with a link to a sign-up page', 'example': True, 'unit': 'People',
    'stages': [('Impressions', 20000, '20,000'), ('Link clicks', 400, '400'), ('Page views', 360, '360'), ('Sign-ups', 18, '18')],
-   'note': 'Made-up numbers. CTR here is 400 ÷ 20,000 = 2%.'},
+   'note': 'numbers. CTR here is 400 ÷ 20,000 = 2%.'},
   {'type': 'versus', 'title': 'CTR vs conversion rate', 'cols': ('Click-through rate', 'Conversion rate'), 'rows': [
    ('Measures', 'The click', 'The action after the click'),
    ('Formula', 'Clicks ÷ impressions × 100', 'Conversions ÷ visitors × 100'),
@@ -507,7 +507,7 @@ TERMS += [
 </ul>
 <p>There is also a slower cost. A follower who feels fooled once may scroll past your next post, even when it is honest and useful. You lose clicks you never get to see.</p>
 <h2>Examples</h2>
-<p>Here are made-up pairs that show the difference.</p>
+<p>Here are pairs that show the difference.</p>
 <ul>
 <li><b>Clickbait:</b> a video titled "I quit my job forever" that turns out to be about moving desks at the same company.</li>
 <li><b>Honest hook:</b> "I left my office job to bake full time. Here's what the first month cost me."</li>
@@ -525,7 +525,7 @@ TERMS += [
 </ol>
 <p>Try writing the title last. Once the video or post is done, find the most surprising true thing in it and build the title around that. You will find you rarely need to stretch anything.</p>
 <h2>How to spot it in your own work</h2>
-<p>Some creators slide into clickbait slowly. Each title gets a little bigger to keep up with the last one. Watch your numbers for signs. If clicks rise while watch time, time on page or comments fall, your titles may be promising more than your content gives. Read the comments too. Lines like "where is the part from the title?" are a clear warning. For example, a made-up cooking channel might see its click-through rate jump on a dramatic title while average watch time drops by half. That trade rarely pays off for long.</p>
+<p>Some creators slide into clickbait slowly. Each title gets a little bigger to keep up with the last one. Watch your numbers for signs. If clicks rise while watch time, time on page or comments fall, your titles may be promising more than your content gives. Read the comments too. Lines like "where is the part from the title?" are a clear warning. For example, a cooking channel might see its click-through rate jump on a dramatic title while average watch time drops by half. That trade rarely pays off for long.</p>
 <h2>Common mistakes</h2>
 <ul>
 <li>Saving the payoff for the last few seconds so people have to sit through filler</li>
@@ -543,7 +543,7 @@ TERMS += [
   ]},
   {'type': 'line', 'title': 'What a misleading title does to watch time', 'sub': 'Share of viewers still watching, by seconds into the video', 'example': True, 'suffix': '%', 'unit': 'Still watching',
    'points': [('0s', 100), ('5s', 55), ('10s', 38), ('20s', 27), ('30s', 22), ('45s', 18), ('60s', 15)],
-   'note': 'Made-up numbers to show a common shape.'},
+   'note': 'numbers to show a common shape.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Track reach and engagement for each post so you can see when a title brings views but no replies.'},
@@ -588,7 +588,7 @@ TERMS += [
 <li><b>Place them carefully.</b> Keep text clear of app buttons and the post caption area on short video apps.</li>
 <li><b>Note key sounds.</b> Add short tags such as [laughter] when the sound matters to the story.</li>
 </ol>
-<p>Here is a made-up example. A bike shop films a repair tip and turns on auto captions. The tool writes "chain loop" instead of "chain lube" and spells the brand name wrong. Two minutes of editing fixes both before anyone sees the video.</p>
+<p>Here is an example. A bike shop films a repair tip and turns on auto captions. The tool writes "chain loop" instead of "chain lube" and spells the brand name wrong. Two minutes of editing fixes both before anyone sees the video.</p>
 <p>If you write a script before filming, keep it. You can use it to check the auto captions line by line, or upload it as a caption file on YouTube, which saves fixing mistakes word by word.</p>
 <h2>How captions work on each network</h2>
 <p>The tools differ, so check each app. Short video apps tend to offer auto captions in the editor, with a way to change the words. YouTube lets you review automatic captions in its studio and upload your own files in more than one language. Facebook and LinkedIn can add captions to uploaded videos too. If you post the same video to many networks, burned-in open captions save you from fixing captions on every app, while closed captions give viewers more control.</p>
@@ -639,7 +639,7 @@ TERMS += [
 <h2>How collab posts work</h2>
 <p>A normal post reaches your followers and anyone the app recommends it to. A collab post adds your partner's followers to that pool. The post lives in one place, so all the reactions pile up together instead of being split across two copies.</p>
 <figure data-chart="1"></figure>
-<p>In this made-up example, a candle shop and a home decor creator make a Reel together. A little over a third of the views come from the shop's own followers. Almost as many come from the creator's followers, people who may never have heard of the shop before.</p>
+<p>In this example, a candle shop and a home decor creator make a Reel together. A little over a third of the views come from the shop's own followers. Almost as many come from the creator's followers, people who may never have heard of the shop before.</p>
 <h2>Why collab posts matter</h2>
 <ul>
 <li><b>More reach.</b> One post is shown to both audiences at once.</li>
@@ -681,7 +681,7 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': 'Where the views came from', 'sub': 'One collab Reel between a shop and a creator', 'example': True,
    'parts': [("Shop's followers", 38), ("Creator's followers", 34), ('Non-followers', 28)],
-   'note': 'Made-up numbers to show how a collab adds a second audience.'},
+   'note': 'numbers to show how a collab adds a second audience.'},
   {'type': 'steps', 'title': 'Making a collab post', 'steps': [
    ('Agree on the plan', 'Topic, caption, date and time, decided together.'),
    ('Create the post', 'Build the post or Reel as usual.'),
@@ -728,7 +728,7 @@ TERMS += [
 <p>Most platforms let you appeal if you think a decision was wrong. The notice you get usually has a link to start an appeal, and it helps to explain calmly why the post fits the rules.</p>
 <h2>Why community guidelines matter for brands</h2>
 <p>If you post for a business, a removed post or a limited account can wreck a campaign. Knowing the rules helps you avoid trouble with contests, health claims, before and after photos, weight loss content, alcohol, music and ads. Some content may be allowed but kept out of recommendations, which means it stays up yet reaches fewer new people. That can feel like a mystery drop in reach when the real cause is a rule you didn't know about.</p>
-<p>Here is a made-up example. A supplement brand posts a Reel saying its gummies "cure anxiety." The post is flagged for a health claim and shown to far fewer people. A rewrite that calls the gummies "part of my calm evening routine," with no medical promise, runs without trouble.</p>
+<p>Here is an example. A supplement brand posts a Reel saying its gummies "cure anxiety." The post is flagged for a health claim and shown to far fewer people. A rewrite that calls the gummies "part of my calm evening routine," with no medical promise, runs without trouble.</p>
 <h2>How to write guidelines for your own community</h2>
 <ol>
 <li><b>Keep them short.</b> A handful of clear rules is easier to follow than a long legal page.</li>
@@ -738,7 +738,7 @@ TERMS += [
 <li><b>Pin them.</b> Put the rules where everyone sees them, such as a pinned post, a group description or a welcome channel.</li>
 <li><b>Apply them evenly.</b> Enforce the same rules for everyone, including fans and friends.</li>
 </ol>
-<p>For example, a made-up running club's Facebook group might use five rules: be kind, stay on topic, no selling without asking the admins, no medical advice and no sharing other members' photos without asking. Each rule fits on one line, and the welcome post explains that a first break gets a friendly message and a second gets the post removed.</p>
+<p>For example, a running club's Facebook group might use five rules: be kind, stay on topic, no selling without asking the admins, no medical advice and no sharing other members' photos without asking. Each rule fits on one line, and the welcome post explains that a first break gets a friendly message and a second gets the post removed.</p>
 <h2>How to stay on the right side of the rules</h2>
 <ul>
 <li>Read the sections that touch your niche before you plan a campaign.</li>
@@ -787,7 +787,7 @@ TERMS += [
 <h2>What a community manager does each day</h2>
 <p>The work is a steady loop. You check every channel for new comments and messages, sort them, reply to the ones that need you, hide the spam and pass bigger issues to the right person. Then you look for chances to start conversations of your own.</p>
 <figure data-chart="1"></figure>
-<p>Most of what comes in falls into a few buckets. The chart below shows a made-up mix for a small online shop over one month. Knowing your own mix tells you where saved replies will help the most.</p>
+<p>Most of what comes in falls into a few buckets. The chart below shows a mix for a small online shop over one month. Knowing your own mix tells you where saved replies will help the most.</p>
 <figure data-chart="2"></figure>
 <h2>Why community management matters</h2>
 <ul>
@@ -809,7 +809,7 @@ TERMS += [
 <li><b>Know when to move offline.</b> Take order numbers, addresses and sensitive issues to private messages or email.</li>
 <li><b>Share what you learn.</b> Pass common feedback to the product or support team every week.</li>
 </ol>
-<p>Here is a made-up example. A bike shop gets the same question about tire sizes in its comments every few days. The community manager writes a saved reply, turns the answer into a carousel and pins it to the profile. The question still comes up, but now each reply links to a post that answers it fully, and the carousel itself picks up saves.</p>
+<p>Here is an example. A bike shop gets the same question about tire sizes in its comments every few days. The community manager writes a saved reply, turns the answer into a carousel and pins it to the profile. The question still comes up, but now each reply links to a post that answers it fully, and the carousel itself picks up saves.</p>
 <h2>How to measure community management</h2>
 <p>Pick a few numbers and track them monthly. Response time shows how fast you reply. Response rate shows how many messages got an answer at all. The share of comments that are questions, praise or complaints tells you how people feel. For groups and servers, watch how many members post, since a big group where nobody talks isn't much of a community. Compare each month with the one before and look for steady gains instead of one-off spikes. Read a sample of your replies each month too. Numbers show speed, but only reading shows whether your answers actually helped.</p>
 <h2>Common mistakes</h2>
@@ -830,7 +830,7 @@ TERMS += [
   ]},
   {'type': 'stack', 'title': 'What comes in during a month', 'sub': 'Comments and messages for a small online shop', 'example': True,
    'parts': [('Questions', 44), ('Praise', 26), ('Complaints', 18), ('Spam', 12)],
-   'note': 'Made-up numbers. Sort your own inbox for a month to find your mix.'},
+   'note': 'numbers. Sort your own inbox for a month to find your mix.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Answer comments and mentions from every channel in one inbox, with suggested replies on paid plans.'},
@@ -874,11 +874,11 @@ TERMS += [
 <li><b>Review results.</b> At the end of each month, check what worked and adjust the next plan.</li>
 </ol>
 <h2>What a week can look like</h2>
-<p>Here is a made-up plan for a small skincare brand posting to Instagram, TikTok and LinkedIn. Monday is a tip, Tuesday a customer story, Wednesday a product close-up and Thursday a behind-the-scenes clip from the lab. Friday is lighter, with a poll or a meme. The weekend gets one post each day, since the team found fewer of its followers engage then.</p>
+<p>Here is a plan for a small skincare brand posting to Instagram, TikTok and LinkedIn. Monday is a tip, Tuesday a customer story, Wednesday a product close-up and Thursday a behind-the-scenes clip from the lab. Friday is lighter, with a poll or a meme. The weekend gets one post each day, since the team found fewer of its followers engage then.</p>
 <figure data-chart="2"></figure>
 <p>Your own rhythm should come from your data. Check when your audience is online and how often you can post without the quality dropping. Fewer good posts beat a full calendar of rushed ones.</p>
 <h2>Content calendar vs editorial calendar</h2>
-<p>An editorial calendar often covers longer content, such as blog posts, newsletters and videos, and may plan months ahead. A social media content calendar focuses on posts across networks and tends to change more often. Many teams link the two, so each new article or video gets matching social posts on the days after it goes live. For example, a made-up travel blog publishes one long guide each week. The editorial calendar holds the guide. The content calendar holds the six social posts that point to it over the next ten days.</p>
+<p>An editorial calendar often covers longer content, such as blog posts, newsletters and videos, and may plan months ahead. A social media content calendar focuses on posts across networks and tends to change more often. Many teams link the two, so each new article or video gets matching social posts on the days after it goes live. For example, a travel blog publishes one long guide each week. The editorial calendar holds the guide. The content calendar holds the six social posts that point to it over the next ten days.</p>
 <figure data-chart="3"></figure>
 <h2>Tips for keeping it alive</h2>
 <ul>
@@ -902,7 +902,7 @@ TERMS += [
   ]},
   {'type': 'columns', 'title': 'Posts planned per day', 'sub': 'One week for a small brand across three networks', 'example': True,
    'rows': [('Mon', 3, '3'), ('Tue', 3, '3'), ('Wed', 3, '3'), ('Thu', 3, '3'), ('Fri', 2, '2'), ('Weekend', 2, '2')],
-   'labels': 'all', 'unit': 'Posts', 'note': 'Made-up plan. Base yours on when your audience is online.'},
+   'labels': 'all', 'unit': 'Posts', 'note': 'plan. Base yours on when your audience is online.'},
   {'type': 'versus', 'title': 'Content calendar vs editorial calendar', 'cols': ('Content calendar', 'Editorial calendar'), 'rows': [
    ('Covers', 'Social posts on each network', 'Blog posts, newsletters and videos'),
    ('How far ahead', 'Days to weeks', 'Weeks to months'),
@@ -946,7 +946,7 @@ TERMS += [
 <li>Selling their own products, courses or services</li>
 <li>Making content for brands to post on their own accounts</li>
 </ul>
-<p>Most full-time creators mix several of these, so one platform change can't wipe out all their income. Brands often care about how engaged an audience is, so a small, active following can still attract offers. The chart shows a made-up mix for one creator over a year.</p>
+<p>Most full-time creators mix several of these, so one platform change can't wipe out all their income. Brands often care about how engaged an audience is, so a small, active following can still attract offers. The chart shows a mix for one creator over a year.</p>
 <figure data-chart="2"></figure>
 <h2>How to become a content creator</h2>
 <figure data-chart="3"></figure>
@@ -958,7 +958,7 @@ TERMS += [
 <li><b>Build real connections.</b> Reply to comments and work with other creators in your space.</li>
 <li><b>Reuse your work.</b> Turn one long video into short clips, a carousel and a newsletter.</li>
 </ol>
-<p>For example, a made-up home cook might start with one recipe video a week on TikTok. After a few months, she notices her budget meals get far more saves than fancy dishes, so she leans into cheap weeknight dinners. That focus is what later brings her first brand deal with a grocery app.</p>
+<p>For example, a home cook might start with one recipe video a week on TikTok. After a few months, she notices her budget meals get far more saves than fancy dishes, so she leans into cheap weeknight dinners. That focus is what later brings her first brand deal with a grocery app.</p>
 <h2>Tips for staying in it</h2>
 <ul>
 <li>Batch your filming so you aren't racing to post every day.</li>
@@ -979,7 +979,7 @@ TERMS += [
   ]},
   {'type': 'stack', 'title': "One creator's income mix", 'sub': 'Share of a year\'s income by source', 'example': True,
    'parts': [('Brand deals', 40), ('Own products', 25), ('Affiliate links', 20), ('Platform payouts', 15)],
-   'note': 'Made-up numbers. Every creator\'s mix is different.'},
+   'note': 'numbers. Every creator\'s mix is different.'},
   {'type': 'steps', 'title': 'Getting started as a creator', 'steps': [
    ('Pick a niche', 'A topic you know and could talk about for years.'),
    ('Choose one platform', 'Where your audience is and your skills fit.'),
@@ -1025,15 +1025,15 @@ TERMS += [
 <li><b>Keep it small.</b> Most accounts do well with three to five pillars. Beyond that, focus slips.</li>
 <li><b>Name them.</b> Give each pillar a simple label so the whole team uses the same words.</li>
 </ol>
-<p>For example, a made-up dog trainer lists the questions clients ask most. Nearly all of them fall into four groups: puppy basics, leash manners, fixing bad habits and life with a rescue dog. Those four groups become her pillars, and every post idea she writes down goes under one of them.</p>
+<p>For example, a dog trainer lists the questions clients ask most. Nearly all of them fall into four groups: puppy basics, leash manners, fixing bad habits and life with a rescue dog. Those four groups become her pillars, and every post idea she writes down goes under one of them.</p>
 <h2>How to balance your pillars</h2>
-<p>Pillars don't need equal time. Give the most room to the ones that build trust, and keep promotion to a smaller slice so your feed doesn't feel like an ad. Here is a made-up mix for a small skincare brand.</p>
+<p>Pillars don't need equal time. Give the most room to the ones that build trust, and keep promotion to a smaller slice so your feed doesn't feel like an ad. Here is a mix for a small skincare brand.</p>
 <figure data-chart="1"></figure>
 <p>Assign each pillar a share of your posts, then map it onto your content calendar. Some people tie pillars to days, such as "Tip Tuesday" or "Customer Friday." Mix formats inside each pillar too. A pillar about recipes can hold a Reel, a carousel, a quick text tip and a Story poll.</p>
 <h2>How to measure each pillar</h2>
 <p>Tag every post with its pillar in your calendar or spreadsheet. At the end of each month, average the engagement, reach and clicks for each one. You will often find that one pillar earns the most saves, another brings more comments and a third drives the clicks that lead to sales. Each can earn its place for a different reason. Look at two or three months before you drop a pillar, since one slow month can be bad luck.</p>
 <figure data-chart="2"></figure>
-<p>In this made-up example, tutorials earn the highest engagement rate and promotions the lowest. The brand keeps promoting anyway, because the tutorials build the trust that makes the promotions work. The useful move is to make promotions feel more like tutorials, such as showing a product in use.</p>
+<p>In this example, tutorials earn the highest engagement rate and promotions the lowest. The brand keeps promoting anyway, because the tutorials build the trust that makes the promotions work. The useful move is to make promotions feel more like tutorials, such as showing a product in use.</p>
 <h2>Content pillars vs content series</h2>
 <p>People use the terms loosely. In general, pillars are the big themes and series are the repeat formats inside them. "Simple meals" is a pillar. "Five-minute breakfast videos every Monday" is a series inside it. A pillar can hold several series, and a series makes a pillar easier to plan, because you already know the shape of the post before you start. Series help followers too. When they know a new breakfast video lands every Monday, they come back for it.</p>
 <h2>Common mistakes</h2>
@@ -1047,10 +1047,10 @@ TERMS += [
  'charts': [
   {'type': 'stack', 'title': "One brand's pillar mix", 'sub': 'Share of posts in a month', 'example': True,
    'parts': [('Tutorials', 40), ('Behind the scenes', 25), ('Customer stories', 20), ('Promotions', 15)],
-   'note': 'Made-up mix for a small skincare brand.'},
+   'note': 'mix for a small skincare brand.'},
   {'type': 'columns', 'title': 'Engagement rate by pillar', 'sub': 'Average over one month', 'example': True,
    'rows': [('Tutorials', 4.8, '4.8%'), ('Behind the scenes', 3.1, '3.1%'), ('Customer stories', 3.6, '3.6%'), ('Promotions', 1.4, '1.4%')],
-   'highlight': 'Tutorials', 'labels': 'all', 'unit': 'Engagement rate', 'note': 'Made-up numbers for one account. Your pillars will rank differently.'},
+   'highlight': 'Tutorials', 'labels': 'all', 'unit': 'Engagement rate', 'note': 'numbers for one account. Your pillars will rank differently.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar AI agent', 'url': '/#agents', 'line': 'An AI agent that plans and writes posts as drafts for you to review, on paid plans.'},
@@ -1077,12 +1077,12 @@ TERMS += [
 <p>It answers the question every business asks sooner or later: did all that attention turn into anything? Likes and views show people noticed you. Conversion rate shows whether they acted.</p>
 <h2>How to calculate conversion rate</h2>
 <figure data-chart="1"></figure>
-<p>With made-up numbers: 400 people click through from a post and 12 of them sign up. 12 ÷ 400 × 100 = 3%. If you improve the landing page and the next 400 visitors bring 20 sign-ups, the rate climbs to 5%.</p>
+<p>With numbers: 400 people click through from a post and 12 of them sign up. 12 ÷ 400 × 100 = 3%. If you improve the landing page and the next 400 visitors bring 20 sign-ups, the rate climbs to 5%.</p>
 <p>Some teams divide by all visitors to a page, and others divide by clicks or by sessions. Each is fine. Write down which base you use and keep it the same, or your numbers won't compare from month to month.</p>
 <h2>Where conversion rate fits in the journey</h2>
 <p>Conversion rate is the last step in a chain. Your post is shown, some people click, some of those land on your page, and a few complete your goal. A weak step anywhere in the chain shrinks the final number.</p>
 <figure data-chart="2"></figure>
-<p>In this made-up funnel, 3% of the people who reached the page signed up. Looking at each step tells you where to work. If clicks are high and sign-ups are low, the problem is usually on the page. If clicks are low, start with the post.</p>
+<p>In this funnel, 3% of the people who reached the page signed up. Looking at each step tells you where to work. If clicks are high and sign-ups are low, the problem is usually on the page. If clicks are low, start with the post.</p>
 <h2>How to track conversions from social media</h2>
 <ol>
 <li><b>Pick one goal per campaign.</b> Decide what counts as a conversion before you post.</li>
@@ -1095,7 +1095,7 @@ TERMS += [
 <h2>How conversion rates differ by network and offer</h2>
 <p>Each network sends a different kind of visitor. People who tap a link on LinkedIn may be at work and ready to read. People who tap through from a short video may be curious but in a hurry. A free download usually converts far better than a paid product, and a small purchase better than a big one. So compare like with like: the same offer, on the same kind of page, from different sources.</p>
 <figure data-chart="3"></figure>
-<p>In this made-up example, LinkedIn sends fewer visitors but more of them sign up, while short video sends lots of visitors who mostly look around. Both can be worth it. Multiply each rate by the number of visitors to see which source brought the most sign-ups in total.</p>
+<p>In this example, LinkedIn sends fewer visitors but more of them sign up, while short video sends lots of visitors who mostly look around. Both can be worth it. Multiply each rate by the number of visitors to see which source brought the most sign-ups in total.</p>
 <h2>How to improve your conversion rate</h2>
 <ul>
 <li>Make the promise in your post match the page people land on.</li>
@@ -1110,13 +1110,13 @@ TERMS += [
 <p>A frequent mistake is judging a post only by its conversion rate. A post with a low rate but huge reach can still bring more total sales than a post with a high rate and tiny reach. Look at both the rate and the raw count. Another mistake is changing your goal halfway through a campaign, which makes the numbers impossible to compare. Last, remember the people who come back later. Someone may see your post today, then buy next week after searching your name. Your analytics may credit that sale to search, so social often does more than the report shows.</p>''',
  'charts': [
   {'type': 'formula', 'title': 'Conversion rate', 'formula': 'Conversion rate = conversions ÷ visitors × 100',
-   'note': 'Made-up numbers to show the math.', 'result': '3%', 'example': [('Sign-ups', '12'), ('Visitors', '400')]},
+   'note': 'numbers to show the math.', 'result': '3%', 'example': [('Sign-ups', '12'), ('Visitors', '400')]},
   {'type': 'funnel', 'title': 'From a post to a sign-up', 'sub': 'One post linking to a sign-up page', 'example': True, 'unit': 'People',
    'stages': [('Impressions', 25000, '25,000'), ('Link clicks', 500, '500'), ('Page visits', 400, '400'), ('Sign-ups', 12, '12')],
-   'note': 'Made-up numbers. 12 ÷ 400 = 3% of visitors signed up.'},
+   'note': 'numbers. 12 ÷ 400 = 3% of visitors signed up.'},
   {'type': 'bars', 'title': 'Same offer, different sources', 'sub': 'Conversion rate of visitors from each network', 'example': True,
    'rows': [('LinkedIn post', 4.2, '4.2%'), ('Instagram bio link', 2.8, '2.8%'), ('Facebook post', 2.1, '2.1%'), ('Short video', 1.6, '1.6%')],
-   'highlight': 'LinkedIn post', 'unit': 'Conversion rate', 'note': 'Made-up numbers for one offer. Your networks will rank differently.'},
+   'highlight': 'LinkedIn post', 'unit': 'Conversion rate', 'note': 'numbers for one offer. Your networks will rank differently.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Compare reach and engagement across your channels to see which ones get the most attention.'},
@@ -1140,7 +1140,7 @@ TERMS += [
 <p>The word "click" can mean different things on different platforms. Some count any click on the ad, including a tap to see more text or a tap on your profile name. Others offer a "link click" figure that only counts clicks that leave the platform. For website traffic, link clicks are the ones that matter, so check which one you are looking at.</p>
 <h2>How to calculate CPC</h2>
 <figure data-chart="1"></figure>
-<p>With made-up numbers: you spend $100 on an ad and it gets 400 link clicks. $100 ÷ 400 = $0.25 per click. If a second ad spends the same $100 and gets 250 clicks, its CPC is $0.40. The first ad brings you more visitors for the same money. Keep the spend and clicks from the same date range, or the math will drift.</p>
+<p>With numbers: you spend $100 on an ad and it gets 400 link clicks. $100 ÷ 400 = $0.25 per click. If a second ad spends the same $100 and gets 250 clicks, its CPC is $0.40. The first ad brings you more visitors for the same money. Keep the spend and clicks from the same date range, or the math will drift.</p>
 <h2>How CPC bidding works</h2>
 <p>On many ad platforms you can choose to be charged per click instead of per view. You set a budget and sometimes a top bid. The platform runs an auction each time there is space to show an ad to someone in your audience. Your price depends on how many other advertisers want the same people, how relevant your ad looks and how often people click it.</p>
 <figure data-chart="2"></figure>
@@ -1158,7 +1158,7 @@ TERMS += [
 <h2>Comparing ads by CPC</h2>
 <p>CPC is most useful when you compare ads inside one campaign. Run a few versions, let each one collect a fair number of clicks, then look at the numbers side by side.</p>
 <figure data-chart="3"></figure>
-<p>In this made-up test, the short demo video wins on CPC. Before you pour your budget into it, check that those clicks also turn into sign-ups or sales. A cheap click from someone who leaves at once is worth less than a pricier click from someone who buys.</p>
+<p>In this test, the short demo video wins on CPC. Before you pour your budget into it, check that those clicks also turn into sign-ups or sales. A cheap click from someone who leaves at once is worth less than a pricier click from someone who buys.</p>
 <h2>How to lower your CPC</h2>
 <ol>
 <li><b>Write a hook for one group.</b> An ad that speaks to new dog owners usually beats one that speaks to everyone.</li>
@@ -1173,7 +1173,7 @@ TERMS += [
 <p>The biggest mistake is treating the lowest CPC as the goal. What matters is the cost of each customer, so always check your conversion rate. Another mistake is judging an ad after a day or two, before it has had time to settle. Finally, think about the audience before you compare CPC across networks. A pricier click from the right buyer is often the better deal.</p>''',
  'charts': [
   {'type': 'formula', 'title': 'Cost per click', 'formula': 'CPC = total ad spend ÷ clicks',
-   'note': 'Made-up numbers to show the math.', 'result': '$0.25', 'example': [('Ad spend', '$100'), ('Link clicks', '400')]},
+   'note': 'numbers to show the math.', 'result': '$0.25', 'example': [('Ad spend', '$100'), ('Link clicks', '400')]},
   {'type': 'steps', 'title': 'How a pay-per-click auction works', 'steps': [
    ('You set a budget', 'And sometimes a top bid per click.'),
    ('An auction runs', 'Each time there is space for an ad.'),
@@ -1183,7 +1183,7 @@ TERMS += [
   ], 'note': 'Each platform runs its own version of this auction.'},
   {'type': 'bars', 'title': 'CPC for four versions of one ad', 'sub': 'Same budget and audience, different creative', 'example': True,
    'rows': [('Short demo video', 0.22, '$0.22'), ('Customer quote image', 0.31, '$0.31'), ('Product photo', 0.38, '$0.38'), ('Text-only graphic', 0.55, '$0.55')],
-   'highlight': 'Short demo video', 'unit': 'Cost per click', 'note': 'Made-up numbers. Real prices vary by network, audience and season.'},
+   'highlight': 'Short demo video', 'unit': 'Cost per click', 'note': 'numbers. Real prices vary by network, audience and season.'},
  ],
  'tools': [
   {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': 'Meta\'s tool for creating and tracking ads on Facebook and Instagram.'},
@@ -1208,13 +1208,13 @@ TERMS += [
 <p>On social platforms, CPM shows up in two ways. Some campaigns charge you by impressions, so CPM is what you pay. Others charge you for clicks or results, and CPM is still reported so you can see what it cost to be seen.</p>
 <h2>How to calculate CPM</h2>
 <figure data-chart="1"></figure>
-<p>With made-up numbers: you spend $30 and your ad is shown 10,000 times. $30 ÷ 10,000 × 1,000 = $3. Each thousand showings cost you $3. If a second ad spends $30 and gets 6,000 impressions, its CPM is $5, so it costs more to reach the same number of screens.</p>
+<p>With numbers: you spend $30 and your ad is shown 10,000 times. $30 ÷ 10,000 × 1,000 = $3. Each thousand showings cost you $3. If a second ad spends $30 and gets 6,000 impressions, its CPM is $5, so it costs more to reach the same number of screens.</p>
 <h2>Why CPM matters</h2>
 <p>CPM shows how expensive it is to put your ad in front of people. A rising CPM can mean more advertisers want the same audience, or that the platform sees your ad as less relevant. Watching it helps you understand where your budget goes before anyone clicks or buys.</p>
 <p>CPM is also handy for comparing networks and audiences. If one platform reaches the people you want for much less, it may be worth a test there. Cheaper reach only helps if the people reached care about what you sell, so look at what happens next too.</p>
 <p>Think of CPM as the price of a seat in front of your audience. It tells you nothing yet about whether anyone liked the show, which is why it works best as a starting point for other numbers.</p>
 <h2>CPM vs CPC</h2>
-<p>With CPM, you pay for being seen. With CPC, you pay when someone clicks. The two are linked by click-through rate. When CTR is written as a percent, CPC = CPM ÷ (CTR × 10). With made-up numbers, a $5 CPM and a 1% CTR give a CPC of $0.50. Double the CTR to 2% and the CPC drops to $0.25, even though the CPM stayed the same.</p>
+<p>With CPM, you pay for being seen. With CPC, you pay when someone clicks. The two are linked by click-through rate. When CTR is written as a percent, CPC = CPM ÷ (CTR × 10)., a $5 CPM and a 1% CTR give a CPC of $0.50. Double the CTR to 2% and the CPC drops to $0.25, even though the CPM stayed the same.</p>
 <figure data-chart="2"></figure>
 <p>So if your ad gets clicked often, even a high CPM can turn into cheap clicks. That is why a strong creative matters on both models.</p>
 <h2>What pushes CPM up or down</h2>
@@ -1226,7 +1226,7 @@ TERMS += [
 <li><b>Frequency.</b> Showing the same ad to the same people again and again makes each new impression less useful.</li>
 </ul>
 <figure data-chart="3"></figure>
-<p>The made-up chart shows a CPM climbing through a busy holiday stretch, then easing off. If your campaign has a flexible date, running it outside the busiest weeks may stretch your budget further.</p>
+<p>The chart shows a CPM climbing through a busy holiday stretch, then easing off. If your campaign has a flexible date, running it outside the busiest weeks may stretch your budget further.</p>
 <h2>When to use CPM bidding</h2>
 <ul>
 <li>You want as many people as possible to see a launch or event.</li>
@@ -1235,12 +1235,12 @@ TERMS += [
 <li>Your video ad works when people watch it, even if they never click.</li>
 <li>You are testing which audience is cheapest to reach before you spend on clicks.</li>
 </ul>
-<p>For example, a made-up music festival might buy impressions for a short trailer in the weeks before tickets go on sale. Few people click, but thousands see the lineup. Later, a click-based ad goes only to people who watched most of the trailer.</p>
+<p>For example, a music festival might buy impressions for a short trailer in the weeks before tickets go on sale. Few people click, but thousands see the lineup. Later, a click-based ad goes only to people who watched most of the trailer.</p>
 <h2>Common mistakes</h2>
 <p>Many advertisers chase the lowest CPM. Cheap impressions often come from placements where people scroll past fast, or from audiences that don't care about your product. A higher CPM that reaches the right people can bring better results. Also remember that impressions count every showing, so one person may see your ad several times. Check frequency and reach next to CPM so you know how many different people you actually reached. Finally, judge CPM together with what came after it. Clicks, sign-ups and sales tell you whether the reach paid off.</p>''',
  'charts': [
   {'type': 'formula', 'title': 'Cost per mille', 'formula': 'CPM = ad spend ÷ impressions × 1,000',
-   'note': 'Made-up numbers to show the math.', 'result': '$3', 'example': [('Ad spend', '$30'), ('Impressions', '10,000')]},
+   'note': 'numbers to show the math.', 'result': '$3', 'example': [('Ad spend', '$30'), ('Impressions', '10,000')]},
   {'type': 'versus', 'title': 'CPM vs CPC', 'cols': ('CPM', 'CPC'), 'rows': [
    ('You pay for', 'Every 1,000 showings', 'Each click'),
    ('Best for', 'Awareness and reach', 'Website visits'),
@@ -1249,7 +1249,7 @@ TERMS += [
   ]},
   {'type': 'line', 'title': 'CPM through a busy season', 'sub': 'Weekly CPM in dollars for one ad account', 'example': True, 'unit': 'CPM',
    'points': [('Wk 1', 4.1), ('Wk 2', 4.3), ('Wk 3', 4.8), ('Wk 4', 5.6), ('Wk 5', 6.9), ('Wk 6', 7.4), ('Wk 7', 5.2), ('Wk 8', 4.4)],
-   'note': 'Made-up numbers to show how competition can move prices.'},
+   'note': 'numbers to show how competition can move prices.'},
  ],
  'tools': [
   {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': 'Meta\'s tool for creating and tracking ads on Facebook and Instagram.'},
@@ -1292,12 +1292,12 @@ TERMS += [
 <p>Most full-time creators mix several of these. Relying on one source is risky, because a platform can change its rules or its payouts at any time.</p>
 <figure data-chart="1"></figure>
 <h2>Why creator income goes up and down</h2>
-<p>Creator income is rarely steady. Brand budgets often bunch up around big shopping seasons. A video can take off one month and the next can be quiet. A change to a platform's feed can cut views overnight. The made-up chart shows one creator's income across six months.</p>
+<p>Creator income is rarely steady. Brand budgets often bunch up around big shopping seasons. A video can take off one month and the next can be quiet. A change to a platform's feed can cut views overnight. The chart shows one creator's income across six months.</p>
 <figure data-chart="2"></figure>
 <p>That's why many creators keep a cushion of savings, sign longer brand deals when they can and build income they control, such as an email list or their own products.</p>
 <h2>Why the creator economy matters for brands</h2>
 <p>People often trust a creator they follow more than they trust an ad. That is why many brands now work with creators of every size, from nano-influencers to big names. Smaller creators can be a strong fit, because their audiences are often close-knit and focused on one topic.</p>
-<p>Brands also borrow the creator style for their own accounts. Casual, face-to-camera videos and honest reviews often feel more natural in a feed than polished ads. For example, a made-up hardware store might hire a local DIY creator to film weekend projects for its own TikTok, then use the best clips as ads.</p>
+<p>Brands also borrow the creator style for their own accounts. Casual, face-to-camera videos and honest reviews often feel more natural in a feed than polished ads. For example, a hardware store might hire a local DIY creator to film weekend projects for its own TikTok, then use the best clips as ads.</p>
 <h2>How to take part as a small business</h2>
 <ol>
 <li><b>Find creators your customers already watch.</b> Search your niche, your city and your product type.</li>
@@ -1317,7 +1317,7 @@ TERMS += [
   ]},
   {'type': 'columns', 'title': "One creator's income by month", 'sub': 'Brand deals, payouts and sales added together', 'example': True,
    'rows': [('Jan', 2100, '$2,100'), ('Feb', 1400, '$1,400'), ('Mar', 1800, '$1,800'), ('Apr', 3900, '$3,900'), ('May', 1200, '$1,200'), ('Jun', 2600, '$2,600')],
-   'highlight': 'Apr', 'labels': 'all', 'unit': 'Income', 'note': 'Made-up numbers to show how uneven creator income can be.'},
+   'highlight': 'Apr', 'labels': 'all', 'unit': 'Income', 'note': 'numbers to show how uneven creator income can be.'},
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Link in bio', 'url': '/link-in-bio', 'line': 'Send fans to your shop, newsletter and latest work from one link-in-bio page.'},
@@ -1353,7 +1353,7 @@ TERMS += [
 <h2>Why fund payouts can shrink</h2>
 <p>A fund with a fixed pool has a catch. The pot stays the same size while more creators join and more videos get posted. Each view ends up worth a smaller slice. Some creators in fixed-pool programs have said their earnings fell even when their views held steady.</p>
 <figure data-chart="2"></figure>
-<p>The made-up chart shows what that can look like: the same number of views each month, earning less as the pool is split more ways. Newer programs that pay per qualified view or share ad money work differently, but they also change their rates and rules over time. Watch your payout per thousand views each month, since that one number shows the trend clearly.</p>
+<p>The chart shows what that can look like: the same number of views each month, earning less as the pool is split more ways. Newer programs that pay per qualified view or share ad money work differently, but they also change their rates and rules over time. Watch your payout per thousand views each month, since that one number shows the trend clearly.</p>
 <h2>Why creator funds matter</h2>
 <p>For new creators, a fund can be the first money they earn from posting. It shows that their work has value and can make it easier to keep going. For platforms, funds are a way to attract creators from other apps and keep them posting.</p>
 <p>Funds also shape what gets made. When a program pays more for longer videos, creators start making longer videos. When it pays for qualified views, creators work harder on the first few seconds. Read what a program rewards before you change your style to chase it.</p>
@@ -1376,7 +1376,7 @@ TERMS += [
 <li>Track your payouts each month next to your views, so you can see what a view is really worth to you.</li>
 <li>Use the fund as a starting point and work toward income you control.</li>
 </ol>
-<p>For example, a made-up comedy creator might earn a small monthly payout from a fund while she builds a following. Once she has a loyal audience, she adds a merch line and a few brand deals, and the fund becomes a minor part of her income.</p>''',
+<p>For example, a comedy creator might earn a small monthly payout from a fund while she builds a following. Once she has a loyal audience, she adds a merch line and a few brand deals, and the fund becomes a minor part of her income.</p>''',
  'charts': [
   {'type': 'steps', 'title': 'How a creator fund usually works', 'steps': [
    ('Meet the rules', 'Age, country, account standing and a minimum level of activity.'),
@@ -1387,7 +1387,7 @@ TERMS += [
   ], 'note': 'Rules differ by platform and change over time.'},
   {'type': 'line', 'title': 'Same views, smaller payout', 'sub': 'Monthly fund payout in dollars for 100,000 views', 'example': True, 'unit': 'Payout',
    'points': [('Jan', 40), ('Feb', 36), ('Mar', 31), ('Apr', 29), ('May', 25), ('Jun', 22)],
-   'note': 'Made-up numbers to show how a fixed pool shrinks as more creators join.'},
+   'note': 'numbers to show how a fixed pool shrinks as more creators join.'},
   {'type': 'versus', 'title': 'Creator fund vs brand deal', 'cols': ('Creator fund', 'Brand deal'), 'rows': [
    ('Who pays', 'The platform', 'A company'),
    ('Amount set in advance', False, True),
@@ -1422,7 +1422,7 @@ TERMS += [
 <h2>Why cross-posting matters</h2>
 <p>Your audience is spread out. Some people only check one app. Cross-posting helps your message reach all of them without making brand-new content for each place. It also keeps quieter accounts active, so a follower who checks your Threads or Bluesky profile doesn't find it empty.</p>
 <p>There is a quality side too. A post that took real work, like a well-made video or a useful guide, deserves more than one audience. Cross-posting gives your best work a longer life.</p>
-<p>For example, a made-up bakery might find that its Instagram followers love the photos while its Facebook group mostly asks about opening hours. The same weekend special post works on both, with a short line about hours added for Facebook.</p>
+<p>For example, a bakery might find that its Instagram followers love the photos while its Facebook group mostly asks about opening hours. The same weekend special post works on both, with a short line about hours added for Facebook.</p>
 <h2>How to cross-post well</h2>
 <p>The best cross-posts feel at home on each network. The text limit is the first thing to check, because it changes so much from app to app.</p>
 <figure data-chart="1"></figure>
@@ -1437,7 +1437,7 @@ TERMS += [
 </ul>
 <h2>Step by step: one post, many networks</h2>
 <figure data-chart="2"></figure>
-<p>Here is a made-up example. A yoga studio films a 30-second stretch routine. On TikTok and Instagram, the caption is chatty with a few hashtags. On LinkedIn, the same video gets a short note about desk workers and back pain. On X, the caption shrinks to one line under 280 characters. On Pinterest, the description uses search words like "morning stretch routine." One video, five versions, about fifteen minutes of editing.</p>
+<p>Here is an example. A yoga studio films a 30-second stretch routine. On TikTok and Instagram, the caption is chatty with a few hashtags. On LinkedIn, the same video gets a short note about desk workers and back pain. On X, the caption shrinks to one line under 280 characters. On Pinterest, the description uses search words like "morning stretch routine." One video, five versions, about fifteen minutes of editing.</p>
 <h2>Cross-posting vs repurposing</h2>
 <p>Cross-posting shares the same piece with light edits. Repurposing turns one idea into a new format, like making a blog post into a carousel or a long video into a thread. Both save time. Repurposing takes more work, yet it often performs better because each version is built for its home.</p>
 <figure data-chart="3"></figure>
@@ -1508,7 +1508,7 @@ TERMS += [
 <h2>Where people drop off</h2>
 <p>Every stage loses people. That is normal. The question is where you lose more than you should, and a funnel view helps you see it. Look at the drop between each pair of steps, then compare months.</p>
 <figure data-chart="2"></figure>
-<p>In this made-up example, plenty of people visit the profile, but only a third of them click through to the site. That points to a gap between consideration and decision. A clearer link in bio, a pinned post with the offer or faster replies to questions might close it.</p>
+<p>In this example, plenty of people visit the profile, but only a third of them click through to the site. That points to a gap between consideration and decision. A clearer link in bio, a pinned post with the offer or faster replies to questions might close it.</p>
 <h2>How to map your customer journey</h2>
 <ol>
 <li><b>Talk to real customers.</b> Ask how they found you, what nearly stopped them and what made them say yes.</li>
@@ -1518,7 +1518,7 @@ TERMS += [
 <li><b>Fix the weakest step.</b> Pick the biggest drop and test one change at a time.</li>
 <li><b>Review it each quarter.</b> Journeys change as your products and channels change.</li>
 </ol>
-<p>For example, a made-up furniture shop learns from customer chats that most buyers watched several room tour videos before they visited the site. The team posts fewer discount ads and makes more room tours, each ending with a link to the products shown.</p>
+<p>For example, a furniture shop learns from customer chats that most buyers watched several room tour videos before they visited the site. The team posts fewer discount ads and makes more room tours, each ending with a link to the products shown.</p>
 <h2>Customer journey vs sales funnel</h2>
 <p>A sales funnel focuses on the steps up to a purchase. The customer journey also covers what happens after: using the product, coming back and telling others. For many businesses, the steps after the sale matter just as much, since a returning customer and a happy fan both cost less to win than a stranger. If your plan stops at the sale, you miss the part of the journey where fans bring new customers to you.</p>
 <figure data-chart="3"></figure>
@@ -1540,7 +1540,7 @@ TERMS += [
   ]},
   {'type': 'funnel', 'title': 'Where people drop off', 'sub': 'One month of social traffic for a small shop', 'example': True, 'unit': 'People',
    'stages': [('Saw a post', 10000, '10,000'), ('Visited the profile', 900, '900'), ('Clicked to the site', 300, '300'), ('Bought', 24, '24'), ('Bought again', 8, '8')],
-   'note': 'Made-up numbers to show how each stage narrows.'},
+   'note': 'numbers to show how each stage narrows.'},
   {'type': 'versus', 'title': 'Customer journey vs sales funnel', 'cols': ('Customer journey', 'Sales funnel'), 'rows': [
    ('Covers awareness to purchase', True, True),
    ('Covers life after the sale', True, False),
@@ -1585,7 +1585,7 @@ TERMS += [
 <h2>Testing with dark posts</h2>
 <p>Testing is where dark posts shine. Because none of the versions land on your page, you can try four headlines at once and let the results decide. Keep the audience and budget the same for each version and change only one thing. Give each version enough time and budget to collect a fair number of clicks before you call a winner.</p>
 <figure data-chart="2"></figure>
-<p>In this made-up test, the version that names a clear benefit wins on click-through rate. The team pauses the other three, moves the budget to the winner and writes a new challenger to test against it next week.</p>
+<p>In this test, the version that names a clear benefit wins on click-through rate. The team pauses the other three, moves the budget to the winner and writes a new challenger to test against it next week.</p>
 <h2>Dark post vs boosted post</h2>
 <p>A boosted post starts as a normal post on your page. You then pay to show it to more people. A dark post never goes on your page at all. Boosting is quick and simple, and the post keeps any likes it earned before you paid. Dark posts give you more control over the audience, placement, buttons and design.</p>
 <p>Use a boost when a post is already doing well and you want more people to see it. Use a dark post when you want to test, target closely or keep a short offer off your page.</p>
@@ -1616,7 +1616,7 @@ TERMS += [
   ]},
   {'type': 'bars', 'title': 'Four headlines, one test', 'sub': 'Click-through rate of four dark posts with the same image and audience', 'example': True,
    'rows': [('"Save 2 hours a week"', 2.3, '2.3%'), ('"Try it free"', 1.6, '1.6%'), ('"New: smarter planning"', 1.1, '1.1%'), ('"Meet our app"', 0.8, '0.8%')],
-   'highlight': '"Save 2 hours a week"', 'unit': 'Click-through rate', 'note': 'Made-up numbers for one test.'},
+   'highlight': '"Save 2 hours a week"', 'unit': 'Click-through rate', 'note': 'numbers for one test.'},
   {'type': 'versus', 'title': 'Dark post vs boosted post', 'cols': ('Dark post', 'Boosted post'), 'rows': [
    ('Appears on your page', False, True),
    ('Where it starts', 'The ad tool', 'A post on your page'),
@@ -1648,11 +1648,11 @@ TERMS += [
 <h2>How dark social happens</h2>
 <p>Most sharing on phones happens through a share button or a copied link. When a link is pasted into a messaging app, it often arrives with no tag that says where it came from. Some apps also open links in their own built-in browser, which can strip or hide the source. The visit lands on your site, but the report can't say "this came from a group chat." Email apps can do the same, especially when the link sits in a forwarded message.</p>
 <figure data-chart="1"></figure>
-<p>In this made-up report, more than a third of visits show up as direct. Some of those are people who typed your address or used a bookmark. Many are likely private shares that lost their source along the way.</p>
+<p>In this report, more than a third of visits show up as direct. Some of those are people who typed your address or used a bookmark. Many are likely private shares that lost their source along the way.</p>
 <h2>Why dark social matters</h2>
 <p>A lot of word of mouth happens in private messages. People are often more willing to share a recommendation with close friends than to post it publicly. If you only count public likes and shares, you may think a post did poorly when it was really passed around in dozens of chats.</p>
 <p>Ignoring dark social can lead you to cut content that was working. It can also make paid ads look like they did all the work, since ad clicks are easy to track and private shares are not.</p>
-<p>For example, a made-up recipe site might see a post get only a handful of public shares, yet the recipe page fills with direct visits that evening. Readers were sending it to family to plan Sunday dinner. A report that only counts public shares would call the post a flop.</p>
+<p>For example, a recipe site might see a post get only a handful of public shares, yet the recipe page fills with direct visits that evening. Readers were sending it to family to plan Sunday dinner. A report that only counts public shares would call the post a flop.</p>
 <h2>Common sources of dark social</h2>
 <ul>
 <li>Messaging apps and group chats</li>
@@ -1673,16 +1673,16 @@ TERMS += [
 <li><b>Look for spikes in direct traffic</b> to deep pages that nobody would type by hand.</li>
 </ol>
 <figure data-chart="2"></figure>
-<p>The made-up chart shows direct visits to one long blog post address. Nobody types a long address like that by hand, so the jump on the day after a popular Story is a strong hint that people were sending the link to each other.</p>
+<p>The chart shows direct visits to one long blog post address. Nobody types a long address like that by hand, so the jump on the day after a popular Story is a strong hint that people were sending the link to each other.</p>
 <h2>How to encourage more private sharing</h2>
 <p>Make content people want to send to one specific friend. Useful tips, relatable jokes, local news and timely deals all travel well in chats. Add easy share buttons to your site, including ones for messaging apps. Keep your links short and clean so they look trustworthy when pasted. Some sites also add a short tag to links copied from the page, so a pasted link keeps a hint of where it came from. You can even ask for it directly, with a line like "Send this to the friend who always plans the trip." Then watch your send counts to see which posts people pass along, and make more like them.</p>''',
  'charts': [
   {'type': 'stack', 'title': 'Where website visits came from', 'sub': 'One month of visits as a website report shows them', 'example': True,
    'parts': [('Direct, no source', 38), ('Search', 30), ('Tagged social links', 22), ('Email', 10)],
-   'note': 'Made-up numbers. Much of "direct" can be private sharing.'},
+   'note': 'numbers. Much of "direct" can be private sharing.'},
   {'type': 'line', 'title': 'Direct visits to one long blog address', 'sub': 'Visits per day with no source', 'example': True, 'unit': 'Visits',
    'points': [('Mon', 12), ('Tue', 14), ('Wed', 11), ('Thu', 13), ('Fri', 96), ('Sat', 71), ('Sun', 40)],
-   'note': 'Made-up numbers. A Story linking to the post went out on Thursday evening.'},
+   'note': 'numbers. A Story linking to the post went out on Thursday evening.'},
  ],
  'tools': [
   {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder tags each link so more visits keep their source when shared.'},
@@ -1707,7 +1707,7 @@ TERMS += [
 <p>The trend grew on short video apps, especially TikTok, and spread to Instagram and YouTube. It is most common in beauty, fashion, skincare, tech and home products, where haul videos and "must-have" lists are everywhere. The word is a playful twist on "influencing," and creators often use it as a hashtag or in the first line of a video.</p>
 <h2>How a deinfluencing post usually works</h2>
 <p>Most deinfluencing videos follow a simple pattern. The creator names a popular product, says why it disappointed them or why most people don't need it, then offers something else. That something else might be a cheaper item, a product they already had or no purchase at all.</p>
-<p>Here is a made-up example of the style: "Things I'm deinfluencing you from buying this month. That viral lip oil? The drugstore one I've used for years does the same job. That fancy hair tool? If your basic one still works, keep it. And skip the matching storage bins. A shoebox does the trick."</p>
+<p>Here is an example of the style: "Things I'm deinfluencing you from buying this month. That viral lip oil? The drugstore one I've used for years does the same job. That fancy hair tool? If your basic one still works, keep it. And skip the matching storage bins. A shoebox does the trick."</p>
 <figure data-chart="1"></figure>
 <h2>Why deinfluencing caught on</h2>
 <ul>
@@ -1730,7 +1730,7 @@ TERMS += [
 <h2>How to make an honest deinfluencing post</h2>
 <figure data-chart="2"></figure>
 <p>If you are a creator, the format works best when it is fair. Explain your reasons, show the product if you can and admit when something simply isn't for you even if others love it. Avoid mocking the people who bought it. The point is to help viewers decide, so give them enough detail to make their own call.</p>
-<p>For example, a made-up tech creator might say a popular pair of earbuds sounds great but drops calls, so anyone who takes lots of calls should skip them. That one detail helps the right viewers walk away and lets the rest buy with confidence.</p>
+<p>For example, a tech creator might say a popular pair of earbuds sounds great but drops calls, so anyone who takes lots of calls should skip them. That one detail helps the right viewers walk away and lets the rest buy with confidence.</p>
 <h2>Is deinfluencing always genuine?</h2>
 <p>No. Some posts use the "deinfluencing" label as a hook and then push a sponsored item. If a creator earns money from the product they suggest instead, they should still disclose it, just like any other paid post. As a viewer, look for clear ad labels and real reasons behind each claim. A video that trashes one brand only to sell its rival with a discount code may be an ad in disguise. Brands that pay creators to knock a rival's product take a big risk, since it can backfire badly if viewers find out.</p>
 <h2>Common mistakes</h2>
