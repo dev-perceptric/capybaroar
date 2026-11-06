@@ -101,14 +101,14 @@ def funnel(spec):
     top = st[0][1] or 1
     out = ''
     for i, s in enumerate(st):
-        w = max(8, s[1] / top * 100)
-        on = ' on' if i == len(st) - 1 else ''
-        rate = ''
         if i > 0 and st[i - 1][1]:
-            rate = f'<span class="ch-rate">{s[1] / st[i - 1][1] * 100:.0f}% move on</span>'
-        out += (f'{rate}<div class="ch-stage"><span class="ch-fbar{on}" style="width:{w:.1f}%" data-tip="{_e(s[0])}: {_e(_shown(s))}"></span>'
-                f'<span class="ch-ftx"><b>{_e(s[0])}</b><span>{_e(_shown(s))}</span></span></div>')
-    return f'<figure class="ch">{_head(spec)}<div class="ch-funnel" aria-hidden="true">{out}</div>{_table(["Stage", spec.get("unit", "Value")], [(s[0], _shown(s)) for s in st])}{_note(spec)}</figure>'
+            out += f'<div class="ch-frate"><span></span><span>{s[1] / st[i - 1][1] * 100:.0f}% move on</span></div>'
+        w = max(1.5, s[1] / top * 100)
+        on = ' on' if i == len(st) - 1 else ''
+        out += (f'<div class="ch-row"><span class="ch-lab">{_e(s[0])}</span><span class="ch-track">'
+                f'<span class="ch-bar ch-fb{on}" style="width:{w:.1f}%" data-tip="{_e(s[0])}: {_e(_shown(s))}"></span>'
+                f'<span class="ch-val">{_e(_shown(s))}</span></span></div>')
+    return f'<figure class="ch">{_head(spec)}<div class="ch-bars ch-funnel" aria-hidden="true">{out}</div>{_table(["Stage", spec.get("unit", "Value")], [(s[0], _shown(s)) for s in st])}{_note(spec)}</figure>'
 
 
 def stack(spec):

@@ -707,7 +707,7 @@ TERMS += [
   ('Do collab posts get more reach?', 'They are shown to the followers of each account, so they can reach more people than a post on one profile alone.'),
   ('Who owns a collab post?', 'The account that created it can edit or delete it. A collaborator can usually remove themselves from the post.'),
   ('Do I still need a paid partnership label on a collab post?', 'Yes, if the post is paid. A collab post shows both names, but disclosure rules still ask you to mark sponsored content clearly.'),
-  ('Can I invite more than one collaborator?', 'Instagram has allowed more than one collaborator on a post, but the limit can change. Check the app when you create the post.'),
+  ('Can I invite more than one collaborator?', 'It depends on the app\'s current rules, which change from time to time. Check the collaborator option when you create the post to see how many accounts you can invite.'),
  ],
  'related': ['instagram', 'influencer-marketing', 'tag', 'reach', 'sponsored-content'],
 },
@@ -767,7 +767,7 @@ TERMS += [
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'See comments and mentions from every channel in one inbox so you can act on rule breaks quickly.'},
-  {'name': 'Notion', 'url': 'https://www.notion.so/', 'domain': 'notion.so', 'line': 'A workspace for writing your community rules on one shared page your team can find.'},
+  {'name': 'Notion', 'url': 'https://www.notion.com/', 'domain': 'notion.com', 'line': 'A workspace for writing your community rules on one shared page your team can find.'},
  ],
  'faqs': [
   ('Where can I find a platform\'s community guidelines?', 'Most platforms link to them in the app\'s settings or help center and at the bottom of their website.'),
@@ -834,7 +834,7 @@ TERMS += [
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Answer comments and mentions from every channel in one inbox, with suggested replies on paid plans.'},
-  {'name': 'Notion', 'url': 'https://www.notion.so/', 'domain': 'notion.so', 'line': 'A shared workspace for saved replies and notes on the questions people ask most.'},
+  {'name': 'Notion', 'url': 'https://www.notion.com/', 'domain': 'notion.com', 'line': 'A shared workspace for saved replies and notes on the questions people ask most.'},
   {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for logging response times and sorting messages by type each month.'},
  ],
  'list': 'social-media-management-tools',
@@ -913,7 +913,7 @@ TERMS += [
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'See every planned post for every network on one calendar and schedule them from there.'},
   {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet that works as a simple content calendar for small teams.'},
-  {'name': 'Notion', 'url': 'https://www.notion.so/', 'domain': 'notion.so', 'line': 'A workspace for keeping post ideas, drafts and notes next to your plan.'},
+  {'name': 'Notion', 'url': 'https://www.notion.com/', 'domain': 'notion.com', 'line': 'A workspace for keeping post ideas, drafts and notes next to your plan.'},
  ],
  'list': 'social-media-scheduling-apps',
  'faqs': [
@@ -1054,7 +1054,7 @@ TERMS += [
  ],
  'tools': [
   {'id': 'capybaroar', 'name': 'Capybaroar AI agent', 'url': '/#agents', 'line': 'An AI agent that plans and writes posts as drafts for you to review, on paid plans.'},
-  {'name': 'Notion', 'url': 'https://www.notion.so/', 'domain': 'notion.so', 'line': 'A workspace for writing down your pillars and the post ideas under each one.'},
+  {'name': 'Notion', 'url': 'https://www.notion.com/', 'domain': 'notion.com', 'line': 'A workspace for writing down your pillars and the post ideas under each one.'},
   {'name': 'Google Sheets', 'url': 'https://www.google.com/sheets/about/', 'domain': 'google.com', 'line': 'A free spreadsheet for tagging posts by pillar and comparing their results.'},
  ],
  'faqs': [
@@ -1409,5 +1409,359 @@ TERMS += [
   ('Is a creator fund worth joining?', 'It can be a helpful bonus, especially early on. Read the rules first and keep building other income, since the fund depends fully on the platform.'),
  ],
  'related': ['monetization', 'creator-economy', 'content-creator', 'tiktok', 'watch-time'],
+},
+]
+
+TERMS += [
+{
+ 'slug': 'cross-posting',
+ 'short': 'Cross-posting is sharing the same piece of content on more than one social network, often with small changes to fit each one.',
+ 'body': '''<h2>What is cross-posting?</h2>
+<p>Cross-posting means you take one post and publish it on more than one platform. You might share a product photo on Instagram, Facebook and LinkedIn, or turn one short video into a TikTok, a Reel and a YouTube Short. You create once and publish many times, which is a big help when you have a small team and a long list of channels.</p>
+<p>Some apps offer a built-in way to share a post to a sister app, such as between Instagram and Facebook. Many teams use a scheduling tool to send one draft to every network at once, then adjust each version before it goes out.</p>
+<h2>Why cross-posting matters</h2>
+<p>Your audience is spread out. Some people only check one app. Cross-posting helps your message reach all of them without making brand-new content for each place. It also keeps quieter accounts active, so a follower who checks your Threads or Bluesky profile doesn't find it empty.</p>
+<p>There is a quality side too. A post that took real work, like a well-made video or a useful guide, deserves more than one audience. Cross-posting gives your best work a longer life.</p>
+<p>For example, a made-up bakery might find that its Instagram followers love the photos while its Facebook group mostly asks about opening hours. The same weekend special post works on both, with a short line about hours added for Facebook.</p>
+<h2>How to cross-post well</h2>
+<p>The best cross-posts feel at home on each network. The text limit is the first thing to check, because it changes so much from app to app.</p>
+<figure data-chart="1"></figure>
+<p>Beyond length, adjust these things before you hit publish:</p>
+<ul>
+<li><b>Format.</b> Crop images and videos to the shape each app prefers.</li>
+<li><b>Hashtags.</b> Some networks use them a lot. On others, one or two is plenty, and some people skip them.</li>
+<li><b>Tone.</b> LinkedIn readers often expect a more professional voice than TikTok viewers.</li>
+<li><b>Tags and mentions.</b> Handles change between platforms, so check each one.</li>
+<li><b>Links.</b> Some networks make links in posts tappable and others don't, so point to your bio where needed.</li>
+<li><b>Timing.</b> Your audiences may be online at different hours on each app, so stagger the posts if your data shows a gap.</li>
+</ul>
+<h2>Step by step: one post, many networks</h2>
+<figure data-chart="2"></figure>
+<p>Here is a made-up example. A yoga studio films a 30-second stretch routine. On TikTok and Instagram, the caption is chatty with a few hashtags. On LinkedIn, the same video gets a short note about desk workers and back pain. On X, the caption shrinks to one line under 280 characters. On Pinterest, the description uses search words like "morning stretch routine." One video, five versions, about fifteen minutes of editing.</p>
+<h2>Cross-posting vs repurposing</h2>
+<p>Cross-posting shares the same piece with light edits. Repurposing turns one idea into a new format, like making a blog post into a carousel or a long video into a thread. Both save time. Repurposing takes more work, yet it often performs better because each version is built for its home.</p>
+<figure data-chart="3"></figure>
+<p>Many teams do both. They cross-post quick updates and short videos, and repurpose their biggest pieces into a fresh format for each network. A handy rule: cross-post anything quick and timely, and repurpose anything you spent more than a day making.</p>
+<h2>How to measure cross-posting</h2>
+<p>Compare the same post across networks after a week. Look at reach, engagement rate and clicks for each version. If one network keeps lagging, the content may not fit there, or the edits may be too light. Some teams also compare a cross-posted version with a post made just for that network to see how big the gap is. If it is small, cross-posting is saving you time at no real cost. If it is large, that network may deserve its own content. Keep your notes in one place so the pattern is easy to spot after a month.</p>
+<h2>Common mistakes</h2>
+<ol>
+<li>Posting a caption that gets cut off because it is too long for one network.</li>
+<li>Leaving one app's watermark on a video you post to another.</li>
+<li>Tagging a handle that doesn't exist on the second platform.</li>
+<li>Posting at the exact same minute everywhere, even when your audiences are active at different hours.</li>
+<li>Sharing the same post to every network every day, which can make followers who use several apps tune out.</li>
+</ol>''',
+ 'charts': [
+  {'type': 'bars', 'title': 'Text limits by network', 'sub': 'Characters allowed in one post', 'unit': 'Characters',
+   'rows': [('Facebook', 63206, '63,206'), ('YouTube description', 5000, '5,000'), ('LinkedIn', 3000, '3,000'), ('Instagram', 2200, '2,200'), ('TikTok', 2200, '2,200'), ('Discord', 2000, '2,000'), ('Google Business Profile', 1500, '1,500'), ('Threads', 500, '500'), ('Pinterest description', 500, '500'), ('Mastodon', 500, '500'), ('Bluesky', 300, '300'), ('X', 280, '280')],
+   'highlight': 'X', 'note': "Limits used by Capybaroar's composer, November 2026."},
+  {'type': 'steps', 'title': 'Adapting one post for each network', 'steps': [
+   ('Write the longest version first', 'It is easier to cut than to stretch.'),
+   ('Trim for short networks', 'Fit X, Bluesky and Threads inside their limits.'),
+   ('Crop the media', 'Match the shape each app shows best.'),
+   ('Swap tags and hashtags', 'Check handles and use the hashtags each network expects.'),
+   ('Set times per audience', 'Post when each audience is most active.'),
+  ]},
+  {'type': 'versus', 'title': 'Cross-posting vs repurposing', 'cols': ('Cross-posting', 'Repurposing'), 'rows': [
+   ('Same piece of content', True, False),
+   ('New format for each network', False, True),
+   ('Time per post', 'A few minutes', 'Longer'),
+   ('Fits each network', 'With edits', True),
+   ('Good for', 'Quick updates and short videos', 'Guides and long videos'),
+  ]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule one post to several of the 12 networks Capybaroar supports, with a preview for each.'},
+  {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Our free counter shows how long a caption is so you can trim it for shorter networks.'},
+  {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design tool for resizing one graphic into the shapes each network uses.'},
+ ],
+ 'list': 'social-media-post-schedulers',
+ 'faqs': [
+  ('Is cross-posting bad for reach?', 'Cross-posting on its own is fine. Content that ignores each platform\'s style can perform worse, so edit the caption, format and hashtags for each network to give every post a fair chance.'),
+  ('Can you cross-post from Instagram to Facebook?', 'Yes. Meta lets you link the two accounts and share posts, Reels and Stories to both. You can also schedule to both from a social media tool.'),
+  ('What is the difference between cross-posting and reposting?', 'Cross-posting is publishing your own content on several networks. Reposting is sharing a post again, often someone else\'s, on the same network.'),
+  ('Should I remove watermarks before cross-posting videos?', 'Yes. Export a clean copy of your video before you add one app\'s watermark, and post that file everywhere.'),
+  ('How do I fit one caption into X\'s 280 characters?', 'Keep the hook and the main point, cut the extra detail and move hashtags out. A link can carry the rest of the story.'),
+ ],
+ 'related': ['social-media-scheduling', 'repost', 'native-content', 'caption', 'bulk-scheduling'],
+},
+{
+ 'slug': 'customer-journey',
+ 'short': 'The customer journey is the full path a person takes from first hearing about a brand to buying, using it and coming back or telling others.',
+ 'body': '''<h2>What is the customer journey?</h2>
+<p>The customer journey maps every step a person goes through with your business. It starts before they know your name and goes well past the first sale. Each step has its own questions and needs. Your job is to meet people with the right message at each point, so moving to the next step feels easy.</p>
+<p>Social media touches almost every stage. Someone might see a Reel, follow your account, read reviews in the comments, ask a question by direct message, buy, then post a photo of what they got. That photo becomes the first step in someone else's journey.</p>
+<h2>Stages of the customer journey</h2>
+<figure data-chart="1"></figure>
+<p>Some models use more or fewer stages, and some draw the journey as a loop instead of a line. The names matter less than the idea that people move step by step, and that many of them stop along the way.</p>
+<p>Each stage asks a different question. In awareness, people wonder "what is this?" In consideration, "is it right for me?" In decision, "is now the time?" After the sale, "was it worth it?" and "who should I tell?" Your posts work best when they answer the question of the stage the reader is in.</p>
+<h2>How social media fits each stage</h2>
+<ul>
+<li><b>Awareness.</b> Use reach-friendly formats like short video, collabs and timely topics.</li>
+<li><b>Consideration.</b> Share how-to posts, customer stories, comparisons and answers to common questions.</li>
+<li><b>Decision.</b> Make it easy to act with clear links, simple offers and quick replies to messages.</li>
+<li><b>Retention.</b> Keep customers close with tips for using what they bought, updates and a friendly community.</li>
+<li><b>Advocacy.</b> Repost user-generated content and thank fans who talk about you.</li>
+</ul>
+<p>A simple check is to tag a month of posts by stage. If almost every post is awareness, or almost every post is a sales pitch, you have a gap to fill.</p>
+<h2>Where people drop off</h2>
+<p>Every stage loses people. That is normal. The question is where you lose more than you should, and a funnel view helps you see it. Look at the drop between each pair of steps, then compare months.</p>
+<figure data-chart="2"></figure>
+<p>In this made-up example, plenty of people visit the profile, but only a third of them click through to the site. That points to a gap between consideration and decision. A clearer link in bio, a pinned post with the offer or faster replies to questions might close it.</p>
+<h2>How to map your customer journey</h2>
+<ol>
+<li><b>Talk to real customers.</b> Ask how they found you, what nearly stopped them and what made them say yes.</li>
+<li><b>List every touchpoint.</b> Write down each place they met your brand, from a first video to a follow-up email.</li>
+<li><b>Group them by stage.</b> Put each touchpoint under awareness, consideration, decision, retention or advocacy.</li>
+<li><b>Check your data.</b> Use analytics and UTM tags to see how many people move from one stage to the next.</li>
+<li><b>Fix the weakest step.</b> Pick the biggest drop and test one change at a time.</li>
+<li><b>Review it each quarter.</b> Journeys change as your products and channels change.</li>
+</ol>
+<p>For example, a made-up furniture shop learns from customer chats that most buyers watched several room tour videos before they visited the site. The team posts fewer discount ads and makes more room tours, each ending with a link to the products shown.</p>
+<h2>Customer journey vs sales funnel</h2>
+<p>A sales funnel focuses on the steps up to a purchase. The customer journey also covers what happens after: using the product, coming back and telling others. For many businesses, the steps after the sale matter just as much, since a returning customer and a happy fan both cost less to win than a stranger. If your plan stops at the sale, you miss the part of the journey where fans bring new customers to you.</p>
+<figure data-chart="3"></figure>
+<h2>Common mistakes</h2>
+<ul>
+<li><b>Only posting sales messages.</b> That skips the early stages, where people first learn to trust you.</li>
+<li><b>Only chasing awareness.</b> Big reach means little if nothing helps people take the next step.</li>
+<li><b>Forgetting existing customers.</b> People who already bought need help and reasons to come back.</li>
+<li><b>Guessing instead of asking.</b> Your idea of the journey may differ from what customers actually do. A "How did you hear about us?" question helps.</li>
+<li><b>Mapping once and filing it away.</b> The journey changes as you add products and channels, so revisit it.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'The five stages', 'steps': [
+   ('Awareness', 'The person first learns you exist.'),
+   ('Consideration', 'They compare options and look for proof.'),
+   ('Decision', 'They buy or sign up.'),
+   ('Retention', 'They use what they bought and decide whether to stay.'),
+   ('Advocacy', 'Happy customers tell friends and followers.'),
+  ]},
+  {'type': 'funnel', 'title': 'Where people drop off', 'sub': 'One month of social traffic for a small shop', 'example': True, 'unit': 'People',
+   'stages': [('Saw a post', 10000, '10,000'), ('Visited the profile', 900, '900'), ('Clicked to the site', 300, '300'), ('Bought', 24, '24'), ('Bought again', 8, '8')],
+   'note': 'Made-up numbers to show how each stage narrows.'},
+  {'type': 'versus', 'title': 'Customer journey vs sales funnel', 'cols': ('Customer journey', 'Sales funnel'), 'rows': [
+   ('Covers awareness to purchase', True, True),
+   ('Covers life after the sale', True, False),
+   ('Includes word of mouth', True, False),
+   ('Often drawn as', 'A path or loop', 'A narrowing funnel'),
+  ]},
+ ],
+ 'tools': [
+  {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Answer questions from comments and mentions on every channel in one place, so people can decide faster.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder tags your links so you can follow visitors from a post to a sale.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics that shows how visitors move from landing on your site to buying.'},
+  {'name': 'Typeform', 'url': 'https://www.typeform.com/', 'domain': 'typeform.com', 'line': 'A form builder for asking new customers how they found you.'},
+ ],
+ 'faqs': [
+  ('What are the stages of the customer journey?', 'A common model uses five stages: awareness, consideration, decision, retention and advocacy. Some businesses merge or split stages to fit how their customers buy.'),
+  ('What is the difference between a customer journey and a sales funnel?', 'A sales funnel focuses on the steps up to a purchase. The customer journey also covers what happens after the sale, such as using the product and recommending it.'),
+  ('How does social media help the customer journey?', 'Social media can introduce people to your brand, answer their questions, prompt a purchase and keep customers engaged afterward. It is one of the few channels that touches every stage.'),
+  ('How do I map my customer journey?', 'Ask real customers how they found you and what nearly stopped them, list every touchpoint, group them by stage and check your data for the biggest drop.'),
+  ('What is a touchpoint?', 'A touchpoint is any moment a person meets your brand, such as a video, a comment reply, an email, your website or a review.'),
+ ],
+ 'related': ['target-audience', 'lead-generation', 'conversion-rate', 'brand-awareness', 'retargeting'],
+},
+{
+ 'slug': 'dark-post',
+ 'short': "A dark post is a social media ad that appears only in the feeds of the people it targets and never shows up on the brand's own page.",
+ 'body': '''<h2>What is a dark post?</h2>
+<p>A dark post is an ad that doesn't live on your public timeline. It looks like a normal post when it shows up in someone's feed, with your name, picture and a "Sponsored" label. But if a person visits your page, they won't find it there. Only the audience you chose for the ad sees it in their feed.</p>
+<p>Marketers also call these unpublished posts or ad-only posts. On many networks, an ad you create directly in the ad manager works this way unless you choose to publish it to your page too. The name sounds sneaky, yet it is a normal ad feature.</p>
+<p>Dark posts are common on Facebook and Instagram, and other networks with ad tools offer something similar, such as sponsored content that only runs as an ad. The labels and menus differ, so check each platform's ad tool.</p>
+<h2>How dark posts work</h2>
+<figure data-chart="1"></figure>
+<p>You build the ad in the platform's ad tool. You write the copy, add an image or video and pick your audience. When you launch, the ad goes straight to the people you targeted. People can like, comment and share it like any post. Those reactions stay attached to the ad itself, so you need to check the ad tool or your inbox to see and answer them.</p>
+<p>Many platforms also keep a public ad library where anyone can look up the ads a page is running. So a dark post is hidden from your feed, yet anyone who looks in that library can still find it.</p>
+<h2>Why marketers use dark posts</h2>
+<ul>
+<li><b>Testing.</b> You can run many versions of an ad without cluttering your page.</li>
+<li><b>Targeting.</b> You can show one message to students and a different one to parents.</li>
+<li><b>A clean profile.</b> Your page stays focused on regular content for followers.</li>
+<li><b>Local offers.</b> You can promote a deal in one city without confusing people elsewhere.</li>
+<li><b>Short sales.</b> A sale can run as an ad and disappear when it ends, leaving no stale post on your page.</li>
+</ul>
+<h2>Testing with dark posts</h2>
+<p>Testing is where dark posts shine. Because none of the versions land on your page, you can try four headlines at once and let the results decide. Keep the audience and budget the same for each version and change only one thing. Give each version enough time and budget to collect a fair number of clicks before you call a winner.</p>
+<figure data-chart="2"></figure>
+<p>In this made-up test, the version that names a clear benefit wins on click-through rate. The team pauses the other three, moves the budget to the winner and writes a new challenger to test against it next week.</p>
+<h2>Dark post vs boosted post</h2>
+<p>A boosted post starts as a normal post on your page. You then pay to show it to more people. A dark post never goes on your page at all. Boosting is quick and simple, and the post keeps any likes it earned before you paid. Dark posts give you more control over the audience, placement, buttons and design.</p>
+<p>Use a boost when a post is already doing well and you want more people to see it. Use a dark post when you want to test, target closely or keep a short offer off your page.</p>
+<figure data-chart="3"></figure>
+<h2>How to create a dark post</h2>
+<ol>
+<li><b>Open the ad tool.</b> Start a new campaign in the platform's ad manager.</li>
+<li><b>Pick a goal.</b> Choose what you want, such as traffic, leads or video views.</li>
+<li><b>Set the audience.</b> Choose who should see each version.</li>
+<li><b>Build the ad there.</b> Write the copy and add media inside the ad tool, instead of picking an existing page post.</li>
+<li><b>Tag the link.</b> Add UTM parameters so your analytics can tell the versions apart.</li>
+<li><b>Launch and watch.</b> Check results after a few days and keep the winners.</li>
+</ol>
+<h2>Tips and common mistakes</h2>
+<ul>
+<li><b>Ignoring comments.</b> People see ad comments as part of your brand. Reply to them as you would on your page.</li>
+<li><b>Losing track of versions.</b> Name each version clearly, such as "Spring sale, parents, video A."</li>
+<li><b>Mixed messages.</b> Tailoring the message to each group is fine. Every claim still has to be true, and offers should match what the landing page says.</li>
+<li><b>Forgetting the ad library.</b> Anyone can see your ads there, so don't run anything you wouldn't post in public.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'steps', 'title': 'How a dark post reaches people', 'steps': [
+   ('Build it in the ad tool', 'Copy, media and a button, made inside the ad manager.'),
+   ('Pick the audience', 'Each version can go to a different group.'),
+   ('It shows in their feeds', 'With your name and a Sponsored label.'),
+   ('It stays off your page', 'Visitors to your profile won\'t see it.'),
+   ('Reactions stay on the ad', 'Likes and comments live with the ad itself.'),
+  ]},
+  {'type': 'bars', 'title': 'Four headlines, one test', 'sub': 'Click-through rate of four dark posts with the same image and audience', 'example': True,
+   'rows': [('"Save 2 hours a week"', 2.3, '2.3%'), ('"Try it free"', 1.6, '1.6%'), ('"New: smarter planning"', 1.1, '1.1%'), ('"Meet our app"', 0.8, '0.8%')],
+   'highlight': '"Save 2 hours a week"', 'unit': 'Click-through rate', 'note': 'Made-up numbers for one test.'},
+  {'type': 'versus', 'title': 'Dark post vs boosted post', 'cols': ('Dark post', 'Boosted post'), 'rows': [
+   ('Appears on your page', False, True),
+   ('Where it starts', 'The ad tool', 'A post on your page'),
+   ('Easy to test many versions', True, False),
+   ('Keeps likes from before you paid', False, True),
+   ('Custom buttons and placements', True, 'Fewer options'),
+  ]},
+ ],
+ 'tools': [
+  {'name': 'Meta Ads Manager', 'url': 'https://www.facebook.com/business/tools/ads-manager', 'domain': 'facebook.com', 'line': 'Meta\'s tool for creating and tracking ads on Facebook and Instagram.'},
+  {'name': 'LinkedIn Campaign Manager', 'url': 'https://business.linkedin.com/marketing-solutions/ads', 'domain': 'linkedin.com', 'line': 'LinkedIn\'s tool for running and tracking ads on LinkedIn.'},
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder gives each ad version its own tagged link so you can compare them.'},
+ ],
+ 'faqs': [
+  ('Are dark posts allowed?', 'Yes. Dark posts are a normal ad feature on major platforms. They still follow each platform\'s ad rules and carry a sponsored label.'),
+  ('Can people see dark posts on my page?', 'No. Dark posts appear only in the feeds of the people you targeted. They don\'t show on your page, though they may appear in the platform\'s public ad library.'),
+  ('Why are they called dark posts?', 'The name comes from the fact that they don\'t show on your public page, so they stay out of sight for anyone outside the target audience.'),
+  ('What is the difference between a dark post and a boosted post?', 'A boosted post starts on your page and you pay to show it to more people. A dark post is built in the ad tool and never appears on your page.'),
+  ('How do I reply to comments on a dark post?', 'Comments on ads usually show in the ad tool or your page\'s inbox. Check them often and reply like you would on any public post.'),
+ ],
+ 'related': ['paid-social', 'boosted-post', 'a-b-testing', 'target-audience', 'lookalike-audience'],
+},
+{
+ 'slug': 'dark-social',
+ 'short': "Dark social is sharing that happens in private channels, like messaging apps, email and DMs, where analytics can't see where traffic came from.",
+ 'body': '''<h2>What is dark social?</h2>
+<p>Dark social describes links and content that people share in private. Someone copies a link to your article and pastes it into a group chat. A friend forwards your post in a direct message. A coworker emails your video to the team. All of this is real sharing, yet your analytics can't trace it back to a source.</p>
+<p>When people click those private links, website tools often record the visit as "direct" traffic, as if the person typed your web address by hand. That is why dark social is so easy to miss. The name has nothing to do with anything shady. "Dark" just means hidden from view.</p>
+<h2>How dark social happens</h2>
+<p>Most sharing on phones happens through a share button or a copied link. When a link is pasted into a messaging app, it often arrives with no tag that says where it came from. Some apps also open links in their own built-in browser, which can strip or hide the source. The visit lands on your site, but the report can't say "this came from a group chat." Email apps can do the same, especially when the link sits in a forwarded message.</p>
+<figure data-chart="1"></figure>
+<p>In this made-up report, more than a third of visits show up as direct. Some of those are people who typed your address or used a bookmark. Many are likely private shares that lost their source along the way.</p>
+<h2>Why dark social matters</h2>
+<p>A lot of word of mouth happens in private messages. People are often more willing to share a recommendation with close friends than to post it publicly. If you only count public likes and shares, you may think a post did poorly when it was really passed around in dozens of chats.</p>
+<p>Ignoring dark social can lead you to cut content that was working. It can also make paid ads look like they did all the work, since ad clicks are easy to track and private shares are not.</p>
+<p>For example, a made-up recipe site might see a post get only a handful of public shares, yet the recipe page fills with direct visits that evening. Readers were sending it to family to plan Sunday dinner. A report that only counts public shares would call the post a flop.</p>
+<h2>Common sources of dark social</h2>
+<ul>
+<li>Messaging apps and group chats</li>
+<li>Direct messages inside social networks</li>
+<li>Email and newsletters</li>
+<li>Private communities, such as Discord servers or closed groups</li>
+<li>Links copied from a mobile app and pasted somewhere else</li>
+<li>Work chat tools and team channels</li>
+</ul>
+<p>Which ones matter most depends on your audience. A B2B brand may find its links travel through work chat and email, while a fashion brand's links fly around group chats among friends.</p>
+<h2>How to measure dark social</h2>
+<p>You can't see all of it, but you can get much closer. None of these steps gives an exact count, yet together they show the trend.</p>
+<ol>
+<li><b>Add UTM parameters</b> to every link you share so more visits keep their source.</li>
+<li><b>Use short links</b> with their own click counts for posts, bios and printed material.</li>
+<li><b>Watch your send counts.</b> Many networks show how often a post was sent in messages, separate from public shares.</li>
+<li><b>Ask people.</b> A "How did you hear about us?" field on sign-up forms often reveals private recommendations.</li>
+<li><b>Look for spikes in direct traffic</b> to deep pages that nobody would type by hand.</li>
+</ol>
+<figure data-chart="2"></figure>
+<p>The made-up chart shows direct visits to one long blog post address. Nobody types a long address like that by hand, so the jump on the day after a popular Story is a strong hint that people were sending the link to each other.</p>
+<h2>How to encourage more private sharing</h2>
+<p>Make content people want to send to one specific friend. Useful tips, relatable jokes, local news and timely deals all travel well in chats. Add easy share buttons to your site, including ones for messaging apps. Keep your links short and clean so they look trustworthy when pasted. Some sites also add a short tag to links copied from the page, so a pasted link keeps a hint of where it came from. You can even ask for it directly, with a line like "Send this to the friend who always plans the trip." Then watch your send counts to see which posts people pass along, and make more like them.</p>''',
+ 'charts': [
+  {'type': 'stack', 'title': 'Where website visits came from', 'sub': 'One month of visits as a website report shows them', 'example': True,
+   'parts': [('Direct, no source', 38), ('Search', 30), ('Tagged social links', 22), ('Email', 10)],
+   'note': 'Made-up numbers. Much of "direct" can be private sharing.'},
+  {'type': 'line', 'title': 'Direct visits to one long blog address', 'sub': 'Visits per day with no source', 'example': True, 'unit': 'Visits',
+   'points': [('Mon', 12), ('Tue', 14), ('Wed', 11), ('Thu', 13), ('Fri', 96), ('Sat', 71), ('Sun', 40)],
+   'note': 'Made-up numbers. A Story linking to the post went out on Thursday evening.'},
+ ],
+ 'tools': [
+  {'name': 'UTM builder', 'url': '/tools/utm-builder', 'line': 'Our free builder tags each link so more visits keep their source when shared.'},
+  {'name': 'Bitly', 'url': 'https://bitly.com/', 'domain': 'bitly.com', 'line': 'A link shortener that makes links tidy to paste and counts the clicks on each one.'},
+  {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics where you can watch direct traffic to deep pages.'},
+  {'name': 'Typeform', 'url': 'https://www.typeform.com/', 'domain': 'typeform.com', 'line': 'A form builder for asking new customers how they heard about you.'},
+ ],
+ 'faqs': [
+  ('Why is it called dark social?', 'It is called dark because the sharing happens out of sight of public feeds and analytics tools. The traffic is real, but its source is hidden.'),
+  ('Is dark social bad?', 'No. Private sharing is often a strong sign that people trust and like your content. The only problem is that it is hard to measure.'),
+  ('How can I track dark social traffic?', 'You can\'t track all of it, but you can get closer. Use UTM tags and short links, watch the send counts each platform shows and ask new customers how they found you.'),
+  ('Why does so much of my traffic show as direct?', 'Some direct visits come from people typing your address or using bookmarks. Many come from links shared in messages and email, which often arrive without a source.'),
+  ('What kind of content gets shared privately?', 'Posts people want to send to one specific friend travel best, such as useful tips, relatable jokes, local news and timely deals.'),
+ ],
+ 'related': ['shares', 'word-of-mouth', 'utm-parameters', 'direct-message', 'analytics'],
+},
+{
+ 'slug': 'deinfluencing',
+ 'short': "Deinfluencing is a trend where creators tell followers which popular products aren't worth buying, or urge them to buy less overall.",
+ 'body': '''<h2>What is deinfluencing?</h2>
+<p>Deinfluencing flips the usual influencer post. Instead of saying "you need this," a creator explains why you might skip a product. They may call out an overhyped item, share a cheaper option that works just as well or simply remind viewers to use what they already own.</p>
+<p>The trend grew on short video apps, especially TikTok, and spread to Instagram and YouTube. It is most common in beauty, fashion, skincare, tech and home products, where haul videos and "must-have" lists are everywhere. The word is a playful twist on "influencing," and creators often use it as a hashtag or in the first line of a video.</p>
+<h2>How a deinfluencing post usually works</h2>
+<p>Most deinfluencing videos follow a simple pattern. The creator names a popular product, says why it disappointed them or why most people don't need it, then offers something else. That something else might be a cheaper item, a product they already had or no purchase at all.</p>
+<p>Here is a made-up example of the style: "Things I'm deinfluencing you from buying this month. That viral lip oil? The drugstore one I've used for years does the same job. That fancy hair tool? If your basic one still works, keep it. And skip the matching storage bins. A shoebox does the trick."</p>
+<figure data-chart="1"></figure>
+<h2>Why deinfluencing caught on</h2>
+<ul>
+<li>Many viewers felt tired of nonstop product pushing.</li>
+<li>People wanted honest reviews when money felt tight.</li>
+<li>Viewers grew more aware of paid partnerships and wanted creators they could trust.</li>
+<li>Buying less fits with interest in cutting waste and clutter.</li>
+<li>The format is easy to copy: one product, one honest opinion, one alternative.</li>
+</ul>
+<p>It also gave creators a fresh angle. After years of "favorites" videos, saying "skip this" felt surprising, and surprise is a strong hook in a crowded feed.</p>
+<h2>What deinfluencing means for brands</h2>
+<p>Deinfluencing shows that honesty builds trust. Followers respect creators who admit when something isn't worth it. For brands, a creator's real opinion carries more weight than a scripted rave, and a creator who sometimes says no makes their yes mean more.</p>
+<p>Many deinfluencing videos still end by recommending a different product, so the trend still leads to purchases. It moves trust toward creators who seem fair. Brands can respond in several ways:</p>
+<ul>
+<li>Make products that hold up to honest reviews.</li>
+<li>Work with creators who are free to share real opinions, including small criticisms.</li>
+<li>Say clearly who a product is for and who can skip it.</li>
+<li>Watch deinfluencing videos about your category for honest feedback you may never hear in a survey.</li>
+</ul>
+<h2>How to make an honest deinfluencing post</h2>
+<figure data-chart="2"></figure>
+<p>If you are a creator, the format works best when it is fair. Explain your reasons, show the product if you can and admit when something simply isn't for you even if others love it. Avoid mocking the people who bought it. The point is to help viewers decide, so give them enough detail to make their own call.</p>
+<p>For example, a made-up tech creator might say a popular pair of earbuds sounds great but drops calls, so anyone who takes lots of calls should skip them. That one detail helps the right viewers walk away and lets the rest buy with confidence.</p>
+<h2>Is deinfluencing always genuine?</h2>
+<p>No. Some posts use the "deinfluencing" label as a hook and then push a sponsored item. If a creator earns money from the product they suggest instead, they should still disclose it, just like any other paid post. As a viewer, look for clear ad labels and real reasons behind each claim. A video that trashes one brand only to sell its rival with a discount code may be an ad in disguise. Brands that pay creators to knock a rival's product take a big risk, since it can backfire badly if viewers find out.</p>
+<h2>Common mistakes</h2>
+<ul>
+<li><b>Trashing products you haven't tried.</b> Viewers can tell, and it hurts your credibility.</li>
+<li><b>Hiding a sponsor.</b> Recommending an alternative you are paid to promote without saying so breaks trust and often breaks platform rules.</li>
+<li><b>Making it all negative.</b> The best posts leave viewers with something useful, such as a cheaper option or a tip for using what they already own.</li>
+<li><b>Brands fighting back in comments.</b> Arguing with an honest review usually draws more attention to it. A calm reply or a real fix works better.</li>
+</ul>''',
+ 'charts': [
+  {'type': 'versus', 'title': 'Influencing vs deinfluencing', 'cols': ('Influencing', 'Deinfluencing'), 'rows': [
+   ('Main message', '"You need this"', '"You might skip this"'),
+   ('Often sponsored', True, 'Sometimes'),
+   ('Suggests an alternative', 'Rarely', 'Often'),
+   ('Can still lead to a purchase', True, True),
+   ('Builds trust when honest', True, True),
+  ]},
+  {'type': 'steps', 'title': 'An honest deinfluencing post', 'steps': [
+   ('Name the product', 'Say what it is and why people are buying it.'),
+   ('Give your real reason', 'What let you down, or why most people don\'t need it.'),
+   ('Offer an alternative', 'A cheaper option, something you already own or nothing at all.'),
+   ('Disclose paid links', 'Label any sponsor or affiliate code clearly.'),
+  ]},
+ ],
+ 'faqs': [
+  ('What does deinfluencing mean on TikTok?', 'On TikTok, deinfluencing means videos where creators tell viewers to skip certain popular products. They often explain why and may suggest a cheaper option or none at all.'),
+  ('Is deinfluencing the opposite of influencing?', 'In a way. It still shapes what people buy, though it pushes them away from hype and toward fewer or more careful purchases.'),
+  ('Can brands use deinfluencing in marketing?', 'They can if it feels honest. A brand that openly says who a product is not for can build trust, while a fake deinfluencing post usually backfires.'),
+  ('Do deinfluencing videos need an ad label?', 'Yes, if the creator is paid or earns a commission on anything they recommend. The same disclosure rules apply as for any sponsored post.'),
+  ('Why is deinfluencing popular?', 'Many viewers grew tired of constant product pushing and wanted honest opinions. Creators who say when something isn\'t worth it often earn more trust.'),
+ ],
+ 'related': ['influencer', 'authenticity', 'influencer-marketing', 'sponsored-content', 'trend'],
 },
 ]

@@ -1165,7 +1165,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .ch-lab{font-size:14px;line-height:1.3;color:var(--ink-2)}
 .ch-track{display:flex;align-items:center;gap:8px;min-width:0}
 .ch-bar{display:block;height:18px;border-radius:0 4px 4px 0;background:#d6d6d2}
-.ch-bar.on,.ch-colbar.on,.ch-fbar.on{background:var(--y)}
+.ch-bar.on,.ch-colbar.on{background:var(--y)}
 .ch-val{flex:none;font-size:13.5px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
 .ch-cols{display:flex;align-items:flex-end;gap:2px;height:200px;padding-bottom:26px;border-bottom:0}
 .ch-col{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;height:100%}
@@ -1181,12 +1181,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .ch-end{fill:#2a78d6;stroke:#fff;stroke-width:2}
 .ch-endl{font-size:13px;font-weight:600;fill:var(--ink)}
 .ch-hit{fill:transparent;cursor:default}
-.ch-funnel{display:flex;flex-direction:column;align-items:center;gap:4px}
-.ch-stage{position:relative;display:flex;justify-content:center;width:100%}
-.ch-fbar{display:block;height:44px;border-radius:8px;background:#e6e6e2}
-.ch-ftx{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;color:var(--ink);pointer-events:none}
-.ch-ftx span{color:var(--ink-2);font-variant-numeric:tabular-nums}
-.ch-rate{font-size:12px;color:var(--gray)}
 .ch-stack{display:flex;gap:2px;height:22px;border-radius:6px;overflow:hidden}
 .ch-seg:first-child{border-radius:6px 0 0 6px}.ch-seg:last-child{border-radius:0 6px 6px 0}
 .ch-leg{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;margin:12px 0 0!important;padding:0!important}
@@ -1230,3 +1224,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .lx-incl-h{margin:18px 0 6px!important;font-size:15px!important}
 .lx-incl{margin:0 0 8px!important;font-size:15px}
 .lx-incl li{margin-bottom:4px}
+.ch-frate{display:grid;grid-template-columns:minmax(90px,30%) 1fr;gap:12px;margin:-2px 0}
+.ch-frate span:last-child{font-size:12px;color:var(--gray)}
+.ch-frate span:last-child::before{content:"\2193  "}
+@media (max-width:600px){.ch-frate{grid-template-columns:1fr}.ch-frate span:first-child{display:none}}
