@@ -6,6 +6,7 @@ vendor's own pages, with the date) and posts/*.py (one file per post, POST = {..
 site/build/shots.mjs, covers from site/build/covers.mjs."""
 import os, re, json, glob, html as H
 
+exec(open(os.path.join(HERE, 'charts.py')).read())
 LX = os.path.join(HERE, 'listicles')
 FACTS = json.load(open(os.path.join(LX, 'facts.json')))
 POSTS = []
@@ -120,6 +121,44 @@ def compare(items):
             f'</tr></thead><tbody>{rows}</tbody></table></div>')
 
 
+def price_chart(items):
+    rows = []
+    for it in items:
+        f = FACTS[it['id']]
+        m = re.search(r'\$\s?(\d+(?:\.\d+)?)', f.get('priceShort') or '')
+        if m:
+            rows.append((f['name'], float(m.group(1)), f['priceShort']))
+    if len(rows) < 3:
+        return ''
+    rows.sort(key=lambda r: r[1])
+    return render_chart({'type': 'bars', 'title': 'Lowest listed price per month', 'sub': 'The cheapest paid plan on each tool\'s own pricing page',
+                         'rows': rows, 'highlight': 'Capybaroar', 'unit': 'Price from',
+                         'note': f'Prices as listed in {MONTH}. Some are per user, per channel or per workspace, and some are billed yearly, so read each tool below before you compare.'})
+
+
+FEATS = [('freePlan', 'Free plan'), ('trial', 'Free trial'), ('ai', 'AI'), ('inbox', 'Inbox'), ('approvals', 'Approvals'), ('mcp', 'MCP')]
+
+
+def feature_matrix(items):
+    head = ''.join(f'<th scope="col">{b}</th>' for _, b in FEATS)
+    rows = ''
+    for it in items:
+        f = FACTS[it['id']]
+        cells = ''.join(f'<td>{"<span class=\"yes\" title=\"Named on its pages\"></span>" if f.get(k) else "<span class=\"no\">&ndash;</span>"}</td>' for k, _ in FEATS)
+        rows += f'<tr><th scope="row"><a href="#{it["id"]}">{logo(it["id"], 20)}<span>{esc(f["name"])}</span></a></th>{cells}</tr>'
+    return (f'<figure class="ch"><figcaption class="ch-head"><b>What each tool names on its own pages</b></figcaption>'
+            f'<div class="scroll"><table class="cmp lx-cmp lx-feat"><thead><tr><th scope="col">Tool</th>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+            f'<p class="ch-note">A dash means we couldn\'t find it on the tool\'s homepage or pricing page in {MONTH}. It may still exist on a higher plan or a help page.</p></figure>')
+
+
+INCL = [('ai', 'AI'), ('inbox', 'Inbox'), ('approvals', 'Approvals'), ('analytics', 'Analytics'), ('reports', 'Reports'), ('mcp', 'MCP'), ('mobileApp', 'Mobile app')]
+
+
+def included(f):
+    li = ''.join(f'<li><b>{b}:</b> {esc(str(f[k]).rstrip("."))}.</li>' for k, b in INCL if f.get(k))
+    return f'<h3 class="lx-incl-h">What\'s included</h3><ul class="lx-incl">{li}</ul>' if li else ''
+
+
 def picks(p):
     out = ''
     for label, tid, why in p['picks']:
@@ -162,6 +201,7 @@ def item(k, it, used):
 <p class="lx-is"><b>{esc(f["name"])}</b> is {f["kind"]}.</p>
 {text}
 <dl class="lx-meta">{dl}</dl>
+{included(f)}
 <div class="lx-pc"><div><h3>What we like</h3>{ul(pros, "lx-pros")}</div><div><h3>What to know</h3>{ul(cons, "lx-cons")}</div></div>
 <p class="lx-go">{go}</p>
 </section>'''
@@ -230,6 +270,8 @@ for p in POSTS:
 {picks(p)}
 <h2 id="compared">All {n} compared</h2>
 {compare(p["items"])}
+{price_chart(p["items"])}
+{feature_matrix(p["items"])}
 {SIGNUP}
 {items_html}
 <h2 id="how">How we picked</h2>
@@ -252,7 +294,7 @@ for p in POSTS:
         {"@type": "ListItem", "position": 3, "name": p['title'], "item": "https://capybaroar.com" + slug}]}
     ld = ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (art, lst, crumbs))
     html = html.replace('</head>', ld + '</head>', 1)
-    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + '\n</body>', 1)
+    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + CHART_JS + '\n</body>', 1)
     os.makedirs(P + 'blog', exist_ok=True)
     open(P + 'blog/' + p['slug'] + '.html', 'w').write(html)
     cards.append(f'<li><a href="{slug}"><img src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt="" loading="lazy"><h2>{esc(p["title"])}</h2><p>{esc(p["desc"])}</p></a></li>')

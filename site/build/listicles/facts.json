@@ -20,7 +20,7 @@
    "Newer than the big names, with fewer integrations so far",
    "AI features need a paid plan; Free covers scheduling only"
   ],
-  "mcp": "MCP server on every plan",
+  "mcp": "MCP server and REST API on every plan, Free included",
   "networks": [
    "instagram",
    "facebook",
@@ -35,7 +35,15 @@
    "discord",
    "google business"
   ],
-  "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 12 networks from one calendar"
+  "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 12 networks from one calendar",
+  "ai": "An AI agent plans and writes posts as drafts; AI writing, images and video from credits on paid plans",
+  "inbox": "One inbox for comments and mentions on every plan, with suggested replies on paid plans",
+  "approvals": "Approvals on Pro and Agency; clients who only approve take no seat",
+  "analytics": "Reach, engagement, followers and best times to post on every plan",
+  "reports": "Reports by link, PDF or email on Pro and Agency, with your logo on Agency",
+  "freePlan": "3 channels, 30 scheduled posts a month, 1 member",
+  "trial": "14 days of Pro with 200 AI credits, no card",
+  "mobileApp": null
  },
  "agorapulse": {
   "id": "agorapulse",

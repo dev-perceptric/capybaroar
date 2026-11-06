@@ -4,10 +4,11 @@ are loaded. Terms: site/build/glossary/list.json (name, category, the Capybaroar
 site/build/glossary/terms/group*.py (the copy)."""
 import os, re, json, glob, string
 
+exec(open(os.path.join(HERE, 'charts.py')).read())
 GL = os.path.join(HERE, 'glossary')
 LIST = json.load(open(os.path.join(GL, 'list.json')))
 COPY = {}
-for f in sorted(glob.glob(os.path.join(GL, 'terms', 'group*.py'))):
+for f in sorted(glob.glob(os.path.join(GL, 'terms', 'group*.py')) + glob.glob(os.path.join(GL, 'terms', 'v2_*.py'))):
     ns = {}
     try:
         exec(open(f).read(), ns)
@@ -55,6 +56,33 @@ def cap_block(key):
     return (f'<aside class="lx-signup gl-cap" id="capybaroar" aria-label="Capybaroar"><img src="/icon.svg" alt="" width="48" height="48">'
             f'<div><h2>{esc(title)}</h2><p>{esc(line)}</p><p class="lx-note">Free forever plan. 14 days of Pro free. No card needed.</p></div>'
             f'<div class="lx-cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="{url}">{esc(go)}</a></div></aside>')
+
+
+def tools_block(tools):
+    """Software that helps with this term: Capybaroar first when it fits, then tools from facts.json or by domain."""
+    li = ''
+    for t in tools:
+        if t.get('id') == 'capybaroar' or t.get('url', '').startswith('/'):
+            img, url, ext = '/icon.svg', t.get('url', '/'), False
+        elif t.get('id') in FACTS:
+            img, url, ext = f'/img/blog/logos/{t["id"]}.png', FACTS[t['id']]['home'], True
+        else:
+            img, url, ext = f'/img/glossary/logos/{t["domain"]}.png', t['url'], True
+        if not os.path.exists(P + img[1:]):
+            img = ''
+        rel = ' rel="nofollow noopener" target="_blank"' if ext else ''
+        pic = f'<img src="{img}" alt="" width="40" height="40" loading="lazy">' if img else '<span></span>'
+        mine = '<span class="tag">Our tool</span>' if t.get('id') == 'capybaroar' or url.startswith('/') else ''
+        li += f'<li><a href="{esc(url)}"{rel}>{pic}<span><b>{esc(t["name"])}{mine}</b><span>{esc(t["line"])}</span></span><span class="go">{"Open" if url.startswith("/") else "Visit site"}</span></a></li>'
+    return f'<h2 id="tools">Tools that help</h2><ul class="gl-tools">{li}</ul>'
+
+
+def list_link(slug):
+    p = next((q for q in POSTS if q['slug'] == slug), None)
+    if not p:
+        return ''
+    return (f'<p class="gl-list-link"><a href="/blog/{slug}"><img src="/img/blog/{slug}.webp" width="2400" height="1260" alt="" loading="lazy">'
+            f'<span><small>Compare tools</small><b>{esc(p["title"])}</b></span></a></p>')
 
 
 def hid(text):
@@ -111,9 +139,14 @@ for t in TERMS:
         n[0] += 1
         return m.group(0) if n[0] <= 8 else m.group(2)
     body = re.sub(r'(<a href="/social-media-terms/[^"]+">)(.*?)</a>', cap_links, body)
+    # Charts go in after the links, so no chart label becomes a link.
+    for k, spec in enumerate(t.get('charts', []), 1):
+        body = body.replace(f'<figure data-chart="{k}"></figure>', render_chart(spec))
+    body = re.sub(r'<figure data-chart="\d+"></figure>', '', body)
     rel = [BY[r] for r in t.get('related', []) if r in BY][:5]
     rel_html = ''.join(f'<li><a href="{BASE}/{r["slug"]}"><b>{esc(r["term"])}</b><span>{esc(r["short"])}</span></a></li>' for r in rel)
-    rows = heads + [('capybaroar', 'In Capybaroar')] + ([('related', 'Related terms')] if rel else []) + [('faq', 'Questions')]
+    tools_html = (tools_block(t['tools']) if t.get('tools') else '') + (list_link(t['list']) if t.get('list') else '')
+    rows = heads + ([('tools', 'Tools that help')] if tools_html else []) + [('capybaroar', 'In Capybaroar')] + ([('related', 'Related terms')] if rel else []) + [('faq', 'Questions')]
     toc = ''.join(f'<li><a href="#{a}">{esc(b)}</a></li>' for a, b in rows)
     mini = ('<div class="lx-mini"><img src="/icon.svg" alt="" width="32" height="32"><b>Try Capybaroar free</b>'
             '<p>An AI agent that plans your week of posts.</p><a class="btn sm" href="https://app.capybaroar.com/signup">Start free</a></div>')
@@ -128,6 +161,7 @@ for t in TERMS:
 <section aria-label="{esc(t["term"])}"><div class="wrap lx-layout"><aside class="lx-toc"><details open><summary>On this page</summary><nav aria-label="On this page"><ol>{toc}</ol></nav></details>{mini}</aside>
 <article class="t-read lx gl">
 {body}
+{tools_html}
 {cap_block(t.get("cap"))}
 {f'<h2 id="related">Related terms</h2><ul class="gl-rel">{rel_html}</ul>' if rel else ''}
 {az_bar(t["term"][0].upper())}
@@ -143,7 +177,7 @@ for t in TERMS:
         {"@type": "ListItem", "position": 2, "name": "Social media terms", "item": "https://capybaroar.com" + BASE},
         {"@type": "ListItem", "position": 3, "name": t['term'], "item": "https://capybaroar.com" + slug}]}
     html = html.replace('</head>', ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (dt, crumbs)) + '</head>', 1)
-    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + '\n</body>', 1)
+    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + CHART_JS + '\n</body>', 1)
     os.makedirs(P + BASE[1:], exist_ok=True)
     open(P + slug[1:] + '.html', 'w').write(html)
     written += 1
