@@ -9,7 +9,11 @@ LIST = json.load(open(os.path.join(GL, 'list.json')))
 COPY = {}
 for f in sorted(glob.glob(os.path.join(GL, 'terms', 'group*.py'))):
     ns = {}
-    exec(open(f).read(), ns)
+    try:
+        exec(open(f).read(), ns)
+    except SyntaxError as e:
+        print('glossary: skipped', os.path.basename(f), '(not finished:', e.msg + ')')
+        continue
     for t in ns['TERMS']:
         COPY[t['slug']] = t
 TERMS = [dict(x, **COPY[x['slug']]) for x in LIST if x['slug'] in COPY]
@@ -61,7 +65,7 @@ def hid(text):
 PLAIN = {'post', 'like', 'profile', 'feed', 'story', 'tag', 'trend', 'viral', 'audience', 'follower', 'handle', 'filter', 'embed', 'pin',
          'saves', 'shares', 'reach', 'mute', 'niche', 'keyword', 'hook', 'grid', 'thread', 'mention', 'queue', 'repost', 'remix', 'avatar',
          'authenticity', 'monetization', 'moderation', 'meme', 'emoji', 'gif', 'bio', 'caption', 'subscriber', 'unfollow', 'troll', 'takeover',
-         'highlights', 'vlog', 'voiceover', 'engagement', 'analytics', 'algorithm', 'api', 'feed', 'tag', 'pov', 'ootd', 'fomo', 'grwm', 'cfbr'}
+         'highlights', 'x', 'vlog', 'voiceover', 'engagement', 'analytics', 'algorithm', 'api', 'feed', 'tag', 'pov', 'ootd', 'fomo', 'grwm', 'cfbr'}
 
 
 def term_rules(skip):
