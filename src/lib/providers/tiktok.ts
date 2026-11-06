@@ -26,11 +26,13 @@ export const tiktok: Provider = {
     authUrl: ({ state, redirect }) =>
       `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,user.info.profile,user.info.stats,video.list,video.publish", redirect_uri: redirect, state })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
-      const t = await call<{ access_token: string; expires_in: number; refresh_token: string; open_id: string }>(
+      const t = await call<{ access_token?: string; expires_in: number; refresh_token: string; open_id: string; error?: string; error_description?: string }>(
         `${API}/oauth/token/`,
         { method: "POST", body: form({ client_key: key(), client_secret: secret(), code, grant_type: "authorization_code", redirect_uri: redirect }) },
         { what: "TikTok sign-in" },
       );
+      // TikTok answers a failed exchange with 200 and an error body; say why instead of calling on with no token.
+      if (!t.access_token) throw new AuthError(`TikTok sign-in: ${t.error_description || t.error || "no access token returned"}`);
       const u = await tt<{ user: { open_id: string; display_name: string; username?: string; avatar_url?: string } }>(
         `${API}/user/info/?fields=open_id,display_name,username,avatar_url`,
         { headers: { Authorization: `Bearer ${t.access_token}` } },

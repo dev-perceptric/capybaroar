@@ -66,3 +66,18 @@ test("branded content can't be private", () => {
   assert.equal(tt.check!(post({ brand: "branded" })), null);
   assert.equal(tt.check!(post({ brand: "own", privacy: "SELF_ONLY" })), null);
 });
+
+test("a failed sign-in says TikTok's reason instead of calling on with no token", async () => {
+  const real = globalThis.fetch;
+  const urls: string[] = [];
+  globalThis.fetch = (async (u: string | URL | Request) => {
+    urls.push(String(u));
+    return Response.json({ error: "invalid_client", error_description: "Client key or secret is incorrect.", log_id: "x" });
+  }) as typeof fetch;
+  try {
+    await assert.rejects(tt.oauth!.exchange({ code: "c", redirect: "https://app.example.com/cb", verifier: "v", input: {} }), /TikTok sign-in: Client key or secret is incorrect\./);
+  } finally {
+    globalThis.fetch = real;
+  }
+  assert.equal(urls.length, 1, "no profile call without a token");
+});
