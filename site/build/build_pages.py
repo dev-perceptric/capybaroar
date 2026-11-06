@@ -34,7 +34,7 @@ CHANNELS_NAV = [
     ('/mastodon-scheduler', 'mastodon', 'Mastodon', 'Posts'),
     ('/discord-message-scheduler', 'discord', 'Discord', 'Messages'),
 ]
-RESOURCES = [('/blog', 'i-file', 'Blog', 'Guides and news'), ('/api', 'i-layers', 'API docs', 'REST API, MCP and webhooks')]
+RESOURCES = [('/blog', 'i-file', 'Blog', 'Guides and news'), ('/social-media-terms', 'i-text', 'Social media terms', '200 terms from A to Z'), ('/api', 'i-layers', 'API docs', 'REST API, MCP and webhooks')]
 UTILITIES = [('/tools/font-generator', 'i-text', 'Font generator', 'Fonts for Instagram and more'), ('/tools/character-counter', 'i-text', 'Character counter', 'Fits on every network?'),
              ('/tools/emoji-copy-paste', 'i-smile', 'Emoji copy and paste', 'Every emoji, one click'), ('/tools/linkedin-text-formatter', 'i-pen', 'LinkedIn formatter', 'Bold and lists for LinkedIn'),
              ('/tools/instagram-post-size', 'i-image', 'Instagram post size', 'Check and resize pictures'), ('/tools/best-time-to-post', 'i-clock', 'Best time to post', 'Your audience\'s hours, your time'),

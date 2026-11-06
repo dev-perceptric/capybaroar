@@ -123,3 +123,6 @@ print('pricing nav refreshed')
 
 # ---------- blog listicles ----------
 exec(open(os.path.join(HERE, 'build_listicles.py')).read())
+
+# ---------- social media glossary ----------
+exec(open(os.path.join(HERE, 'build_glossary.py')).read())
