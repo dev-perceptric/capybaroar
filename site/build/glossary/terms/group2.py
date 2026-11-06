@@ -652,3 +652,678 @@ TERMS = [
  ],
  'related': ['engagement', 'call-to-action', 'clickbait', 'algorithm', 'community-guidelines'],
 },
+{
+ 'slug': 'engagement-rate',
+ 'short': "Engagement rate is the share of your audience that interacts with your content, shown as a percentage of followers, reach or impressions.",
+ 'body': '''<h2>What is engagement rate?</h2>
+<p>Engagement rate turns your raw engagement into a percentage. Total likes and comments are hard to compare between a small account and a large one. A rate fixes that by showing how much interaction you get for the size of your audience.</p>
+<h2>How to calculate engagement rate</h2>
+<p>There are several common formulas. Each one answers a slightly different question.</p>
+<ul>
+<li><b>By followers:</b> engagements / followers × 100. Good for comparing accounts.</li>
+<li><b>By reach:</b> engagements / reach × 100. Shows how the people who saw the post reacted.</li>
+<li><b>By impressions:</b> engagements / impressions × 100. Useful for ads and posts seen many times.</li>
+<li><b>Average per post:</b> add up the rate for each post in a period and divide by the number of posts.</li>
+</ul>
+<p>Here is a quick example with made-up numbers. A post gets 150 engagements and your account has 5,000 followers. 150 / 5,000 × 100 = 3%.</p>
+<p>Decide what counts as an engagement before you start. Most people include reactions, comments, shares and saves. Some also count clicks.</p>
+<h2>Why engagement rate matters</h2>
+<p>A rising follower count looks good. Yet if fewer of those followers interact, your content may be losing its pull. Engagement rate shows the health of your audience. Brands also use it to vet creators, since a high rate can suggest a real and active following.</p>
+<h2>How to improve your engagement rate</h2>
+<ol>
+<li>Study your top posts and make more of what worked.</li>
+<li>Post when your audience is online.</li>
+<li>Use formats that invite action, like carousels, polls and questions.</li>
+<li>Reply to comments so people feel heard.</li>
+<li>Remove spam and bot followers where the platform allows it, since they drag your rate down.</li>
+</ol>
+<h2>Common mistakes</h2>
+<p>Mixing formulas is the biggest one. A rate by reach will usually look higher than a rate by followers, so comparing them gives a false picture. Another mistake is chasing a rate while ignoring results. A post with a lower rate might still bring more sales. Treat engagement rate as one part of the story, alongside reach and conversions.</p>''',
+ 'faqs': [
+  ("What is a good engagement rate?", "It depends on the platform, your industry and the formula you use. The most useful benchmark is your own average, so aim to beat it over time."),
+  ("Why is engagement rate higher on smaller accounts?", "Smaller accounts often have closer, more loyal followers who interact more. As accounts grow, the rate commonly falls even when total engagement rises."),
+  ("Should I use reach or followers to calculate engagement rate?", "Use reach if you want to know how people who saw a post responded. Use followers if you want to compare your account with others. Stick to one method for fair comparisons."),
+ ],
+ 'related': ['engagement', 'reach', 'impressions', 'analytics', 'vanity-metrics'],
+},
+{
+ 'slug': 'evergreen-content',
+ 'short': "Evergreen content is content that stays useful for a long time, so you can share it again months or years after you first post it.",
+ 'body': '''<h2>What is evergreen content?</h2>
+<p>Evergreen content gets its name from evergreen trees, which keep their leaves all year. It covers topics that don't go out of date quickly. A guide on how to clean leather boots will be just as useful next year. A post about this week's news will not.</p>
+<p>Examples of evergreen content include:</p>
+<ul>
+<li>How-to guides and tutorials</li>
+<li>Answers to common customer questions</li>
+<li>Glossaries and beginner explainers</li>
+<li>Checklists and templates</li>
+<li>Stories about your brand's values or history</li>
+</ul>
+<h2>Why evergreen content matters</h2>
+<p>Most social posts fade within a day or two. Evergreen posts can be reused again and again, which saves you time. New followers join your account all the time, and many of them have never seen your best older posts. Sharing them again gives that work a second life.</p>
+<p>Evergreen pieces also tend to bring steady search traffic to your website, since people keep searching the same questions.</p>
+<h2>How to use evergreen content on social media</h2>
+<ol>
+<li><b>Build a library</b> of your strongest timeless posts.</li>
+<li><b>Refresh them</b> with a new hook, image or format before reposting.</li>
+<li><b>Space them out</b> so followers don't see the same post too often.</li>
+<li><b>Mix them</b> with timely posts so your feed still feels current.</li>
+<li><b>Check them</b> now and then for old prices, links or facts.</li>
+</ol>
+<p>Many teams keep evergreen posts in a queue that fills gaps in their calendar on slow weeks.</p>
+<h2>Evergreen vs timely content</h2>
+<p>Timely content ties to a trend, a holiday or a news event. It can spike fast and then disappear. Evergreen content grows slowly and lasts. A healthy content plan uses both. Timely posts grab attention now, and evergreen posts keep working in the background.</p>
+<h2>Common mistakes</h2>
+<p>Some brands repost the exact same caption over and over, which looks lazy. Others forget to update details, and an old link or discount code confuses people. Before you share an evergreen post again, read it as if you were a new follower seeing it for the first time.</p>''',
+ 'faqs': [
+  ("What is an example of evergreen content?", "A tutorial on how to tie a tie, a list of beginner gardening tips or an FAQ about your product are evergreen. They stay useful long after you post them."),
+  ("How often can I repost evergreen content?", "There is no fixed rule. Leave enough time that most followers won't remember the last time, and change the hook or image so it feels fresh."),
+  ("Is evergreen content good for SEO?", "Yes. Evergreen pages answer questions people keep searching for, so they can bring steady traffic over a long time."),
+ ],
+ 'related': ['content-calendar', 'queue', 'content-pillars', 'repost', 'batching'],
+},
+{
+ 'slug': 'explore-page',
+ 'short': "The Explore page is a section of Instagram that shows posts, Reels and accounts picked for you from people you don't follow yet.",
+ 'body': '''<h2>What is the Explore page?</h2>
+<p>The Explore page is Instagram's discovery feed. You reach it by tapping the search icon. It fills with a grid of photos, videos and Reels from accounts you don't follow. Instagram picks them based on what you have liked, saved, watched and searched in the past.</p>
+<p>Every person's Explore page looks different. Two friends sitting side by side will often see very different posts.</p>
+<h2>Why the Explore page matters</h2>
+<p>Most of your posts reach people who already follow you. The Explore page is one of the main ways to reach people who don't. When a post lands there, it can bring a wave of new views, profile visits and followers. For small accounts, this kind of discovery can make a big difference.</p>
+<h2>How the Explore page works</h2>
+<p>Instagram has explained in general terms that Explore ranks posts using signals like:</p>
+<ul>
+<li>How many people are interacting with a post, and how fast</li>
+<li>Your past activity with similar content</li>
+<li>Whether you have interacted with that account before</li>
+<li>Information about the account that posted</li>
+</ul>
+<p>The exact recipe is private and changes over time. What stays true is that posts people engage with strongly are more likely to spread.</p>
+<h2>How to get on the Explore page</h2>
+<ol>
+<li>Post content in a clear niche, so Instagram learns who it is for.</li>
+<li>Use eye-catching visuals and a strong first second on Reels.</li>
+<li>Write captions with keywords people search for.</li>
+<li>Add a few relevant hashtags.</li>
+<li>Encourage saves and shares by making posts useful or fun to send.</li>
+<li>Follow Instagram's recommendation guidelines, since some content can't be suggested.</li>
+</ol>
+<h2>Common mistakes</h2>
+<p>Chasing Explore with random viral trends can bring followers who don't care about your topic. They may never engage again. Another mistake is breaking content rules without knowing it. Posts that Instagram sees as borderline or low quality may be left out of recommendations even if they stay on your profile.</p>''',
+ 'faqs': [
+  ("How do I get my posts on the Instagram Explore page?", "There is no guaranteed way. Posts that get strong engagement from people interested in a clear topic have the best chance, so make content worth saving and sharing and follow Instagram's recommendation guidelines."),
+  ("Why is my Explore page full of random posts?", "Explore is based on your past activity. If you watch or like posts outside your usual interests, Instagram may show more of them. You can mark posts as not interesting to see fewer like them."),
+  ("Do hashtags help you get on Explore?", "They can help Instagram understand your post's topic. Strong engagement and clear, relevant content matter more than adding lots of hashtags."),
+ ],
+ 'related': ['instagram', 'algorithm', 'instagram-reels', 'hashtag', 'organic-reach'],
+},
+{
+ 'slug': 'facebook',
+ 'short': "Facebook is a social network owned by Meta where people connect with friends, follow Pages, join Groups and share posts, photos and videos.",
+ 'body': '''<h2>What is Facebook?</h2>
+<p>Facebook is one of the oldest and largest social networks. It started as a way for college students to connect and grew into a platform used by people of all ages around the world. Today it is run by Meta, the same company behind Instagram, WhatsApp and Threads.</p>
+<p>On Facebook, you have a personal profile and a Feed that shows posts from friends, Pages, Groups and suggested content.</p>
+<h2>Main parts of Facebook</h2>
+<ul>
+<li><b>Profiles</b> are for individual people.</li>
+<li><b>Pages</b> are public presences for businesses, brands, creators and public figures.</li>
+<li><b>Groups</b> are communities built around shared interests.</li>
+<li><b>Reels and Stories</b> offer short videos and posts that disappear after a day.</li>
+<li><b>Marketplace</b> lets people buy and sell items locally.</li>
+<li><b>Events</b> help people plan and promote gatherings.</li>
+<li><b>Messenger</b> handles private chats.</li>
+</ul>
+<h2>Why Facebook matters for businesses</h2>
+<p>Facebook's users span many age groups, which makes it useful when your customers aren't on newer apps. A Facebook Page gives your business a place to share news, hours, reviews and offers. Groups let you build a community around your product or local area. Facebook also has one of the most detailed ad systems, run through Meta's ad tools, which can target people by location, interests and behavior.</p>
+<h2>How to post well on Facebook</h2>
+<ol>
+<li>Post from a Page instead of a personal profile when you represent a business.</li>
+<li>Mix formats: photos, short videos, links, Reels and live videos.</li>
+<li>Keep most posts short, even though a post can run up to 63,206 characters.</li>
+<li>Ask questions and reply to comments to start conversations.</li>
+<li>Share posts into relevant Groups only when the rules allow it.</li>
+</ol>
+<h2>Common mistakes</h2>
+<p>Running a business from a personal profile goes against Facebook's terms and limits your tools. Posting only links to your website is another common mistake, since people often prefer content they can enjoy without leaving the app. Finally, keep an eye on your Page inbox. Customers often message businesses there first.</p>''',
+ 'faqs': [
+  ("Is Facebook free?", "Yes. Creating a profile, Page or Group is free. You only pay if you choose to run ads or boost posts."),
+  ("How long can a Facebook post be?", "A Facebook post can be up to 63,206 characters long. Shorter posts are usually easier to read in the feed."),
+  ("What is the difference between a Facebook profile and a Page?", "A profile is for a person and connects with friends. A Page is a public presence for a business, brand or public figure that people can follow, and it comes with insights and ad tools."),
+ ],
+ 'related': ['facebook-page', 'facebook-group', 'meta-business-suite', 'facebook-reels', 'instagram'],
+},
+{
+ 'slug': 'facebook-group',
+ 'short': "A Facebook Group is a community space on Facebook where members with a shared interest post, comment and talk with each other.",
+ 'body': '''<h2>What is a Facebook Group?</h2>
+<p>A Facebook Group is a place for people to gather around a topic. It could be a neighborhood, a hobby, a product, a profession or a cause. Members can usually post, and they see the group's posts both in their feed and in the group itself.</p>
+<p>Groups have admins and moderators who set rules, approve members and remove posts that break them. A group can be public, where anyone can see posts, or private, where only members can.</p>
+<h2>Why Facebook Groups matter</h2>
+<p>Groups feel more personal than a Page. Members talk to each other instead of only hearing from a brand. That turns followers into a community. Many people join groups for advice, support or local news, and they come back often.</p>
+<p>For businesses, a group can:</p>
+<ul>
+<li>Build loyalty among customers</li>
+<li>Give you direct feedback on products</li>
+<li>Answer common questions in one place</li>
+<li>Create a space for fans to help each other</li>
+</ul>
+<h2>How to start a Facebook Group</h2>
+<ol>
+<li>Choose a clear purpose and a name people will search for.</li>
+<li>Pick public or private, depending on how open you want the group to be.</li>
+<li>Write a short set of rules and add them to the group.</li>
+<li>Add membership questions to keep out spam.</li>
+<li>Invite your first members and post a welcome message.</li>
+<li>Link the group to your Facebook Page if you run one.</li>
+</ol>
+<h2>Facebook Group vs Facebook Page</h2>
+<p>A Page is like a storefront where the business speaks to followers. A Group is like a club where members speak to each other. Pages offer stronger ad tools and analytics. Groups often get deeper conversation. Many brands run both.</p>
+<h2>Common mistakes</h2>
+<p>A group without rules can fill with spam fast. Activity also drops when admins never post. Keep conversation alive by asking questions, welcoming new members and highlighting helpful posts. Avoid turning the group into a stream of sales pitches, or members will leave.</p>''',
+ 'faqs': [
+  ("Is a Facebook Group free to create?", "Yes. Anyone with a Facebook account can create a group for free."),
+  ("What is the difference between a public and private Facebook Group?", "In a public group, anyone can see posts and who is a member. In a private group, only members can see posts and the member list."),
+  ("Can a business create a Facebook Group?", "Yes. You can create a group and link it to your business Page, so you can post and comment as the Page inside the group."),
+ ],
+ 'related': ['facebook', 'facebook-page', 'community-management', 'moderation', 'community-guidelines'],
+},
+{
+ 'slug': 'facebook-page',
+ 'short': "A Facebook Page is a public profile for a business, brand, creator or organization that people can follow to see its posts and updates.",
+ 'body': '''<h2>What is a Facebook Page?</h2>
+<p>A Facebook Page is the official home of a business or public figure on Facebook. It sits apart from personal profiles. People follow or like a Page instead of adding it as a friend. A Page can post updates, run ads, answer messages and show business details like hours, location and contact info.</p>
+<p>You create and manage a Page from a personal account, and the Page posts under its own name. You can also give teammates access so several people can help run it.</p>
+<h2>Why a Facebook Page matters</h2>
+<ul>
+<li>It makes your business easy to find when people search on Facebook.</li>
+<li>It gives you insights that show who sees and engages with your posts.</li>
+<li>It lets you run ads and boost posts.</li>
+<li>It collects reviews and recommendations from customers.</li>
+<li>It connects to Instagram and other Meta tools for shared management.</li>
+</ul>
+<h2>How to set up a Facebook Page</h2>
+<ol>
+<li>From your Facebook account, open the Pages section and choose to create a new Page.</li>
+<li>Add your business name, category and a short bio.</li>
+<li>Upload a clear profile photo, such as your logo, and a cover image.</li>
+<li>Fill in contact details, hours, website and location.</li>
+<li>Add an action button, like Book Now or Send Message.</li>
+<li>Invite people to follow and publish your first post.</li>
+</ol>
+<h2>What to post on your Page</h2>
+<p>Share a mix of updates, behind-the-scenes photos, short videos, customer stories, tips and offers. Posts can be long, up to 63,206 characters, but most people skim, so get to the point early. Use Stories and Reels for quick, casual content and live video for events or Q&amp;As.</p>
+<h2>Common mistakes</h2>
+<p>An empty or outdated Page makes a business look closed. Keep your hours and contact info current. Answer reviews and messages, since people see slow replies as a bad sign. And post often enough that a new visitor can tell you are active.</p>''',
+ 'faqs': [
+  ("Is a Facebook Page free?", "Yes. Creating and running a Facebook Page is free. Ads and boosted posts cost money, but they are optional."),
+  ("Can I have a Facebook Page without a personal profile?", "You need a personal Facebook account to create and manage a Page. The Page posts under the business name, so followers see the brand instead of you."),
+  ("What is the difference between following and liking a Page?", "Liking a Page shows you support it. Following means its posts can show up in your feed. People who like a Page usually follow it too, and they can unfollow while keeping the like."),
+ ],
+ 'related': ['facebook', 'facebook-group', 'business-account', 'meta-business-suite', 'profile'],
+},
+{
+ 'slug': 'facebook-reels',
+ 'short': "Facebook Reels are short vertical videos on Facebook, often set to music or sound, that can be found by people who don't follow you.",
+ 'body': '''<h2>What are Facebook Reels?</h2>
+<p>Facebook Reels are short, full-screen videos that play in a scrollable feed. They work much like Reels on Instagram and short videos on TikTok. You can add music, text, effects, voiceover and stickers. Reels show up in a dedicated Reels area, in the main feed and in suggestions for people who don't follow you yet.</p>
+<p>Because Facebook and Instagram are both owned by Meta, you can often share a Reel to both apps at once.</p>
+<p>Short video is one of the main ways new people discover accounts on Facebook. Reels are recommended widely, so even a small Page can reach a big audience if the video holds attention. They also give businesses a fun, casual way to show products, staff and behind-the-scenes moments.</p>
+<h2>How to make a Facebook Reel</h2>
+<ol>
+<li>Open the Facebook app and choose to create a Reel.</li>
+<li>Record new clips or upload video from your phone.</li>
+<li>Trim the clips and add music, text or effects.</li>
+<li>Write a short caption with a few relevant hashtags.</li>
+<li>Choose who can see it and whether to share it to Instagram too.</li>
+<li>Post it, or save it as a draft for later.</li>
+</ol>
+<h2>Tips for better Reels</h2>
+<ul>
+<li>Hook viewers in the first second with movement or a bold line of text.</li>
+<li>Film vertically so the video fills the screen.</li>
+<li>Add captions, since many people watch with the sound off.</li>
+<li>Keep it tight. Cut anything that doesn't move the story forward.</li>
+<li>End with a clear next step, like visiting your Page or sending a message.</li>
+</ul>
+<h2>Facebook Reels vs Facebook Stories</h2>
+<p>Reels stay on your Page until you delete them and can be suggested to strangers. Stories disappear after a day and mostly reach people who already follow you. Use Reels to grow and Stories to stay in touch with your current audience.</p>
+<h2>Common mistakes</h2>
+<p>Posting a video with another app's watermark can make it look reused. Horizontal video wastes most of the screen. And some music is only cleared for personal accounts, so business Pages may have a smaller sound library. Check which tracks are open to you before you plan a Reel around a song.</p>''',
+ 'faqs': [
+  ("How long can a Facebook Reel be?", "Meta has changed the maximum length of Reels more than once. Check the Facebook app when you record, since it shows the current limit."),
+  ("Can I share an Instagram Reel to Facebook?", "Yes. If your Instagram and Facebook accounts are linked, you can choose to share a Reel to both when you post it."),
+  ("Do Facebook Reels get more reach than regular posts?", "Reels are often recommended to people who don't follow you, so they can reach more new viewers. Results vary by account and content, so compare them in your insights."),
+ ],
+ 'related': ['instagram-reels', 'facebook', 'youtube-shorts', 'facebook-stories', 'trending-audio'],
+},
+{
+ 'slug': 'facebook-stories',
+ 'short': "Facebook Stories are photos and short videos shown at the top of the Facebook app that disappear a day after you post them.",
+ 'body': '''<h2>What are Facebook Stories?</h2>
+<p>Facebook Stories are quick, full-screen posts that show up in a row at the top of the app. You tap through them one by one. Each story lasts for a day and then vanishes from view, though you can save it to your archive. Stories can include photos, videos, text, music, stickers, polls and links.</p>
+<p>Both personal profiles and Pages can post Stories. If your Facebook and Instagram accounts are linked, you can share the same story to both.</p>
+<p>Stories feel casual and in the moment. People don't expect them to be polished, which makes them great for daily updates and behind-the-scenes clips. They also sit at the top of the screen, so they are one of the first things followers see when they open the app. Posting Stories often keeps you on your audience's mind between bigger posts.</p>
+<h2>How to post a Facebook Story</h2>
+<ol>
+<li>Tap the option to create a story at the top of your feed or Page.</li>
+<li>Take a photo or video, or pick one from your gallery.</li>
+<li>Add text, stickers, music or a link if you want.</li>
+<li>Choose who can see it.</li>
+<li>Share it.</li>
+</ol>
+<h2>Ideas for Facebook Stories</h2>
+<ul>
+<li>A quick look at a new product before it launches</li>
+<li>A poll asking followers which option they prefer</li>
+<li>A reminder about an event or a sale ending soon</li>
+<li>A peek at your team or workspace</li>
+<li>A reshare of a customer's post, with their permission</li>
+</ul>
+<h2>Facebook Stories vs feed posts</h2>
+<p>Feed posts stay on your profile or Page and can be found later. Stories are short-lived and made for quick viewing. Use feed posts for content you want people to find again. Use Stories for timely updates and light, everyday moments.</p>
+<h2>Common mistakes</h2>
+<p>Packing too much text into one frame makes it hard to read before it moves on. Posting a long string of Stories in a row can cause people to tap away. Keep each one simple, and check your Story insights to see where viewers drop off.</p>''',
+ 'faqs': [
+  ("How long do Facebook Stories last?", "Facebook Stories stay visible for one day after you post them. After that, they move to your private story archive if it is turned on."),
+  ("Can I see who viewed my Facebook Story?", "Yes. You can see a list of people who viewed your story while it is live. Pages also see view counts in their insights."),
+  ("Can I add a link to a Facebook Story?", "Many accounts can add a link sticker to Stories. If you don't see the option, check that your app is up to date."),
+ ],
+ 'related': ['story', 'instagram-stories', 'facebook', 'facebook-reels', 'highlights'],
+},
+{
+ 'slug': 'feed',
+ 'short': "A feed is the stream of posts you scroll through on a social network, filled with content from accounts you follow and posts the app suggests.",
+ 'body': '''<h2>What is a feed?</h2>
+<p>The feed is the main screen of most social apps. It is a list of posts that keeps loading as you scroll. Your feed might include updates from friends, photos from brands, videos from creators, ads and suggested posts from accounts you don't follow.</p>
+<p>Each person's feed is unique. It depends on who they follow and how they use the app.</p>
+<h2>How feeds are sorted</h2>
+<p>A feed can be ordered in two basic ways:</p>
+<ul>
+<li><b>Chronological:</b> the newest posts appear first, in the order they were posted.</li>
+<li><b>Algorithmic:</b> the app ranks posts by what it predicts you will care about most.</li>
+</ul>
+<p>Most big networks use an algorithmic feed by default. Many also offer a following-only or latest-first view. Some networks, such as Mastodon, show a chronological home timeline, and Bluesky lets people pick from many custom feeds.</p>
+<p>For anyone posting on social media, the feed is where you compete for attention. Your post sits next to friends' updates, news and countless other brands. To be seen, it needs to stop the scroll quickly. To keep being shown, it needs people to engage with it.</p>
+<h2>How to show up in more feeds</h2>
+<ol>
+<li>Post when your audience is most active.</li>
+<li>Lead with a strong image, video or opening line.</li>
+<li>Encourage real interaction, like comments and shares.</li>
+<li>Post consistently so the algorithm keeps learning who to show you to.</li>
+<li>Use formats each app is promoting, such as short video.</li>
+</ol>
+<h2>Feed vs Stories vs For You</h2>
+<p>The feed holds lasting posts. Stories sit apart and disappear after a day. Many apps also have a discovery tab, like TikTok's For You page or Instagram's Explore, which shows mostly content from accounts you don't follow. Each space has its own style, so plan content with the right home in mind.</p>
+<h2>Common mistakes</h2>
+<p>Many brands plan posts for their own profile and forget how they look to a follower. A row of logos and sales text gets skipped. Picture your post in a busy feed between a friend's baby photo and a funny video. If it wouldn't make you stop, rework it.</p>''',
+ 'faqs': [
+  ("What is a news feed?", "News feed is the older name for the feed on Facebook and similar sites. It shows a running list of updates from friends, Pages and other accounts."),
+  ("Can I make my feed chronological?", "On many apps, yes. Look for an option like Following or Latest, which shows recent posts from accounts you follow in time order."),
+  ("Why do I see posts from people I don't follow?", "Many feeds include suggested posts that the app thinks you'll like, based on your activity. You can often hide them or tell the app you aren't interested."),
+ ],
+ 'related': ['algorithm', 'explore-page', 'post', 'organic-reach', 'story'],
+},
+{
+ 'slug': 'filter',
+ 'short': "A filter is an effect you add to a photo or video to change its colors, light or look, or to add digital elements like masks and frames.",
+ 'body': '''<h2>What is a filter?</h2>
+<p>On social media, a filter changes how your photo or video looks. Simple filters adjust color and light, such as making an image warmer, brighter or black and white. More advanced filters use your camera to add effects that move with you, like animal ears, makeup, background swaps or games. Those are often called AR filters or effects.</p>
+<p>Filters became popular on photo apps because they made phone pictures look more polished with one tap.</p>
+<h2>Types of filters</h2>
+<ul>
+<li><b>Color filters</b> change tone, contrast and mood.</li>
+<li><b>Beauty filters</b> smooth skin or change facial features.</li>
+<li><b>AR face filters</b> add moving masks, props or makeup.</li>
+<li><b>World effects</b> place objects or scenes into the space around you.</li>
+<li><b>Branded filters</b> are made by companies to promote a product or campaign.</li>
+</ul>
+<h2>Why filters matter</h2>
+<p>A consistent filter style can make a feed look unified, which helps people recognize your posts. Playful AR filters can boost engagement because people enjoy trying them and sharing the results. Some brands make their own filters as a fun way to get users to spread their name.</p>
+<h2>How to use filters well</h2>
+<ol>
+<li>Pick a small set of looks that fit your brand and use them often.</li>
+<li>Keep product photos true to life so buyers aren't surprised.</li>
+<li>Use playful effects for Stories and short videos, where people expect fun.</li>
+<li>Check the photo on a few screens, since heavy edits can look odd on some phones.</li>
+</ol>
+<p>A filter is a preset look you apply in one step. Editing means adjusting individual settings yourself, like exposure or saturation. Many creators start with a filter and then fine-tune it by hand.</p>
+<h2>Common mistakes</h2>
+<p>Heavy beauty filters can hurt trust if your audience feels misled. Some countries and platforms have rules about filters in ads for beauty products, so check the rules where you post. Over-editing food or products can lead to complaints when the real item looks different. And switching your filter style every week makes your grid look messy.</p>''',
+ 'faqs': [
+  ("What is an AR filter?", "An AR filter uses your camera to add digital effects that move with your face or surroundings, like masks, makeup or 3D objects."),
+  ("Should brands disclose filters?", "In ads, especially for beauty products, avoid filters that change how well a product seems to work. Some places have rules about this, so check local ad guidelines."),
+  ("Can I make my own social media filter?", "Yes. Some platforms offer tools for creating your own AR effects. Tools and rules change, so check each platform's creator pages."),
+ ],
+ 'related': ['augmented-reality-filter', 'instagram-stories', 'snapchat', 'grid', 'authenticity'],
+},
+{
+ 'slug': 'first-comment',
+ 'short': "A first comment is a comment you add to your own post right after publishing it, often to hold hashtags, links or extra details.",
+ 'body': '''<h2>What is a first comment?</h2>
+<p>A first comment is the first reply on a post, written by the person who posted it. Many social media managers use it to keep the main caption clean. Instead of stuffing hashtags or links into the caption, they put them in a comment below the post.</p>
+<p>Scheduling tools often let you write the first comment ahead of time so it goes live right after the post.</p>
+<h2>Why people use a first comment</h2>
+<ul>
+<li><b>Hashtags.</b> Moving hashtags out of the caption makes the post easier to read.</li>
+<li><b>Links.</b> On some networks, people put links in a comment because they believe posts with links in the main text get less reach.</li>
+<li><b>Extra detail.</b> You can add credits, sources, prices or a longer story.</li>
+<li><b>Conversation starters.</b> A question in the first comment can get replies going.</li>
+</ul>
+<h2>Does a first comment help reach?</h2>
+<p>The effect is not well proven, and it can change as platforms update. Many people believe hashtags and links work better in a comment on some networks. Platforms rarely confirm details like this. The safest approach is to test it on your own account by comparing similar posts over a few weeks.</p>
+<h2>How to use a first comment</h2>
+<ol>
+<li>Write your caption with the main message and call to action.</li>
+<li>Draft the first comment with hashtags, a link or extra info.</li>
+<li>Publish the post, then add the comment right away so it sits at the top.</li>
+<li>Pin the comment if the platform allows it, so it stays visible.</li>
+<li>Tell readers where to look, like "Link in the first comment."</li>
+</ol>
+<h2>Common mistakes</h2>
+<p>Waiting too long to add the comment means early viewers miss it. Putting the only important info in the comment is risky, since many people never open the comments. Keep your key message in the caption.</p>
+<p>Also check whether links in comments are clickable on that network. Some apps show them as plain text, so a link there may do little good. In that case, point people to your bio or a link-in-bio page instead.</p>''',
+ 'faqs': [
+  ("Should I put hashtags in the first comment or the caption?", "Both can work. Many people use the first comment to keep captions tidy. Test both on your account and compare reach over several posts."),
+  ("Are links in comments clickable?", "It depends on the app. Links in comments are clickable on networks like Facebook and LinkedIn, while on Instagram they usually show as plain text."),
+  ("Can I schedule a first comment?", "Many social media scheduling tools let you write a first comment with your post so it is added automatically when the post goes live."),
+ ],
+ 'related': ['caption', 'hashtag', 'social-media-scheduling', 'pinned-post', 'link-in-bio'],
+},
+{
+ 'slug': 'follower',
+ 'short': "A follower is a person or account that subscribes to your updates on a social network, so your posts can show up in their feed.",
+ 'body': '''<h2>What is a follower?</h2>
+<p>A follower is someone who has chosen to see your content. When they tap Follow on your profile, your posts may start appearing in their feed. Following is often one-way. You can follow someone without them following you back. On Facebook, personal profiles connect mainly through two-way friendships, though people can also follow public profiles and Pages.</p>
+<p>Your follower count is the total number of accounts following you. It is usually shown right on your profile.</p>
+<h2>Why followers matter</h2>
+<p>Followers are your built-in audience. When you post, they are the first people likely to see it. A group of followers who care about your topic gives each post a strong start, which can help it reach more people. For brands, followers are also potential customers. For creators, follower size is one thing sponsors look at.</p>
+<p>A big follower count looks impressive, yet it can mislead. What matters more is whether your followers are real, active and interested. An account with a small, engaged following can sell more than an account with a huge, silent one. That is why many marketers treat follower count as a vanity metric unless it is paired with engagement and conversions.</p>
+<h2>How to grow your followers</h2>
+<ol>
+<li>Pick a clear niche so people know what they will get.</li>
+<li>Post regularly, on a schedule you can keep up.</li>
+<li>Make content worth sharing, since shares bring new eyes.</li>
+<li>Write a bio that explains who you are and why to follow.</li>
+<li>Collaborate with other accounts in your space.</li>
+<li>Reply to comments and join conversations in your niche.</li>
+</ol>
+<h2>Common mistakes</h2>
+<p>Buying followers is a mistake that is hard to undo. Fake accounts never engage, so your engagement rate falls, and platforms may remove them or limit your reach. Follow-for-follow schemes have a similar problem. Chasing every trend to gain followers fast can also backfire. You may grow, but the new followers might not care about what you usually post.</p>
+<h2>Followers vs subscribers</h2>
+<p>Different networks use different words. YouTube says subscribers. Facebook Pages show followers and likes. Either way, the word means people who opted in to hear from you.</p>''',
+ 'faqs': [
+  ("What is the difference between followers and following?", "Followers are the accounts that follow you. Following is the list of accounts you follow."),
+  ("Should I buy followers?", "No. Bought followers are usually fake or inactive. They lower your engagement rate, can break platform rules and won't become customers."),
+  ("Why am I losing followers?", "People unfollow when your content changes, when you post far more or less than before or when their interests move on. Platforms also remove fake and inactive accounts from time to time, which can lower counts."),
+ ],
+ 'related': ['audience', 'unfollow', 'vanity-metrics', 'engagement-rate', 'subscriber'],
+},
+{
+ 'slug': 'fomo',
+ 'short': "FOMO stands for fear of missing out. It is the worry that others are having fun or getting a good deal without you.",
+ 'body': '''<h2>What is FOMO?</h2>
+<p>FOMO is short for "fear of missing out." It describes the uneasy feeling that something exciting is happening somewhere else and you aren't part of it. Scrolling past photos of a party you weren't at, or seeing friends rave about a concert you skipped, can trigger it.</p>
+<p>People use the term in captions, comments and everyday chat. It can be serious or playful.</p>
+<h2>How people use FOMO on social media</h2>
+<ul>
+<li>To describe their own feelings after seeing friends' plans</li>
+<li>To tease friends about an event they missed</li>
+<li>As a hashtag on travel, food and event posts</li>
+<li>In marketing, to describe offers that create urgency</li>
+</ul>
+<p>Here is a made-up example of a post using the word:</p>
+<p>"Couldn't make it to the beach trip this weekend and the group chat is giving me serious FOMO. Save me a spot next time!"</p>
+<h2>FOMO in marketing</h2>
+<p>Brands often try to create FOMO to get people to act fast. Common tactics include:</p>
+<ul>
+<li>Limited-time sales and countdowns</li>
+<li>Low stock or "only a few left" messages</li>
+<li>Early access for followers or email subscribers</li>
+<li>Showing how many people bought or signed up</li>
+</ul>
+<p>Used honestly, these can help people make decisions. Fake countdowns or made-up stock limits break trust, and in many places they can break consumer protection rules too.</p>
+<h2>FOMO and well-being</h2>
+<p>Social media shows the highlights of other people's lives, which can make your own life feel dull by comparison. If you notice FOMO making you anxious, it can help to mute some accounts, take breaks from scrolling or turn off certain notifications. For brands, it is worth remembering that leaning too hard on FOMO can make followers feel pressured instead of excited.</p>
+<h2>Related slang</h2>
+<p>JOMO, the "joy of missing out," is the opposite. People use it when they happily skip an event to stay home and rest.</p>''',
+ 'faqs': [
+  ("What does FOMO stand for?", "FOMO stands for fear of missing out. It is the feeling that others are enjoying something you aren't part of."),
+  ("Is FOMO used in marketing?", "Yes. Limited-time offers, countdowns and low stock messages all aim to create FOMO. They work best when the limits are real."),
+  ("What is the opposite of FOMO?", "JOMO, or joy of missing out, is the happy feeling of skipping an event and enjoying your own time instead."),
+ ],
+ 'related': ['social-proof', 'call-to-action', 'mute', 'trend', 'viral'],
+},
+{
+ 'slug': 'geotag',
+ 'short': "A geotag is a location label added to a social media post, photo or story that shows where it was taken or what place it is about.",
+ 'body': '''<h2>What is a geotag?</h2>
+<p>A geotag links a post to a real place. It might be a city, a park, a shop or an event venue. On most apps, you add it by tapping "Add location" while writing your post. The location then shows near your name or on the post, and people can tap it to see other public posts tagged at the same spot.</p>
+<p>Photos can also hold hidden location data from your phone's camera. Many social apps strip this out when you upload, but it is worth checking your phone's settings.</p>
+<h2>Why geotags matter</h2>
+<ul>
+<li><b>Local discovery.</b> People searching a place can find your post.</li>
+<li><b>Foot traffic.</b> Shops, restaurants and venues can draw visitors who browse their area.</li>
+<li><b>Context.</b> A location helps viewers understand the story behind a photo.</li>
+<li><b>Community.</b> Customers who tag your location help spread the word.</li>
+</ul>
+<h2>How to use geotags well</h2>
+<ol>
+<li>Make sure your business has an accurate location listing so customers can tag it.</li>
+<li>Tag the most specific place that makes sense, such as your store instead of just the city.</li>
+<li>Use location stickers in Stories for events and pop-ups.</li>
+<li>Browse posts tagged at your location to find and thank customers.</li>
+<li>Pair geotags with local hashtags for extra reach.</li>
+</ol>
+<h2>Geotag privacy and safety</h2>
+<p>Geotags can reveal more than you expect. Tagging your home, your child's school or your real-time location lets strangers know where you are. A safer habit is to tag places after you have left, or to use a general area like a city. Businesses should also ask staff and guests before tagging them at private events.</p>
+<h2>Common mistakes</h2>
+<p>Using a fake or joke location can confuse people and makes your post harder to find. Tagging a popular landmark that has nothing to do with your post can look like spam. And forgetting to tag your own shop in your own posts is a missed chance to show up in local searches.</p>''',
+ 'faqs': [
+  ("How do I add a geotag on Instagram?", "When you create a post, tap Add location and search for the place. In Stories, use the location sticker."),
+  ("Do geotags increase engagement?", "They can help local people find your post, which may bring more views and interaction. The effect is strongest for businesses and events with a physical location."),
+  ("Is it safe to geotag posts?", "It depends on the place. Avoid tagging your home or your live location. Tagging after you leave, or using a broad area, is safer."),
+ ],
+ 'related': ['tag', 'instagram-stories', 'google-business-profile', 'hashtag', 'mention'],
+},
+{
+ 'slug': 'gif',
+ 'short': "A GIF is a short, looping animation or image file, widely used on social media to react, joke or show a quick moment without sound.",
+ 'body': '''<h2>What is a GIF?</h2>
+<p>GIF stands for Graphics Interchange Format. It is an image file type that can hold several frames, which play one after another to create a short animation. GIFs loop over and over and have no sound. They are usually small clips from shows, movies, sports or memes, or simple animated graphics.</p>
+<p>People still argue about how to say it. Some use a hard "g," like "gift." Others use a soft "g," like "jif." Both are common.</p>
+<h2>Why GIFs matter on social media</h2>
+<p>A GIF can say in a second what would take a sentence to write. People use them to react in comments and messages, show emotion or add humor. Many apps have a built-in GIF search, so you can drop one into a reply with a couple of taps. Brands use GIFs to sound friendlier and to show quick product demos.</p>
+<h2>How to use GIFs in your posts</h2>
+<ul>
+<li>Reply to comments with a GIF to add warmth and humor.</li>
+<li>Use a GIF sticker in Stories to point at a link or button.</li>
+<li>Turn a short product clip into a looping GIF for a website or email.</li>
+<li>Make your own branded GIFs so fans can use them in replies.</li>
+</ul>
+<h2>GIF vs video</h2>
+<p>A GIF has no sound and loops by default. Video can be long, has sound and gives you more control. Many apps convert uploaded GIFs into short video files behind the scenes so they load faster.</p>
+<p>GIF files can also be large for their quality. For long or detailed clips, a short video usually works better.</p>
+<h2>Things to watch for</h2>
+<ol>
+<li><b>Accessibility.</b> Fast-flashing GIFs can harm people with photosensitive conditions. Avoid strobing effects.</li>
+<li><b>Alt text.</b> Describe the GIF so screen reader users know what it shows.</li>
+<li><b>Rights.</b> Clips from movies and shows belong to someone else. GIF libraries inside apps are usually fine for replies, but think twice before using them in ads.</li>
+<li><b>Tone.</b> A joke GIF in reply to a serious complaint can make things worse.</li>
+</ol>''',
+ 'faqs': [
+  ("What does GIF stand for?", "GIF stands for Graphics Interchange Format, a file type that can show short, looping animations."),
+  ("How do you pronounce GIF?", "Both a hard g, as in gift, and a soft g, as in jif, are widely used. The creator of the format favored the soft g, but many people use the hard g."),
+  ("Can I post GIFs on Instagram?", "You can add GIF stickers to Stories, and comments on many accounts support GIFs too. To post a GIF in your feed, save it as a short video and upload that."),
+ ],
+ 'related': ['meme', 'emoji', 'alt-text', 'instagram-stories', 'caption'],
+},
+{
+ 'slug': 'google-business-profile',
+ 'short': "A Google Business Profile is a free business listing that shows your info, photos, reviews and posts in Google Search and Google Maps.",
+ 'body': '''<h2>What is a Google Business Profile?</h2>
+<p>A Google Business Profile is the panel that appears when someone searches for your business on Google or finds it on Google Maps. It shows your name, address, phone number, hours, website, photos and customer reviews. It used to be called Google My Business.</p>
+<p>The owner claims and verifies the profile, then keeps the details up to date. Profiles are most useful for businesses with a physical location or a local service area, like shops, salons, plumbers and restaurants.</p>
+<h2>Why a Google Business Profile matters</h2>
+<p>Many local customers search on Google before they visit or call. A complete profile helps you show up in local results and on the map. Good reviews and fresh photos build trust before someone ever walks through the door. People can also tap to call, get directions or visit your site right from the listing.</p>
+<h2>Google Business Profile posts</h2>
+<p>You can publish short posts on your profile, much like social media updates. Posts can share news, offers or events and include a photo and a button. Each post can hold up to 1,500 characters, though shorter posts are easier to read on a phone. Posts help your profile look active and give searchers a reason to choose you.</p>
+<h2>How to set up and improve your profile</h2>
+<ol>
+<li>Search for your business on Google and claim it, or create a new profile.</li>
+<li>Verify that you own the business using one of Google's methods.</li>
+<li>Fill in every field: category, hours, services, website and description.</li>
+<li>Add clear photos of your space, team and products.</li>
+<li>Ask happy customers to leave reviews, and reply to all of them.</li>
+<li>Post updates regularly, such as offers, events and new products.</li>
+</ol>
+<h2>Common mistakes</h2>
+<ul>
+<li>Leaving holiday hours wrong, which sends customers to a closed door.</li>
+<li>Stuffing keywords into the business name, which goes against Google's guidelines.</li>
+<li>Ignoring negative reviews when a calm reply would help.</li>
+<li>Letting the profile go months without new photos or posts.</li>
+</ul>''',
+ 'faqs': [
+  ("Is Google Business Profile free?", "Yes. Creating and managing a Google Business Profile is free. Google also sells ads, but you don't need them to have a profile."),
+  ("How long can a Google Business Profile post be?", "A Google Business Profile post can be up to 1,500 characters. Short, clear posts with a photo and a button tend to work best."),
+  ("What happened to Google My Business?", "Google My Business was renamed Google Business Profile. The tool works in much the same way, and you can now manage it from Google Search and Maps."),
+ ],
+ 'related': ['geotag', 'social-proof', 'keyword', 'post', 'posting-frequency'],
+},
+{
+ 'slug': 'grid',
+ 'short': "A grid is the layout of post thumbnails on an Instagram profile, which shows your posts as rows of tiles when someone visits your page.",
+ 'body': '''<h2>What is a grid?</h2>
+<p>On Instagram, your grid is the block of small tiles people see when they open your profile. Each tile is a cover image from a post or Reel. By default, the newest posts appear first and older ones move down as you add more. You can also pin a few posts so they stay at the top.</p>
+<p>The grid crops each post into a tile shape, so the full photo may not show until someone taps it. Instagram has changed the tile shape over time, so check how your covers look after each update.</p>
+<h2>Why your grid matters</h2>
+<p>Your grid is often the first impression of your account. When someone finds you through a Reel or a tag, they visit your profile and scan the grid in a few seconds. If it looks clear and consistent, they understand what you post and are more likely to follow. A messy or empty grid can make them leave.</p>
+<h2>How to plan your grid</h2>
+<ol>
+<li><b>Choose a look.</b> Pick a few colors, fonts or filters that fit your brand.</li>
+<li><b>Mix content types.</b> Alternate photos, Reel covers and carousels so the grid has rhythm.</li>
+<li><b>Preview before posting.</b> Use a grid planner to see how a new post sits next to the others.</li>
+<li><b>Set Reel covers.</b> Choose a clear cover image so videos look good as tiles.</li>
+<li><b>Pin key posts</b> like an intro, a best seller or a guide.</li>
+</ol>
+<h2>Grid styles</h2>
+<ul>
+<li><b>Color themed:</b> posts share a palette for a calm, unified look.</li>
+<li><b>Checkerboard:</b> two kinds of posts alternate, like photos and quotes.</li>
+<li><b>Row by row:</b> each row tells its own small story.</li>
+<li><b>Puzzle:</b> one big image is split across several tiles.</li>
+</ul>
+<p>Puzzle grids look striking but can break when the tile shape changes or when you delete a post, so use them with care.</p>
+<h2>Common mistakes</h2>
+<p>Text-heavy covers can be unreadable at tile size. Busy images with tiny details also get lost. Another mistake is caring so much about the grid that you stop posting. Most followers see your content in their feed, so the post itself still matters most.</p>''',
+ 'faqs': [
+  ("What is an Instagram grid?", "It is the layout of post tiles on your Instagram profile. Visitors see it when they open your page."),
+  ("How do I plan my Instagram grid?", "Use a grid preview or planning tool to arrange upcoming posts before they go live. Check colors, covers and the mix of formats so the grid looks balanced."),
+  ("Can I rearrange my Instagram grid?", "Instagram lets you pin posts to the top of your profile, and it has been adding more ways to arrange your grid. Check your profile options in the app for what is available now."),
+ ],
+ 'related': ['instagram', 'pinned-post', 'thumbnail', 'content-calendar', 'profile'],
+},
+{
+ 'slug': 'growth-hacking',
+ 'short': "Growth hacking is a style of marketing that uses quick, low-cost experiments to find the fastest ways to grow users or customers.",
+ 'body': '''<h2>What is growth hacking?</h2>
+<p>Growth hacking is about finding clever, cheap ways to grow. The term came out of the startup world, where small teams needed lots of users fast without big ad budgets. A growth hacker tests many ideas across marketing, product and data, then doubles down on the few that work.</p>
+<p>A "hack" here means a smart shortcut. It has nothing to do with breaking into systems or breaking rules.</p>
+<h2>How growth hacking works</h2>
+<ol>
+<li><b>Set one clear goal</b>, like more sign-ups or more repeat buyers.</li>
+<li><b>List ideas</b> that might move that number.</li>
+<li><b>Rank them</b> by how big the impact could be and how easy they are to try.</li>
+<li><b>Run small tests</b> with a clear start and end.</li>
+<li><b>Measure results</b> and keep only what works.</li>
+<li><b>Repeat</b> with the next idea.</li>
+</ol>
+<h2>Growth hacking on social media</h2>
+<ul>
+<li>Testing many short hooks to find the one that holds attention</li>
+<li>Running referral offers where users invite friends for a reward</li>
+<li>Turning one popular post into several formats</li>
+<li>Partnering with micro-influencers in a tight niche</li>
+<li>Adding share prompts at the moment people feel happiest with a product</li>
+</ul>
+<h2>Why growth hacking matters</h2>
+<p>It pushes teams to learn fast. Instead of spending months on one big campaign, you run many small tests and let data guide you. For small businesses and new brands, this approach can stretch a tight budget much further.</p>
+<h2>Common mistakes</h2>
+<p>Some so-called hacks cross ethical lines. Buying followers, spamming DMs, posting fake reviews or joining engagement pods can bring short-term numbers and long-term damage. Platforms often punish these tricks with lower reach or bans.</p>
+<p>Another mistake is chasing growth without a product people want to keep using. If users sign up and leave, more sign-ups won't help. Fix the experience first, then grow.</p>
+<p>Finally, avoid running too many tests at once. If you change several things together, you won't know which one made the difference.</p>''',
+ 'faqs': [
+  ("What is an example of growth hacking?", "A classic example is a referral program that gives both the user and their friend a reward for signing up. It turns customers into a low-cost marketing channel."),
+  ("Is growth hacking the same as marketing?", "It is a type of marketing that focuses on fast testing and measurable growth. It often blends marketing with product changes and data analysis."),
+  ("Is growth hacking still used?", "Yes, though many teams now call it growth marketing. The core idea of testing quickly and scaling what works is still common."),
+ ],
+ 'related': ['a-b-testing', 'viral', 'key-performance-indicator', 'lead-generation', 'analytics'],
+},
+{
+ 'slug': 'grwm',
+ 'short': "GRWM stands for get ready with me, a video style where a creator chats with viewers while doing their makeup, hair or getting dressed.",
+ 'body': '''<h2>What is GRWM?</h2>
+<p>GRWM is short for "get ready with me." In a GRWM video, a creator films themselves getting ready for the day or for an event. They might do their skincare, makeup or hair, or pick out an outfit. While they get ready, they talk to the camera as if chatting with a friend.</p>
+<p>GRWM videos are popular on TikTok, Instagram Reels and YouTube. The letters often appear in titles, captions and hashtags, like #GRWM.</p>
+<h2>Why GRWM videos are popular</h2>
+<ul>
+<li>They feel personal, like hanging out with the creator.</li>
+<li>Viewers pick up tips on products and routines.</li>
+<li>The chat can cover anything: a story, advice, a rant or news.</li>
+<li>They are easy to film with just a phone and a mirror.</li>
+</ul>
+<p>Here is a made-up example of a caption:</p>
+<p>"GRWM for my first day at the new job. Telling you how I almost missed the interview while I do a quick makeup look."</p>
+<h2>How brands use GRWM</h2>
+<p>GRWM is a natural fit for beauty, fashion and personal care brands. A creator can show a product as part of a real routine, which feels more natural than a standard ad. Some brands also make their own GRWM videos with staff, showing how they use the products day to day.</p>
+<p>Any paid GRWM should be clearly labeled as an ad or partnership, as with other sponsored content.</p>
+<h2>Spin-offs of GRWM</h2>
+<p>The format has inspired many variations. "Get unready with me" shows a nighttime routine. Some people film GRWM-style videos while cooking, cleaning or packing for a trip. The core stays the same: everyday tasks paired with casual storytelling.</p>
+<h2>Tips for making a GRWM video</h2>
+<ol>
+<li>Start with a hook that tells viewers what the story or event is.</li>
+<li>Film in good light, near a window if you can.</li>
+<li>Keep talking. The chat matters as much as the routine.</li>
+<li>Use captions so people can follow without sound.</li>
+</ol>''',
+ 'faqs': [
+  ("What does GRWM mean?", "GRWM means get ready with me. It is a video where a creator gets ready while talking to viewers."),
+  ("Where are GRWM videos posted?", "GRWM videos are most common on TikTok, Instagram Reels and YouTube, often tagged with #GRWM."),
+  ("What do you talk about in a GRWM?", "Anything you like. Many creators share a story, give advice, talk about their plans for the day or explain the products they are using."),
+ ],
+ 'related': ['ootd', 'vlog', 'content-creator', 'influencer', 'tiktok'],
+},
+{
+ 'slug': 'handle',
+ 'short': "A handle is the unique username that identifies an account on a social network, usually written with an @ sign, like @yourbrand.",
+ 'body': '''<h2>What is a handle?</h2>
+<p>A handle is your username on social media. It is the name that follows the @ sign, such as @sunnybakery. No two accounts on the same network can share a handle, so it works like an address. People type it to tag you, mention you or find your profile.</p>
+<p>Your handle is separate from your display name. The display name is the bigger name shown on your profile. It can include spaces, and other accounts may use the same one. The handle is the short, unique ID.</p>
+<h2>Why your handle matters</h2>
+<ul>
+<li>It makes you easy to find in search.</li>
+<li>It is how people tag and mention you in posts and comments.</li>
+<li>It often becomes part of your profile's web address.</li>
+<li>It shows up on printed materials, packaging and ads.</li>
+</ul>
+<p>A clear, consistent handle across networks helps customers find the right account and avoid fakes.</p>
+<h2>How to choose a good handle</h2>
+<ol>
+<li>Use your brand name if it is available.</li>
+<li>Keep it short and easy to spell out loud.</li>
+<li>Avoid confusing numbers and extra underscores.</li>
+<li>Check that the same handle is free on every network you plan to use.</li>
+<li>If your name is taken, add a simple word like "hq," "shop," "app" or "official."</li>
+</ol>
+<h2>Handles on different networks</h2>
+<p>Most networks use an @ handle, but the format can vary. On Bluesky, a handle can be a domain you own, like @yourbrand.com. On Mastodon, a full handle includes the server name, like @yourname@server.social. Rules on length and allowed characters also differ by platform.</p>
+<h2>Common mistakes</h2>
+<p>Changing your handle often can break old links and confuse followers. Picking a handle that is too close to a famous brand may get you reported. And forgetting to secure your handle on new networks lets someone else grab it. Even if you don't plan to post there yet, it can be wise to claim your name.</p>''',
+ 'faqs': [
+  ("What is the difference between a handle and a username?", "They usually mean the same thing. Handle is the common name for the unique username that follows the @ sign."),
+  ("Can I change my social media handle?", "Most networks let you change it, though some limit how often. Changing it can break old links and tags, so do it rarely."),
+  ("What happens if my handle is taken?", "Try adding a short word like shop, app, hq or official, or pair your brand name with your city. Keep the same handle across networks if you can."),
+ ],
+ 'related': ['profile', 'mention', 'tag', 'bio', 'verified-account'],
+},
+]

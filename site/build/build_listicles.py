@@ -77,7 +77,8 @@ TAG = re.compile(r'(<[^>]+>)')
 
 
 def autolink(html, rules, used, skip_href=None):
-    """Links the first match of each rule in text that isn't already a link, a heading or a tag."""
+    """Links the first match of each rule in text that isn't already a link, a heading or a tag.
+    Matches never overlap and never start or end inside a hyphenated word."""
     out, in_a, in_h = [], 0, 0
     for part in TAG.split(html):
         if part.startswith('<'):
@@ -86,16 +87,24 @@ def autolink(html, rules, used, skip_href=None):
             in_h += 1 if re.match(r'<h[1-6]\b', t) else -1 if re.match(r'</h[1-6]', t) else 0
             out.append(part)
             continue
-        if in_a > 0 or in_h > 0:
+        if in_a > 0 or in_h > 0 or not part.strip():
             out.append(part)
             continue
+        spans = []
         for rx, href in rules:
             if href in used or href == skip_href:
                 continue
-            m = re.search(rx, part)
-            if m:
+            for m in re.finditer(rx, part):
+                a, b = m.span()
+                if (a > 0 and part[a - 1] in '-/#@') or (b < len(part) and part[b] == '-'):
+                    continue
+                if any(a < y and x < b for x, y, _ in spans):
+                    continue
+                spans.append((a, b, href))
                 used.add(href)
-                part = part[:m.start()] + f'<a href="{href}">{m.group(0)}</a>' + part[m.end():]
+                break
+        for a, b, href in sorted(spans, reverse=True):
+            part = part[:a] + f'<a href="{href}">{part[a:b]}</a>' + part[b:]
         out.append(part)
     return ''.join(out)
 
