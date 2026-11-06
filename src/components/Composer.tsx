@@ -8,12 +8,13 @@ import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bar
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { ChannelFace, NetworkLogo } from "./NetworkLogo";
-import { askConfirm, askText } from "./Dialogs";
+import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
 import { TextTools, mod, toggleStyle } from "./TextTools";
 import { networkOf, type NetworkField } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
+import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow } from "@/lib/posts";
 import type { Access } from "./CalendarView";
 import { approve, channelGroups, composerData, duplicate, loadComments, loadMedia, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
@@ -187,6 +188,34 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   const picked = channels.filter((c) => targets[c.id]);
   const active = picked.find((c) => c.id === tab) ?? null;
+  // TikTok: what the account may post right now (who can watch, comments, Duet, Stitch), loaded from TikTok.
+  const [tiktokInfo, setTiktokInfo] = useState<Record<string, CreatorInfo | { error: string }>>({});
+  const tiktokAsked = useRef(new Set<string>());
+  useEffect(() => {
+    if (active?.network !== "tiktok" || tiktokAsked.current.has(active.id)) return;
+    const id = active.id;
+    tiktokAsked.current.add(id);
+    fetch(`/api/tiktok/creator?channel=${encodeURIComponent(id)}`)
+      .then(async (r) => ((await r.json()) as CreatorInfo | { error: string }))
+      .catch(() => ({ error: "Couldn't reach TikTok" }))
+      .then((info) => {
+        setTiktokInfo((m) => ({ ...m, [id]: info }));
+        // A choice TikTok no longer allows for this account is cleared, so the person picks again.
+        if ("privacy" in info)
+          setTargets((t) => (t[id]?.settings.privacy && !info.privacy.includes(t[id].settings.privacy) ? { ...t, [id]: { ...t[id], settings: { ...t[id].settings, privacy: "" } } } : t));
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.id, active?.network]);
+  const fieldsFor = (c: Channel): NetworkField[] => {
+    const fs = networkOf(c.network).fields ?? [];
+    const info = c.network === "tiktok" ? tiktokInfo[c.id] : undefined;
+    if (!info || "error" in info) return fs;
+    return fs.map((f) => {
+      if (f.key === "privacy") return { ...f, options: (f.options ?? []).filter((o) => info.privacy.includes(o.value)) };
+      const off = (f.key === "comments" && info.commentOff) || (f.key === "duet" && info.duetOff) || (f.key === "stitch" && info.stitchOff);
+      return off ? { ...f, label: `${f.label} (off in TikTok)`, options: (f.options ?? []).filter((o) => o.value === "off") } : f;
+    });
+  };
   const shown = picked.find((c) => c.id === view) ?? active ?? picked[0] ?? null;
   const files = mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m));
   const textOf = (c: Channel) => targets[c.id]?.text ?? text;
@@ -305,6 +334,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       if (r.error) setError(r.error);
       else {
         writeLocal(draftKey, null);
+        if (mode !== "draft" && picked.some((c) => c.network === "tiktok"))
+          await tell("TikTok can take a few minutes", "After your video posts, TikTok may take a few minutes to process it before it shows on your profile.");
         onSaved();
       }
     });
@@ -763,8 +794,10 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 ) : null}
               </div>
 
+              {active?.network === "tiktok" ? <TikTokCreator info={tiktokInfo[active.id]} /> : null}
+
               {active
-                ? (networkOf(active.network).fields ?? [])
+                ? fieldsFor(active)
                     .filter((f) => !f.when || targets[active.id].settings[f.when.key] === f.when.value)
                     .map((f) => (
                       <SettingField
@@ -1036,6 +1069,26 @@ function TikTokConsent({ brand }: { brand: string }) {
       <p>
         By posting, you agree to TikTok’s {link("https://www.tiktok.com/legal/page/global/music-usage-confirmation/en", "Music Usage Confirmation")}
         {brand === "branded" ? <> and {link("https://www.tiktok.com/legal/page/global/bc-policy/en", "Branded Content Policy")}</> : null}.
+      </p>
+    </div>
+  );
+}
+
+
+/** The TikTok account the post goes to, as TikTok names it, shown above its settings. */
+function TikTokCreator({ info }: { info: CreatorInfo | { error: string } | undefined }) {
+  if (!info)
+    return (
+      <div className="flex items-center gap-2 text-[12.5px] text-muted">
+        <Loader /> TikTok account
+      </div>
+    );
+  if ("error" in info) return <p className="text-[12.5px] text-danger">{info.error}</p>;
+  return (
+    <div className="flex items-center gap-2.5">
+      {info.avatar ? <img src={info.avatar} alt="" width={28} height={28} className="size-7 rounded-full object-cover" /> : null}
+      <p className="text-[12.5px] text-muted">
+        Posting as <span className="font-medium text-ink">{info.nickname}</span>
       </p>
     </div>
   );

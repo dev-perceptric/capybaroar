@@ -1,6 +1,7 @@
-import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type PostStats, type Provider } from "./types";
+import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type Provider } from "./types";
 
-// TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server.
+// TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server. Scopes stay at what the
+// composer and publisher use (user.info.basic, video.publish) until TikTok audits the app.
 // Who can watch is the person's choice (TikTok requires it); until TikTok audits the app only "Only me" is offered.
 const API = "https://open.tiktokapis.com/v2";
 const key = () => process.env.TIKTOK_CLIENT_ID ?? "";
@@ -22,12 +23,43 @@ const CHUNK = 10 * 1024 * 1024;
 // URLSearchParams body) as malformed, so the type is set exactly and the body sent as a string.
 const tokenRequest = (o: Record<string, string>): RequestInit => ({ method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "Cache-Control": "no-cache" }, body: qs(o) });
 
+/** What TikTok lets this account post right now (Direct Post creator_info). The composer shows it before posting. */
+export type CreatorInfo = {
+  nickname: string;
+  avatar: string | null;
+  privacy: string[];
+  commentOff: boolean;
+  duetOff: boolean;
+  stitchOff: boolean;
+  maxSeconds: number | null;
+};
+export async function creatorInfo(token: string): Promise<CreatorInfo> {
+  const c = await tt<{
+    creator_nickname?: string;
+    creator_avatar_url?: string;
+    privacy_level_options: string[];
+    comment_disabled?: boolean;
+    duet_disabled?: boolean;
+    stitch_disabled?: boolean;
+    max_video_post_duration_sec?: number;
+  }>(`${API}/post/publish/creator_info/query/`, { method: "POST", headers: json(token) }, "TikTok account");
+  return {
+    nickname: c.creator_nickname ?? "",
+    avatar: c.creator_avatar_url ?? null,
+    privacy: c.privacy_level_options ?? [],
+    commentOff: Boolean(c.comment_disabled),
+    duetOff: Boolean(c.duet_disabled),
+    stitchOff: Boolean(c.stitch_disabled),
+    maxSeconds: c.max_video_post_duration_sec ?? null,
+  };
+}
+
 export const tiktok: Provider = {
   network: "tiktok",
   oauth: {
     configured: () => Boolean(key() && secret()),
     authUrl: ({ state, redirect }) =>
-      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,user.info.profile,user.info.stats,video.list,video.publish", redirect_uri: redirect, state })}`,
+      `https://www.tiktok.com/v2/auth/authorize/?${qs({ client_key: key(), response_type: "code", scope: "user.info.basic,video.publish", redirect_uri: redirect, state })}`,
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const t = await call<{ access_token?: string; expires_in: number; refresh_token: string; open_id: string; error?: string; error_description?: string }>(
         `${API}/oauth/token/`,
@@ -36,8 +68,8 @@ export const tiktok: Provider = {
       );
       // TikTok answers a failed exchange with 200 and an error body; say why instead of calling on with no token.
       if (!t.access_token) throw new AuthError(`TikTok sign-in: ${t.error_description || t.error || "no access token returned"}`);
-      const u = await tt<{ user: { open_id: string; display_name: string; username?: string; avatar_url?: string } }>(
-        `${API}/user/info/?fields=open_id,display_name,username,avatar_url`,
+      const u = await tt<{ user: { open_id: string; display_name: string; avatar_url?: string } }>(
+        `${API}/user/info/?fields=open_id,display_name,avatar_url`,
         { headers: { Authorization: `Bearer ${t.access_token}` } },
         "TikTok profile",
       );
@@ -45,7 +77,7 @@ export const tiktok: Provider = {
         {
           accountId: t.open_id,
           name: u.user.display_name,
-          username: u.user.username ?? null,
+          username: null,
           avatar: u.user.avatar_url ?? null,
           accessToken: t.access_token,
           refreshToken: t.refresh_token,
@@ -68,10 +100,10 @@ export const tiktok: Provider = {
   publish: async (s, _openId, p) => {
     const token = s.accessToken;
     const video = p.media[0];
-    const creator = await tt<{ privacy_level_options: string[]; comment_disabled?: boolean; duet_disabled?: boolean; stitch_disabled?: boolean }>(`${API}/post/publish/creator_info/query/`, { method: "POST", headers: json(token) }, "TikTok account");
+    const creator = await creatorInfo(token);
     const privacy = p.settings.privacy;
     if (!privacy) throw new PostError("Choose who can watch this TikTok");
-    if (!creator.privacy_level_options.includes(privacy)) throw new PostError(`This TikTok account can only post as: ${creator.privacy_level_options.join(", ")}`);
+    if (!creator.privacy.includes(privacy)) throw new PostError(`This TikTok account can only post as: ${creator.privacy.join(", ")}`);
     const bytes = await video.bytes();
     const size = bytes.length;
     const chunk = size <= CHUNK * 2 ? size : CHUNK;
@@ -86,9 +118,9 @@ export const tiktok: Provider = {
             title: p.text,
             privacy_level: privacy,
             // Off unless the person turned it on, and off when the account's own TikTok settings turn it off.
-            disable_comment: p.settings.comments !== "on" || Boolean(creator.comment_disabled),
-            disable_duet: p.settings.duet !== "on" || Boolean(creator.duet_disabled),
-            disable_stitch: p.settings.stitch !== "on" || Boolean(creator.stitch_disabled),
+            disable_comment: p.settings.comments !== "on" || creator.commentOff,
+            disable_duet: p.settings.duet !== "on" || creator.duetOff,
+            disable_stitch: p.settings.stitch !== "on" || creator.stitchOff,
             brand_organic_toggle: p.settings.brand === "own",
             brand_content_toggle: p.settings.brand === "branded",
           },
@@ -123,27 +155,5 @@ export const tiktok: Provider = {
     }
     // Uploaded and processing: TikTok finishes on its side, so don't upload again.
     return { id: init.publish_id, url: null };
-  },
-  followers: async (s) => {
-    const u = await tt<{ user: { follower_count?: number } }>(`${API}/user/info/?fields=follower_count`, { headers: { Authorization: `Bearer ${s.accessToken}` } }, "TikTok followers");
-    return u.user.follower_count ?? null;
-  },
-  postStats: async (s, _openId, remoteId) => {
-    type Video = { id: string; view_count?: number; like_count?: number; comment_count?: number; share_count?: number };
-    try {
-      // A publish_id (when TikTok gave no post id) matches no video, so it comes back empty: {}.
-      const r = await tt<{ videos?: Video[] }>(
-        `${API}/video/query/?fields=id,view_count,like_count,comment_count,share_count`,
-        { method: "POST", headers: json(s.accessToken), body: JSON.stringify({ filters: { video_ids: [remoteId] } }) },
-        "TikTok post stats",
-      );
-      const v = r.videos?.find((x) => String(x.id) === remoteId) ?? r.videos?.[0];
-      if (!v) return {};
-      const out: PostStats = { views: v.view_count, likes: v.like_count, comments: v.comment_count, shares: v.share_count };
-      return Object.fromEntries(Object.entries(out).filter(([, x]) => typeof x === "number")) as PostStats;
-    } catch (e) {
-      if (e instanceof PostError || (e instanceof Error && /not found|404/i.test(e.message) && !(e instanceof AuthError))) return {};
-      throw e;
-    }
   },
 };

@@ -21,22 +21,18 @@ Everything the TikTok for Developers form asks for, matching what the app does i
 |---|---|---|
 | Login Kit | user.info.basic | Connect TikTok; show the account's name and avatar |
 | Login Kit redirect URI | https://app.capybaroar.com/integrations/social/tiktok | |
-| Display API | user.info.profile, user.info.stats, video.list | Username on the channel, follower count, views, likes, comments and shares in Analytics |
-| Content Posting API (turn on Direct Post) | video.publish | Upload and publish a video now or at a scheduled time |
+| Content Posting API (turn on Direct Post) | video.publish | Show the creator's options, upload and publish a video now or at a scheduled time |
 
-The app no longer asks for `video.upload` (drafts to the TikTok inbox), so leave it off.
+Remove Display API and the user.info.profile, user.info.stats, video.list and video.upload scopes. The app no longer asks for them; add them back after the Direct Post audit if analytics for TikTok is wanted.
 
-## App review text (912/1000)
+## App review text (990/1000)
 
 ```
 Capybaroar is a web app (app.capybaroar.com) where people plan and schedule their own social media posts.
 
-Login Kit, user.info.basic: the user clicks Connect TikTok, signs in, and we read open_id, display name and avatar to show which account is connected.
-user.info.profile: we show the account's username on the channel.
-user.info.stats: we show the follower count in Analytics.
-video.list: we show views, likes, comments and shares for videos the user posted through Capybaroar, in Analytics.
+Login Kit, user.info.basic: the user clicks Connect TikTok in Channels, signs in, and we read open_id, display name and avatar to show which account is connected. They can disconnect at any time.
 
-Content Posting API (Direct Post), video.publish: the user uploads one video, writes a caption, sees their TikTok name, picks who can watch from the options TikTok returns, turns comments, Duet and Stitch on or off (all off by default), marks promotional content, and posts now or at a set time. Our server uploads the file (FILE_UPLOAD), publishes it and shows the status. Nothing posts without the user's action.
+Content Posting API (Direct Post), video.publish: the user uploads one video and writes a caption. For the TikTok channel we call creator_info and show the creator's nickname and avatar, only the privacy options TikTok returns (no default), and Allow comments, Duet and Stitch (off by default, locked off when the account disables them). The user can mark promotional content, which shows TikTok's label, and sees the Music Usage Confirmation (and Branded Content Policy when branded). They post now or at a set time. Our server uploads the file (FILE_UPLOAD), publishes it, checks the status and says the video may take a few minutes to appear. Nothing posts without the user's action.
 ```
 
 ## URL properties
@@ -56,10 +52,9 @@ Record one take, with the address bar showing app.capybaroar.com:
 1. Open https://app.capybaroar.com and log in.
 2. Channels, Connect TikTok. Sign in to TikTok, approve the scopes, land back on Channels with the TikTok account's name, avatar and username showing.
 3. New post. Upload one video, write a caption, pick the TikTok channel.
-4. Show the TikTok settings: Who can watch (no default, pick one), Allow comments, Allow Duet, Allow Stitch (all off, turn one on), Promotional content (show the label lines appear), and the Music Usage Confirmation line.
-5. Post now (or schedule a minute ahead) and wait for the post to show as published.
+4. Show the TikTok block: "Posting as" with your TikTok name and avatar, Who can watch (only the options TikTok allows, pick Only me), Allow comments, Allow Duet, Allow Stitch (all off, turn one on), Promotional content (pick Your brand to show the label line, then set it back to No), and the Music Usage Confirmation line.
+5. Post now. Show the "TikTok can take a few minutes" message, then wait for the post to show as published.
 6. Open TikTok on your phone or tiktok.com and show the video on the account.
-7. Back in Capybaroar, open Analytics and show the follower count and the video's views and likes.
-8. Channels, show how to disconnect TikTok.
+7. Channels, show how to disconnect TikTok.
 
 Unaudited apps can only post as "Only me". After approval, apply for the Direct Post audit so public posting opens up.
