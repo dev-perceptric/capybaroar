@@ -9,7 +9,7 @@ primary_region = "iad" # same region as the Supabase project
 
 [env]
   APP_URL = "https://app.capybaroar.com"
-  # Link-in-bio pages live at capybaroar.com/<name> (site/nginx.conf passes them here); old /b/ links redirect there.
+  # Link-in-bio pages live at capybaroar.com/<name> (site/default.conf.template passes them here); old /b/ links redirect there.
   BIO_URL = "https://capybaroar.com"
   NEXT_PUBLIC_SUPABASE_URL = "https://txaqthvlpjzzyyrszbdd.supabase.co"
 
