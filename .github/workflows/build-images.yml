@@ -4,7 +4,7 @@ name: Build images
 
 on:
   push:
-    branches: [claude/compassionate-bell-kidk43, claude/relaxed-fermat-jk5bjb]
+    branches: [claude/compassionate-bell-kidk43]
   workflow_dispatch:
 
 permissions:
