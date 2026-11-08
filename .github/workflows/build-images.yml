@@ -1,5 +1,6 @@
 # Build the app and the homepage images on every push and publish them to GitHub's container registry (ghcr.io).
-# The Hostinger VPS pulls these images. The app's build needs the NEXT_PUBLIC_SUPABASE_ANON_KEY repository secret.
+# The Hostinger VPS pulls these images. The database is the self-hosted Supabase at db.capybaroar.com; its public (anon) key
+# is baked into the browser build, so it lives here in the open like any browser key.
 name: Build images
 
 on:
@@ -31,8 +32,8 @@ jobs:
           context: .
           push: true
           build-args: |
-            NEXT_PUBLIC_SUPABASE_URL=https://txaqthvlpjzzyyrszbdd.supabase.co
-            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            NEXT_PUBLIC_SUPABASE_URL=https://db.capybaroar.com
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzk0MTI5Njc0LCJleHAiOjIxMDk0ODk2NzR9.-Q8KakixmXY0vJdU39SLEahf6uZuSvv-yVClsc70MzY
           tags: |
             ghcr.io/${{ github.repository_owner }}/capybaroar-web:latest
             ghcr.io/${{ github.repository_owner }}/capybaroar-web:${{ github.sha }}
