@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Publishable, type Secret } from "./types";
 
 // X: OAuth 2.0 with PKCE (confidential client) and the v2 API for posts and media.
 const API = "https://api.x.com/2";
@@ -75,6 +75,36 @@ async function setAlt(tok: string, id: string, alt: string) {
 type Mention = { id: string; text: string; author_id?: string; created_at?: string; conversation_id?: string; in_reply_to_user_id?: string; referenced_tweets?: { type: string; id: string }[] };
 type XUser = { id: string; name: string; username: string; profile_image_url?: string };
 
+const REPLY = new Set(["following", "mentionedUsers", "verified"]);
+const POLL_MINUTES = new Set(["60", "360", "1440", "4320", "10080"]);
+
+/** A poll's options, one per line, blank lines dropped. Empty when the post has no poll. */
+export const pollOptions = (settings: Record<string, string>) => (settings.poll ?? "").split(/\r?\n/).map((o) => o.trim()).filter(Boolean);
+
+/** Why this post can't go to X as it is: a poll with the wrong number of options, a long option, or media. */
+export function xProblem(p: Pick<Publishable, "media" | "settings">): string | null {
+  const opts = pollOptions(p.settings);
+  if (!opts.length) return null;
+  if (opts.length < 2 || opts.length > 4) return "An X poll has 2 to 4 options";
+  const long = opts.find((o) => [...o].length > 25);
+  if (long) return `Poll options are up to 25 characters: "${long}"`;
+  if (p.media.length) return "An X poll can't have pictures or video";
+  return null;
+}
+
+/** The body for POST /2/tweets: text, files, the poll, who can reply, labels and the post it answers. */
+export function xBody(p: Publishable, mediaIds: string[]): Record<string, unknown> {
+  const body: Record<string, unknown> = { text: p.text };
+  if (mediaIds.length) body.media = { media_ids: mediaIds };
+  const opts = pollOptions(p.settings);
+  if (opts.length) body.poll = { options: opts, duration_minutes: Number(POLL_MINUTES.has(p.settings.poll_length) ? p.settings.poll_length : "1440") };
+  if (REPLY.has(p.settings.reply_settings)) body.reply_settings = p.settings.reply_settings;
+  if (p.settings.made_with_ai === "yes") body.made_with_ai = true;
+  if (p.settings.paid_partnership === "yes") body.paid_partnership = true;
+  if (p.reply) body.reply = { in_reply_to_tweet_id: p.reply.parent };
+  return body;
+}
+
 export const x: Provider = {
   network: "x",
   oauth: {
@@ -126,9 +156,11 @@ export const x: Provider = {
     if (p.media.some((m) => isGif(m) && m.size > 15 * 1024 * 1024)) return "X GIFs must be under 15 MB";
     if (p.media.some((m) => isVideo(m) && m.size > 512 * 1024 * 1024)) return "X videos must be under 512 MB";
     if (!p.text.trim() && !p.media.length) return "X posts need text or media";
-    return null;
+    return xProblem(p);
   },
   publish: async (s, _accountId, p) => {
+    const problem = xProblem(p);
+    if (problem) throw new PostError(problem);
     const tok = s.accessToken;
     const ids: string[] = [];
     for (const m of p.media.slice(0, 4)) {
@@ -136,10 +168,7 @@ export const x: Provider = {
       if (m.alt?.trim()) await setAlt(tok, id, m.alt.trim());
       ids.push(id);
     }
-    const body: Record<string, unknown> = { text: p.text };
-    if (ids.length) body.media = { media_ids: ids };
-    if (p.reply) body.reply = { in_reply_to_tweet_id: p.reply.parent };
-    const r = await call<{ data: { id: string } }>(`${API}/tweets`, { method: "POST", headers: { ...bearer(tok), "Content-Type": "application/json" }, body: JSON.stringify(body) }, { what: "X post" });
+    const r = await call<{ data: { id: string } }>(`${API}/tweets`, { method: "POST", headers: { ...bearer(tok), "Content-Type": "application/json" }, body: JSON.stringify(xBody(p, ids)) }, { what: "X post" });
     return { id: r.data.id, url: `https://x.com/i/web/status/${r.data.id}` };
   },
   // DELETE /2/tweets/:id answers 200 { data: { deleted } }; a post that's gone answers 404 (NotFound: deleted).

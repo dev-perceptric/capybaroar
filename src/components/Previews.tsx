@@ -289,7 +289,8 @@ function LinkedIn({ channel: c, text, media }: PreviewProps) {
   );
 }
 
-function XPost({ channel: c, text, media }: PreviewProps) {
+function XPost({ channel: c, text, media, settings }: PreviewProps) {
+  const poll = (settings.poll ?? "").split(/\r?\n/).map((o) => o.trim()).filter(Boolean).slice(0, 4);
   return (
     <div className="flex gap-3 bg-white px-4 py-3 text-[15px] text-[#0f1419]">
       <Face c={c} size={40} />
@@ -299,6 +300,15 @@ function XPost({ channel: c, text, media }: PreviewProps) {
         </p>
         <Clamp text={text} lines={12} className="mt-0.5 leading-snug" />
         {media.length ? <div className="mt-3 overflow-hidden rounded-2xl border border-[#cfd9de]">{<Grid media={media} />}</div> : null}
+        {poll.length ? (
+          <div className="mt-3 flex flex-col gap-2">
+            {poll.map((o, i) => (
+              <span key={i} className="rounded-full border border-[#1d9bf0] px-4 py-1.5 text-center text-[15px] font-bold text-[#1d9bf0]">
+                {o}
+              </span>
+            ))}
+          </div>
+        ) : null}
         <div className="mt-3 flex justify-between pr-6 text-[13px] text-[#536471]">
           <MessageCircle size={18} />
           <Repeat2 size={18} />

@@ -39,7 +39,10 @@ export function splitThread(text: string): { text: string; thread: ThreadPart[] 
   return { text: pieces[0].trim(), thread: pieces.slice(1).map((t) => ({ text: t.trim(), mediaIds: [] })).filter((p) => p.text) };
 }
 
-/** The settings a thread's later parts keep: those about the whole post (Mastodon visibility), never a first comment or cover. */
+/** Settings only the thread's first post gets: a first comment, a cover and an X poll. */
+const FIRST_ONLY = new Set(["first_comment", "cover", "poll", "poll_length"]);
+
+/** The settings a thread's later parts keep: those about the whole post (Mastodon visibility, who can reply on X). */
 export function partSettings(settings: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(Object.entries(settings).filter(([k]) => k !== "first_comment" && k !== "cover"));
+  return Object.fromEntries(Object.entries(settings).filter(([k]) => !FIRST_ONLY.has(k)));
 }

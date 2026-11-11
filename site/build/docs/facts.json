@@ -314,7 +314,58 @@
    "hide": true
   },
   "paused": false,
-  "fields": [],
+  "fields": [
+   {
+    "key": "reply_settings",
+    "label": "Who can reply",
+    "kind": "select",
+    "initial": "everyone",
+    "options": [
+     "Everyone",
+     "People you follow",
+     "Only people you mention",
+     "Verified accounts"
+    ]
+   },
+   {
+    "key": "poll",
+    "label": "Poll",
+    "kind": "textarea"
+   },
+   {
+    "key": "poll_length",
+    "label": "Poll length",
+    "kind": "select",
+    "initial": "1440",
+    "options": [
+     "1 hour",
+     "6 hours",
+     "1 day",
+     "3 days",
+     "7 days"
+    ]
+   },
+   {
+    "key": "made_with_ai",
+    "label": "Made with AI",
+    "kind": "select",
+    "initial": "no",
+    "options": [
+     "No",
+     "Yes"
+    ]
+   },
+   {
+    "key": "paid_partnership",
+    "label": "Paid partnership",
+    "kind": "select",
+    "initial": "no",
+    "options": [
+     "No",
+     "Yes"
+    ]
+   }
+  ],
   "connect": "oauth",
   "asks": [],
   "formFields": [],

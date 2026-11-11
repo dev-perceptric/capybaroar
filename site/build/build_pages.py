@@ -448,7 +448,7 @@ SCHED_NETS = [
     ('threads', 'Threads', '500', 'Post', False, ''),
     ('tiktok', 'TikTok', '2,200', 'Video', True, 'Who can watch, comments on or off'),
     ('youtube', 'YouTube', '5,000', 'Video', True, 'Title, tags, visibility, made for kids, thumbnail'),
-    ('x', 'X', '280', 'Post', False, ''),
+    ('x', 'X', '280', 'Post, thread or poll', False, 'Who can reply, poll, made with AI, paid partnership'),
     ('pinterest', 'Pinterest', '500', 'Pin', True, 'Board, title, link'),
     ('bluesky', 'Bluesky', '300', 'Post', False, ''),
     ('mastodon', 'Mastodon', '500', 'Post', False, 'Visibility, content warning'),
