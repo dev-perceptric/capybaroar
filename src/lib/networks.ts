@@ -40,7 +40,14 @@ export type Network = {
   fields?: NetworkField[];
   /** What the Inbox can do on this network. Missing when it has no Inbox. `hideOnce`: a hidden item can't be shown again. */
   inbox?: { like?: boolean; hide?: boolean; hideOnce?: boolean };
+  /** Posts a thread: parts after the first go out as replies to the part before. */
+  thread?: boolean;
 };
+
+/** A thread's parts after the first: each its own text and files. */
+export type ThreadPart = { text: string; mediaIds: string[] };
+/** Parts after the first that one post may have (25 in all). */
+export const THREAD_MAX = 24;
 
 const FIRST_COMMENT: NetworkField = { key: "first_comment", label: "First comment", kind: "textarea", placeholder: "Posted as a comment right after" };
 
@@ -69,7 +76,7 @@ export const NETWORKS: Network[] = [
     ],
     inbox: { hide: true },
   },
-  { id: "threads", name: "Threads", limit: 500, inbox: { hide: true } },
+  { id: "threads", name: "Threads", limit: 500, inbox: { hide: true }, thread: true },
   {
     id: "tiktok",
     name: "TikTok",
@@ -119,7 +126,7 @@ export const NETWORKS: Network[] = [
     ],
     inbox: { hide: true, hideOnce: true },
   },
-  { id: "x", name: "X", limit: 280, inbox: { like: true, hide: true } },
+  { id: "x", name: "X", limit: 280, inbox: { like: true, hide: true }, thread: true },
   {
     id: "pinterest",
     name: "Pinterest",
@@ -140,7 +147,7 @@ export const NETWORKS: Network[] = [
       { key: "title", label: "Title", kind: "text", required: true, placeholder: "Up to 300 characters" },
     ],
   },
-  { id: "bluesky", name: "Bluesky", limit: 300, inbox: { like: true } },
+  { id: "bluesky", name: "Bluesky", limit: 300, inbox: { like: true }, thread: true },
   {
     id: "mastodon",
     name: "Mastodon",
@@ -150,6 +157,7 @@ export const NETWORKS: Network[] = [
       { key: "spoiler", label: "Content warning", kind: "text" },
     ],
     inbox: { like: true },
+    thread: true,
   },
   { id: "telegram", name: "Telegram", limit: 4096 },
   { id: "discord", name: "Discord", limit: 2000 },
@@ -157,6 +165,7 @@ export const NETWORKS: Network[] = [
 ];
 
 export const networkOf = (id: NetworkId) => NETWORKS.find((n) => n.id === id)!;
+export const takesThread = (id: string) => NETWORKS.some((n) => n.id === id && n.thread);
 
 /** Networks switched off for now: hidden from Channels and Welcome, and they can't be connected. Remove an id to bring it back. */
 export const PAUSED: NetworkId[] = ["reddit", "telegram", "gbp"];

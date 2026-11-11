@@ -138,6 +138,7 @@ export const x: Provider = {
     }
     const body: Record<string, unknown> = { text: p.text };
     if (ids.length) body.media = { media_ids: ids };
+    if (p.reply) body.reply = { in_reply_to_tweet_id: p.reply.parent };
     const r = await call<{ data: { id: string } }>(`${API}/tweets`, { method: "POST", headers: { ...bearer(tok), "Content-Type": "application/json" }, body: JSON.stringify(body) }, { what: "X post" });
     return { id: r.data.id, url: `https://x.com/i/web/status/${r.data.id}` };
   },

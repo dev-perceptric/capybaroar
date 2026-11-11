@@ -18,6 +18,8 @@ export type ApiChannel = {
   brand_id: string | null;
   character_limit: number;
   needs_media: boolean;
+  /** Posts threads: create_posts sends `thread` as replies. */
+  thread: boolean;
   settings: ApiSetting[];
 };
 
@@ -29,7 +31,10 @@ export type ApiPost = {
   publish_at: string | null;
   brand_id: string | null;
   media_ids: string[];
-  channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null; deleted_at: string | null }[];
+  /** A thread's posts after the first. Channels on networks without threads post the first only. */
+  thread: { text: string; media_ids: string[] }[];
+  /** thread_urls: links to the thread's later posts that went out on this channel, in order. */
+  channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null; deleted_at: string | null; thread_urls: (string | null)[] }[];
 };
 
 /** What deleting everywhere did on each channel. manual: the network can't delete from here; delete it at url. */

@@ -30,6 +30,8 @@ export type PostFields = {
   channelText?: Record<string, string>;
   /** Network settings by channel id: { first_comment: "..." }. */
   settings?: Record<string, Record<string, string>>;
+  /** A thread's posts after the first, each with its text and files. */
+  thread?: { text: string; mediaIds: string[] }[];
 };
 
 export const MAX_TEXT = 70000;
@@ -37,6 +39,25 @@ export const MAX_CHANNELS = 30;
 export const MAX_MEDIA = 20;
 export const MAX_BATCH = 25;
 export const MAX_RANGE_DAYS = 92;
+export const MAX_THREAD = 24;
+
+function threadParts(v: unknown): { text: string; mediaIds: string[] }[] {
+  if (!Array.isArray(v)) throw bad("thread must be a list of { text, media_ids }");
+  if (v.length > MAX_THREAD) throw bad(`thread can have up to ${MAX_THREAD} posts after the first`);
+  return v.map((p, i) => {
+    const what = `thread[${i}]`;
+    if (typeof p === "string") {
+      if (p.length > MAX_TEXT) throw bad(`${what} is too long`);
+      return { text: p, mediaIds: [] };
+    }
+    if (!isObject(p)) throw bad(`${what} must be { text, media_ids } or a string`);
+    for (const k of Object.keys(p)) if (k !== "text" && k !== "media_ids") throw bad(`${what}: unknown field "${k}"`);
+    if (p.text !== undefined && typeof p.text !== "string") throw bad(`${what}.text must be a string`);
+    const text = (p.text as string | undefined) ?? "";
+    if (text.length > MAX_TEXT) throw bad(`${what}.text is too long`);
+    return { text, mediaIds: p.media_ids === undefined ? [] : ids(p.media_ids, `${what}.media_ids`, MAX_MEDIA) };
+  });
+}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // A full time with its offset, so "9 AM" can't mean different things on different servers.
@@ -93,7 +114,7 @@ function settingsMap(v: unknown): Record<string, Record<string, string>> {
 /** A post to create (`partial` false) or the fields to change on one (`partial` true). */
 export function postFields(body: unknown, partial: boolean): PostFields {
   if (!isObject(body)) throw bad("Send a JSON object");
-  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings"]);
+  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings", "thread"]);
   for (const k of Object.keys(body)) if (!known.has(k) && !(partial && k === "id")) throw bad(`Unknown field "${k}"`);
   const out: PostFields = {};
   if (body.text !== undefined) {
@@ -113,6 +134,7 @@ export function postFields(body: unknown, partial: boolean): PostFields {
   if (body.publish_at !== undefined) out.publishAt = body.publish_at === null ? null : time(body.publish_at, "publish_at");
   if (body.channel_text !== undefined) out.channelText = textMap(body.channel_text, "channel_text");
   if (body.settings !== undefined) out.settings = settingsMap(body.settings);
+  if (body.thread !== undefined) out.thread = threadParts(body.thread);
   if (!partial) {
     if (!out.channelIds) throw bad("channel_ids is required");
     out.mode ??= "draft";

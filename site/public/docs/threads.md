@@ -21,6 +21,7 @@ Click Threads in Channels, sign in with Meta and approve Capybaroar.
 3. **Open the Threads tab** to set the options below.
 4. **Check the preview**, then schedule, queue or post now.
 
+- Press Add to thread under the text to post a thread: each post goes out as a reply to the one before, with its own text and files, up to 25 posts.
 - Posts can be up to 500 characters.
 - A post takes up to 20 files.
 - In the Inbox you can answer replies and hide them.

@@ -399,3 +399,16 @@ test("Instagram and TikTok have no delete", () => {
   assert.equal(PROVIDERS.instagram.unpublish, undefined);
   assert.equal(PROVIDERS.tiktok.unpublish, undefined);
 });
+
+test("a thread's later posts are deleted first, last one first; a failure keeps the first post for the retry", async () => {
+  const store = new Memory();
+  const parts = [{ id: "p2", url: null }, { id: "p3", url: null }];
+  const ok = fakeNetwork((id) => (id === "p3" ? "404" : "ok"));
+  const r = await unpublishTargets(store, providersWith(ok.p), [target(1, "fake", { parts })], "all");
+  assert.deepEqual(ok.calls, ["p3", "p2", "r1"]);
+  assert.equal(r.results[0].result, "deleted");
+  const bad = fakeNetwork((id) => (id === "p2" ? "error" : "ok"));
+  const r2 = await unpublishTargets(new Memory(), providersWith(bad.p), [target(1, "fake", { parts })], "all");
+  assert.deepEqual(bad.calls, ["p3", "p2"]);
+  assert.equal(r2.results[0].result, "failed");
+});

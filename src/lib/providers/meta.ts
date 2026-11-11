@@ -512,24 +512,26 @@ export const threads: Provider = {
   check: (p) => (p.text.length > 500 ? "Threads posts are up to 500 characters" : p.media.length > 20 ? "Threads takes up to 20 files" : null),
   publish: async (s, userId, p) => {
     const token = s.accessToken;
+    // A thread part answers the part before it.
+    const replyTo: Record<string, string> = p.reply ? { reply_to_id: p.reply.parent } : {};
     const status = (id: string) => T(`${id}?${qs({ fields: "status,error_message", access_token: token })}`);
     const item = async (m: MediaFile, child: boolean) => {
       const body: Record<string, string> = { access_token: token, media_type: isVideo(m) ? "VIDEO" : "IMAGE", [isVideo(m) ? "video_url" : "image_url"]: m.url };
       if (child) body.is_carousel_item = "true";
-      else body.text = p.text;
+      else Object.assign(body, { text: p.text }, replyTo);
       const r = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form(body) }, { what: "Threads media" });
       await ready(status, r.id, "status");
       return r.id;
     };
     let creation: string;
     if (!p.media.length) {
-      const r = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form({ media_type: "TEXT", text: p.text, access_token: token }) }, { what: "Threads post" });
+      const r = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form({ media_type: "TEXT", text: p.text, access_token: token, ...replyTo }) }, { what: "Threads post" });
       creation = r.id;
     } else if (p.media.length === 1) creation = await item(p.media[0], false);
     else {
       const children: string[] = [];
       for (const m of p.media) children.push(await item(m, true));
-      const r = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form({ media_type: "CAROUSEL", children: children.join(","), text: p.text, access_token: token }) }, { what: "Threads carousel" });
+      const r = await call<{ id: string }>(T(`${userId}/threads`), { method: "POST", body: form({ media_type: "CAROUSEL", children: children.join(","), text: p.text, access_token: token, ...replyTo }) }, { what: "Threads carousel" });
       await ready(status, r.id, "status");
       creation = r.id;
     }

@@ -12,7 +12,8 @@ import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
 import { TextTools, mod, toggleStyle } from "./TextTools";
-import { networkOf, type NetworkField } from "@/lib/networks";
+import { THREAD_MAX, networkOf, takesThread, type NetworkField, type ThreadPart } from "@/lib/networks";
+import { threadOf } from "@/lib/thread";
 import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow } from "@/lib/posts";
@@ -43,7 +44,7 @@ const nextHour = () => {
 };
 const initialSettings = (c: Channel) => Object.fromEntries((networkOf(c.network).fields ?? []).filter((f) => f.initial).map((f) => [f.key, f.initial!]));
 const count = (s: string) => [...s].length;
-type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string };
+type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string; thread?: ThreadPart[] };
 const noSub = () => () => {};
 const readLocal = (key: string) => {
   try {
@@ -94,6 +95,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   });
   const [text, setText] = useState(post?.text ?? "");
   const [mediaIds, setMediaIds] = useState<string[]>(post?.media_ids ?? []);
+  const [thread, setThread] = useState<ThreadPart[]>(() => threadOf(post?.thread));
   const [when, setWhen] = useState(() => localValue(post?.publish_at ? new Date(post.publish_at) : (at ?? nextHour())));
   const [tab, setTab] = useState<string>("all");
   const [view, setView] = useState<string>("");
@@ -116,7 +118,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   // Autosave on this device: every change is kept, and offered back the next time this post opens.
   const draftKey = `capybaroar:compose:${post?.id ?? "new"}`;
-  const snap: Snapshot = { text, targets, mediaIds, when };
+  const snap: Snapshot = { text, targets, mediaIds, when, thread };
   const snapJson = JSON.stringify(snap);
   const [first] = useState(snapJson);
   const dirty = snapJson !== first;
@@ -143,6 +145,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     setText(restorable.text);
     setTargets(restorable.targets);
     setMediaIds(restorable.mediaIds);
+    setThread(restorable.thread ?? []);
     setWhen(restorable.when);
     setRestoreSeen(true);
   };
@@ -219,6 +222,11 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const shown = picked.find((c) => c.id === view) ?? active ?? picked[0] ?? null;
   const files = mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m));
   const textOf = (c: Channel) => targets[c.id]?.text ?? text;
+  // Channels that post the thread's later parts; the rest post the first only.
+  const threaded = picked.filter((c) => takesThread(c.network));
+  const threadLimit = threaded.length ? Math.min(...threaded.map((c) => networkOf(c.network).limit)) : null;
+  const threadPreview = (c: Channel) =>
+    takesThread(c.network) ? thread.map((p) => ({ text: p.text, media: p.mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m)) })) : [];
   const problems = useMemo(
     () =>
       picked.flatMap((c) => {
@@ -226,10 +234,11 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         const out: string[] = [];
         if (count(textOf(c)) > n.limit) out.push(`${c.name}: over ${n.limit.toLocaleString("en-US")} characters`);
         for (const f of n.fields ?? []) if (f.required && !targets[c.id]?.settings[f.key]?.trim()) out.push(`${c.name}: ${f.label} is required`);
+        if (n.thread) thread.forEach((p, i) => count(p.text) > n.limit && out.push(`${c.name}: post ${i + 2} is over ${n.limit.toLocaleString("en-US")} characters`));
         return out;
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [picked, targets, text],
+    [picked, targets, text, thread],
   );
 
   // Select all and saved channel groups (groupRules.ts).
@@ -283,7 +292,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   });
 
   /** Upload straight to storage with a one-time link, then attach. Several files upload one after another. */
-  const upload = async (list: FileList | File[], replace?: string) => {
+  const upload = async (list: FileList | File[], replace?: string, attach?: (id: string) => void) => {
     const all = Array.from(list).filter((f) => ACCEPT.split(",").includes(f.type));
     if (!all.length) {
       setError("Use JPG, PNG, GIF, WebP, MP4 or MOV");
@@ -315,7 +324,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       }
       const fresh = (await loadMedia()) as Media[];
       setLibrary(fresh);
-      setMediaIds((ids) => (replace && ids.includes(replace) ? ids.map((x) => (x === replace ? done.id! : x)) : [...ids, done.id!]));
+      if (attach) attach(done.id);
+      else setMediaIds((ids) => (replace && ids.includes(replace) ? ids.map((x) => (x === replace ? done.id! : x)) : [...ids, done.id!]));
       setUploading((u) => u.filter((x) => x.key !== key));
     }
   };
@@ -327,6 +337,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         id: post?.id,
         text,
         mediaIds,
+        thread,
         targets: picked.map((c) => ({ channelId: c.id, text: targets[c.id].text, settings: targets[c.id].settings })),
         publishAt: when ? new Date(when).toISOString() : null,
         mode,
@@ -794,6 +805,17 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 ) : null}
               </div>
 
+              {threadLimit !== null || thread.length ? (
+                <ThreadEditor
+                  parts={thread}
+                  onChange={setThread}
+                  limit={threadLimit}
+                  library={library}
+                  locked={locked}
+                  onUpload={(list, i) => void upload(list, undefined, (id) => setThread((t) => t.map((p, j) => (j === i ? { ...p, mediaIds: [...p.mediaIds, id] } : p))))}
+                />
+              ) : null}
+
               {active?.network === "tiktok" ? <TikTokCreator info={tiktokInfo[active.id]} /> : null}
 
               {active
@@ -885,9 +907,9 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
             <FitBox width={device === "mobile" ? 340 : 560}>
               {shown ? (
                 device === "mobile" ? (
-                  <Phone channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} />
+                  <Phone channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} />
                 ) : (
-                  <Desktop channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} />
+                  <Desktop channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} />
                 )
               ) : (
                 <div className="text-[13px] text-faint">Pick a channel to see the preview</div>
@@ -1005,6 +1027,111 @@ function SettingField({ f, value, locked, onChange, cover, onPickCover }: { f: N
     <Field label={label}>
       <Input value={value} readOnly={locked} placeholder={f.placeholder} onChange={(e) => onChange(e.target.value)} />
     </Field>
+  );
+}
+
+/** A thread's posts after the first: each with its own text and files, added one by one. */
+function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { parts: ThreadPart[]; onChange: (p: ThreadPart[]) => void; limit: number | null; library: Media[] | null; locked: boolean; onUpload: (files: FileList, index: number) => void }) {
+  const [picking, setPicking] = useState<number | null>(null);
+  const upInput = useRef<HTMLInputElement>(null);
+  const upFor = useRef(0);
+  const set = (i: number, p: Partial<ThreadPart>) => onChange(parts.map((x, j) => (j === i ? { ...x, ...p } : x)));
+  const toggleFile = (i: number, id: string) => set(i, { mediaIds: parts[i].mediaIds.includes(id) ? parts[i].mediaIds.filter((x) => x !== id) : [...parts[i].mediaIds, id] });
+  const tile = "flex size-20 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-line-strong text-[11px] text-muted transition-colors hover:border-ink/40 hover:text-ink";
+  return (
+    <div className="flex flex-col gap-2">
+      {parts.length ? <p className="text-[12.5px] font-medium text-body">Thread</p> : null}
+      {parts.map((p, i) => {
+        const files = p.mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m));
+        const len = count(p.text);
+        return (
+          <div key={i} className="flex flex-col gap-1.5">
+            <div className={boxClass}>
+              <div className="flex items-center justify-between gap-2 px-3 pt-2">
+                <span className="text-[12px] text-muted tabular-nums">{i + 2}</span>
+                {!locked ? (
+                  <IconButton label="Remove from thread" onClick={() => onChange(parts.filter((_, j) => j !== i))}>
+                    <Trash2 size={14} />
+                  </IconButton>
+                ) : null}
+              </div>
+              <textarea aria-label={`Post ${i + 2}`} rows={4} value={p.text} readOnly={locked} onChange={(e) => set(i, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
+              {files.length || !locked ? (
+                <div className="flex flex-wrap gap-2 px-3 pb-3">
+                  {files.map((m) => (
+                    <div key={m.id} className="group/thumb relative">
+                      <Thumb m={m} small />
+                      {!locked ? (
+                        <button type="button" title="Remove" aria-label="Remove" onClick={() => toggleFile(i, m.id)} className="absolute top-1.5 right-1.5 hidden size-6 items-center justify-center rounded-full bg-panel shadow-chip group-focus-within/thumb:flex group-hover/thumb:flex">
+                          <X size={13} />
+                        </button>
+                      ) : null}
+                    </div>
+                  ))}
+                  {!locked ? (
+                    <>
+                      <button
+                        type="button"
+                        className={tile}
+                        onClick={() => {
+                          upFor.current = i;
+                          upInput.current?.click();
+                        }}
+                      >
+                        <Upload size={16} />
+                        Upload
+                      </button>
+                      <button type="button" aria-pressed={picking === i} onClick={() => setPicking(picking === i ? null : i)} className={picking === i ? "flex size-20 flex-col items-center justify-center gap-1 rounded-lg bg-signal-soft text-[11px] text-ink shadow-picked" : tile}>
+                        <ImagePlus size={16} />
+                        Library
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+            {limit !== null ? <span className={`text-[12px] tabular-nums ${len > limit ? "text-danger" : "text-muted"}`}>{len} / {limit}</span> : null}
+            {picking === i ? (
+              <div className="rounded-lg bg-paper p-3 shadow-track">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[13px] font-medium">Your library</span>
+                  <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
+                    Done
+                  </Button>
+                </div>
+                {library === null ? (
+                  <Loader />
+                ) : (
+                  <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto">
+                    {library
+                      .filter((m) => !m.mime.startsWith("audio/"))
+                      .map((m) => (
+                        <button key={m.id} type="button" onClick={() => toggleFile(i, m.id)} className="relative">
+                          <Thumb m={m} small />
+                          {p.mediaIds.includes(m.id) ? (
+                            <span className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-signal text-on-signal">
+                              <Check size={12} />
+                            </span>
+                          ) : null}
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+      {!locked && limit !== null && parts.length < THREAD_MAX ? (
+        <div>
+          <Button variant="ghost" size="sm" onClick={() => onChange([...parts, { text: "", mediaIds: [] }])}>
+            <Plus size={14} />
+            Add to thread
+          </Button>
+        </div>
+      ) : null}
+      <input ref={upInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && (onUpload(e.target.files, upFor.current), (e.target.value = ""))} />
+    </div>
   );
 }
 

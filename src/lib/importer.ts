@@ -4,6 +4,7 @@ import { listChannels } from "./channels";
 import { ALLOWED, MAX_BYTES } from "./media";
 import { savePost, type Actor, type PostStatus } from "./posts";
 import { MAX_CSV, parseBulk, queueTimes, dailyTimes, settingsFor } from "./bulk";
+import { splitThread } from "./thread";
 import { assertCanScheduleMany } from "./billing";
 import { safeGet, sniffMedia } from "./safefetch";
 import type { Slot } from "./queue";
@@ -73,7 +74,8 @@ export async function saveCsvRows(workspaceId: string, userId: string, actor: Ac
         workspaceId,
         userId,
         {
-          text: row.text,
+          // A line holding only --- starts the next post of a thread. Channels without threads post the first only.
+          ...splitThread(row.text),
           mediaIds,
           targets: row.channelIds.map((id) => ({ channelId: id, text: null, settings: settingsFor(byId.get(id)!.network, row) })),
           publishAt: row.at,

@@ -21,6 +21,7 @@ Click Mastodon in Channels and type your server, like mastodon.social. Capybaroa
 3. **Open the Mastodon tab** to set the options below.
 4. **Check the preview**, then schedule, queue or post now.
 
+- Press Add to thread under the text to post a thread: each post goes out as a reply to the one before, with its own text and files, up to 25 posts.
 - Posts can be up to 500 characters.
 - Pick Visibility (Public, Quiet public or Followers) and add a content warning if you need one.
 - In the Inbox you can answer and like replies.

@@ -22,7 +22,13 @@ export type MediaFile = { url: string; mime: string; size: number; name: string;
  * `settings` holds the network's own fields (see NETWORKS[].fields): first_comment, privacy, title, tags, format,
  * subreddit, board, link... always strings. `cover` is the picture chosen for a video, when the network takes one.
  */
-export type Publishable = { text: string; media: MediaFile[]; settings: Record<string, string>; cover?: MediaFile | null };
+export type Publishable = { text: string; media: MediaFile[]; settings: Record<string, string>; cover?: MediaFile | null; reply?: ReplyTo };
+
+/**
+ * A thread part's place: it answers `parent` (the part before), and `root` is the thread's first post. Both are ids
+ * exactly as publish returned them. Only networks marked `thread` in networks.ts get one.
+ */
+export type ReplyTo = { parent: string; root: string };
 
 /** `note` reports something that went wrong after the post was already out (a first comment that failed). */
 export type Published = { id: string; url?: string | null; note?: string | null };

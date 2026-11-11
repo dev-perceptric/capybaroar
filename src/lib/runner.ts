@@ -5,7 +5,9 @@ import { readSecret, writeSecret } from "./channels";
 import { mediaFiles } from "./media";
 import { settlePost } from "./posts";
 import { providerOf } from "./providers";
-import { AuthError, type Provider, type Secret } from "./providers/types";
+import { AuthError, type Provider, type Published, type Secret } from "./providers/types";
+import { takesThread } from "./networks";
+import { threadOf, type StoredPart } from "./thread";
 import { STATS_AFTER_MIN, runDue, runInbox, type Job, type Store, type TargetCtx } from "./publisher";
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
@@ -37,7 +39,8 @@ type Row = {
   channel_id: string;
   text: string | null;
   settings: Record<string, string> | null;
-  posts: { text: string; media_ids: string[]; status: string };
+  parts: Published[] | null;
+  posts: { text: string; media_ids: string[]; status: string; thread: StoredPart[] | null };
   channels: { network: string; account_id: string; name: string; status: string };
 };
 
@@ -69,7 +72,7 @@ export const supabaseStore: Store = {
   async target(id) {
     const { data } = await adminClient()
       .from("post_targets")
-      .select("id, status, remote_id, deleted_at, post_id, workspace_id, channel_id, text, settings, posts(text, media_ids, status), channels(network, account_id, name, status)")
+      .select("id, status, remote_id, deleted_at, post_id, workspace_id, channel_id, text, settings, parts, posts(text, media_ids, status, thread), channels(network, account_id, name, status)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -90,6 +93,8 @@ export const supabaseStore: Store = {
       settings: r.settings ?? {},
       mediaIds: r.posts.media_ids ?? [],
       deletedAt: r.deleted_at,
+      thread: takesThread(r.channels.network) ? threadOf(r.posts.thread) : [],
+      parts: r.parts ?? [],
     };
   },
   async publishing(t) {
@@ -103,6 +108,19 @@ export const supabaseStore: Store = {
       .update({ status: "published", remote_id: out.id, url: out.url ?? null, note: out.note ?? null, error: null, published_at: new Date().toISOString() })
       .eq("id", t.id);
     if (error) throw new Error(error.message);
+  },
+  async savePart(t, index, out) {
+    const db = adminClient();
+    const { data, error: e1 } = await db.from("post_targets").select("parts").eq("id", t.id).single();
+    if (e1) throw new Error(e1.message);
+    const parts = ((data?.parts as Published[] | null) ?? []).slice(0, index);
+    // Only the part after the last saved one: a repeat of a saved part changes nothing.
+    if (parts.length !== index) throw new Error(`Thread part ${index + 2} is out of order`);
+    const { error } = await db.from("post_targets").update({ parts: [...parts, { id: out.id, url: out.url ?? null }] }).eq("id", t.id);
+    if (error) throw new Error(error.message);
+  },
+  async threadStopped(t, error) {
+    await adminClient().from("post_targets").update({ note: error }).eq("id", t.id);
   },
   async retrying(targetId, error) {
     await adminClient().from("post_targets").update({ status: "pending", error }).eq("id", targetId).neq("status", "published");

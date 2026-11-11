@@ -4,6 +4,7 @@
 import { parseCsv } from "./csv";
 import { networkOf, NETWORKS, type NetworkId } from "./networks";
 import { nextQueueSlot, todayIn, zonedInstant, type Slot } from "./queue";
+import { splitThread } from "./thread";
 
 export const MAX_ROWS = 500;
 /** Server actions take up to 1 MB, and the file goes along with every save. */
@@ -124,7 +125,10 @@ export function parseBulk(csv: string, channels: BulkChannel[], timeZone: string
     for (const c of picked) {
       const n = networkOf(c.network);
       if (c.status === "reconnect") errors.push(`Reconnect ${c.name} first`);
-      if ([...text].length > n.limit) errors.push(`${c.name}: ${n.name} posts are up to ${n.limit.toLocaleString("en-US")} characters`);
+      // A line holding only --- starts the next post of a thread. Networks without threads post the first only.
+      const parts = splitThread(text);
+      if ([...parts.text].length > n.limit) errors.push(`${c.name}: ${n.name} posts are up to ${n.limit.toLocaleString("en-US")} characters`);
+      if (n.thread) parts.thread.forEach((p, k) => [...p.text].length > n.limit && errors.push(`${c.name}: post ${k + 2} of the thread is over ${n.limit.toLocaleString("en-US")} characters`));
       if (n.needsMedia && !mediaUrl) errors.push(`${c.name}: ${n.name} needs a picture or video`);
       const settings = settingsFor(c.network, { firstComment, title });
       for (const f of n.fields ?? []) if (f.required && !settings[f.key]?.trim()) holds.push(`${c.name}: ${f.label} is required`);

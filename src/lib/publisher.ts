@@ -6,10 +6,15 @@
 //   with backoff until max_attempts.
 // - A post that is a draft or waits for approval (HELD) is never published, whatever jobs exist for it. Approving it
 //   queues fresh jobs.
+// - A thread's parts after the first go out one by one, each answering the part before. Each part's id is saved before
+//   the next goes out, and a retry starts at the first part with no saved id, so no part goes out twice. Once the
+//   first post is live the target counts as published; parts that still fail for good leave a note and an alert.
 // - Inbox reads (kind "inbox", one channel each) run on their own claim so they never hold up publishing. They don't
 //   retry: the next round reads again. Items are saved before the cursor moves, and an item already saved is never
 //   saved twice (unique per channel and network id), so a failed or repeated read loses and doubles nothing.
 import { AuthError, PostError, type InboxItem, type MediaFile, type PostStats, type Provider, type Published, type Secret } from "./providers/types";
+import type { ThreadPart } from "./networks";
+import { partSettings } from "./thread";
 
 export type Job = { id: number; kind: string; payload: Record<string, string>; attempts: number; max_attempts: number };
 
@@ -31,6 +36,9 @@ export type TargetCtx = {
   mediaIds: string[];
   /** Deleted on the network (Delete everywhere): no more results to read. */
   deletedAt?: string | null;
+  /** A thread's parts after the first (empty on networks without threads), and those already out, in order. */
+  thread?: ThreadPart[];
+  parts?: Published[];
 };
 
 /** A channel as the Inbox reads it: where the last read stopped and when it ran. */
@@ -48,6 +56,10 @@ export interface Store {
   target(id: string): Promise<TargetCtx | null>;
   publishing(t: TargetCtx): Promise<void>;
   published(t: TargetCtx, out: Published): Promise<void>;
+  /** Saves a thread part that went out: `index` 0 is the second post. */
+  savePart(t: TargetCtx, index: number, out: Published): Promise<void>;
+  /** A live thread's remaining parts failed for good: keep why on the target. */
+  threadStopped(t: TargetCtx, error: string): Promise<void>;
   retrying(targetId: string, error: string): Promise<void>;
   /** Fails the target unless it was already published. Returns the target's context when it changed. */
   failed(targetId: string, error: string): Promise<TargetCtx | null>;
@@ -129,6 +141,14 @@ export async function runJob(store: Store, providers: (network: string) => Provi
           await store.settle(t.postId);
           await store.alert(e instanceof AuthError ? "reconnect" : "post_failed", t, msg);
           await tell(store, "post.failed", t, { error: msg });
+        } else {
+          // The first post is live, so the target stays published: the rest of its thread didn't make it.
+          const live = await store.target(job.payload.targetId);
+          if (live && unfinished(live)) {
+            const why = `Posts ${(live.parts?.length ?? 0) + 2} to ${(live.thread?.length ?? 0) + 1} of the thread didn't go out: ${msg}`;
+            await store.threadStopped(live, why);
+            await store.alert(e instanceof AuthError ? "reconnect" : "post_failed", live, why);
+          }
         }
       }
     } else {
@@ -138,6 +158,9 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     }
   }
 }
+
+/** A thread with parts that haven't gone out yet. */
+const unfinished = (t: TargetCtx) => (t.parts?.length ?? 0) < (t.thread?.length ?? 0);
 
 async function publishTarget(store: Store, providers: (network: string) => Provider | null, targetId: string) {
   const t = await store.target(targetId);
@@ -149,6 +172,8 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
       await tell(store, "post.published", t, { url: null });
     }
     await store.settle(t.postId);
+    // Deleted on the network meanwhile: the thread has nothing left to answer.
+    if (unfinished(t) && !t.deletedAt) await publishParts(store, providers, t, t.remoteId!);
     return;
   }
   // Waiting for approval, or back to a draft: not now. The job ends; approving queues a new one.
@@ -175,6 +200,31 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
     await store.statsLater(t);
   } catch {
     // results are a nice-to-have: never fail a published post over them
+  }
+  if (unfinished(t)) await publishParts(store, providers, t, out.id);
+}
+
+/** The thread's parts that haven't gone out, in order. Throws like publish does, so the job retries from the same part. */
+async function publishParts(store: Store, providers: (network: string) => Provider | null, t: TargetCtx, rootId: string) {
+  const p = providers(t.network);
+  if (!p) throw new PostError(`${t.network} isn't supported yet`);
+  const thread = t.thread ?? [];
+  const done = [...(t.parts ?? [])];
+  const settings = partSettings(t.settings);
+  for (let i = done.length; i < thread.length; i++) {
+    const part = thread[i];
+    let out: Published;
+    try {
+      const secret = await store.secret(t.channelId, p);
+      const media = await store.media(t.workspaceId, part.mediaIds);
+      if (media.length !== part.mediaIds.length) throw new PostError(`A file in post ${i + 2} of the thread was deleted`);
+      out = await p.publish(secret, t.accountId, { text: part.text, media, settings, reply: { parent: i === 0 ? rootId : done[i - 1].id, root: rootId } });
+    } catch (e) {
+      if (e instanceof AuthError) await store.reconnect(t.channelId);
+      throw e;
+    }
+    await saveHard(() => store.savePart(t, i, out));
+    done.push(out);
   }
 }
 

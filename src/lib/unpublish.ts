@@ -15,7 +15,7 @@ type Row = {
   brand_id: string | null;
   text: string;
   media_ids: string[] | null;
-  post_targets: { id: string; channel_id: string; status: string; remote_id: string | null; url: string | null; text: string | null; published_at: string | null; deleted_at: string | null; channels: Chan | Chan[] | null }[];
+  post_targets: { id: string; channel_id: string; status: string; remote_id: string | null; url: string | null; text: string | null; published_at: string | null; deleted_at: string | null; parts: { id: string; url: string | null }[] | null; channels: Chan | Chan[] | null }[];
 };
 
 const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ? (v[0] ?? null) : (v ?? null));
@@ -23,7 +23,7 @@ const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ?
 async function load(workspaceId: string, postId: string, by: Asker) {
   const { data, error } = await adminClient()
     .from("posts")
-    .select("id, status, brand_id, text, media_ids, post_targets(id, channel_id, status, remote_id, url, text, published_at, deleted_at, channels(network, account_id, name, status))")
+    .select("id, status, brand_id, text, media_ids, post_targets(id, channel_id, status, remote_id, url, text, published_at, deleted_at, parts, channels(network, account_id, name, status))")
     .eq("id", postId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();
@@ -49,6 +49,7 @@ async function load(workspaceId: string, postId: string, by: Asker) {
         deletedAt: t.deleted_at ? new Date(t.deleted_at) : null,
         text: t.text ?? p!.text,
         media: (p!.media_ids ?? []).length,
+        parts: t.parts ?? [],
       },
     ];
   });

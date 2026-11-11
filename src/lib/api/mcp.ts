@@ -23,6 +23,12 @@ const POST_PROPS: Json = {
     description: "draft (the default) puts it on the calendar without sending; schedule sends it at publish_at; now sends it right away; queue takes the next free time slot of the workspace's queue.",
   },
   media_ids: { type: "array", items: { type: "string" }, description: "File ids from list_media, in order." },
+  thread: {
+    type: "array",
+    maxItems: 24,
+    items: { type: "object", properties: { text: { type: "string" }, media_ids: { type: "array", items: { type: "string" } } } },
+    description: "A thread's posts after the first (text is the first). Each goes out as a reply to the one before, on channels where list_channels shows thread: true. Other channels post the first only. Keep each within character_limit.",
+  },
   channel_text: { type: "object", additionalProperties: { type: "string" }, description: "Own text for some channels, by channel id. Other channels use text." },
   settings: {
     type: "object",

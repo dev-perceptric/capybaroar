@@ -77,6 +77,20 @@ class Memory implements Store {
     }
     Object.assign(this.targets.get(t.id)!, { status: "published", remoteId: out.id, note: out.note ?? null, error: null });
   }
+  failPartSaves = 0;
+  async savePart(t: TargetCtx, index: number, out: Published) {
+    if (this.failPartSaves > 0) {
+      this.failPartSaves--;
+      throw new Error("database hiccup");
+    }
+    const row = this.targets.get(t.id)!;
+    const parts = (row.parts ?? []).slice(0, index);
+    if (parts.length !== index) throw new Error("out of order");
+    row.parts = [...parts, out];
+  }
+  async threadStopped(t: TargetCtx, error: string) {
+    this.targets.get(t.id)!.note = error;
+  }
   async retrying(id: string, error: string) {
     const t = this.targets.get(id)!;
     if (t.status !== "published") Object.assign(t, { status: "pending", error });
@@ -358,4 +372,110 @@ test("a broken webhook store never stops a post going out", async () => {
   await drain(m, net.provider);
   assert.ok([...m.targets.values()].every((t) => t.status === "published" || t.status === "failed"));
   assert.equal(net.live.length, [...m.targets.values()].filter((t) => t.status === "published").length);
+});
+
+// Threads: parts after the first go out one by one as replies, and a retry never posts a part twice.
+
+/** A fake network for threads: records each post with the id it answers, and fails the given calls (1-based). */
+function threadNetwork(opts: { failOn?: Set<number>; failAll?: (n: number) => boolean; error?: () => Error } = {}) {
+  const live: { text: string; parent: string | null; root: string | null }[] = [];
+  let calls = 0;
+  const provider: Provider = {
+    network: "fake" as never,
+    publish: async (_s, _a, p) => {
+      calls++;
+      if (opts.failOn?.has(calls) || opts.failAll?.(calls)) throw opts.error ? opts.error() : new Error("network timeout");
+      live.push({ text: p.text, parent: p.reply?.parent ?? null, root: p.reply?.root ?? null });
+      return { id: `r${live.length}`, url: `https://x/${live.length}` };
+    },
+  };
+  return { provider, live };
+}
+
+const threaded = (m: Memory, parts: string[]) => {
+  m.add(1);
+  m.targets.get("t0")!.thread = parts.map((text) => ({ text, mediaIds: [] }));
+  m.targets.get("t0")!.parts = [];
+};
+
+test("a thread goes out in order, each part answering the one before", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three", "four"]);
+  const net = threadNetwork();
+  await drain(m, net.provider);
+  assert.deepEqual(net.live, [
+    { text: "post 0", parent: null, root: null },
+    { text: "two", parent: "r1", root: "r1" },
+    { text: "three", parent: "r2", root: "r1" },
+    { text: "four", parent: "r3", root: "r1" },
+  ]);
+  const t = m.targets.get("t0")!;
+  assert.equal(t.status, "published");
+  assert.deepEqual(t.parts?.map((p) => p.id), ["r2", "r3", "r4"]);
+  assert.equal(m.alerts.length, 0);
+});
+
+test("a part that fails is retried from that part: nothing goes out twice", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three", "four", "five"]);
+  // Call 3 is part 3 ("three"); call 4 retries it after the backoff.
+  const net = threadNetwork({ failOn: new Set([3]) });
+  await drain(m, net.provider);
+  assert.deepEqual(net.live.map((x) => x.text), ["post 0", "two", "three", "four", "five"]);
+  assert.deepEqual(net.live.map((x) => x.parent), [null, "r1", "r2", "r3", "r4"]);
+  assert.equal(m.targets.get("t0")!.parts?.length, 4);
+  assert.equal(m.posts.get("p0"), "published");
+});
+
+test("random failures in long threads: every part goes out once, in order, or the thread stops with a note", async () => {
+  for (const seed of [3, 11, 58]) {
+    let x = seed;
+    const rand = () => ((x = (x * 1103515245 + 12345) % 2147483648) / 2147483648);
+    const m = new Memory();
+    threaded(m, Array.from({ length: 8 }, (_, i) => `part ${i + 2}`));
+    const net = threadNetwork({ failAll: () => rand() < 0.4 });
+    await drain(m, net.provider, 3);
+    const texts = net.live.map((l) => l.text);
+    assert.equal(new Set(texts).size, texts.length, `seed ${seed}: a part went out twice`);
+    // Each part answers the part right before it.
+    for (let i = 1; i < net.live.length; i++) assert.equal(net.live[i].parent, `r${i}`, `seed ${seed}: part ${i + 1} answers the wrong post`);
+    const t = m.targets.get("t0")!;
+    if (t.status === "published") {
+      assert.equal(t.parts?.length, net.live.length - 1);
+      if (t.parts!.length < 8) assert.match(t.note ?? "", /of the thread didn't go out/, `seed ${seed}: a stopped thread leaves a note`);
+    } else assert.equal(net.live.length, 0);
+    assert.ok(m.jobs.every((j) => j.done));
+  }
+});
+
+test("a thread whose part fails for good stays published, with a note and one alert", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three"]);
+  const net = threadNetwork({ failAll: (n) => n >= 3, error: () => new PostError("X post: duplicate content") });
+  await drain(m, net.provider);
+  const t = m.targets.get("t0")!;
+  assert.equal(t.status, "published");
+  assert.equal(t.parts?.length, 1);
+  assert.equal(t.note, "Posts 3 to 3 of the thread didn't go out: X post: duplicate content");
+  assert.deepEqual(m.alerts, ["post_failed:t0"]);
+  assert.equal(m.posts.get("p0"), "published");
+});
+
+test("a database hiccup after a part goes out doesn't post it again", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three"]);
+  m.failPartSaves = 2;
+  const net = threadNetwork();
+  await drain(m, net.provider);
+  assert.deepEqual(net.live.map((x) => x.text), ["post 0", "two", "three"]);
+  assert.equal(m.targets.get("t0")!.parts?.length, 2);
+});
+
+test("a thread deleted on the network meanwhile doesn't post its remaining parts", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three"]);
+  Object.assign(m.targets.get("t0")!, { status: "published", remoteId: "r0", parts: [], deletedAt: new Date().toISOString() });
+  const net = threadNetwork();
+  await drain(m, net.provider);
+  assert.equal(net.live.length, 0);
 });

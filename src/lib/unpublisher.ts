@@ -29,6 +29,8 @@ export type UnpublishTarget = {
   /** The channel's text and the post's number of files: what went out. */
   text: string;
   media: number;
+  /** A thread's parts after the first that went out, in order. They're deleted first, last part first. */
+  parts?: { id: string; url: string | null }[];
 };
 
 export type ChannelResult = {
@@ -164,6 +166,14 @@ async function one(store: UnpublishStore, providers: (network: string) => Provid
     const s = await store.secret(t.channelId, p!);
     const reason = manualReason(t, p, s);
     if (reason) return { ...base, result: "manual", error: reason };
+    // The thread's later parts go first: if one fails, the first post is still there and a retry finds the rest.
+    for (const part of [...(t.parts ?? [])].reverse()) {
+      try {
+        await within(p!.unpublish!(s, t.accountId, { id: part.id, url: part.url, at: t.publishedAt, media: 0, text: "" }), timeoutMs, `${nameOf(t.network)} didn't answer in time. Try again.`);
+      } catch (e) {
+        if (!(e instanceof NotFound)) throw e;
+      }
+    }
     try {
       const r = await within(p!.unpublish!(s, t.accountId, remoteOf(t)), timeoutMs, `${nameOf(t.network)} didn't answer in time. Try again.`);
       note = (r && r.note) || null;

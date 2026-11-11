@@ -52,6 +52,14 @@ const postKey = (uri: string) => {
   return m ? { repo: m[1], rkey: m[2] } : null;
 };
 
+/** A post's uri and cid, which a reply needs for its root and parent. Read from the account's own repo. */
+async function refOf(jwt: string, uri: string): Promise<Ref> {
+  const k = postKey(uri);
+  if (!k) throw new PostError("This thread's first Bluesky post wasn't kept, so the rest can't follow it");
+  const r = await call<{ uri: string; cid: string }>(`${PDS}/com.atproto.repo.getRecord?${new URLSearchParams({ repo: k.repo, collection: "app.bsky.feed.post", rkey: k.rkey })}`, { headers: { Authorization: `Bearer ${jwt}` } }, { what: "Bluesky thread" });
+  return { uri: r.uri, cid: r.cid };
+}
+
 /** at://did/app.bsky.feed.post/rkey → https://bsky.app/profile/did/post/rkey */
 const postLink = (uri: string) => {
   const m = uri.match(/^at:\/\/([^/]+)\/app\.bsky\.feed\.post\/([^/]+)$/);
@@ -100,6 +108,10 @@ export const bluesky: Provider = {
     const facets = linkFacets(p.text);
     if (facets.length) record.facets = facets;
     if (images.length) record.embed = { $type: "app.bsky.embed.images", images };
+    if (p.reply) {
+      const parent = await refOf(sess.accessJwt, p.reply.parent);
+      record.reply = { root: p.reply.root === p.reply.parent ? parent : await refOf(sess.accessJwt, p.reply.root), parent };
+    }
     const r = await call<{ uri: string }>(`${PDS}/com.atproto.repo.createRecord`, { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ repo: did, collection: "app.bsky.feed.post", record }) }, { what: "Bluesky post" });
     const rkey = r.uri.split("/").pop();
     return { id: r.uri, url: `https://bsky.app/profile/${sess.handle}/post/${rkey}` };

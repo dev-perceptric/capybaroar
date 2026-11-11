@@ -2,6 +2,7 @@ import "server-only";
 import { listBrands, mayUseBrand } from "../brands";
 import { listChannels, type Channel } from "../channels";
 import { networkOf } from "../networks";
+import { threadOf } from "../thread";
 import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePost, type PostRow, type SaveInput } from "../posts";
 import { listMedia, mediaThumbs } from "../media";
 import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
@@ -37,6 +38,7 @@ export function toChannel(c: Channel): ApiChannel {
     brand_id: c.brand_id,
     character_limit: n.limit,
     needs_media: !!n.needsMedia,
+    thread: !!n.thread,
     settings: (n.fields ?? []).map((f) => ({
       key: f.key,
       label: f.label,
@@ -56,7 +58,8 @@ export function toPost(p: PostRow): ApiPost {
     publish_at: p.publish_at,
     brand_id: p.brand_id,
     media_ids: p.media_ids ?? [],
-    channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error, deleted_at: t.deleted_at ?? null })),
+    thread: (p.thread ?? []).map((t) => ({ text: t.text, media_ids: t.media_ids ?? [] })),
+    channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error, deleted_at: t.deleted_at ?? null, thread_urls: (t.parts ?? []).map((x) => x.url) })),
   };
 }
 
@@ -100,7 +103,7 @@ export function realOps(ctx: ApiCtx): Ops {
     for (const t of input.targets) if (!channels.has(t.channelId)) throw new ApiError(400, "invalid_request", `Channel ${t.channelId} isn't in this workspace. Use an id from list_channels.`);
     checkSettings(channels, Object.fromEntries(input.targets.map((t) => [t.channelId, t.settings])));
     // Files (and covers) must be this workspace's, drafts included.
-    const files = [...new Set([...input.mediaIds, ...input.targets.map((t) => t.settings.cover).filter(Boolean)])];
+    const files = [...new Set([...input.mediaIds, ...input.targets.map((t) => t.settings.cover).filter(Boolean), ...(input.thread ?? []).flatMap((p) => p.mediaIds)])];
     if (files.length) {
       if (!files.every(isId)) throw new ApiError(400, "invalid_request", "A cover must be a file id from list_media");
       const { data, error } = await adminClient().from("media").select("id").eq("workspace_id", ctx.workspaceId).in("id", files);
@@ -160,7 +163,7 @@ export function realOps(ctx: ApiCtx): Ops {
       return toPost(await load(id));
     },
     async create(f) {
-      return save({ text: f.text ?? "", mediaIds: f.mediaIds ?? [], targets: targetsOf(f.channelIds, f), publishAt: f.publishAt ?? null, mode: f.mode });
+      return save({ text: f.text ?? "", mediaIds: f.mediaIds ?? [], thread: f.thread ?? [], targets: targetsOf(f.channelIds, f), publishAt: f.publishAt ?? null, mode: f.mode });
     },
     async update(id, f) {
       const cur = await load(id);
@@ -169,7 +172,7 @@ export function realOps(ctx: ApiCtx): Ops {
       const publishAt = f.publishAt !== undefined ? f.publishAt : cur.publish_at;
       if ((mode === "draft" || mode === "schedule") && !publishAt) throw new ApiError(400, "invalid_request", `publish_at is required when mode is ${mode}`);
       const channelIds = f.channelIds ?? cur.post_targets.map((t) => t.channel_id);
-      return save({ id, text: f.text ?? cur.text, mediaIds: f.mediaIds ?? cur.media_ids ?? [], targets: targetsOf(channelIds, f, cur), publishAt, mode });
+      return save({ id, text: f.text ?? cur.text, mediaIds: f.mediaIds ?? cur.media_ids ?? [], thread: f.thread ?? threadOf(cur.thread), targets: targetsOf(channelIds, f, cur), publishAt, mode });
     },
     async remove(id) {
       const cur = await load(id);

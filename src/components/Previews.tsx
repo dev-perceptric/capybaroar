@@ -3,6 +3,7 @@
 // Realistic previews of a post on each network, on a phone or in a desktop browser. These copy each network's
 // own look on purpose (rounded corners, their icons and spacing), so they sit inside a device frame and nowhere else.
 import { useRef, useState } from "react";
+import { partSettings } from "@/lib/thread";
 import { Bookmark, ChevronDown, Globe, Heart, MessageCircle, MoreHorizontal, Music2, Play, Repeat2, Send, Share, ThumbsUp } from "lucide-react";
 import { Avatar } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
@@ -10,7 +11,23 @@ import { networkOf } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 
 export type PreviewMedia = { id: string; mime: string; thumb: string | null; alt: string | null };
-export type PreviewProps = { channel: Channel; text: string; media: PreviewMedia[]; settings: Record<string, string> };
+/** `thread`: a thread's posts after the first, shown under it as replies. */
+export type PreviewProps = { channel: Channel; text: string; media: PreviewMedia[]; settings: Record<string, string>; thread?: { text: string; media: PreviewMedia[] }[] };
+
+/** The post, then its thread's later posts as replies. */
+function WithThread(p: PreviewProps) {
+  const rest = partSettings(p.settings);
+  return (
+    <>
+      <NetworkPost {...p} />
+      {(p.thread ?? []).map((t, i) => (
+        <div key={i} className="border-t border-neutral-200">
+          <NetworkPost channel={p.channel} text={t.text} media={t.media} settings={rest} />
+        </div>
+      ))}
+    </>
+  );
+}
 
 const handle = (c: Channel) => c.username || c.name.toLowerCase().replace(/[^a-z0-9_.]+/g, "");
 const isVideo = (m: PreviewMedia) => m.mime.startsWith("video/");
@@ -494,7 +511,7 @@ export function Phone(p: PreviewProps) {
             ) : (
               <>
                 <AppBar network={p.channel.network} />
-                <NetworkPost {...p} />
+                <WithThread {...p} />
                 <div className="h-2 bg-neutral-100" />
                 <div className="space-y-3 p-4 opacity-40">
                   <div className="h-3 w-2/3 rounded bg-neutral-200" />
@@ -548,7 +565,7 @@ export function Desktop(p: PreviewProps) {
       </div>
       <div className="flex justify-center bg-[#f3f2ef] px-6 py-6">
         <div className={`w-full overflow-hidden rounded-lg border border-neutral-200 bg-white ${bleed ? "max-w-[340px]" : "max-w-[520px]"}`}>
-          <NetworkPost {...p} />
+          {bleed ? <NetworkPost {...p} /> : <WithThread {...p} />}
         </div>
       </div>
     </div>

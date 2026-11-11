@@ -21,6 +21,7 @@ Bluesky connects with an app password, so your real password stays private. In B
 3. **Open the Bluesky tab** to set the options below.
 4. **Check the preview**, then schedule, queue or post now.
 
+- Press Add to thread under the text to post a thread: each post goes out as a reply to the one before, with its own text and files, up to 25 posts.
 - Posts can be up to 300 characters.
 - A post takes up to 4 pictures, each under 1 MB. Videos aren't supported yet.
 - In the Inbox you can answer and like replies and mentions.

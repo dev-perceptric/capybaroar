@@ -111,14 +111,14 @@ export const mastodon: Provider = {
     // Mastodon drops a repeat with the same Idempotency-Key for an hour, so a retry after a lost response doesn't post twice.
     // Media urls are signed and change between tries, so the key uses the file names instead.
     const key = createHash("sha256")
-      .update([accountId, p.text, visibility, spoiler ?? "", ...p.media.map((m) => m.name)].join("\n"))
+      .update([accountId, p.text, visibility, spoiler ?? "", p.reply?.parent ?? "", ...p.media.map((m) => m.name)].join("\n"))
       .digest("hex");
     const r = await call<{ id: string; url?: string | null; uri: string }>(
       `${base}/api/v1/statuses`,
       {
         method: "POST",
         headers: { ...bearer(tok), "Content-Type": "application/json", "Idempotency-Key": key },
-        body: JSON.stringify({ status: p.text, media_ids: ids, visibility, ...(spoiler ? { spoiler_text: spoiler } : {}) }),
+        body: JSON.stringify({ status: p.text, media_ids: ids, visibility, ...(spoiler ? { spoiler_text: spoiler } : {}), ...(p.reply ? { in_reply_to_id: p.reply.parent } : {}) }),
       },
       { what: "Mastodon post" },
     );

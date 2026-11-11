@@ -4,7 +4,8 @@ import { cancelPostJobs, enqueue } from "./jobs";
 import { mediaInfo } from "./media";
 import { listChannels } from "./channels";
 import { providerOf } from "./providers";
-import { networkOf, type NetworkId } from "./networks";
+import { networkOf, type NetworkId, type ThreadPart } from "./networks";
+import { cleanThread, partProblem, partSettings, storedThread, threadOf, type StoredPart } from "./thread";
 import { nextQueueSlot, type Slot } from "./queue";
 import { assertCanSchedule } from "./billing";
 import { mayUseBrand } from "./brands";
@@ -26,10 +27,13 @@ export type TargetRow = {
   note: string | null;
   /** When it was deleted on the network (the status stays "published"). */
   deleted_at: string | null;
+  /** A thread's parts after the first that went out on this channel, in order. */
+  parts: { id: string; url: string | null }[];
 };
-export type PostRow = { id: string; text: string; media_ids: string[]; status: PostStatus; publish_at: string | null; brand_id: string | null; post_targets: TargetRow[] };
+/** `thread`: the parts after the first, as stored. */
+export type PostRow = { id: string; text: string; media_ids: string[]; thread: StoredPart[]; status: PostStatus; publish_at: string | null; brand_id: string | null; post_targets: TargetRow[] };
 
-const COLS = "id, text, media_ids, status, publish_at, brand_id, post_targets(id, channel_id, status, text, settings, url, error, note, deleted_at)";
+const COLS = "id, text, media_ids, thread, status, publish_at, brand_id, post_targets(id, channel_id, status, text, settings, url, error, note, deleted_at, parts)";
 
 /** Posts in a time range; `scope` keeps only these brands' (null: every post). Posts deleted everywhere are left out. */
 export async function postsBetween(workspaceId: string, from: Date, to: Date, scope: string[] | null = null): Promise<PostRow[]> {
@@ -61,6 +65,8 @@ export type SaveInput = {
   publishAt: string | null;
   /** draft: keep; schedule: at publishAt; now: right away; queue: the next free saved time slot. */
   mode: "draft" | "schedule" | "now" | "queue";
+  /** A thread's parts after the first. Networks without threads post the first only. */
+  thread?: ThreadPart[];
 };
 
 const EDITABLE: PostStatus[] = ["draft", "review", "scheduled", "failed"];
@@ -82,11 +88,14 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
   const byId = new Map(channels.map((c) => [c.id, c]));
   if (!input.targets.length) throw new Error("Pick at least one channel");
   if (publishAt.getTime() < Date.now() - 60000) throw new Error("Pick a time in the future");
+  const thread = input.thread ?? [];
   const coverIds = input.targets.map((t) => t.settings.cover).filter(Boolean);
-  const all = await mediaInfo(workspaceId, [...new Set([...input.mediaIds, ...coverIds])]);
+  const all = await mediaInfo(workspaceId, [...new Set([...input.mediaIds, ...coverIds, ...thread.flatMap((p) => p.mediaIds)])]);
   const media = input.mediaIds.map((id) => all.find((m) => m.id === id)).filter((m) => m !== undefined);
   if (media.length !== input.mediaIds.length) throw new Error("A file in this post was deleted");
-  if (media.some((m) => m.mime.startsWith("audio/"))) throw new Error("Audio can't go on a post on its own. Use a picture or a video.");
+  const partMedia = thread.map((p) => p.mediaIds.map((id) => all.find((m) => m.id === id)).filter((m) => m !== undefined));
+  if (partMedia.some((m, i) => m.length !== thread[i].mediaIds.length)) throw new Error("A file in this thread was deleted");
+  if ([...media, ...partMedia.flat()].some((m) => m.mime.startsWith("audio/"))) throw new Error("Audio can't go on a post on its own. Use a picture or a video.");
   for (const t of input.targets) {
     const c = byId.get(t.channelId);
     if (!c) throw new Error("A channel in this post was removed");
@@ -99,6 +108,11 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
     const cover = t.settings.cover ? (all.find((m) => m.id === t.settings.cover) ?? null) : null;
     const reason = providerOf(c.network)?.check?.({ text, media, settings: t.settings, cover });
     if (reason) throw new Error(`${c.name}: ${reason}`);
+    if (!n.thread) continue;
+    for (const [i, part] of thread.entries()) {
+      const why = partProblem(part, i + 2, n.limit, n.name) ?? providerOf(c.network)?.check?.({ text: part.text, media: partMedia[i], settings: partSettings(t.settings) });
+      if (why) throw new Error(`${c.name}: ${why.startsWith("Post ") ? why : `post ${i + 2} of the thread: ${why}`}`);
+    }
   }
 }
 
@@ -121,6 +135,7 @@ export async function queueTime(workspaceId: string): Promise<Date> {
  */
 export async function savePost(workspaceId: string, userId: string, input: SaveInput, actor?: Actor): Promise<{ id: string; publishAt: string | null; status: PostStatus }> {
   const sending = input.mode !== "draft";
+  input = { ...input, thread: cleanThread(input.thread) };
   const db = adminClient();
   type Cur = { status: PostStatus; brand_id: string | null };
   let cur: Cur | null = null;
@@ -146,7 +161,7 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
     if (!at) throw new Error("Pick a time");
     await validate(workspaceId, input, input.mode === "now" ? new Date(Date.now() + 60000) : at, channels);
   }
-  const row = { workspace_id: workspaceId, brand_id: brandId, text: input.text.trim(), media_ids: input.mediaIds, status, publish_at: at?.toISOString() ?? null, updated_at: new Date().toISOString(), ...(review ? { submitted_by: userId } : {}) };
+  const row = { workspace_id: workspaceId, brand_id: brandId, text: input.text.trim(), media_ids: input.mediaIds, thread: storedThread(input.thread ?? []), status, publish_at: at?.toISOString() ?? null, updated_at: new Date().toISOString(), ...(review ? { submitted_by: userId } : {}) };
   let id = input.id;
   if (id) {
     await cancelPostJobs(id);
@@ -219,6 +234,7 @@ export async function duplicatePost(workspaceId: string, userId: string, id: str
   return savePost(workspaceId, userId, {
     text: src.text,
     mediaIds: src.media_ids,
+    thread: threadOf(src.thread),
     targets: src.post_targets.map((t) => ({ channelId: t.channel_id, text: t.text, settings: t.settings ?? {} })),
     publishAt: at.toISOString(),
     mode,
@@ -279,6 +295,7 @@ export async function approvePost(workspaceId: string, id: string, by: Reviewer)
     id: p.id,
     text: p.text,
     mediaIds: p.media_ids,
+    thread: threadOf(p.thread),
     targets: p.post_targets.map((t) => ({ channelId: t.channel_id, text: t.text, settings: t.settings ?? {} })),
     publishAt: p.publish_at,
     mode: late ? "now" : "schedule",
