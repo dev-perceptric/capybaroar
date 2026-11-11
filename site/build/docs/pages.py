@@ -196,42 +196,45 @@ PAGES = [
 {
  'slug': 'mcp', 'section': 'ai', 'title': 'Use Capybaroar from Claude, ChatGPT or Cursor', 'app': '/settings', 'shot': 'settings',
  'lead': 'Capybaroar has an MCP server, so the AI you already use can plan, write and schedule posts in your account. It is on every plan, Free too.',
- 'body': '''<h2 id="link">1. Copy your MCP link</h2>
+ 'body': '''<h2 id="claude">Claude: sign in</h2>
+<p>Claude connects with your Capybaroar sign-in, so there is no key to copy.</p>
+<ol class="dx-steps">
+<li>In Claude, open <b>Settings</b>, then <b>Connectors</b>.</li>
+<li>Press <b>Add custom connector</b>, name it Capybaroar and paste <code>https://app.capybaroar.com/api/mcp</code></li>
+<li>Press <b>Connect</b>, sign in to Capybaroar, pick the workspace and press <b>Allow</b>.</li>
+<li>Start a new chat.</li>
+</ol>
+<p>In Claude Code, run this and sign in when it asks:</p>
+<pre><code>claude mcp add --transport http capybaroar https://app.capybaroar.com/api/mcp</code></pre>
+<p>Apps you connect this way are listed in <b>Settings</b>, <b>API and MCP</b>, under <b>Connected apps</b>. Press <b>Remove</b> to cut one off.</p>
+<h2 id="link">Other apps: copy your MCP link</h2>
 <ol class="dx-steps">
 <li>In Capybaroar, open <b>Settings</b>, then <b>API and MCP</b>.</li>
 <li>Press <b>New key</b> and copy the <b>MCP link</b>. It looks like <code>https://app.capybaroar.com/api/mcp/cbr_...</code></li>
 </ol>
 <p class="dx-note">Keep the link private. Anyone with it can post as you. You only see it once, so make a new key if you lose it.</p>
-<h2 id="claude">2a. Claude</h2>
-<ol class="dx-steps">
-<li>Open <b>Settings</b>, then <b>Connectors</b>.</li>
-<li>Press <b>Add custom connector</b>, name it Capybaroar and paste your link.</li>
-<li>Press <b>Add</b>, then start a new chat.</li>
-</ol>
-<h2 id="chatgpt">2b. ChatGPT</h2>
+<h2 id="chatgpt">ChatGPT</h2>
 <ol class="dx-steps">
 <li>Open <b>Settings</b>, then <b>Apps and Connectors</b>.</li>
 <li>Under <b>Advanced</b>, turn on <b>Developer mode</b>. This needs a paid ChatGPT plan.</li>
 <li>Press <b>Create</b>, name it Capybaroar and paste your link.</li>
 <li>In a new chat, open <b>+</b> and pick Capybaroar.</li>
 </ol>
-<h2 id="cursor">2c. Cursor</h2>
+<h2 id="cursor">Cursor</h2>
 <p>Open <b>Cursor Settings</b>, then <b>MCP</b>, press <b>Add new MCP server</b> and paste this with your link:</p>
 <pre><code>{
   "mcpServers": {
     "capybaroar": { "url": "https://app.capybaroar.com/api/mcp/cbr_your_key" }
   }
 }</code></pre>
-<h2 id="claude-code">2d. Claude Code</h2>
-<pre><code>claude mcp add --transport http capybaroar https://app.capybaroar.com/api/mcp/cbr_your_key</code></pre>
-<h2 id="try">3. Try it</h2>
+<h2 id="try">Try it</h2>
 <ul>
 <li>"Use Capybaroar. Look at my channels and recent posts, then write a week of posts about [topic]. Save them as drafts at my next queue times."</li>
 <li>"Use Capybaroar. List everything scheduled for this week."</li>
 <li>"Use Capybaroar. Show my results for the last 30 days and tell me which posts did best."</li>
 </ul>
 <h2 id="tools">What your AI can do</h2>
-<p>List channels, brands and channel groups; create, update, list and delete posts; find the next queue time; upload and list media; make pictures and videos; read analytics and credits; and manage webhooks. The <a href="/api">API docs</a> list every action in detail.</p>''',
+<p>List channels, brands and channel groups; create, update, list and delete posts; find the next queue time; upload and list media; make pictures and videos (with an MCP link); read analytics and credits; and manage webhooks. The <a href="/api">API docs</a> list every action in detail.</p>''',
  'related': ['agent', 'ai-credits', 'welcome'],
 },
 ]

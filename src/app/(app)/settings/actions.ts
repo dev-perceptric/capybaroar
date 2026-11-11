@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revokeConnectedApp } from "@/lib/oauth/store";
 import { unstable_rethrow } from "next/navigation";
 import { canManage, getCtx, managerCtx, type Ctx, type Role } from "@/lib/session";
 import { createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLink, setApproval } from "@/lib/brands";
@@ -198,4 +199,17 @@ export async function saveAutoTopUp(pack: number | null, max: number): Promise<{
 export async function saveBrandLimit(brandId: string, limit: number | null): Promise<{ error?: string }> {
   const { setBrandLimit } = await import("@/lib/credits");
   return manage((ctx) => setBrandLimit(ctx.workspaceId, brandId, limit));
+}
+
+/** Remove an app connected with OAuth (Claude, an MCP client). It stops working at once. */
+export async function removeConnectedApp(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await managerCtx();
+    await revokeConnectedApp(ctx.workspaceId, id);
+    revalidatePath("/settings");
+    return {};
+  } catch (e) {
+    unstable_rethrow(e);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
 }

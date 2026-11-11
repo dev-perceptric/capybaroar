@@ -2,6 +2,8 @@ import "server-only";
 import { authorize, errorResponse, json, readJson } from "./http";
 import { ApiError } from "./input";
 import { handleMcp, parseError } from "./mcp";
+import { appUrl } from "../channels";
+import { DIRECTORY_HIDDEN, challengeHeader } from "../oauth/rules";
 
 /** One MCP request over HTTP POST. `pathKey` is the key from a link, for apps that only take a link. */
 export async function mcpPost(req: Request, pathKey?: string) {
@@ -12,6 +14,8 @@ export async function mcpPost(req: Request, pathKey?: string) {
     const res = errorResponse(e);
     const wait = (e as { wait?: number }).wait;
     if (wait) res.headers.set("retry-after", String(wait));
+    // No or bad sign-in on the plain address: tell the app where to sign in (RFC 9728), so Claude can start OAuth.
+    if (res.status === 401 && !pathKey) res.headers.set("www-authenticate", challengeHeader(appUrl(), req.headers.get("authorization") ? "invalid_token" : undefined));
     return res;
   }
   let body: unknown;
@@ -21,7 +25,7 @@ export async function mcpPost(req: Request, pathKey?: string) {
     if (e instanceof ApiError && e.code === "invalid_json") return json(parseError(), 400);
     return errorResponse(e);
   }
-  const out = await handleMcp(body, auth.ops, auth.ctx.timezone);
+  const out = await handleMcp(body, auth.ops, auth.ctx.timezone, auth.ctx.via === "oauth" ? { hide: DIRECTORY_HIDDEN } : {});
   return out === null ? json(null, 202) : json(out);
 }
 

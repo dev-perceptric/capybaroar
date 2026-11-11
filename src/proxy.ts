@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
 // link-in-bio pages open signed out.
-const OPEN = ["/login", "/signup", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/"];
+const OPEN = ["/login", "/signup", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/.well-known/"];
 
 /** Only paths on this site, so a link can't send someone elsewhere after signing in. */
 export const safeNext = (v: string | null | undefined) => (v && /^\/(?![/\\])/.test(v) ? v : "/calendar");
@@ -28,7 +28,8 @@ export async function proxy(request: NextRequest) {
   if (!user && !open) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.search = "";
+    // An app's sign-in request (OAuth) comes back here after logging in, with all its parameters.
+    url.search = path === "/oauth/authorize" ? `?next=${encodeURIComponent(path + request.nextUrl.search)}` : "";
     return NextResponse.redirect(url);
   }
   if (user && (path === "/login" || path === "/signup")) {

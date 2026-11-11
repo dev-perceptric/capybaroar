@@ -1,6 +1,8 @@
 import "server-only";
 import { ApiError } from "./input";
 import { RateLimit } from "./limit";
+import { isAccessToken } from "../oauth/rules";
+import { oauthCtx } from "../oauth/store";
 import { keyCtx } from "./keys";
 import { realOps } from "./ops";
 import type { ApiCtx, Ops } from "./types";
@@ -34,7 +36,8 @@ const bearer = (req: Request) => {
 export async function authorize(req: Request, pathKey?: string): Promise<{ ctx: ApiCtx; ops: Ops }> {
   const key = pathKey ?? bearer(req);
   if (!key) throw new ApiError(401, "unauthorized", "Send an API key from Settings as Authorization: Bearer cbr_...");
-  const ctx = await keyCtx(key);
+  // OAuth access tokens (apps connected through a sign-in) work wherever a key does.
+  const ctx = !pathKey && isAccessToken(key) ? await oauthCtx(key) : await keyCtx(key);
   const wait = limiter.take(ctx.keyId);
   if (wait) throw Object.assign(new ApiError(429, "rate_limited", `Too many requests. Try again in ${wait} seconds.`), { wait });
   return { ctx, ops: realOps(ctx) };

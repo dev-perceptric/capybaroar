@@ -2,16 +2,17 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, KeyRound, Plus, Send, Trash2, Webhook } from "lucide-react";
+import { AppWindow, BookOpen, KeyRound, Plus, Send, Trash2, Webhook } from "lucide-react";
 import { Badge, Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
 import { Modal } from "./Overlay";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { fmtDate } from "@/lib/format";
-import { addWebhook, newApiKey, removeApiKey, removeWebhook, saveWebhookOn, sendTestWebhook } from "@/app/(app)/settings/actions";
+import { addWebhook, newApiKey, removeApiKey, removeConnectedApp, removeWebhook, saveWebhookOn, sendTestWebhook } from "@/app/(app)/settings/actions";
 import { EVENTS } from "@/lib/api/events";
 
 type Hook = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null };
-export type ApiInfo = { base: string; docs: string; keys: { id: string; name: string; prefix: string; created_at: string; last_used_at: string | null }[]; hooks: Hook[] | null };
+type App = { id: string; name: string; created_at: string; last_used_at: string | null };
+export type ApiInfo = { base: string; docs: string; keys: { id: string; name: string; prefix: string; created_at: string; last_used_at: string | null }[]; apps: App[]; hooks: Hook[] | null };
 
 const EVENT_LABEL: Record<string, string> = {
   "post.published": "A post went out",
@@ -90,6 +91,7 @@ export function ApiSection({ api }: { api: ApiInfo }) {
           <p className="px-4 py-6 text-center text-[13px] text-muted">No keys yet</p>
         )}
       </Panel>
+      {api.apps.length ? <ConnectedApps apps={api.apps} /> : null}
       {api.hooks ? <Webhooks hooks={api.hooks} /> : null}
       {made ? (
         <Modal title="Your new key" wide onClose={() => setMade(null)} footer={<Button onClick={() => setMade(null)}>Done</Button>}>
@@ -102,6 +104,43 @@ export function ApiSection({ api }: { api: ApiInfo }) {
         </Modal>
       ) : null}
     </>
+  );
+}
+
+/** Apps connected with a sign-in (OAuth), like Claude's Capybaroar connector. Removing one signs it out at once. */
+function ConnectedApps({ apps }: { apps: App[] }) {
+  const router = useRouter();
+  const [busy, start] = useTransition();
+  const del = async (a: App) => {
+    if (!(await askConfirm(`Remove ${a.name}?`, { body: "It stops working right away. You can connect it again later.", ok: "Remove", danger: true }))) return;
+    start(async () => {
+      const r = await removeConnectedApp(a.id);
+      if (r.error) await tell("Couldn't remove the app", r.error);
+      router.refresh();
+    });
+  };
+  return (
+    <Panel className="overflow-hidden">
+      <CardHead label="Connected apps" count={apps.length} />
+      <div className="divide-y divide-line">
+        {apps.map((a) => (
+          <Row
+            key={a.id}
+            lead={
+              <span className="flex size-8 items-center justify-center rounded-md bg-paper text-muted shadow-track">
+                <AppWindow size={15} />
+              </span>
+            }
+            title={a.name}
+            sub={`Connected ${fmtDate(a.created_at)}, ${a.last_used_at ? `used ${timeAgo(a.last_used_at)}` : "not used yet"}`}
+          >
+            <IconButton label="Remove app" align="end" onClick={() => del(a)} disabled={busy}>
+              <Trash2 />
+            </IconButton>
+          </Row>
+        ))}
+      </div>
+    </Panel>
   );
 }
 

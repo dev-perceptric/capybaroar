@@ -247,7 +247,11 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
   }
 }
 
-async function one(msg: unknown, ops: Ops, timezone: string): Promise<unknown | null> {
+/** Options for one connection: tools to leave out (the directory listing hides AI pictures and videos). */
+export type McpOptions = { hide?: ReadonlySet<string> };
+
+async function one(msg: unknown, ops: Ops, timezone: string, opts: McpOptions = {}): Promise<unknown | null> {
+  const tools = opts.hide?.size ? TOOLS.filter((t) => !opts.hide!.has(t.name)) : TOOLS;
   if (typeof msg !== "object" || msg === null || Array.isArray(msg)) return reply(null, { error: err(-32600, "Invalid request") });
   const m = msg as Json;
   const isRequest = "id" in m && m.id !== null && m.id !== undefined;
@@ -270,10 +274,10 @@ async function one(msg: unknown, ops: Ops, timezone: string): Promise<unknown | 
     case "ping":
       return reply(m.id, { result: {} });
     case "tools/list":
-      return reply(m.id, { result: { tools: TOOLS } });
+      return reply(m.id, { result: { tools } });
     case "tools/call": {
       const name = params.name;
-      if (typeof name !== "string" || !TOOLS.some((t) => t.name === name)) return reply(m.id, { error: err(-32602, `Unknown tool ${String(name)}`) });
+      if (typeof name !== "string" || !tools.some((t) => t.name === name)) return reply(m.id, { error: err(-32602, `Unknown tool ${String(name)}`) });
       const args = (typeof params.arguments === "object" && params.arguments !== null && !Array.isArray(params.arguments) ? params.arguments : {}) as Json;
       try {
         const out = await callTool(ops, name, args);
@@ -293,17 +297,17 @@ async function one(msg: unknown, ops: Ops, timezone: string): Promise<unknown | 
 }
 
 /** One POST body: a message or a batch. null means "accepted, nothing to send back" (HTTP 202). */
-export async function handleMcp(body: unknown, ops: Ops, timezone: string): Promise<unknown | null> {
+export async function handleMcp(body: unknown, ops: Ops, timezone: string, opts: McpOptions = {}): Promise<unknown | null> {
   if (Array.isArray(body)) {
     if (!body.length) return reply(null, { error: err(-32600, "Invalid request") });
     const out = [];
     for (const m of body) {
-      const r = await one(m, ops, timezone);
+      const r = await one(m, ops, timezone, opts);
       if (r) out.push(r);
     }
     return out.length ? out : null;
   }
-  return one(body, ops, timezone);
+  return one(body, ops, timezone, opts);
 }
 
 export const parseError = () => reply(null, { error: err(-32700, "Parse error") });

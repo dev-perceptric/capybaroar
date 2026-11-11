@@ -14,6 +14,7 @@ import { listBrands, reviewLinks } from "@/lib/brands";
 import { listInvites, listMembers } from "@/lib/team";
 import { mailReady } from "@/lib/alerts";
 import { listApiKeys } from "@/lib/api/keys";
+import { listConnectedApps } from "@/lib/oauth/store";
 import { listWebhooks } from "@/lib/webhooks";
 import { appUrl } from "@/lib/channels";
 
@@ -21,7 +22,7 @@ export default async function SettingsPage() {
   const ctx = await getCtx();
   if (!canManage(ctx.role)) redirect("/calendar");
   const db = adminClient();
-  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys, hooks, credits, history, { data: topUp }] = await Promise.all([
+  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys, apps, hooks, credits, history, { data: topUp }] = await Promise.all([
     db.from("workspaces").select("queue").eq("id", ctx.workspaceId).single(),
     getBilling(ctx.workspaceId),
     postsThisMonth(ctx.workspaceId),
@@ -34,6 +35,7 @@ export default async function SettingsPage() {
     db.from("channels").select("brand_id").eq("workspace_id", ctx.workspaceId),
     // Until migration 009 is in, Settings shows without the API section.
     listApiKeys(ctx.workspaceId).catch(() => null),
+    listConnectedApps(ctx.workspaceId).catch(() => []),
     // Until migration 020 is in, the API section shows without webhooks.
     listWebhooks(ctx.workspaceId).catch(() => null),
     // Until migration 025 is in, Billing shows without credits.
@@ -84,7 +86,7 @@ export default async function SettingsPage() {
           members,
           invites,
         }}
-        api={keys ? { base: appUrl(), docs: "https://capybaroar.com/api", keys, hooks } : undefined}
+        api={keys ? { base: appUrl(), docs: "https://capybaroar.com/api", keys, apps, hooks } : undefined}
       />
     </Page>
   );

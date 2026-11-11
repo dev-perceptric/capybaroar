@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "capybaroar": {
+      "type": "http",
+      "url": "https://app.capybaroar.com/api/mcp"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "capybaroar",
+  "version": "1.0.0",
+  "description": "Plan, write and schedule social media posts to 12 networks with Capybaroar, and recap what worked. Connects the Capybaroar MCP server and adds skills for a week of posts, repurposing content and results recaps.",
+  "author": { "name": "Capybaroar", "email": "hello@capybaroar.com", "url": "https://capybaroar.com" },
+  "homepage": "https://capybaroar.com/docs/mcp",
+  "license": "MIT",
+  "keywords": ["social media", "scheduling", "instagram", "linkedin", "tiktok", "content calendar", "mcp"]
+}

@@ -101,6 +101,8 @@ export type ApiCtx = {
   role: "owner" | "admin" | "editor";
   /** The brands the key's person may use, or null for every brand. */
   brandIds: string[] | null;
+  /** How the request signed in: an API key from Settings, or an app connected with OAuth (Claude's directory). */
+  via?: "key" | "oauth";
   /** The brand AI credits count against (the app's picked brand). Without it, the one brand in brandIds, if any. */
   spendBrand?: string | null;
 };

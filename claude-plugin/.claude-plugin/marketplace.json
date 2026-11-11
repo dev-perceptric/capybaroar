@@ -1,0 +1,5 @@
+{
+  "name": "capybaroar",
+  "owner": { "name": "Capybaroar", "email": "hello@capybaroar.com" },
+  "plugins": [{ "name": "capybaroar", "source": "./", "description": "Plan, write and schedule social media posts to 12 networks with Capybaroar." }]
+}
