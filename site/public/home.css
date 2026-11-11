@@ -1285,3 +1285,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .dx-results[hidden]{display:none}
 .dx-results-hero{width:100%}
 .gl-search input:focus,.gl-search input:focus-visible,.dx-find input:focus,.dx-find input:focus-visible{outline:none;box-shadow:none;border:0;background:none}
+/* Feature pages: media gallery and a line of post text above pills */
+.mgal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}
+.mgal figure{position:relative;margin:0;aspect-ratio:1;overflow:hidden;border-radius:10px;background:var(--shell)}
+.mgal img{display:block;width:100%;height:100%;object-fit:cover}
+.mgal .badge{position:absolute;left:6px;bottom:6px;background:var(--panel)}
+.mk-text{padding:14px 14px 0;font-size:13px;line-height:1.5;color:var(--ink)}

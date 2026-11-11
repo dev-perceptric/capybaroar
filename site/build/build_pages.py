@@ -12,13 +12,32 @@ PAGES = [
     ('/social-media-analytics', 'Analytics'),
     ('/link-in-bio', 'Link in bio'),
     ('/mcp', 'MCP'),
+    ('/social-media-calendar', 'Content calendar'),
+    ('/posting-queue', 'Posting queue'),
+    ('/bulk-scheduling', 'Bulk scheduling'),
+    ('/media-library', 'Media library'),
+    ('/social-media-automation', 'Automation'),
+    ('/client-reports', 'Client reports'),
+    ('/brands-and-teams', 'Brands and teams'),
+    ('/post-approval', 'Approvals'),
+    ('/ai-studio', 'AI Studio'),
+    ('/ai-social-media-agent', 'Agents'),
 ]
 PLATFORM = [
     ('/social-media-scheduler', 'i-calendar', 'Scheduler', 'Plan and post to 12 networks'),
+    ('/social-media-calendar', 'i-grid', 'Content calendar', 'Week, month and list, drag to move'),
+    ('/posting-queue', 'i-clock', 'Posting queue', 'Set your times once, posts fill them'),
+    ('/bulk-scheduling', 'i-upload', 'Bulk scheduling', 'A CSV or a stack of files at once'),
+    ('/media-library', 'i-image', 'Media library', 'Crop, trim, alt text, reuse'),
+    ('/social-media-automation', 'i-repeat', 'Automation', 'Evergreen posts and RSS feeds'),
     ('/social-media-inbox', 'i-inbox', 'Inbox', 'Every comment in one list'),
     ('/social-media-analytics', 'i-chart', 'Analytics', 'See what works and when'),
+    ('/client-reports', 'i-file', 'Client reports', 'A link, a PDF or a monthly email'),
+    ('/brands-and-teams', 'i-users', 'Brands and teams', 'A brand per client, a role per person'),
+    ('/post-approval', 'i-check-circle', 'Approvals', 'Clients approve from a link'),
     ('/link-in-bio', 'i-link', 'Link in bio', 'One page for every link'),
-    ('/#agents', 'i-spark', 'Agents', 'A week of posts in one message'),
+    ('/ai-studio', 'i-pen', 'AI Studio', 'Rewrite posts, make pictures and videos'),
+    ('/ai-social-media-agent', 'i-spark', 'Agents', 'A week of posts in one message'),
     ('/mcp', 'i-bot', 'MCP', 'Work from Claude, ChatGPT or Cursor'),
 ]
 CHANNELS_NAV = [
@@ -54,7 +73,7 @@ def dd(key, label, items, logo=False, cols=1, foot=''):
 
 
 ALLCH = '<a class="dd-all" href="/social-media-scheduler#networks">See what you can post on each network<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>'
-NAV = (dd('platform', 'Platform', PLATFORM, cols=2) + dd('channels', 'Channels', CHANNELS_NAV, logo=True, cols=3, foot=ALLCH)
+NAV = (dd('platform', 'Features', PLATFORM, cols=2) + dd('channels', 'Platforms', CHANNELS_NAV, logo=True, cols=3, foot=ALLCH)
        + '<a class="nav-a" href="/pricing">Pricing</a>' + dd('resources', 'Resources', RESOURCES) + dd('utilities', 'Utilities', UTILITIES, cols=2))
 
 
@@ -63,11 +82,11 @@ def sheet_group(title, items, logo=False, cols=1):
     return f'<div class="sh-g"><p class="sh-t">{title}</p><div class="sh-l cols{cols}">{links}</div></div>'
 
 
-SHEET = (sheet_group('Platform', PLATFORM) + sheet_group('Channels', CHANNELS_NAV, logo=True, cols=2)
+SHEET = (sheet_group('Features', PLATFORM, cols=2) + sheet_group('Platforms', CHANNELS_NAV, logo=True, cols=2)
          + sheet_group('Resources', RESOURCES) + sheet_group('Utilities', UTILITIES, cols=2)
          + '<div class="sh-g sh-end"><a href="/pricing">Pricing</a><a href="https://app.capybaroar.com/login">Log in</a></div>')
 FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/pricing">Pricing</a></li><li><a href="/docs">Docs</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
-NAV_IDS = ['i-calendar', 'i-inbox', 'i-chart', 'i-link', 'i-spark', 'i-bot', 'i-file', 'i-layers', 'i-grid', 'i-arrow', 'i-smile', 'i-text', 'i-pen', 'i-image', 'i-clock'] + [f'n-{c[1]}' for c in CHANNELS_NAV]
+NAV_IDS = ['i-calendar', 'i-inbox', 'i-chart', 'i-link', 'i-spark', 'i-bot', 'i-file', 'i-layers', 'i-grid', 'i-arrow', 'i-smile', 'i-text', 'i-pen', 'i-image', 'i-clock', 'i-upload', 'i-repeat', 'i-users', 'i-check-circle'] + [f'n-{c[1]}' for c in CHANNELS_NAV]
 
 
 def nav_sprite(src):
@@ -168,7 +187,8 @@ g_start = mcp_sec.index('<div class="g-apps"')
 g_end = mcp_sec.index('<p class="g-dev">')
 GUIDE = mcp_sec[g_start:g_end]
 
-ICON = {'sched': 'i-calendar', 'inbox': 'i-inbox', 'ana': 'i-chart', 'bio': 'i-link', 'mcp': 'i-bot'}
+ICON = {'sched': 'i-calendar', 'inbox': 'i-inbox', 'ana': 'i-chart', 'bio': 'i-link', 'mcp': 'i-bot', 'cal': 'i-grid', 'queue': 'i-clock', 'bulk': 'i-upload', 'media': 'i-image',
+        'auto': 'i-repeat', 'reports': 'i-file', 'teams': 'i-users', 'approve': 'i-check-circle', 'ai': 'i-pen', 'agent': 'i-spark'}
 
 
 def ico(i, cls='ico'):
@@ -309,7 +329,7 @@ def page(slug, key, title, desc, body, faqs):
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=6">
+<link rel="stylesheet" href="/home.css?v=7">
 <script type="application/ld+json">{json.dumps(ld, separators=(',', ':'))}</script>
 </head>
 <body>
@@ -734,6 +754,212 @@ mcp_faq = [
 open(P + 'mcp.html', 'w').write(page('/mcp', 'mcp', 'Social media MCP server for Claude, ChatGPT and Cursor | Capybaroar',
      'Connect Capybaroar to Claude, ChatGPT or Cursor with MCP. Plan, write and schedule posts, make pictures and check results from your own AI. Step by step guide and prompts.',
      mcp_body, mcp_faq))
+
+# =====================================================================================================
+# 6. More feature pages (one per item in the Features menu). Every claim matches the app: see src/lib/bulk.ts,
+#    queue.ts, media.ts, evergreen.ts, feeds.ts, reportTimes.ts, billing.ts, composer.ts and genRules.ts.
+# =====================================================================================================
+def rows_mock(title, icon, rows, foot='', sub=''):
+    tr = ''.join(f'<div class="crow rv pop"><span class="cd">{d}</span><span class="cl">{"".join(net(n) for n in ns)}</span><span class="ct">{t}</span></div>' for d, ns, t in rows)
+    f = f'<div class="mk-foot">{foot}</div>' if foot else ''
+    sb = f'<span class="sub">{sub}</span>' if sub else ''
+    return mock(f'<div class="win mk-win"><div class="win-h">{ico(icon)}{title}{sb}</div><div class="csv">{tr}</div>{f}</div>')
+
+
+def pills_mock(title, icon, items, pick=None, text=None):
+    t = f'<div class="mk-text rv pop">{text}</div>' if text else ''
+    ps = ''.join(f'<span class="pill{" pick" if x == pick else ""}">{x}</span>' for x in items)
+    return mock(f'<div class="win mk-win"><div class="win-h">{ico(icon)}{title}</div>{t}<div class="weeks">{ps}</div></div>')
+
+
+def gallery_mock():
+    pics = [('croissant', 'Alt text'), ('loaf', 'Alt text'), ('coffee', 'Add alt'), ('rack', 'Alt text'), ('shape', 'Video'), ('shelf', 'Add alt')]
+    cells = ''.join(f'<figure class="rv pop">{food(n)}<span class="badge">{b}</span></figure>' for n, b in pics)
+    return mock(f'<div class="win mk-win"><div class="win-h">{ico("i-image")}Media<span class="sub">48 files</span></div><div class="mgal">{cells}</div></div>')
+
+
+def feature(slug, key, tag, h1a, h1b, lead, stage, rows, extra, close, faqs, title, desc):
+    body = hero(key, tag, h1a, h1b, lead, hero_stage(stage)) + tour(rows) + extra + CLOSE.format(a=close[0], b=close[1])
+    open(P + slug.strip('/') + '.html', 'w').write(page(slug, key, title, desc, body, faqs))
+
+
+# ---- Content calendar
+feature('/social-media-calendar', 'cal', 'Content calendar', 'A social media calendar', 'for every brand and network',
+        'See every draft, scheduled post and published post in one place. Drag a post to a new day, or click an open hour to write one.', 'sc-sched', [
+    zrow('i-grid', 'Views', 'Week, month or list.', 'Switch in one click.', 'Plan the week hour by hour, see the whole month at a glance, or read every post in order in the list.',
+         ['Week view with hours', 'Month view for the big picture', 'List view to read posts in order', 'Times in your workspace\'s time zone'], month_mock()),
+    zrow('i-pointer', 'Drag and drop', 'Move a post.', 'Keep your plan.', 'Drag a draft, scheduled or failed post to another day or hour. Scheduled posts go out at the new time.',
+         ['Drag to change the day or hour', 'Click an open hour to add a post', 'Copy a post to reuse it', 'Delete it on every network from the calendar'], rows_mock('This week', 'i-calendar', [
+             ('Mon 9 AM', ['linkedin'], 'Meet our bakers'), ('Wed 9 AM', ['instagram', 'threads'], 'Rye is back'), ('Thu 12 PM', ['youtube'], 'Oven tour'), ('Fri 5 PM', ['tiktok'], 'Crumb shot')]), flip=True),
+    zrow('i-layers', 'Every brand', 'One calendar per client,', 'or all of them together.', 'Filter by brand or channel to focus, and see each post\'s state at a glance: draft, in review, scheduled, published or failed.',
+         ['Filter by brand or channel', 'Draft, In review, Scheduled, Published and Failed', 'Approvals show right on the calendar', 'Best times suggested when you pick a time'], ZVIS['z-prev']),
+], '', ('Your next month of posts,', 'on one calendar.'), [
+    ('What is a social media calendar?', 'A calendar of the posts you plan to publish on each network. In Capybaroar it is also where posts are written, moved and approved.'),
+    ('Can I drag posts to a new day?', 'Yes. Drag a draft, scheduled or failed post to another day or hour. Scheduled posts go out at the new time.'),
+    ('Which views are there?', 'Week, month and list.'),
+    ('Can I see several brands at once?', 'Yes. See every brand together, or filter by one brand or one channel.'),
+    ('Does the calendar show published posts?', 'Yes. Published posts stay on the calendar with a link to the live post.'),
+], 'Social media content calendar with drag and drop | Capybaroar',
+   'Plan posts for 12 networks on one social media calendar. Week, month and list views, drag and drop, filters by brand and channel, and approvals on the calendar. Free plan.')
+
+# ---- Posting queue
+feature('/posting-queue', 'queue', 'Posting queue', 'Set your posting times once.', 'Every new post takes the next one.',
+        'Pick the hours you want to post on each day. Add a post to the queue and it takes the next free time, so your week fills itself.', 'sc-sched', [
+    zrow('i-clock', 'Time slots', 'Your hours,', 'day by day.', 'Choose different times for each day of the week, in your workspace\'s time zone.',
+         ['Different times for each day', 'Your workspace\'s time zone', 'Several times a day if you like', 'Change them any time'], queue_mock()),
+    zrow('i-send', 'Add to queue', 'Write it.', 'Press Add to queue.', 'The post takes the next free time in the next 8 weeks. No date picking, no gaps.',
+         ['Next free time, found for you', 'Bulk uploads can fill the queue', 'RSS feeds and evergreen posts use it too', 'Your AI can find the next free time with MCP'], rows_mock('Queue', 'i-clock', [
+             ('Mon 9:00', ['instagram'], 'Croissant day'), ('Mon 12:30', ['linkedin'], 'Hiring a night baker'), ('Tue 9:00', ['x', 'bluesky'], 'New flour'), ('Tue 12:30', ['tiktok'], 'Next free time')], sub='Crumb &amp; Co.'), flip=True),
+], '', ('Set it once.', 'Post every day.'), [
+    ('What is a posting queue?', 'A set of times you want to post on each day. When you add a post to the queue, it takes the next free time.'),
+    ('How far ahead does the queue look?', 'Up to 8 weeks. If every time in that span is taken, Capybaroar tells you, so you can add more times.'),
+    ('Which time zone do queue times use?', 'Your workspace\'s time zone, set in Settings.'),
+    ('Can bulk uploads use the queue?', 'Yes. A stack of files or a feed can fill your queue times in order.'),
+    ('Is the queue on the free plan?', 'Yes. Every plan has a posting queue.'),
+], 'Posting queue: set your times once | Capybaroar',
+   'Set posting times for each day once, and every new post takes the next free time. Works with bulk uploads, RSS feeds, evergreen posts and MCP. Free plan.')
+
+# ---- Bulk scheduling
+BULK_COLS = [('date', '2026-11-05 or 2026/11/05'), ('time', '09:30 or 9:30 PM'), ('channels', 'Channel names or networks, like Instagram | LinkedIn'), ('text', 'The post. A line with only --- starts the next post of a thread'),
+             ('media url', 'A link to a picture or video'), ('first comment', 'Posted as a comment right after, where the network allows it'), ('title', 'A YouTube or Pinterest title')]
+feature('/bulk-scheduling', 'bulk', 'Bulk scheduling', 'Schedule a month of posts', 'in one upload',
+        'Upload a CSV with one post per row, or a stack of pictures and videos with a caption each. Every row is checked before anything is saved.', 'sc-sched', [
+    zrow('i-upload', 'CSV upload', 'One row,', 'one post.', 'Up to 500 posts per file. Capybaroar reads the columns, matches your channels and shows every problem by row before you import.',
+         ['Up to 500 posts per file', 'Column names are matched for you', 'Every row checked before saving', 'Schedule them or save them as drafts'], bulk_mock()),
+    zrow('i-image', 'A stack of files', 'Drop 30 photos.', 'Get 30 posts.', 'Give each picture or video its own caption, then spread them one a day or over your queue times.',
+         ['A caption for each file', 'One a day, or your queue times', 'Pictures and videos up to 250 MB', 'Plan limits checked before saving'], gallery_mock(), flip=True),
+], section('columns', 'i-file', 'CSV columns', 'What goes in the file.', 'Only date, time, channels and text are needed.', '',
+           table(['Column', 'What to put in it'], [[f'<code>{c}</code>', d] for c, d in BULK_COLS], 'CSV columns for bulk upload'), gray=True),
+   ('Plan the month', 'in one go.'), [
+    ('How many posts can I upload at once?', 'Up to 500 rows per CSV file.'),
+    ('Which columns does the CSV need?', 'date, time, channels and text. media url, first comment and title are optional.'),
+    ('Can I move from Buffer, Hootsuite or Later?', 'Yes. Export your posts as a CSV, then match your columns to Capybaroar\'s: date, time, channels and text.'),
+    ('What happens to a row with a problem?', 'It is shown with its line number and the reason before you import, and is left out until you fix it.'),
+    ('Can I upload threads?', 'Yes. In the text column, a line with only --- starts the next post. X, Bluesky, Threads and Mastodon post them as a thread.'),
+], 'Bulk schedule social media posts from a CSV | Capybaroar',
+   'Schedule up to 500 posts from one CSV, or a stack of photos and videos with a caption each. Every row is checked before saving. Instagram, TikTok, LinkedIn and 9 more networks.')
+
+# ---- Media library
+feature('/media-library', 'media', 'Media library', 'Every picture and video,', 'ready for any post',
+        'Upload once and reuse files in any post. Crop pictures, trim videos and add alt text, so each network gets what it needs.', 'sc-sched', [
+    zrow('i-image', 'Library', 'Upload once.', 'Use it anywhere.', 'Drop files in the composer or the library, paste a picture, or pull AI pictures and videos straight in.',
+         ['JPG, PNG, GIF, WebP, MP4 and MOV', 'Files up to 250 MB', 'Drag files into order in a post', 'AI pictures and videos land here too'], gallery_mock()),
+    zrow('i-pen', 'Edit', 'Crop and trim', 'without another app.', 'Crop a picture to the shape each network wants, or trim a video to the part that matters.',
+         ['Crop to 1:1, 4:5, 9:16, 16:9 or 1.91:1', 'Trim videos to the right length', 'Pick a cover for Reels', 'Alt text for people who can\'t see the picture'], ZVIS['z-prev'], flip=True),
+], '', ('Your files,', 'ready to post.'), [
+    ('Which files can I upload?', 'JPG, PNG, GIF and WebP pictures, and MP4 and MOV videos. Files are up to 250 MB.'),
+    ('Can I add alt text?', 'Yes. Alt text you add in the library goes out with the picture on networks that take it.'),
+    ('Can I crop and trim in Capybaroar?', 'Yes. Crop pictures and trim videos from the composer or the library.'),
+    ('Do AI pictures go to the library?', 'Yes. Pictures and videos you make with AI are saved to the library and can be used in any post.'),
+], 'Social media media library: crop, trim, alt text | Capybaroar',
+   'Keep every picture and video for your social posts in one library. Crop, trim, add alt text and reuse files in any post. Files up to 250 MB. Free plan.')
+
+# ---- Automation
+feature('/social-media-automation', 'auto', 'Automation', 'Posts that keep', 'your calendar full',
+        'Send your best posts out again every few weeks, and turn new blog articles into posts as soon as they go live.', 'sc-sched', [
+    zrow('i-repeat', 'Evergreen', 'Your best posts,', 'again and again.', 'Pick a published post and how often it should go out again. Each time, a copy takes your next queue time.',
+         ['Every 1, 2, 4, 8, 12 or 26 weeks', 'A fresh copy each time', 'Approvals and plan limits still apply', 'Stop it any time'], pills_mock('Post again', 'i-repeat', ['1 week', '2 weeks', '4 weeks', '8 weeks', '12 weeks', '26 weeks'], pick='4 weeks')),
+    zrow('i-rss', 'RSS feeds', 'New article?', 'New post.', 'Add your blog or newsletter feed. Capybaroar checks it every 30 minutes and makes a post for each new article.',
+         ['RSS and Atom feeds', 'Checked every 30 minutes', 'Drafts, or straight into your queue', 'Links shortened so clicks are counted'], rows_mock('Feeds', 'i-rss', [
+             ('New', ['linkedin', 'x'], 'How we source our flour'), ('New', ['facebook'], 'Bread club, June box'), ('Seen', ['linkedin', 'x'], 'Opening our second shop')]), flip=True),
+], '', ('Post more,', 'plan less.'), [
+    ('What is an evergreen post?', 'A post that still works months later. Capybaroar can send it out again every 1 to 26 weeks as a fresh copy.'),
+    ('How often are RSS feeds checked?', 'Every 30 minutes.'),
+    ('Does a new feed post every old article?', 'No. A new feed posts only its newest article. Older ones count as seen.'),
+    ('Do automated posts need approval?', 'If the brand needs approval, they wait for a yes like any other post.'),
+], 'Social media automation: evergreen posts and RSS | Capybaroar',
+   'Re-post your best content every 1 to 26 weeks and turn new blog articles into posts from RSS feeds, checked every 30 minutes. Works with your queue and approvals.')
+
+# ---- Client reports
+feature('/client-reports', 'reports', 'Client reports', 'Social media reports', 'your clients will read',
+        'Pick the sections, share a link or a PDF, or email the report every week or month. On Agency, reports carry your logo and color.', 'sc-ana', [
+    zrow('i-file', 'Build it', 'Pick what matters.', 'Leave out the rest.', 'Choose the sections and the period, and add your own notes for the client.',
+         ['Summary, followers and top posts', 'Best time to post, by format and by channel', 'Your own notes', '7, 30 or 90 days, or last month'], report_mock()),
+    zrow('i-mail', 'Send it', 'A link, a PDF', 'or an email.', 'Share a link that is always up to date, print a PDF, or have the report emailed at 9 AM every week or month.',
+         ['A link anyone can open', 'Print to an A4 PDF', 'Weekly or monthly email', 'On Agency: your logo and color'], ZVIS['z-heat'], flip=True),
+], '', ('Results your clients', 'can see.'), [
+    ('Which plans have reports?', 'Pro and Agency. Agency reports carry your own logo and color.'),
+    ('What can a report show?', 'Summary, followers, top posts, best time to post, results by format and by channel, and your notes.'),
+    ('Can reports be emailed?', 'Yes. Each report can be emailed every week or every month.'),
+    ('Do clients need an account?', 'No. They open the report from its link.'),
+], 'Social media reports for clients | Capybaroar',
+   'Make social media reports for clients: pick sections, share a link or PDF, or email it weekly or monthly. White label with your logo on Agency.')
+
+# ---- Brands and teams
+ROLES = [['Owner', YES, YES, YES], ['Admin', YES, YES, YES], ['Editor', YES, NO, NO], ['Client', NO, YES, NO]]
+feature('/brands-and-teams', 'teams', 'Brands and teams', 'One workspace,', 'every client and teammate',
+        'Give each client a brand with its own channels, calendar and results. Invite your team with the right role for each person.', 'sc-sched', [
+    zrow('i-layers', 'Brands', 'A brand per client.', 'Nothing gets mixed up.', 'Each brand has its own channels, calendar, inbox and reports. A post can only go to one brand\'s channels.',
+         ['Own channels, calendar and results', 'Saved channel groups, like All socials', 'Switch brands in one click', 'Pro has 5 brands, Agency has no limit'], rows_mock('Brands', 'i-layers', [
+             ('Crumb &amp; Co.', ['instagram', 'facebook', 'tiktok'], '12 posts this week'), ('Northside Gym', ['instagram', 'youtube'], '8 posts this week'), ('Bloom Florist', ['pinterest', 'instagram'], '5 posts, 2 in review'), ('Lakeview Dental', ['facebook', 'linkedin'], '3 posts this week')])),
+    zrow('i-users', 'Team', 'The right access', 'for each person.', 'Owners and admins run the workspace. Editors write posts. On Agency, editors can be limited to the brands they work on.',
+         ['Owners, admins, editors and clients', 'Editors limited to their brands on Agency', 'Clients approve without taking a seat', 'Pro has 5 seats, Agency has 15'], rows_mock('Team', 'i-users', [
+             ('Owner', ['instagram', 'linkedin'], 'Maya, every brand'), ('Editor', ['tiktok'], 'Leo, Crumb &amp; Co.'), ('Client', ['facebook'], 'Sam, approves Crumb &amp; Co.')]), flip=True),
+], section('roles', 'i-shield', 'Roles', 'Who can do what.', 'At a glance.', '',
+           table(['Role', 'Write and schedule', 'Approve posts', 'Connect channels and invite'], ROLES, 'What each role can do'), gray=True),
+   ('Every client,', 'one workspace.'), [
+    ('What is a brand?', 'A client or business in your workspace, with its own channels, calendar, inbox and reports.'),
+    ('How many brands and seats do I get?', 'Free and Creator have 1 brand and 1 seat. Pro has 5 brands and 5 seats. Agency has no brand limit and 15 seats.'),
+    ('Do clients take a seat?', 'Clients who only approve posts don\'t need a seat. They can also approve from a review link without an account.'),
+    ('Can I limit an editor to some brands?', 'Yes, on Agency.'),
+], 'Social media management for teams and agencies | Capybaroar',
+   'Run every client from one workspace: a brand per client with its own channels and calendar, roles for your team, and clients who approve without a seat.')
+
+# ---- Approvals
+feature('/post-approval', 'approve', 'Approvals', 'Posts wait for a yes', 'before they go out',
+        'Turn on approval for a brand. Editors\' posts wait in review until an owner, an admin or the client approves them.', 'sc-sched', [
+    zrow('i-check-circle', 'Review', 'Approve or reject,', 'with a reason.', 'Posts in review show on the calendar. Approve them as they are, or send them back with what should change.',
+         ['Turn on approval per brand', 'Reject with a note for the writer', 'Emails when a post is sent, approved or rejected', 'Approved posts go out at their time'], rows_mock('In review', 'i-check-circle', [
+             ('Thu 9 AM', ['instagram', 'facebook'], 'Croissant day is back'), ('Fri 12 PM', ['linkedin'], 'We are hiring a night baker'), ('Sat 10 AM', ['tiktok'], 'How we shape a loaf')],
+             foot='<span class="pill">Reject</span><span class="pill dark">Approve</span>')),
+    zrow('i-link', 'Review links', 'Clients approve', 'without an account.', 'Send your client a review link. They see each post as it will look and approve or reject it there.',
+         ['No account or seat needed', 'Posts shown as they will look', 'A note with every rejection', 'Webhooks for your own tools'], ZVIS['z-prev'], flip=True),
+], '', ('Nothing goes out', 'without a yes.'), [
+    ('Who can approve posts?', 'Owners, admins and clients of that brand, or anyone with the brand\'s review link.'),
+    ('Which plans have approvals?', 'Pro and Agency.'),
+    ('Does my client need an account?', 'No. A review link is enough.'),
+    ('Do posts from AI wait for approval too?', 'Yes. In a brand that needs approval, an editor\'s posts wait for a yes however they were made.'),
+], 'Social media post approval workflow | Capybaroar',
+   'Posts wait for approval before they go out. Clients approve or reject from a review link without an account, with a note for every change.')
+
+# ---- AI Studio
+REWRITE_NAMES = ['Improve', 'Shorter', 'Longer', 'Casual', 'Professional', 'Better hook', 'Add hashtags', 'Fit to network', 'Fix spelling']
+MODELS_IMG = ['FLUX.2 Pro', 'Ideogram V3', 'Nano Banana 2', 'Nano Banana Pro']
+MODELS_VID = ['Kling 3 Pro', 'Seedance 2.0 Fast', 'Veo 3.1']
+feature('/ai-studio', 'ai', 'AI Studio', 'Write, rewrite and make media', 'right in the composer',
+        'Rewrite any post in one click with Claude, and make pictures and videos with top AI models. Everything lands in your post and your library.', 'sc-agent', [
+    zrow('i-pen', 'Rewrite', 'Make it better', 'in one click.', 'Pick what you want and Claude rewrites the post in your voice, sized for the network you are posting to.',
+         ['Improve, shorter, longer', 'Casual or professional', 'A better first line, or hashtags', 'Fit to the network, or fix spelling only'], pills_mock('Rewrite', 'i-pen', REWRITE_NAMES, pick='Better hook', text='Fresh rye, out of the oven at 7. Come early.')),
+    zrow('i-image', 'Pictures and videos', 'Make the picture', 'the post needs.', 'Describe it, pick a model and a shape, and it goes straight into the post when it is ready.',
+         [f'Pictures: {", ".join(MODELS_IMG)}', f'Videos: {", ".join(MODELS_VID)}', 'Edit a picture by describing the change', 'A picture can start a video'], gallery_mock(), flip=True),
+    zrow('i-text', 'Writing tools', 'The small things,', 'done for you.', 'Save lines you use often, shorten links so clicks are counted, and add hashtags or mentions from the toolbar.',
+         ['Saved snippets', 'Short links with click counts', 'Bold and italic for networks that show them', 'Character counts for each network'], ZVIS['z-prev']),
+], '', ('Better posts,', 'in less time.'), [
+    ('Which AI writes the rewrites?', 'Claude, from Anthropic.'),
+    ('Which models make pictures and videos?', f'Pictures: {", ".join(MODELS_IMG)}. Videos: {", ".join(MODELS_VID)}.'),
+    ('How much does AI cost?', 'AI uses credits. Creator has 1,000 a month, Pro 2,500 and Agency 8,000, and you can buy more. Free has no AI.'),
+    ('Are failed generations charged?', 'No. Credits are only used for what you get.'),
+], 'AI Studio: AI captions, pictures and videos for social posts | Capybaroar',
+   'Rewrite posts in one click with Claude, and make pictures and videos with FLUX.2, Nano Banana, Kling and Veo, right in the composer.')
+
+# ---- Agents
+feature('/ai-social-media-agent', 'agent', 'Agents', 'An AI agent that plans', 'your week of posts',
+        'Tell the agent what is coming up. It reads your channels and recent posts, writes the posts with pictures and puts them on your calendar as drafts.', 'sc-agent', [
+    zrow('i-spark', 'Plan', 'One message.', 'A full week.', 'Ask for a week of posts about a launch, an event or your usual topics. The agent drafts each one at a good time.',
+         ['Reads your channels and recent posts', 'Writes in your voice', 'Uses your queue and best times', 'Drafts wait for you to check them'], rows_mock('Agent drafts', 'i-spark', [
+             ('Mon 9 AM', ['linkedin'], 'Why we bake at 4 AM'), ('Tue 12 PM', ['instagram'], 'Rye, close up'), ('Thu 5 PM', ['tiktok', 'youtube'], 'Shaping in 30 seconds')])),
+    zrow('i-image', 'Media', 'Pictures and videos', 'made for each post.', 'The agent can make a picture or a short video for a post and attach it when it is ready.',
+         ['Top image and video models', 'Attached to the right draft', 'Saved to your library', 'Uses your AI credits'], gallery_mock(), flip=True),
+    zrow('i-shield', 'Safe', 'You stay', 'in charge.', 'The agent works with the same checks as you: plan limits, brands and approvals. It asks before deleting anything.',
+         ['Drafts unless you ask to schedule', 'Asks before deleting', 'Approvals still apply', 'Or use your own AI through MCP'], ZVIS['z-prev']),
+], '', ('Your week,', 'planned for you.'), [
+    ('What can the agent do?', 'Everything you can do in the app through the API: read channels and results, write, schedule and change posts, and make pictures and videos.'),
+    ('Will it post without asking?', 'No. It writes drafts unless you ask it to schedule, and asks before deleting.'),
+    ('Which plans have the agent?', 'Creator, Pro and Agency. It uses AI credits.'),
+    ('Can I use my own AI instead?', 'Yes. Connect Claude, ChatGPT or Cursor with MCP on any plan.'),
+], 'AI social media agent that plans your posts | Capybaroar',
+   'An AI agent that reads your channels, writes a week of posts with pictures and puts them on your calendar as drafts. Works with your queue, approvals and plan limits.')
+
 
 # ---------- sitemap and robots ----------
 urls = ['/'] + [u for u, _ in PAGES] + ['/api', '/terms', '/privacy', '/data-deletion']
