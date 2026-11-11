@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, FileText, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -34,7 +34,8 @@ type Media = { id: string; name: string; mime: string; thumb: string | null; alt
 type Target = { text: string | null; settings: Record<string, string> };
 type Uploading = { key: string; name: string; error?: string };
 
-const ACCEPT = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime";
+const ACCEPT = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,application/pdf";
+const isPdf = (m: { mime: string }) => m.mime === "application/pdf";
 const pad = (n: number) => String(n).padStart(2, "0");
 const localValue = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const nextHour = () => {
@@ -295,7 +296,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const upload = async (list: FileList | File[], replace?: string, attach?: (id: string) => void) => {
     const all = Array.from(list).filter((f) => ACCEPT.split(",").includes(f.type));
     if (!all.length) {
-      setError("Use JPG, PNG, GIF, WebP, MP4 or MOV");
+      setError("Use JPG, PNG, GIF, WebP, MP4, MOV or PDF");
       return;
     }
     setError("");
@@ -679,14 +680,16 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                       {!locked ? (
                         <>
                           <span className="absolute top-1.5 right-1.5 hidden gap-1 group-focus-within/thumb:flex group-hover/thumb:flex">
-                            <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
-                              {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
-                            </button>
+                            {!isPdf(m) ? (
+                              <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
+                                {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
+                              </button>
+                            ) : null}
                             <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
                               <X size={13} />
                             </button>
                           </span>
-                          {!m.mime.startsWith("video/") ? (
+                          {!m.mime.startsWith("video/") && !isPdf(m) ? (
                             <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1.5 bottom-1.5 h-5 rounded-full bg-panel px-1.5 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
                               {m.alt ? "Alt text" : "Add alt"}
                             </button>
@@ -1138,7 +1141,12 @@ function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { p
 function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
   return (
     <span className={`relative block shrink-0 overflow-hidden rounded-lg bg-paper shadow-chip ${small ? "size-20" : "size-28"}`} title={m.name}>
-      {m.mime.startsWith("video/") ? (
+      {isPdf(m) ? (
+        <span className="flex size-full flex-col items-center justify-center gap-1.5 p-2 text-center">
+          <FileText size={small ? 18 : 22} className="text-muted" />
+          <span className="line-clamp-2 text-[10.5px] break-all text-body">{m.name}</span>
+        </span>
+      ) : m.mime.startsWith("video/") ? (
         <video src={m.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
       ) : (
         // eslint-disable-next-line @next/next/no-img-element

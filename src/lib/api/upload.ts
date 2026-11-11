@@ -4,7 +4,7 @@ import { mkdtemp, open, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { adminClient } from "../supabase/server";
-import { ALLOWED, MAX_BYTES, UPLOADS } from "../media";
+import { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS } from "../media";
 import { ApiError } from "./input";
 import { BlockedAddress, safeGet } from "./fetchSafe";
 import { nameFromUrl, sniffMime } from "./net";
@@ -83,7 +83,8 @@ export async function linkToMedia(workspaceId: string, userId: string | null, ur
     await fh.close();
     const mime = sniffMime(head);
     // Links people send take pictures and videos; files Capy made may also be audio.
-    if (!mime || !(opts.place ? ALLOWED : UPLOADS).test(mime)) throw bad("The link isn't a JPG, PNG, GIF, WebP, MP4 or MOV file");
+    if (!mime || !(opts.place ? ALLOWED : UPLOADS).test(mime)) throw bad("The link isn't a JPG, PNG, GIF, WebP, MP4, MOV or PDF file");
+    if (mime === "application/pdf" && size > MAX_PDF) throw new ApiError(413, "too_large", "PDFs are up to 100 MB");
     const fixed = opts.place?.(mime);
     const name = fixed?.name ?? nameFromUrl(res.url, mime);
     const path = fixed ? `${workspaceId}/${fixed.path}` : `${workspaceId}/${crypto.randomUUID()}-${name}`;

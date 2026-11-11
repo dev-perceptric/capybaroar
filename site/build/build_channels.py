@@ -47,10 +47,10 @@ ch('instagram', slug='/instagram-post-scheduler', name='Instagram', h1='Instagra
 
 ch('linkedin', slug='/linkedin-post-scheduler', name='LinkedIn', h1='LinkedIn Post Scheduler', dim='for profiles and company Pages',
    title='LinkedIn Post Scheduler for Profiles and Company Pages | Capybaroar',
-   desc='Schedule LinkedIn posts to your profile and company Pages. Pictures or video, first comments, Page comments in one inbox and results for every post. Free plan.',
-   lead='Schedule posts to your own profile and to the company Pages you manage. Add a first comment and see how every post does.',
+   desc='Schedule LinkedIn posts and PDF carousels to your profile and company Pages. Up to 20 pictures, video, first comments, Page comments in one inbox and results for every post. Free plan.',
+   lead='Schedule posts and PDF carousels to your own profile and to the company Pages you manage. Add a first comment and see how every post does.',
    account='your LinkedIn profile or Pages', connect='Sign in with LinkedIn, then add your profile, your Pages or both.',
-   specs=[('Characters', '3,000'), ('Media', 'Pictures, or one video'), ('First comment', 'Yes'), ('Accounts', 'Profiles and company Pages'), ('Page comments', 'In the inbox'), ('Results', 'For every post')],
+   specs=[('Characters', '3,000'), ('Media', 'Up to 20 pictures, one video or one PDF'), ('First comment', 'Yes'), ('Accounts', 'Profiles and company Pages'), ('Page comments', 'In the inbox'), ('Results', 'For every post')],
    fields=[('Post as', ['Jon Park', 'Crumb & Co.'], 1), ('First comment', 'We are hiring: crumbandco.com/jobs', None)],
    preview='feed', img='loaf', text='We start our dough at 4 AM so you can have warm bread at 8. This Friday we launch our first sourdough. Pre-orders are open now.',
    inbox={'Comments and replies': True, 'Messages': False, 'Like': True, 'Hide': False}, inbox_note='Comments come from company Pages. Personal profiles are for posting.', stats=True,
@@ -58,7 +58,9 @@ ch('linkedin', slug='/linkedin-post-scheduler', name='LinkedIn', h1='LinkedIn Po
         ('Can I schedule to my personal profile too?', 'Yes. Connect your profile and your Pages, and pick one or both for each post.'),
         ('Can I add a first comment?', 'Yes. Write it in the composer and it is posted right after your post goes live.'),
         ('Can I answer LinkedIn comments?', 'Yes, for company Pages. Comments on your Page posts land in the inbox, where you can reply and like.'),
-        ('What can I attach?', 'Pictures, or one video. LinkedIn does not mix a video with pictures in one post.'),
+        ('What can I attach?', 'Up to 20 pictures, one video, or one PDF. LinkedIn does not mix a video or a PDF with other files in one post.'),
+        ('Can I schedule a LinkedIn carousel?', 'Yes. Add a PDF and it goes out as a document post that people swipe through. PDFs are up to 100 MB and 300 pages.'),
+        ('Can I choose who sees my post?', 'Yes, on your profile: anyone, connections only or LinkedIn members. You can also turn resharing off.'),
         ('Is the LinkedIn scheduler free?', 'Yes. The Free plan has 3 channels and 30 scheduled posts a month. Creator, Pro and Agency have unlimited posts.')])
 
 ch('tiktok', slug='/tiktok-scheduler', name='TikTok', h1='TikTok Scheduler', dim='to schedule TikTok videos',

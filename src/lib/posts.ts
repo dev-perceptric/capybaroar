@@ -4,7 +4,7 @@ import { cancelPostJobs, enqueue } from "./jobs";
 import { mediaInfo } from "./media";
 import { listChannels } from "./channels";
 import { providerOf } from "./providers";
-import { networkOf, type NetworkId, type ThreadPart } from "./networks";
+import { isPdfMime, networkOf, type NetworkId, type ThreadPart } from "./networks";
 import { cleanThread, partProblem, partSettings, storedThread, threadOf, type StoredPart } from "./thread";
 import { nextQueueSlot, type Slot } from "./queue";
 import { assertCanSchedule } from "./billing";
@@ -101,6 +101,7 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
     if (!c) throw new Error("A channel in this post was removed");
     if (c.status === "reconnect") throw new Error(`Reconnect ${c.name} first`);
     const n = networkOf(c.network as NetworkId);
+    if (!n.documents && [...media, ...partMedia.flat()].some((m) => isPdfMime(m.mime))) throw new Error(`${c.name}: PDFs can only go to LinkedIn`);
     const text = (t.text ?? input.text).trim();
     if (!text && !media.length) throw new Error(`${c.name}: write something or add media`);
     if ([...text].length > n.limit) throw new Error(`${c.name}: ${n.name} posts are up to ${n.limit.toLocaleString("en-US")} characters`);

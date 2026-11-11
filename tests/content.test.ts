@@ -115,7 +115,7 @@ test("bulk: the file needs the main columns and a row limit", () => {
 
 test("bulk: settings start from each network's defaults, with the first comment and title where they fit", () => {
   assert.deepEqual(settingsFor("youtube", { title: "T", firstComment: "c" }), { privacy: "public", for_kids: "no", title: "T" });
-  assert.deepEqual(settingsFor("linkedin", { firstComment: "c" }), { first_comment: "c" });
+  assert.deepEqual(settingsFor("linkedin", { firstComment: "c" }), { visibility: "PUBLIC", reshare: "on", first_comment: "c" });
   assert.deepEqual(settingsFor("x", { firstComment: "c", title: "T" }), {});
 });
 

@@ -207,3 +207,4 @@ export const form = (o: Record<string, string>) => new URLSearchParams(o);
 export const qs = (o: Record<string, string>) => new URLSearchParams(o).toString();
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export const isVideo = (m: MediaFile) => m.mime.startsWith("video/");
+export const isPdf = (m: Pick<MediaFile, "mime">) => m.mime === "application/pdf";

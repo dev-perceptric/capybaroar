@@ -42,7 +42,11 @@ export type Network = {
   inbox?: { like?: boolean; hide?: boolean; hideOnce?: boolean };
   /** Posts a thread: parts after the first go out as replies to the part before. */
   thread?: boolean;
+  /** Takes a PDF as a post of its own (LinkedIn's document post, shown as a carousel). */
+  documents?: boolean;
 };
+
+export const isPdfMime = (mime: string) => mime === "application/pdf";
 
 /** A thread's parts after the first: each its own text and files. */
 export type ThreadPart = { text: string; mediaIds: string[] };
@@ -50,10 +54,23 @@ export type ThreadPart = { text: string; mediaIds: string[] };
 export const THREAD_MAX = 24;
 
 const FIRST_COMMENT: NetworkField = { key: "first_comment", label: "First comment", kind: "textarea", placeholder: "Posted as a comment right after" };
+const RESHARE: NetworkField = { key: "reshare", label: "Resharing", kind: "select", initial: "on", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] };
+const DOC_TITLE: NetworkField = { key: "doc_title", label: "PDF title", kind: "text", placeholder: "Shown on a PDF post. The file name if empty." };
 
 export const NETWORKS: Network[] = [
-  { id: "linkedin", name: "LinkedIn", limit: 3000, fields: [FIRST_COMMENT] },
-  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, fields: [FIRST_COMMENT], inbox: { like: true } },
+  {
+    id: "linkedin",
+    name: "LinkedIn",
+    limit: 3000,
+    documents: true,
+    fields: [
+      FIRST_COMMENT,
+      { key: "visibility", label: "Who can see it", kind: "select", initial: "PUBLIC", options: [{ value: "PUBLIC", label: "Anyone" }, { value: "CONNECTIONS", label: "Connections only" }, { value: "LOGGED_IN", label: "LinkedIn members" }] },
+      RESHARE,
+      DOC_TITLE,
+    ],
+  },
+  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, documents: true, fields: [FIRST_COMMENT, RESHARE, DOC_TITLE], inbox: { like: true } },
   {
     id: "facebook",
     name: "Facebook",

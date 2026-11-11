@@ -6,9 +6,11 @@ export type MediaRow = { id: string; path: string; name: string; mime: string; s
 
 const BUCKET = "media";
 export const MAX_BYTES = 250 * 1024 * 1024;
-export const ALLOWED = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime)|audio\/(mpeg|wav|ogg))$/;
+export const ALLOWED = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime)|audio\/(mpeg|wav|ogg)|application\/pdf)$/;
+/** LinkedIn takes documents up to 100 MB. */
+export const MAX_PDF = 100 * 1024 * 1024;
 /** What people may upload themselves; audio comes from CapyAudio. */
-export const UPLOADS = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime))$/;
+export const UPLOADS = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime)|application\/pdf)$/;
 
 // Links for showing files are made for 2 hours and reused while they have more than an hour left. The same file keeps
 // the same address between visits, so the browser shows it from its cache, and most lists skip the call to storage.
@@ -42,8 +44,9 @@ export async function listMedia(workspaceId: string): Promise<(MediaRow & { thum
 
 /** Step 1 of an upload: check the file and hand back a one-time link the browser uploads to directly. */
 export async function prepareUpload(workspaceId: string, file: { name: string; type: string; size: number }) {
-  if (!UPLOADS.test(file.type)) throw new Error("Use JPG, PNG, GIF, WebP, MP4 or MOV");
+  if (!UPLOADS.test(file.type)) throw new Error("Use JPG, PNG, GIF, WebP, MP4, MOV or PDF");
   if (file.size > MAX_BYTES) throw new Error("Files are up to 250 MB");
+  if (file.type === "application/pdf" && file.size > MAX_PDF) throw new Error("PDFs are up to 100 MB");
   const safe = file.name.replace(/[^\w.-]+/g, "-").slice(-80);
   const path = `${workspaceId}/${crypto.randomUUID()}-${safe}`;
   const { data, error } = await adminClient().storage.from(BUCKET).createSignedUploadUrl(path);

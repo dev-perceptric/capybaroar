@@ -11,6 +11,32 @@
     "key": "first_comment",
     "label": "First comment",
     "kind": "textarea"
+   },
+   {
+    "key": "visibility",
+    "label": "Who can see it",
+    "kind": "select",
+    "initial": "PUBLIC",
+    "options": [
+     "Anyone",
+     "Connections only",
+     "LinkedIn members"
+    ]
+   },
+   {
+    "key": "reshare",
+    "label": "Resharing",
+    "kind": "select",
+    "initial": "on",
+    "options": [
+     "On",
+     "Off"
+    ]
+   },
+   {
+    "key": "doc_title",
+    "label": "PDF title",
+    "kind": "text"
    }
   ],
   "connect": "oauth",
@@ -34,6 +60,21 @@
     "key": "first_comment",
     "label": "First comment",
     "kind": "textarea"
+   },
+   {
+    "key": "reshare",
+    "label": "Resharing",
+    "kind": "select",
+    "initial": "on",
+    "options": [
+     "On",
+     "Off"
+    ]
+   },
+   {
+    "key": "doc_title",
+    "label": "PDF title",
+    "kind": "text"
    }
   ],
   "connect": "oauth",

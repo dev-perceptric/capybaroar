@@ -4,13 +4,13 @@
 // own look on purpose (rounded corners, their icons and spacing), so they sit inside a device frame and nowhere else.
 import { useRef, useState } from "react";
 import { partSettings } from "@/lib/thread";
-import { Bookmark, ChevronDown, Globe, Heart, MessageCircle, MoreHorizontal, Music2, Play, Repeat2, Send, Share, ThumbsUp } from "lucide-react";
+import { Bookmark, ChevronDown, FileText, Globe, Heart, MessageCircle, MoreHorizontal, Music2, Play, Repeat2, Send, Share, ThumbsUp } from "lucide-react";
 import { Avatar } from "./ui";
 import { NetworkLogo } from "./NetworkLogo";
 import { networkOf } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 
-export type PreviewMedia = { id: string; mime: string; thumb: string | null; alt: string | null };
+export type PreviewMedia = { id: string; mime: string; thumb: string | null; alt: string | null; name?: string };
 /** `thread`: a thread's posts after the first, shown under it as replies. */
 export type PreviewProps = { channel: Channel; text: string; media: PreviewMedia[]; settings: Record<string, string>; thread?: { text: string; media: PreviewMedia[] }[] };
 
@@ -51,6 +51,13 @@ function Visual({ m, className = "", fit }: { m: PreviewMedia; className?: strin
   const [ratio, setRatio] = useState<number | null>(null);
   const measured = (w: number, h: number) => fit && w > 0 && h > 0 && setRatio(Math.min(fit[1], Math.max(fit[0], w / h)));
   const style = fit ? { aspectRatio: String(ratio ?? 1) } : undefined;
+  if (m.mime === "application/pdf")
+    return (
+      <div className={`flex aspect-[4/5] w-full flex-col items-center justify-center gap-2 bg-neutral-100 text-neutral-500 ${className}`}>
+        <FileText size={32} />
+        <span className="px-4 text-center text-[12px] break-all">{m.name ?? "PDF"}</span>
+      </div>
+    );
   return isVideo(m) ? (
     <PreviewVideo m={m} className={className} style={style} onSize={measured} />
   ) : (

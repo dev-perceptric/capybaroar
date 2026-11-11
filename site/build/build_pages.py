@@ -44,7 +44,7 @@ CHANNELS_NAV = [
     ('/instagram-post-scheduler', 'instagram', 'Instagram', 'Posts, Reels, Stories'),
     ('/facebook-post-scheduler', 'facebook', 'Facebook', 'Posts and Reels'),
     ('/tiktok-scheduler', 'tiktok', 'TikTok', 'Videos'),
-    ('/linkedin-post-scheduler', 'linkedin', 'LinkedIn', 'Profiles and Pages'),
+    ('/linkedin-post-scheduler', 'linkedin', 'LinkedIn', 'Posts and PDF carousels'),
     ('/youtube-video-scheduler', 'youtube', 'YouTube', 'Videos'),
     ('/x-post-scheduler', 'x', 'X', 'Posts'),
     ('/threads-scheduler', 'threads', 'Threads', 'Posts and carousels'),
@@ -441,8 +441,8 @@ def bulk_mock():
 
 
 SCHED_NETS = [
-    ('linkedin', 'LinkedIn', '3,000', 'Post', False, 'First comment'),
-    ('linkedin-page', 'LinkedIn Pages', '3,000', 'Post', False, 'First comment'),
+    ('linkedin', 'LinkedIn', '3,000', 'Post or PDF carousel', False, 'First comment, who can see it, resharing, PDF title'),
+    ('linkedin-page', 'LinkedIn Pages', '3,000', 'Post or PDF carousel', False, 'First comment, resharing, PDF title'),
     ('facebook', 'Facebook', '63,206', 'Post or Reel', False, 'First comment'),
     ('instagram', 'Instagram', '2,200', 'Post, Reel or Story', True, 'Reel cover, first comment'),
     ('threads', 'Threads', '500', 'Post', False, ''),
@@ -843,11 +843,11 @@ feature('/bulk-scheduling', 'bulk', 'Bulk scheduling', 'Schedule a month of post
 feature('/media-library', 'media', 'Media library', 'Every picture and video,', 'ready for any post',
         'Upload once and reuse files in any post. Crop pictures, trim videos and add alt text, so each network gets what it needs.', 'sc-sched', [
     zrow('i-image', 'Library', 'Upload once.', 'Use it anywhere.', 'Drop files in the composer or the library, paste a picture, or pull AI pictures and videos straight in.',
-         ['JPG, PNG, GIF, WebP, MP4 and MOV', 'Files up to 250 MB', 'Drag files into order in a post', 'AI pictures and videos land here too'], gallery_mock()),
+         ['JPG, PNG, GIF, WebP, MP4 and MOV', 'PDFs for LinkedIn carousels', 'Files up to 250 MB, PDFs up to 100 MB', 'AI pictures and videos land here too'], gallery_mock()),
     zrow('i-pen', 'Edit', 'Crop and trim', 'without another app.', 'Crop a picture to the shape each network wants, or trim a video to the part that matters.',
          ['Crop to 1:1, 4:5, 9:16, 16:9 or 1.91:1', 'Trim videos to the right length', 'Pick a cover for Reels', 'Alt text for people who can\'t see the picture'], ZVIS['z-prev'], flip=True),
 ], '', ('Your files,', 'ready to post.'), [
-    ('Which files can I upload?', 'JPG, PNG, GIF and WebP pictures, and MP4 and MOV videos. Files are up to 250 MB.'),
+    ('Which files can I upload?', 'JPG, PNG, GIF and WebP pictures, MP4 and MOV videos up to 250 MB, and PDFs up to 100 MB for LinkedIn document posts.'),
     ('Can I add alt text?', 'Yes. Alt text you add in the library goes out with the picture on networks that take it.'),
     ('Can I crop and trim in Capybaroar?', 'Yes. Crop pictures and trim videos from the composer or the library.'),
     ('Do AI pictures go to the library?', 'Yes. Pictures and videos you make with AI are saved to the library and can be used in any post.'),

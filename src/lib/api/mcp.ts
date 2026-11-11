@@ -105,7 +105,7 @@ export const TOOLS: Tool[] = [
   {
     name: "upload_media",
     title: "Upload media from a link",
-    description: "Download a picture or video (JPG, PNG, GIF, WebP, MP4 or MOV, up to 250 MB) from a public link into the media library. Returns its id for media_ids.",
+    description: "Download a picture, video or PDF (JPG, PNG, GIF, WebP, MP4, MOV up to 250 MB, or a PDF up to 100 MB for a LinkedIn document post) from a public link into the media library. Returns its id for media_ids.",
     inputSchema: { type: "object", properties: { url: { type: "string", description: "A public http or https link to the file" }, alt: { type: "string", description: "Alt text for people who can't see it" } }, required: ["url"] },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
   },

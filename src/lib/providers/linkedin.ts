@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxBatch, type InboxItem, type InboxQuery, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
+import { AuthError, PostError, call, form, isPdf, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // LinkedIn: Sign In with LinkedIn (OpenID) + Share on LinkedIn for people; Community Management API for Pages.
 // Pages use their own app (LinkedIn wants that product alone on its app).
@@ -62,11 +62,69 @@ async function uploadVideo(tok: string, owner: string, bytes: Buffer) {
   return init.value.video;
 }
 
+/** A PDF for a document post (shown as a carousel): upload it, then wait until LinkedIn has read it. */
+async function uploadDocument(tok: string, owner: string, bytes: Buffer) {
+  const init = await call<{ value: { uploadUrl: string; document: string } }>(
+    "https://api.linkedin.com/rest/documents?action=initializeUpload",
+    { method: "POST", headers: rest(tok), body: JSON.stringify({ initializeUploadRequest: { owner } }) },
+    { what: "LinkedIn PDF upload" },
+  );
+  const put = await fetch(init.value.uploadUrl, { method: "PUT", headers: { Authorization: `Bearer ${tok}` }, body: new Uint8Array(bytes), signal: AbortSignal.timeout(300000) });
+  if (!put.ok) throw new Error(`LinkedIn PDF upload: ${put.status}`);
+  for (let i = 0; i < DOC_TRIES; i++) {
+    const d = await call<{ status?: string }>(`https://api.linkedin.com/rest/documents/${encodeURIComponent(init.value.document)}`, { headers: rest(tok) }, { what: "LinkedIn PDF upload" });
+    if (d.status === "AVAILABLE") return init.value.document;
+    if (d.status === "PROCESSING_FAILED") throw new PostError("LinkedIn couldn't read this PDF. Check that it opens and is under 300 pages.");
+    await sleep(DOC_WAIT_MS);
+  }
+  // Still processing: a retry uploads it again.
+  throw new Error("LinkedIn is still reading the PDF");
+}
+
+/** How long a PDF may take to be read: 30 checks, 2 seconds apart (tests set it lower). */
+let DOC_TRIES = 30;
+let DOC_WAIT_MS = 2000;
+export const setDocWait = (tries: number, ms: number) => {
+  DOC_TRIES = tries;
+  DOC_WAIT_MS = ms;
+};
+
+/** One PDF on its own, one video on its own, or up to 20 pictures. */
+export function linkedinMediaProblem(p: Pick<Publishable, "media">): string | null {
+  const pdfs = p.media.filter(isPdf).length;
+  if (pdfs && p.media.length > 1) return "LinkedIn takes one PDF on its own";
+  if (p.media.filter(isVideo).length && p.media.length > 1) return "LinkedIn takes one video, or pictures only";
+  if (p.media.length > 20) return "LinkedIn takes up to 20 pictures";
+  return null;
+}
+
+const VISIBILITY = new Set(["PUBLIC", "CONNECTIONS", "LOGGED_IN"]);
+
+/** The post LinkedIn gets: visibility and resharing from the settings (a Page posts to anyone). */
+export function postBody(author: string, p: Publishable, content: Record<string, unknown> | undefined) {
+  const page = author.startsWith("urn:li:organization:");
+  const visibility = !page && VISIBILITY.has(p.settings.visibility) ? p.settings.visibility : "PUBLIC";
+  return {
+    author,
+    commentary: escape(p.text),
+    visibility,
+    distribution: { feedDistribution: "MAIN_FEED", targetEntities: [], thirdPartyDistributionChannels: [] },
+    lifecycleState: "PUBLISHED",
+    isReshareDisabledByAuthor: p.settings.reshare === "off",
+    ...(content ? { content } : {}),
+  };
+}
+
 async function post(tok: string, author: string, p: Publishable): Promise<Published> {
+  const problem = linkedinMediaProblem(p);
+  if (problem) throw new PostError(problem);
   const videos = p.media.filter(isVideo);
-  if (videos.length > 1 || (videos.length && p.media.length > 1)) throw new PostError("LinkedIn takes one video, or pictures only");
+  const pdf = p.media.find(isPdf);
   let content: Record<string, unknown> | undefined;
-  if (videos.length) content = { media: { id: await uploadVideo(tok, author, await videos[0].bytes()) } };
+  if (pdf) {
+    const title = (p.settings.doc_title?.trim() || pdf.name.replace(/\.pdf$/i, "")).slice(0, 400) || "Document";
+    content = { media: { title, id: await uploadDocument(tok, author, await pdf.bytes()) } };
+  } else if (videos.length) content = { media: { id: await uploadVideo(tok, author, await videos[0].bytes()) } };
   else if (p.media.length) {
     const images: { id: string; altText?: string }[] = [];
     for (const m of p.media.slice(0, 20)) images.push({ id: await uploadImage(tok, author, await m.bytes()), ...(m.alt ? { altText: m.alt.slice(0, 4086) } : {}) });
@@ -76,15 +134,7 @@ async function post(tok: string, author: string, p: Publishable): Promise<Publis
     method: "POST",
     headers: rest(tok),
     signal: AbortSignal.timeout(60000),
-    body: JSON.stringify({
-      author,
-      commentary: escape(p.text),
-      visibility: "PUBLIC",
-      distribution: { feedDistribution: "MAIN_FEED", targetEntities: [], thirdPartyDistributionChannels: [] },
-      lifecycleState: "PUBLISHED",
-      isReshareDisabledByAuthor: false,
-      ...(content ? { content } : {}),
-    }),
+    body: JSON.stringify(postBody(author, p, content)),
   });
   if (!res.ok) {
     const msg = `LinkedIn post: ${res.status} ${(await res.text()).slice(0, 300)}`;
@@ -245,7 +295,7 @@ export const linkedin: Provider = {
     },
   },
   refresh: (s) => refreshWith(s, personId(), personSecret()),
-  check: (p) => (p.media.filter(isVideo).length && p.media.length > 1 ? "LinkedIn takes one video, or pictures only" : null),
+  check: linkedinMediaProblem,
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:person:${accountId}`, p),
   unpublishable,
   unpublish: (s, _accountId, r) => remove(s.accessToken, r.id),
@@ -290,7 +340,7 @@ export const linkedinPage: Provider = {
     },
   },
   refresh: (s) => refreshWith(s, pageId(), pageSecret()),
-  check: (p) => (p.media.filter(isVideo).length && p.media.length > 1 ? "LinkedIn takes one video, or pictures only" : null),
+  check: linkedinMediaProblem,
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:organization:${accountId}`, p),
   unpublishable,
   unpublish: (s, _accountId, r) => remove(s.accessToken, r.id),

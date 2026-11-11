@@ -18,7 +18,7 @@ export type BulkResult = { key: string; status?: PostStatus; error?: string };
 export async function importMediaUrl(workspaceId: string, userId: string, url: string): Promise<string> {
   const got = await safeGet(url, { maxBytes: MAX_BYTES, timeoutMs: 120000, accept: "image/*,video/*" });
   const mime = sniffMedia(got.body);
-  if (!mime || !ALLOWED.test(mime)) throw new Error("The media URL isn't a JPG, PNG, GIF, WebP, MP4 or MOV");
+  if (!mime || !ALLOWED.test(mime)) throw new Error("The media URL isn't a JPG, PNG, GIF, WebP, MP4, MOV or PDF");
   const base = decodeURIComponent(new URL(got.url).pathname.split("/").pop() || "file").replace(/[^\w.-]+/g, "-").slice(-80) || "file";
   const path = `${workspaceId}/${crypto.randomUUID()}-${base}`;
   const db = adminClient();

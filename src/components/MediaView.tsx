@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Image as ImageIcon, Sparkles, Trash2, Upload } from "lucide-react";
+import { FileText, Image as ImageIcon, Sparkles, Trash2, Upload } from "lucide-react";
 import { Button, ErrorNote, IconButton, Page } from "./ui";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
@@ -76,7 +76,7 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
   return (
     <Page icon={<ImageIcon />} title="Media" count={files.length || undefined} actions={shown ? <div className="flex flex-wrap items-center gap-2">{button}</div> : undefined}>
       <div className="min-h-full" onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), send(e.dataTransfer.files))}>
-        <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime" className="hidden" onChange={(e) => send(e.target.files)} />
+        <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,application/pdf" className="hidden" onChange={(e) => send(e.target.files)} />
         <ErrorNote message={error} className="mb-4" />
         {shown ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -86,7 +86,12 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
             {files.map((f) => (
               <figure key={f.id} className="group overflow-hidden rounded-lg bg-panel shadow-card transition-shadow duration-[var(--duration-fast)] hover:shadow-hover">
                 <div className="relative aspect-square bg-paper">
-                  {f.mime.startsWith("audio/") ? (
+                  {f.mime === "application/pdf" ? (
+                    <div className="flex size-full flex-col items-center justify-center gap-2 p-3 text-center">
+                      <FileText size={28} className="text-muted" />
+                      <span className="text-[12px] text-body">PDF</span>
+                    </div>
+                  ) : f.mime.startsWith("audio/") ? (
                     <div className="flex size-full items-center justify-center p-3">
                       <audio src={f.thumb ?? undefined} controls preload="metadata" className="w-full" />
                     </div>
