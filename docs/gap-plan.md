@@ -63,9 +63,10 @@ Rules for every item:
 - **Analytics:** results by campaign, plus scheduled, published and failed counts.
 - **Data:** a `campaigns` table and `posts.campaign_id` (migration 028). Added to the API, MCP and the `campaign` column in bulk CSV.
 
-### 2.2 Queue presets and "Best time" (2 days)
-- **One-click time sets:** "Weekdays at 9" (5 a week), "Morning and lunch" (10), "All day" (14) and "Your best times". Each fills the queue's slots, and you can still edit them.
-- **"Best time" option** in the composer's time picker: the next best-time slot at least 30 minutes out. The API takes `publish_at: "best"`.
+### 2.2 Queue presets and "Best time" (1 day)
+- **Already built:** the composer shows up to 3 best-time buttons, Analytics has a best-times heatmap, and `get_analytics` returns the top 3 times. All need 10 posts with results.
+- **One-click time sets:** "Weekdays at 9" (5 a week), "Morning and lunch" (10), "All day" (14) and "Your best times" (uses `bestSlots`, which exists and isn't used yet). Each fills the queue's slots, and you can still edit them.
+- **API and MCP:** `publish_at: "best"` schedules at the next best time at least 30 minutes out.
 
 ### 2.3 Best times for new accounts (2 days)
 - **What:** until an account has 10 posts with results, show the best times per network across all Capybaroar accounts, labeled "Popular on Instagram".
