@@ -30,14 +30,14 @@ export type BulkRow = {
 };
 
 const COLUMNS = {
-  date: ["date", "day"],
-  time: ["time", "hour"],
-  channels: ["channels", "channel", "network", "networks"],
-  text: ["text", "message", "content", "post", "caption"],
-  media: ["media", "media url", "media_url", "mediaurl", "image", "image url", "video", "url"],
+  date: ["date", "day", "scheduled at", "scheduled date", "scheduled time", "publish date", "publish at", "post date", "send at", "date and time", "datetime"],
+  time: ["time", "hour", "post time", "publish time"],
+  channels: ["channels", "channel", "network", "networks", "profile", "profiles", "account", "accounts", "social network", "platform", "platforms"],
+  text: ["text", "message", "content", "post", "caption", "post text", "body", "copy", "description"],
+  media: ["media", "media url", "media_url", "mediaurl", "image", "image url", "video", "url", "photo url", "picture url", "attachment"],
   comment: ["first comment", "first_comment", "firstcomment", "comment"],
   title: ["title"],
-  campaign: ["campaign"],
+  campaign: ["campaign", "campaign name", "tag", "label"],
 } as const;
 type Col = keyof typeof COLUMNS;
 

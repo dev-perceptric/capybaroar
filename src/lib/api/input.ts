@@ -133,7 +133,7 @@ export function postFields(body: unknown, partial: boolean): PostFields {
     if (!MODES.includes(body.mode as Mode)) throw bad(`mode must be one of ${MODES.join(", ")}`);
     out.mode = body.mode as Mode;
   }
-  if (body.publish_at !== undefined) out.publishAt = body.publish_at === null ? null : time(body.publish_at, "publish_at");
+  if (body.publish_at !== undefined) out.publishAt = body.publish_at === null ? null : body.publish_at === "best" ? "best" : time(body.publish_at, "publish_at");
   if (body.channel_text !== undefined) out.channelText = textMap(body.channel_text, "channel_text");
   if (body.settings !== undefined) out.settings = settingsMap(body.settings);
   if (body.thread !== undefined) out.thread = threadParts(body.thread);

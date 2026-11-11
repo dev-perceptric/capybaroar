@@ -50,3 +50,47 @@ export function nextQueueSlot(slots: Slot[], timeZone: string, taken: Set<number
   }
   return null;
 }
+
+/** Weekday and hour cells with their results, as the best times come from Analytics. */
+export type BestCell = { day: number; hour: number; posts: number; engagement: number };
+
+/** The best `n` hours of the week, once there are 10 posts with results, from hours with at least 2 posts. */
+export function pickBest(cells: BestCell[], n = 3): { day: number; hour: number }[] {
+  if (cells.reduce((s, c) => s + c.posts, 0) < 10) return [];
+  return cells
+    .filter((c) => c.posts >= 2)
+    .sort((a, b) => b.engagement - a.engagement)
+    .slice(0, n)
+    .map(({ day, hour }) => ({ day, hour }));
+}
+
+const at = (day: number, time: string): Slot => ({ day, time });
+const WEEKDAYS = [1, 2, 3, 4, 5];
+
+/** Ready-made queues. "best" comes from the workspace's own results. */
+export const QUEUE_PRESETS = {
+  weekdays: { label: "Weekdays at 9", slots: WEEKDAYS.map((d) => at(d, "09:00")) },
+  lunch: { label: "Morning and lunch", slots: WEEKDAYS.flatMap((d) => [at(d, "08:30"), at(d, "12:30")]) },
+  daily: { label: "Every day, twice", slots: [0, 1, 2, 3, 4, 5, 6].flatMap((d) => [at(d, "09:00"), at(d, "17:00")]) },
+} as const;
+export type QueuePreset = keyof typeof QUEUE_PRESETS | "best";
+
+/** Best hours as queue slots, sorted by day and time. */
+export const slotsFromBest = (best: { day: number; hour: number }[]): Slot[] =>
+  best.map((b) => at(b.day, `${String(b.hour).padStart(2, "0")}:00`)).sort((a, b) => a.day - b.day || a.time.localeCompare(b.time));
+
+/** The next of these best hours at least 30 minutes from now, in the workspace's time zone. Null without best times. */
+export function nextBestTime(best: { day: number; hour: number }[], timeZone: string, now = new Date()): Date | null {
+  if (!best.length) return null;
+  return nextQueueSlot(slotsFromBest(best), timeZone, new Set(), new Date(now.getTime() + 30 * 60000));
+}
+
+/** Popular hours across every Capybaroar account on one network: only once 200 posts have results, from hours with 5. */
+export function pickPopular(cells: BestCell[], n = 3): { day: number; hour: number }[] {
+  if (cells.reduce((s, c) => s + c.posts, 0) < 200) return [];
+  return cells
+    .filter((c) => c.posts >= 5)
+    .sort((a, b) => b.engagement - a.engagement)
+    .slice(0, n)
+    .map(({ day, hour }) => ({ day, hour }));
+}

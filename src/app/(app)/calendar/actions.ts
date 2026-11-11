@@ -138,7 +138,10 @@ export async function composerData() {
   const { listCampaigns } = await import("@/lib/campaigns");
   const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
   const { aiReady } = await import("@/lib/generations");
-  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
+  // Without enough results of its own, the workspace sees each network's popular hours across Capybaroar.
+  const own = best.status === "fulfilled" ? best.value : [];
+  const popular = own.length ? {} : await import("@/lib/analytics").then((a) => a.popularTimes(ctx.timezone)).catch(() => ({}));
+  return { best: best.status === "fulfilled" ? best.value : null, popular, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
 }
 
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */

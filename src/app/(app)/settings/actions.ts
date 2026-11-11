@@ -28,6 +28,14 @@ export async function saveWorkspace(name: string, timezone: string): Promise<{ e
   return {};
 }
 
+/** The workspace's best hours (up to 7) as queue times, from its own results. Empty until there's enough data. */
+export async function bestQueue(): Promise<{ day: number; time: string }[]> {
+  const ctx = await getCtx();
+  const { suggestedTimes } = await import("@/lib/analytics");
+  const { slotsFromBest } = await import("@/lib/queue");
+  return slotsFromBest(await suggestedTimes(ctx.workspaceId, ctx.timezone, 7));
+}
+
 export async function saveQueue(slots: { day: number; time: string }[]): Promise<{ error?: string }> {
   const ctx = await getCtx();
   if (!canManage(ctx.role)) return { error: "Only owners and admins can change this" };

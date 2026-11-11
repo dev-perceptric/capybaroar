@@ -4,6 +4,7 @@ import { listChannels, type Channel } from "../channels";
 import { networkOf } from "../networks";
 import { threadOf } from "../thread";
 import { campaignCounts, listCampaigns } from "../campaigns";
+import { nextBestTime } from "../queue";
 import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePost, type PostRow, type SaveInput } from "../posts";
 import { listMedia, mediaThumbs } from "../media";
 import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
@@ -11,7 +12,7 @@ import { uploadFromLink } from "./upload";
 import { getGeneration, startGeneration, type Generation } from "../generations";
 import { brandOfScope, creditsOf } from "../credits";
 import { adminClient } from "../supabase/server";
-import { analytics } from "../analytics";
+import { analytics, suggestedTimes } from "../analytics";
 import { unpublishPost } from "../unpublish";
 import { UnpublishError } from "../unpublisher";
 import { ApiError, isId } from "./input";
@@ -100,6 +101,13 @@ export function realOps(ctx: ApiCtx): Ops {
     if (!p || !mayUseBrand(ctx, p.brand_id)) throw notFound("Post");
     return p;
   };
+  // publish_at "best": the next of the workspace's best hours, at least 30 minutes from now.
+  const resolveBest = async <F extends { publishAt?: string | null }>(f: F): Promise<F> => {
+    if (f.publishAt !== "best") return f;
+    const at = nextBestTime(await suggestedTimes(ctx.workspaceId, ctx.timezone, 7), ctx.timezone);
+    if (!at) throw new ApiError(400, "invalid_request", "There aren't enough results yet to know the best times. Send a time, or use mode queue.");
+    return { ...f, publishAt: at.toISOString() };
+  };
   const save = async (input: SaveInput) => {
     const channels = new Map((await listChannels(ctx.workspaceId, ctx.brandIds)).map((c) => [c.id, c]));
     for (const t of input.targets) if (!channels.has(t.channelId)) throw new ApiError(400, "invalid_request", `Channel ${t.channelId} isn't in this workspace. Use an id from list_channels.`);
@@ -170,9 +178,11 @@ export function realOps(ctx: ApiCtx): Ops {
       return toPost(await load(id));
     },
     async create(f) {
+      f = await resolveBest(f);
       return save({ text: f.text ?? "", mediaIds: f.mediaIds ?? [], thread: f.thread ?? [], campaignId: f.campaignId ?? null, targets: targetsOf(f.channelIds, f), publishAt: f.publishAt ?? null, mode: f.mode });
     },
     async update(id, f) {
+      f = await resolveBest(f);
       const cur = await load(id);
       if (!EDITABLE.includes(cur.status)) throw new ApiError(409, "conflict", "This post already went out");
       const mode = f.mode ?? (cur.status === "draft" ? "draft" : "schedule");

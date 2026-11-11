@@ -30,6 +30,19 @@ export async function endUpload(file: FileInfo & { path: string }): Promise<{ er
   return { id };
 }
 
+/** How many posts still to go out (drafts, in review, scheduled) use this file, so deleting it can warn first. */
+export async function mediaUsage(id: string): Promise<number> {
+  const ctx = await writerCtx();
+  const { adminClient } = await import("@/lib/supabase/server");
+  const { count } = await adminClient()
+    .from("posts")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", ctx.workspaceId)
+    .in("status", ["draft", "review", "scheduled"])
+    .or(`media_ids.cs.{${id}},thread.cs.[{"media_ids":["${id}"]}]`);
+  return count ?? 0;
+}
+
 export async function removeMedia(id: string) {
   const ctx = await writerCtx();
   await deleteMedia(ctx.workspaceId, id);

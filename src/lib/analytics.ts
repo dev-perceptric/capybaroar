@@ -1,5 +1,6 @@
 import "server-only";
 import { adminClient } from "./supabase/server";
+import { pickBest, pickPopular } from "./queue";
 
 type Metrics = { views: number | null; reach: number | null; impressions: number | null; likes: number | null; comments: number | null; shares: number | null; saves: number | null; clicks: number | null; engagement: number };
 type Row = {
@@ -106,15 +107,36 @@ function bestCells(rows: Pick<Row, "published_at" | "post_metrics">[], timeZone:
   return [...cells.values()].map((c) => ({ ...c, engagement: c.engagement / c.posts }));
 }
 
-/** The best 3 slots, once there's enough data to mean something (10 posts with results). */
-export async function suggestedTimes(workspaceId: string, timeZone: string) {
-  const cells = await bestTimes(workspaceId, timeZone);
-  if (cells.reduce((s, c) => s + c.posts, 0) < 10) return [];
-  return cells
-    .filter((c) => c.posts >= 2)
-    .sort((a, b) => b.engagement - a.engagement)
-    .slice(0, 3)
-    .map(({ day, hour }) => ({ day, hour }));
+/**
+ * Popular hours on each network across every workspace, for accounts without enough results of their own. Only totals
+ * by weekday and hour leave this function, never a workspace's posts. Kept for a day per time zone.
+ */
+const popular = new Map<string, { at: number; value: Record<string, { day: number; hour: number }[]> }>();
+export async function popularTimes(timeZone: string): Promise<Record<string, { day: number; hour: number }[]>> {
+  const hit = popular.get(timeZone);
+  if (hit && Date.now() - hit.at < DAY) return hit.value;
+  const { data, error } = await adminClient()
+    .from("post_targets")
+    .select("published_at, channels(network), post_metrics(engagement)")
+    .eq("status", "published")
+    .gte("published_at", new Date(Date.now() - 90 * DAY).toISOString())
+    .order("published_at", { ascending: false })
+    .limit(20000);
+  if (error) throw new Error(error.message);
+  type P = { published_at: string; channels: { network: string } | { network: string }[] | null; post_metrics: Row["post_metrics"] };
+  const byNetwork = new Map<string, P[]>();
+  for (const r of (data ?? []) as unknown as P[]) {
+    const n = one(r.channels)?.network;
+    if (n) byNetwork.set(n, [...(byNetwork.get(n) ?? []), r]);
+  }
+  const value = Object.fromEntries([...byNetwork].map(([n, rows]) => [n, pickPopular(bestCells(rows, timeZone))]).filter(([, v]) => (v as unknown[]).length));
+  popular.set(timeZone, { at: Date.now(), value });
+  return value;
+}
+
+/** The best `n` slots (3 by default), once there's enough data to mean something (10 posts with results). */
+export async function suggestedTimes(workspaceId: string, timeZone: string, n = 3) {
+  return pickBest(await bestTimes(workspaceId, timeZone), n);
 }
 
 /** The last `days` days up to now, or a fixed `span` (a report's whole days); either is compared with the same length before it. */

@@ -16,7 +16,7 @@ type Tool = { name: string; title: string; description: string; inputSchema: Jso
 const POST_PROPS: Json = {
   channel_ids: { type: "array", items: { type: "string" }, description: "Channel ids from list_channels. One post can only use channels from one brand." },
   text: { type: "string", description: "The post text, shared by every channel. Keep it within each channel's character_limit." },
-  publish_at: { type: "string", description: "When it goes out, ISO 8601 with an offset, like 2026-11-05T09:00:00-05:00. Needed for draft and schedule." },
+  publish_at: { type: "string", description: 'When it goes out, ISO 8601 with an offset, like 2026-11-05T09:00:00-05:00, or "best" for the next of the workspace\'s best times (once it has enough results). Needed for draft and schedule.' },
   mode: {
     type: "string",
     enum: ["draft", "schedule", "now", "queue"],

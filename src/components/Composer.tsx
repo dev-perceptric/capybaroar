@@ -14,6 +14,7 @@ import { DeletePost } from "./DeletePost";
 import { TextTools, mod, toggleStyle } from "./TextTools";
 import { THREAD_MAX, networkOf, takesThread, type NetworkField, type ThreadPart } from "@/lib/networks";
 import { threadOf } from "@/lib/thread";
+import { toUploadable } from "@/lib/imageConvert";
 import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow } from "@/lib/posts";
@@ -36,6 +37,8 @@ type Target = { text: string | null; settings: Record<string, string> };
 type Uploading = { key: string; name: string; error?: string };
 
 const ACCEPT = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,application/pdf";
+// What the file picker offers: the above, plus photos that become JPEG before they upload.
+const PICK = `${ACCEPT},image/heic,image/heif,image/avif,.heic,.heif,.avif`;
 const isPdf = (m: { mime: string }) => m.mime === "application/pdf";
 const NEW_CAMPAIGN = "__new";
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -181,10 +184,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   }, []);
 
   const [best, setBest] = useState<{ day: number; hour: number }[]>([]);
+  const [popular, setPopular] = useState<Record<string, { day: number; hour: number }[]>>({});
   useEffect(() => {
     composerData().then(
       (d) => {
         setBest(d.best ?? []);
+        setPopular(d.popular ?? {});
         setLibrary((d.media ?? []) as Media[]);
         setCampaigns(d.campaigns ?? []);
         setAi(!!d.ai);
@@ -300,7 +305,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   /** Upload straight to storage with a one-time link, then attach. Several files upload one after another. */
   const upload = async (list: FileList | File[], replace?: string, attach?: (id: string) => void) => {
-    const all = Array.from(list).filter((f) => ACCEPT.split(",").includes(f.type));
+    const converted = await Promise.all(Array.from(list).map((f) => toUploadable(f).catch(() => f)));
+    const all = converted.filter((f) => ACCEPT.split(",").includes(f.type));
     if (!all.length) {
       setError("Use JPG, PNG, GIF, WebP, MP4, MOV or PDF");
       return;
@@ -767,7 +773,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     </button>
                   ) : null}
                 </div>
-                <input ref={fileInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
+                <input ref={fileInput} type="file" multiple accept={PICK} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
                 {picking === "generate" ? (
                   <div className="rounded-lg bg-paper p-3 shadow-track">
                     <div className="mb-2 flex items-center justify-between">
@@ -941,10 +947,10 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t border-line bg-paper px-4 py-3">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               <input type="datetime-local" aria-label="Publish time" value={when} onChange={(e) => setWhen(e.target.value)} className={`${inputLook} w-[210px] max-w-full`} />
-              {best.map((b) => {
+              {(best.length ? best : shown ? (popular[shown.network] ?? []) : []).map((b) => {
                 const at = nextAt(b.day, b.hour);
                 return (
-                  <Chip key={`${b.day}${b.hour}`} size="sm" title="One of your best times" on={when === localValue(at)} onClick={() => setWhen(localValue(at))}>
+                  <Chip key={`${b.day}${b.hour}`} size="sm" title={best.length ? "One of your best times" : `Popular on ${networkOf(shown!.network).name}`} on={when === localValue(at)} onClick={() => setWhen(localValue(at))}>
                     {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
                   </Chip>
                 );
@@ -1161,7 +1167,7 @@ function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { p
           </Button>
         </div>
       ) : null}
-      <input ref={upInput} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => e.target.files && (onUpload(e.target.files, upFor.current), (e.target.value = ""))} />
+      <input ref={upInput} type="file" multiple accept={PICK} className="hidden" onChange={(e) => e.target.files && (onUpload(e.target.files, upFor.current), (e.target.value = ""))} />
     </div>
   );
 }

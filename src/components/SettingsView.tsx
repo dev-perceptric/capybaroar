@@ -3,13 +3,15 @@
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, CardHead, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
+import { Button, CardHead, Chip, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
+import { askConfirm, tell } from "./Dialogs";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
 import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
 import { ApiSection, type ApiInfo } from "./ApiSettings";
-import { saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
+import { bestQueue, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
+import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -134,6 +136,13 @@ function Queue({ initial, timezone }: { initial: { day: number; time: string }[]
   const [msg, setMsg] = useState("");
   const [busy, start] = useTransition();
   const set = (i: number, p: Partial<{ day: number; time: string }>) => setSlots((s) => s.map((x, j) => (j === i ? { ...x, ...p } : x)));
+  const preset = async (k: QueuePreset) => {
+    const next = k === "best" ? await bestQueue().catch(() => []) : [...QUEUE_PRESETS[k].slots];
+    if (!next.length) return tell("Not enough results yet", "Your best times show once 10 posts have results. Pick another set for now.");
+    if (slots.length && !(await askConfirm("Replace your times?", { ok: "Replace" }))) return;
+    setSlots(next);
+    setMsg("");
+  };
   return (
     <>
       <PaneHead title="Queue" line={`Times that Add to queue fills, in ${timezone.replace(/_/g, " ")}`} />
@@ -143,6 +152,16 @@ function Queue({ initial, timezone }: { initial: { day: number; time: string }[]
             <Plus /> Add a time
           </Button>
         </CardHead>
+        <div className="flex flex-wrap gap-1.5 border-b border-line px-4 py-3">
+          {(Object.keys(QUEUE_PRESETS) as (keyof typeof QUEUE_PRESETS)[]).map((k) => (
+            <Chip key={k} size="sm" onClick={() => void preset(k)}>
+              {QUEUE_PRESETS[k].label}
+            </Chip>
+          ))}
+          <Chip size="sm" onClick={() => void preset("best")}>
+            Your best times
+          </Chip>
+        </div>
         {slots.length ? (
           <div className="divide-y divide-line">
             {slots.map((s, i) => (

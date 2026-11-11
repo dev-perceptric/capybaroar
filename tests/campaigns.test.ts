@@ -62,3 +62,9 @@ test("MCP: list_campaigns returns the campaigns", async () => {
   assert.equal(r.result.isError, false);
   assert.equal(JSON.parse(r.result.content[0].text).campaigns[0].name, "Launch");
 });
+
+test("bulk CSV matches other tools' column names", () => {
+  const ch: BulkChannel[] = [{ id: "c", name: "Crumb", network: "x", brand_id: null, status: "active" }];
+  const { rows } = parseBulk(`Scheduled At,Profile,Message,Tag\n2099-01-02 09:00,X,Hello there,Launch\n`, ch, "UTC");
+  assert.deepEqual([rows[0].errors, rows[0].text, rows[0].channelIds, rows[0].campaign, rows[0].at], [[], "Hello there", ["c"], "Launch", "2099-01-02T09:00:00.000Z"]);
+});
