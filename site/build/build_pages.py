@@ -43,7 +43,7 @@ PLATFORM = [
 CHANNELS_NAV = [
     ('/instagram-post-scheduler', 'instagram', 'Instagram', 'Posts, Reels, Stories'),
     ('/facebook-post-scheduler', 'facebook', 'Facebook', 'Posts and Reels'),
-    ('/tiktok-scheduler', 'tiktok', 'TikTok', 'Videos'),
+    ('/tiktok-scheduler', 'tiktok', 'TikTok', 'Videos and photo posts'),
     ('/linkedin-post-scheduler', 'linkedin', 'LinkedIn', 'Posts and PDF carousels'),
     ('/youtube-video-scheduler', 'youtube', 'YouTube', 'Videos'),
     ('/x-post-scheduler', 'x', 'X', 'Posts'),
@@ -446,7 +446,7 @@ SCHED_NETS = [
     ('facebook', 'Facebook', '63,206', 'Post or Reel', False, 'First comment'),
     ('instagram', 'Instagram', '2,200', 'Post, Reel or Story', True, 'Reel cover, first comment'),
     ('threads', 'Threads', '500', 'Post', False, ''),
-    ('tiktok', 'TikTok', '2,200', 'Video', True, 'Who can watch, comments on or off'),
+    ('tiktok', 'TikTok', '2,200', 'Video or photo post', True, 'Who can watch, comments, Duet, Stitch, photo title'),
     ('youtube', 'YouTube', '5,000', 'Video', True, 'Title, tags, visibility, made for kids, thumbnail'),
     ('x', 'X', '280', 'Post, thread or poll', False, 'Who can reply, poll, made with AI, paid partnership'),
     ('pinterest', 'Pinterest', '500', 'Pin', True, 'Board, title, link'),

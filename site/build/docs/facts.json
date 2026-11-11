@@ -230,6 +230,11 @@
     ]
    },
    {
+    "key": "title",
+    "label": "Photo title",
+    "kind": "text"
+   },
+   {
     "key": "brand",
     "label": "Promotional content",
     "kind": "select",

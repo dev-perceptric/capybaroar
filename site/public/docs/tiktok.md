@@ -21,7 +21,8 @@ Click TikTok in Channels, sign in with TikTok and approve Capybaroar. TikTok alw
 3. **Open the TikTok tab** to set the options below.
 4. **Check the preview**, then schedule, queue or post now.
 
-- Every TikTok post is one video, with a caption of up to 2,200 characters.
+- A TikTok post is one video, or a photo post of 1 to 35 JPG or WebP pictures. Captions are up to 2,200 characters.
+- A photo post can have a title of up to 90 characters in Photo title. TikTok adds music to it.
 - The TikTok tab shows the account you post as, and the Who can watch choices TikTok allows for it. Pick one: there is no default.
 - Allow comments, Duet and Stitch start off. Turn on the ones you want. If your TikTok settings turn one off, it stays off here too.
 - Mark promotional posts as Your brand or Branded content. TikTok labels them, and branded content can't be set to Only me.
@@ -33,6 +34,7 @@ Click TikTok in Channels, sign in with TikTok and approve Capybaroar. TikTok alw
 | Allow comments | On, Off (starts as Off) |
 | Allow Duet | On, Off (starts as Off) |
 | Allow Stitch | On, Off (starts as Off) |
+| Photo title | Text |
 | Promotional content | No, Your brand, Branded content (starts as Off) |
 
 ## If a post is turned down
@@ -40,7 +42,9 @@ Click TikTok in Channels, sign in with TikTok and approve Capybaroar. TikTok alw
 Capybaroar checks each post before it's scheduled and shows the reason next to the channel. These are the TikTok ones:
 
 | Message | What to do |
-| `TikTok needs exactly one video` | Use one video and no pictures. |
+| `TikTok takes one video, or pictures only` | Use one video on its own, or only pictures. |
+| `TikTok photo posts take JPG or WebP pictures` | Save the picture as JPG or WebP and add it again. |
+| `TikTok photo posts take up to 35 pictures` | Remove some pictures, or make two posts. |
 | `Choose who can watch this TikTok` | Pick an option in Who can watch. |
 | `Branded content can't be set to Only me on TikTok` | Pick a wider audience, or set Promotional content to Your brand or No. |
 | `This TikTok account can't post with that Who can watch choice. Pick another` | Pick one of the options the TikTok tab shows. |

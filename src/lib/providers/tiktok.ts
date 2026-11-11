@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type Provider } from "./types";
+import { AuthError, PostError, call, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Publishable } from "./types";
 
 // TikTok: Login Kit + Content Posting API (Direct Post), video upload from our server. Scopes stay at what the
 // composer and publisher use (user.info.basic, user.info.profile for the username and post links, video.publish)
@@ -122,14 +122,17 @@ export const tiktok: Provider = {
   revoke: async (s) => {
     await call(`${API}/oauth/revoke/`, tokenRequest({ client_key: key(), client_secret: secret(), token: s.accessToken }), { what: "TikTok disconnect" });
   },
-  check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "TikTok needs exactly one video" : p.text.length > 2200 ? "TikTok captions are up to 2,200 characters" : p.settings.brand === "branded" && p.settings.privacy === "SELF_ONLY" ? "Branded content can't be set to Only me on TikTok" : null),
+  check: tiktokProblem,
   publish: async (s, _openId, p) => {
+    const problem = tiktokProblem(p);
+    if (problem) throw new PostError(problem);
     const token = s.accessToken;
     const video = p.media[0];
     const creator = await creatorInfo(token);
     const privacy = p.settings.privacy;
     if (!privacy) throw new PostError("Choose who can watch this TikTok");
     if (!creator.privacy.includes(privacy)) throw new PostError(`This TikTok account can only post as: ${creator.privacy.join(", ")}`);
+    if (!isVideo(video)) return publishPhotos(token, p, privacy, creator);
     const bytes = await video.bytes();
     const size = bytes.length;
     const chunk = size <= CHUNK * 2 ? size : CHUNK;
@@ -166,20 +169,79 @@ export const tiktok: Provider = {
       });
       if (!put.ok) throw new Error(`TikTok upload: ${put.status}`);
     }
-    for (let i = 0; i < 60; i++) {
-      const st = await tt<{ status: string; fail_reason?: string; publicaly_available_post_id?: (string | number)[] }>(
-        `${API}/post/publish/status/fetch/`,
-        { method: "POST", headers: json(token), body: JSON.stringify({ publish_id: init.publish_id }) },
-        "TikTok status",
-      );
-      if (st.status === "PUBLISH_COMPLETE") {
-        const postId = st.publicaly_available_post_id?.[0];
-        return { id: postId ? String(postId) : init.publish_id, url: await postLink(token, postId ? String(postId) : null) };
-      }
-      if (st.status === "FAILED") throw new PostError(`TikTok: ${st.fail_reason ?? "publish failed"}`);
-      await sleep(5000);
-    }
-    // Uploaded and processing: TikTok finishes on its side, so don't upload again.
-    return { id: init.publish_id, url: await postLink(token, null) };
+    return waitPublished(token, init.publish_id);
   },
 };
+
+/** Polls the publish status. Once TikTok has the post it finishes on its side, so a slow one is never sent again. */
+async function waitPublished(token: string, publishId: string) {
+  for (let i = 0; i < STATUS_TRIES; i++) {
+    const st = await tt<{ status: string; fail_reason?: string; publicaly_available_post_id?: (string | number)[] }>(
+      `${API}/post/publish/status/fetch/`,
+      { method: "POST", headers: json(token), body: JSON.stringify({ publish_id: publishId }) },
+      "TikTok status",
+    );
+    if (st.status === "PUBLISH_COMPLETE") {
+      const postId = st.publicaly_available_post_id?.[0];
+      return { id: postId ? String(postId) : publishId, url: await postLink(token, postId ? String(postId) : null) };
+    }
+    if (st.status === "FAILED") throw new PostError(`TikTok: ${PLAIN_FAIL[st.fail_reason ?? ""] ?? st.fail_reason ?? "publish failed"}`);
+    await sleep(STATUS_WAIT_MS);
+  }
+  return { id: publishId, url: await postLink(token, null) };
+}
+
+let STATUS_TRIES = 60;
+let STATUS_WAIT_MS = 5000;
+export const setStatusWait = (tries: number, ms: number) => {
+  STATUS_TRIES = tries;
+  STATUS_WAIT_MS = ms;
+};
+
+/** Photo posts' failure reasons, in plain words. */
+const PLAIN_FAIL: Record<string, string> = {
+  url_ownership_unverified: "TikTok can't fetch the pictures: verify Capybaroar's media domain in the TikTok developer portal",
+  picture_size_check_failed: "A picture is too big for TikTok. Use pictures up to 1080 pixels on the long side.",
+};
+
+const PHOTO = /^image\/(jpeg|webp)$/;
+
+/** One video, or 1 to 35 JPG or WebP pictures up to 20 MB each, plus TikTok's caption and branded content rules. */
+export function tiktokProblem(p: Pick<Publishable, "media" | "text" | "settings">): string | null {
+  const videos = p.media.filter(isVideo);
+  if (!p.media.length) return "TikTok needs one video, or 1 to 35 pictures";
+  if (videos.length && p.media.length > 1) return "TikTok takes one video, or pictures only";
+  if (!videos.length) {
+    if (p.media.length > 35) return "TikTok photo posts take up to 35 pictures";
+    if (p.media.some((m) => !PHOTO.test(m.mime))) return "TikTok photo posts take JPG or WebP pictures";
+    if (p.media.some((m) => m.size > 20 * 1024 * 1024)) return "TikTok pictures must be under 20 MB";
+    if ([...(p.settings.title ?? "")].length > 90) return "TikTok photo titles are up to 90 characters";
+  }
+  if (p.text.length > 2200) return "TikTok captions are up to 2,200 characters";
+  if (p.settings.brand === "branded" && p.settings.privacy === "SELF_ONLY") return "Branded content can't be set to Only me on TikTok";
+  return null;
+}
+
+/** The photo post TikTok gets: it pulls each picture from its link, which must be on a verified domain. */
+export function photoBody(p: Pick<Publishable, "text" | "settings">, media: Pick<MediaFile, "url">[], privacy: string, creator: Pick<CreatorInfo, "commentOff">) {
+  const title = p.settings.title?.trim();
+  return {
+    post_info: {
+      ...(title ? { title } : {}),
+      description: p.text,
+      privacy_level: privacy,
+      disable_comment: p.settings.comments !== "on" || creator.commentOff,
+      auto_add_music: true,
+      brand_organic_toggle: p.settings.brand === "own",
+      brand_content_toggle: p.settings.brand === "branded",
+    },
+    source_info: { source: "PULL_FROM_URL", photo_cover_index: 0, photo_images: media.map((m) => m.url) },
+    post_mode: "DIRECT_POST",
+    media_type: "PHOTO",
+  };
+}
+
+async function publishPhotos(token: string, p: Publishable, privacy: string, creator: CreatorInfo) {
+  const init = await tt<{ publish_id: string }>(`${API}/post/publish/content/init/`, { method: "POST", headers: json(token), body: JSON.stringify(photoBody(p, p.media, privacy, creator)) }, "TikTok photo post");
+  return waitPublished(token, init.publish_id);
+}

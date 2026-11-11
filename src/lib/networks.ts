@@ -116,6 +116,7 @@ export const NETWORKS: Network[] = [
       { key: "comments", label: "Allow comments", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
       { key: "duet", label: "Allow Duet", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
       { key: "stitch", label: "Allow Stitch", kind: "select", initial: "off", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] },
+      { key: "title", label: "Photo title", kind: "text", placeholder: "For photo posts, up to 90 characters" },
       {
         key: "brand",
         label: "Promotional content",
