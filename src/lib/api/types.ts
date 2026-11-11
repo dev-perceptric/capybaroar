@@ -33,6 +33,7 @@ export type ApiPost = {
   media_ids: string[];
   /** A thread's posts after the first. Channels on networks without threads post the first only. */
   thread: { text: string; media_ids: string[] }[];
+  campaign_id: string | null;
   /** thread_urls: links to the thread's later posts that went out on this channel, in order. */
   channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null; deleted_at: string | null; thread_urls: (string | null)[] }[];
 };
@@ -67,11 +68,15 @@ export type ApiAnalytics = {
   top_posts: { id: string; channel_id: string; published_at: string; text: string; url: string | null; engagements: number; engagement_rate: number | null }[];
 };
 
+export type ApiCampaign = { id: string; name: string; color: string; brand_id: string | null; scheduled: number; published: number; failed: number; drafts: number; engagements: number };
+
 export interface Ops {
   brands(): Promise<ApiBrand[]>;
   channels(brandId: string | null): Promise<ApiChannel[]>;
   /** Saved channel groups, to post to many channels at once. */
   channelGroups(): Promise<ApiChannelGroup[]>;
+  /** Campaigns, with their posts by status and engagements. */
+  campaigns(): Promise<ApiCampaign[]>;
   posts(from: Date, to: Date, brandId: string | null): Promise<ApiPost[]>;
   post(id: string): Promise<ApiPost>;
   create(fields: PostFields & { channelIds: string[]; mode: Mode }): Promise<ApiPost>;

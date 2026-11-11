@@ -32,6 +32,8 @@ export type PostFields = {
   settings?: Record<string, Record<string, string>>;
   /** A thread's posts after the first, each with its text and files. */
   thread?: { text: string; mediaIds: string[] }[];
+  /** The campaign, or null to take the post out of its campaign. */
+  campaignId?: string | null;
 };
 
 export const MAX_TEXT = 70000;
@@ -114,7 +116,7 @@ function settingsMap(v: unknown): Record<string, Record<string, string>> {
 /** A post to create (`partial` false) or the fields to change on one (`partial` true). */
 export function postFields(body: unknown, partial: boolean): PostFields {
   if (!isObject(body)) throw bad("Send a JSON object");
-  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings", "thread"]);
+  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings", "thread", "campaign_id"]);
   for (const k of Object.keys(body)) if (!known.has(k) && !(partial && k === "id")) throw bad(`Unknown field "${k}"`);
   const out: PostFields = {};
   if (body.text !== undefined) {
@@ -135,6 +137,7 @@ export function postFields(body: unknown, partial: boolean): PostFields {
   if (body.channel_text !== undefined) out.channelText = textMap(body.channel_text, "channel_text");
   if (body.settings !== undefined) out.settings = settingsMap(body.settings);
   if (body.thread !== undefined) out.thread = threadParts(body.thread);
+  if (body.campaign_id !== undefined) out.campaignId = body.campaign_id === null ? null : id(body.campaign_id, "campaign_id");
   if (!partial) {
     if (!out.channelIds) throw bad("channel_ids is required");
     out.mode ??= "draft";

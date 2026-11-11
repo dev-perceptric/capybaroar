@@ -6,13 +6,17 @@ const noop = () => () => {};
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Layers, Plus } from "lucide-react";
-import { Badge, Button, Chip, Empty, Page, Segmented } from "@/components/ui";
+import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
+import { Badge, Button, Chip, Empty, IconButton, Page, Segmented } from "@/components/ui";
+import { Select } from "@/components/Select";
+import { Sheet } from "@/components/Overlay";
 import { ChannelFace, NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { loadPosts, move } from "@/app/(app)/calendar/actions";
-import { tell } from "@/components/Dialogs";
+import { loadCampaigns, loadPosts, move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
+import { askConfirm, askText, tell } from "@/components/Dialogs";
+import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
+import { fmtNum } from "@/lib/format";
 
 // The composer (previews, text tools, uploads) loads after the calendar shows, and is fetched while the browser is
 // idle so it opens at once.
@@ -20,7 +24,7 @@ const loadComposer = () => import("@/components/Composer").then((m) => m.Compose
 const Composer = dynamic(loadComposer, { ssr: false });
 const BulkSheet = dynamic(() => import("@/components/BulkSheet").then((m) => m.BulkSheet), { ssr: false });
 
-type Mode = "week" | "month" | "list";
+type Mode = "day" | "week" | "month" | "list";
 
 const DAY = 86400000;
 const HOUR_PX = 64;
@@ -53,11 +57,22 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
   const [bulk, setBulk] = useState(false);
   const [channel, setChannel] = useState<string>("all");
+  const [campaign, setCampaign] = useState<string>("all");
+  const [campaigns, setCampaigns] = useState<(Campaign & { counts: CampaignCounts })[]>([]);
+  const [campaignSheet, setCampaignSheet] = useState(false);
+  const reloadCampaigns = useCallback(() => {
+    loadCampaigns().then(setCampaigns, () => setCampaigns([]));
+  }, []);
+  useEffect(() => reloadCampaigns(), [reloadCampaigns]);
   const [posts, setPosts] = useState<PostRow[]>(() => initial?.posts ?? []);
   const range = useMemo(() => {
     if (mode === "list") {
       const from = startOfDay(anchor);
       return { from, to: new Date(from.getTime() + 28 * DAY) };
+    }
+    if (mode === "day") {
+      const from = startOfDay(anchor);
+      return { from, to: new Date(from.getTime() + DAY) };
     }
     const from = mode === "week" ? startOfWeek(anchor) : startOfWeek(new Date(anchor.getFullYear(), anchor.getMonth(), 1));
     return { from, to: new Date(from.getTime() + (mode === "week" ? 7 : 42) * DAY) };
@@ -104,7 +119,8 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
       return t >= from && t < to;
     });
   }, [posts, range, ready]);
-  const shown = channel === "all" ? inRange : inRange.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
+  const byCampaign = campaign === "all" ? inRange : inRange.filter((p) => (campaign === "none" ? !p.campaign_id : p.campaign_id === campaign));
+  const shown = channel === "all" ? byCampaign : byCampaign.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
   const byId = useMemo(() => new Map(channels.map((c) => [c.id, c])), [channels]);
   const counts = useMemo(() => {
     const m = new Map<string, number>();
@@ -146,12 +162,13 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   }, []);
 
   const step = (dir: -1 | 1) =>
-    setAnchor((a) => (mode === "month" ? new Date(a.getFullYear(), a.getMonth() + dir, 1) : new Date(a.getTime() + dir * (mode === "list" ? 28 : 7) * DAY)));
+    setAnchor((a) => (mode === "month" ? new Date(a.getFullYear(), a.getMonth() + dir, 1) : new Date(a.getTime() + dir * (mode === "list" ? 28 : mode === "day" ? 1 : 7) * DAY)));
 
   // The big title: the point in black, the year in gray.
   const [lead, tail] = useMemo((): [string, string] => {
     const year = String(anchor.getFullYear());
     if (mode === "month") return [anchor.toLocaleDateString("en-US", { month: "long" }), year];
+    if (mode === "day") return [anchor.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }), year];
     const s = mode === "list" ? startOfDay(anchor) : startOfWeek(anchor);
     const e = new Date(s.getTime() + (mode === "list" ? 27 : 6) * DAY);
     const md = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -167,6 +184,9 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
       actions={
         access.write ? (
           <>
+            <Button variant="ghost" onClick={() => setCampaignSheet(true)}>
+              <Flag /> Campaigns
+            </Button>
             <Button variant="ghost" onClick={() => setBulk(true)}>
               <Layers /> Bulk
             </Button>
@@ -195,11 +215,22 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               </button>
             </div>
             <span className="flex-1" />
+            {campaigns.length ? (
+              <Select<string>
+                size="sm"
+                lead="Campaign"
+                ariaLabel="Campaign"
+                value={campaign}
+                onChange={setCampaign}
+                options={[{ value: "all", label: "All" }, ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })), { value: "none", label: "No campaign" }]}
+              />
+            ) : null}
             <Segmented<Mode>
               label="View"
               value={mode}
               onChange={setMode}
               options={[
+                { value: "day", label: "Day" },
                 { value: "week", label: "Week" },
                 { value: "month", label: "Month" },
                 { value: "list", label: "List" },
@@ -228,8 +259,8 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
         </div>
 
         <div className="min-h-0 flex-1">
-          {!ready ? null : mode === "week" ? (
-            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} />
+          {!ready ? null : mode === "week" || mode === "day" ? (
+            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} single={mode === "day"} />
           ) : mode === "month" ? (
             <Month
               anchor={anchor}
@@ -270,9 +301,21 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
           onSaved={() => {
             setCompose(null);
             reload();
+            reloadCampaigns();
           }}
         />
       ) : null}
+      <Sheet open={campaignSheet} onClose={() => setCampaignSheet(false)} label="Campaigns" title="Campaigns">
+        <CampaignList
+          campaigns={campaigns}
+          onChange={reloadCampaigns}
+          onShow={(id) => {
+            setCampaign(id);
+            setMode("list");
+            setCampaignSheet(false);
+          }}
+        />
+      </Sheet>
     </Page>
   );
 }
@@ -384,8 +427,10 @@ function lanes(posts: PostRow[]) {
 
 type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void };
 
-function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
-  const days = Array.from({ length: 7 }, (_, i) => new Date(startOfWeek(anchor).getTime() + i * DAY));
+/** The week, or with `single` one day, hour by hour. */
+function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, single = false }: ViewProps & { single?: boolean }) {
+  const days = single ? [startOfDay(anchor)] : Array.from({ length: 7 }, (_, i) => new Date(startOfWeek(anchor).getTime() + i * DAY));
+  const cols = { gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))` };
   const seven = useRef<HTMLDivElement>(null);
   const thisWeekStart = days.some((d) => sameDay(d, now));
   // Open at 7 AM, or two hours before now on this week, just under the sticky headers.
@@ -402,8 +447,8 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
   const nowTop = ((now.getHours() * 60 + now.getMinutes()) / 60) * HOUR_PX;
   const thisWeek = days.some((d) => sameDay(d, now));
   return (
-    <div className="min-w-[840px] pr-6">
-      <div className="sticky top-[var(--cal-head,0px)] z-20 grid grid-cols-[64px_repeat(7,minmax(0,1fr))] border-r border-b border-line bg-panel">
+    <div className={`${single ? "" : "min-w-[840px]"} pr-6`}>
+      <div className="sticky top-[var(--cal-head,0px)] z-20 grid border-r border-b border-line bg-panel" style={cols}>
         <div />
         {days.map((d) => {
           const today = sameDay(d, now);
@@ -419,7 +464,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop }: ViewProps) {
           );
         })}
       </div>
-      <div className="relative mb-6 grid grid-cols-[64px_repeat(7,minmax(0,1fr))] border-r border-b border-line">
+      <div className="relative mb-6 grid border-r border-b border-line" style={cols}>
         <div className="relative">
           {HOURS.map((h) => (
             <div key={h} ref={h === 0 ? seven : undefined} className="relative" style={{ height: HOUR_PX }}>
@@ -578,6 +623,66 @@ function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Cha
           </section>
         );
       })}
+    </div>
+  );
+}
+
+/** Every campaign with its posts by status and their engagements: show its posts, rename it or delete it. */
+function CampaignList({ campaigns, onChange, onShow }: { campaigns: (Campaign & { counts: CampaignCounts })[]; onChange: () => void; onShow: (id: string) => void }) {
+  const add = async () => {
+    const name = await askText("New campaign", { placeholder: "Spring launch", ok: "Create" });
+    if (!name?.trim()) return;
+    const r = await newCampaign(name);
+    if (r.error) return tell("Couldn't make the campaign", r.error);
+    onChange();
+  };
+  const rename = async (c: Campaign) => {
+    const name = await askText("Rename campaign", { initial: c.name, ok: "Save" });
+    if (!name?.trim() || name.trim() === c.name) return;
+    const r = await renameCampaign(c.id, name);
+    if (r.error) return tell("Couldn't rename the campaign", r.error);
+    onChange();
+  };
+  const del = async (c: Campaign) => {
+    if (!(await askConfirm(`Delete the campaign "${c.name}"?`, { ok: "Delete", danger: true, body: "Its posts stay on the calendar." }))) return;
+    const r = await removeCampaign(c.id);
+    if (r.error) return tell("Couldn't delete the campaign", r.error);
+    onChange();
+  };
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <div>
+        <Button size="sm" onClick={add}>
+          <Plus /> New campaign
+        </Button>
+      </div>
+      {campaigns.length ? (
+        <ul className="flex flex-col divide-y divide-line">
+          {campaigns.map((c) => (
+            <li key={c.id} className="flex flex-col gap-1.5 py-3">
+              <div className="flex items-center gap-2">
+                <span className="size-2.5 shrink-0 rounded-full" style={{ background: `var(--color-tone-${c.tone})` }} />
+                <button type="button" onClick={() => onShow(c.id)} className="min-w-0 flex-1 truncate text-left text-[13.5px] font-medium hover:underline">
+                  {c.name}
+                </button>
+                <IconButton label="Rename" onClick={() => rename(c)}>
+                  <Pencil size={14} />
+                </IconButton>
+                <IconButton label="Delete" onClick={() => del(c)}>
+                  <Trash2 size={14} />
+                </IconButton>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pl-4.5">
+                <Badge tone="sky">{c.counts.scheduled} scheduled</Badge>
+                <Badge tone="green">{c.counts.published} published</Badge>
+                {c.counts.failed ? <Badge tone="red">{c.counts.failed} failed</Badge> : null}
+                {c.counts.drafts ? <Badge>{c.counts.drafts} drafts</Badge> : null}
+                <Badge>{fmtNum(c.counts.engagements)} engagements</Badge>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }

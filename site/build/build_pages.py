@@ -786,17 +786,18 @@ def feature(slug, key, tag, h1a, h1b, lead, stage, rows, extra, close, faqs, tit
 # ---- Content calendar
 feature('/social-media-calendar', 'cal', 'Content calendar', 'A social media calendar', 'for every brand and network',
         'See every draft, scheduled post and published post in one place. Drag a post to a new day, or click an open hour to write one.', 'sc-sched', [
-    zrow('i-grid', 'Views', 'Week, month or list.', 'Switch in one click.', 'Plan the week hour by hour, see the whole month at a glance, or read every post in order in the list.',
-         ['Week view with hours', 'Month view for the big picture', 'List view to read posts in order', 'Times in your workspace\'s time zone'], month_mock()),
+    zrow('i-grid', 'Views', 'Day, week, month or list.', 'Switch in one click.', 'Plan a day or a week hour by hour, see the whole month at a glance, or read every post in order in the list.',
+         ['Day and week views with hours', 'Month view for the big picture', 'List view to read posts in order', 'Times in your workspace\'s time zone'], month_mock()),
     zrow('i-pointer', 'Drag and drop', 'Move a post.', 'Keep your plan.', 'Drag a draft, scheduled or failed post to another day or hour. Scheduled posts go out at the new time.',
          ['Drag to change the day or hour', 'Click an open hour to add a post', 'Copy a post to reuse it', 'Delete it on every network from the calendar'], rows_mock('This week', 'i-calendar', [
              ('Mon 9 AM', ['linkedin'], 'Meet our bakers'), ('Wed 9 AM', ['instagram', 'threads'], 'Rye is back'), ('Thu 12 PM', ['youtube'], 'Oven tour'), ('Fri 5 PM', ['tiktok'], 'Crumb shot')]), flip=True),
-    zrow('i-layers', 'Every brand', 'One calendar per client,', 'or all of them together.', 'Filter by brand or channel to focus, and see each post\'s state at a glance: draft, in review, scheduled, published or failed.',
-         ['Filter by brand or channel', 'Draft, In review, Scheduled, Published and Failed', 'Approvals show right on the calendar', 'Best times suggested when you pick a time'], ZVIS['z-prev']),
+    zrow('i-layers', 'Brands and campaigns', 'One calendar per client,', 'one color per campaign.', 'Filter by brand, channel or campaign to focus. Group a launch or a sale into a campaign and see its posts and engagements together.',
+         ['Filter by brand, channel or campaign', 'Campaigns with scheduled, published and failed counts', 'Draft, In review, Scheduled, Published and Failed', 'Best times suggested when you pick a time'], ZVIS['z-prev']),
 ], '', ('Your next month of posts,', 'on one calendar.'), [
     ('What is a social media calendar?', 'A calendar of the posts you plan to publish on each network. In Capybaroar it is also where posts are written, moved and approved.'),
     ('Can I drag posts to a new day?', 'Yes. Drag a draft, scheduled or failed post to another day or hour. Scheduled posts go out at the new time.'),
-    ('Which views are there?', 'Week, month and list.'),
+    ('Which views are there?', 'Day, week, month and list.'),
+    ('Can I group posts into campaigns?', 'Yes. Pick or make a campaign in the composer, or add a campaign column to a bulk CSV. Filter the calendar by campaign and see each campaign\'s posts and engagements.'),
     ('Can I see several brands at once?', 'Yes. See every brand together, or filter by one brand or one channel.'),
     ('Does the calendar show published posts?', 'Yes. Published posts stay on the calendar with a link to the live post.'),
 ], 'Social media content calendar with drag and drop | Capybaroar',
@@ -820,8 +821,9 @@ feature('/posting-queue', 'queue', 'Posting queue', 'Set your posting times once
    'Set posting times for each day once, and every new post takes the next free time. Works with bulk uploads, RSS feeds, evergreen posts and MCP. Free plan.')
 
 # ---- Bulk scheduling
+BULK_COLS_EXTRA = [('campaign', 'A campaign name. A new name makes a new campaign')]
 BULK_COLS = [('date', '2026-11-05 or 2026/11/05'), ('time', '09:30 or 9:30 PM'), ('channels', 'Channel names or networks, like Instagram | LinkedIn'), ('text', 'The post. A line with only --- starts the next post of a thread'),
-             ('media url', 'A link to a picture or video'), ('first comment', 'Posted as a comment right after, where the network allows it'), ('title', 'A YouTube or Pinterest title')]
+             ('media url', 'A link to a picture or video'), ('first comment', 'Posted as a comment right after, where the network allows it'), ('title', 'A YouTube or Pinterest title')] + BULK_COLS_EXTRA
 feature('/bulk-scheduling', 'bulk', 'Bulk scheduling', 'Schedule a month of posts', 'in one upload',
         'Upload a CSV with one post per row, or a stack of pictures and videos with a caption each. Every row is checked before anything is saved.', 'sc-sched', [
     zrow('i-upload', 'CSV upload', 'One row,', 'one post.', 'Up to 500 posts per file. Capybaroar reads the columns, matches your channels and shows every problem by row before you import.',

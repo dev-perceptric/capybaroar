@@ -30,6 +30,7 @@ const POST_PROPS: Json = {
     description: "A thread's posts after the first (text is the first). Each goes out as a reply to the one before, on channels where list_channels shows thread: true. Other channels post the first only. Keep each within character_limit.",
   },
   channel_text: { type: "object", additionalProperties: { type: "string" }, description: "Own text for some channels, by channel id. Other channels use text." },
+  campaign_id: { type: ["string", "null"], description: "A campaign id from list_campaigns, or null for none." },
   settings: {
     type: "object",
     additionalProperties: { type: "object", additionalProperties: { type: "string" } },
@@ -53,6 +54,13 @@ export const TOOLS: Tool[] = [
     name: "list_channel_groups",
     title: "List channel groups",
     description: "Saved groups of channels from one brand, like \"All socials\". To post to a group, send its channel_ids to create_posts.",
+    inputSchema: { type: "object", properties: {} },
+    annotations: read,
+  },
+  {
+    name: "list_campaigns",
+    title: "List campaigns",
+    description: "Campaigns that group posts (a launch, a sale), with their posts by status and engagements. Send a campaign's id as campaign_id to create_posts or update_post.",
     inputSchema: { type: "object", properties: {} },
     annotations: read,
   },
@@ -185,6 +193,8 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       return { channels: await ops.channels(optionalId(args.brand_id, "brand_id")) };
     case "list_channel_groups":
       return { groups: await ops.channelGroups() };
+    case "list_campaigns":
+      return { campaigns: await ops.campaigns() };
     case "list_posts": {
       const r = range(args.from, args.to);
       return { posts: await ops.posts(r.from, r.to, optionalId(args.brand_id, "brand_id")) };

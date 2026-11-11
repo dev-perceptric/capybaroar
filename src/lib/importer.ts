@@ -5,6 +5,7 @@ import { ALLOWED, MAX_BYTES } from "./media";
 import { savePost, type Actor, type PostStatus } from "./posts";
 import { MAX_CSV, parseBulk, queueTimes, dailyTimes, settingsFor } from "./bulk";
 import { splitThread } from "./thread";
+import { createCampaign, listCampaigns } from "./campaigns";
 import { assertCanScheduleMany } from "./billing";
 import { safeGet, sniffMedia } from "./safefetch";
 import type { Slot } from "./queue";
@@ -56,6 +57,23 @@ export async function saveCsvRows(workspaceId: string, userId: string, actor: Ac
   const fetched = new Map<string, string>();
   const out: BulkResult[] = [];
   const want = new Set(lines);
+  // Campaigns by name, found or made once per request (names match whatever the case).
+  const campaignIds = new Map<string, string>();
+  const known = await listCampaigns(workspaceId, actor.brandIds);
+  const campaignOf = async (name: string | null) => {
+    if (!name) return null;
+    const k = name.toLowerCase();
+    const hit = campaignIds.get(k) ?? known.find((c) => c.name.toLowerCase() === k)?.id;
+    if (hit) return hit;
+    const made = await createCampaign(workspaceId, userId, { name, brandId: actor.brandIds ? actor.brandId : null }).catch(async (e) => {
+      // Another request made it a moment ago.
+      const again = (await listCampaigns(workspaceId, actor.brandIds)).find((c) => c.name.toLowerCase() === k);
+      if (again) return again;
+      throw e;
+    });
+    campaignIds.set(k, made.id);
+    return made.id;
+  };
   for (const row of rows.filter((r) => want.has(r.line))) {
     const key = String(row.line);
     if (row.errors.length) {
@@ -76,6 +94,7 @@ export async function saveCsvRows(workspaceId: string, userId: string, actor: Ac
         {
           // A line holding only --- starts the next post of a thread. Channels without threads post the first only.
           ...splitThread(row.text),
+          campaignId: await campaignOf(row.campaign),
           mediaIds,
           targets: row.channelIds.map((id) => ({ channelId: id, text: null, settings: settingsFor(byId.get(id)!.network, row) })),
           publishAt: row.at,

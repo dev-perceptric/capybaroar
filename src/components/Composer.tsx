@@ -18,7 +18,8 @@ import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { approve, channelGroups, composerData, duplicate, loadComments, loadMedia, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { approve, channelGroups, composerData, duplicate, loadComments, loadMedia, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import type { Campaign } from "@/lib/campaignRules";
 import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
 import { Floating } from "./Floating";
 import { fmtDateTime } from "@/lib/format";
@@ -36,6 +37,7 @@ type Uploading = { key: string; name: string; error?: string };
 
 const ACCEPT = "image/jpeg,image/png,image/gif,image/webp,video/mp4,video/quicktime,application/pdf";
 const isPdf = (m: { mime: string }) => m.mime === "application/pdf";
+const NEW_CAMPAIGN = "__new";
 const pad = (n: number) => String(n).padStart(2, "0");
 const localValue = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const nextHour = () => {
@@ -45,7 +47,7 @@ const nextHour = () => {
 };
 const initialSettings = (c: Channel) => Object.fromEntries((networkOf(c.network).fields ?? []).filter((f) => f.initial).map((f) => [f.key, f.initial!]));
 const count = (s: string) => [...s].length;
-type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string; thread?: ThreadPart[] };
+type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string; thread?: ThreadPart[]; campaignId?: string | null };
 const noSub = () => () => {};
 const readLocal = (key: string) => {
   try {
@@ -97,6 +99,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [text, setText] = useState(post?.text ?? "");
   const [mediaIds, setMediaIds] = useState<string[]>(post?.media_ids ?? []);
   const [thread, setThread] = useState<ThreadPart[]>(() => threadOf(post?.thread));
+  const [campaignId, setCampaignId] = useState<string | null>(post?.campaign_id ?? null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [when, setWhen] = useState(() => localValue(post?.publish_at ? new Date(post.publish_at) : (at ?? nextHour())));
   const [tab, setTab] = useState<string>("all");
   const [view, setView] = useState<string>("");
@@ -119,7 +123,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   // Autosave on this device: every change is kept, and offered back the next time this post opens.
   const draftKey = `capybaroar:compose:${post?.id ?? "new"}`;
-  const snap: Snapshot = { text, targets, mediaIds, when, thread };
+  const snap: Snapshot = { text, targets, mediaIds, when, thread, campaignId };
   const snapJson = JSON.stringify(snap);
   const [first] = useState(snapJson);
   const dirty = snapJson !== first;
@@ -147,6 +151,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     setTargets(restorable.targets);
     setMediaIds(restorable.mediaIds);
     setThread(restorable.thread ?? []);
+    if (restorable.campaignId !== undefined) setCampaignId(restorable.campaignId);
     setWhen(restorable.when);
     setRestoreSeen(true);
   };
@@ -181,6 +186,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       (d) => {
         setBest(d.best ?? []);
         setLibrary((d.media ?? []) as Media[]);
+        setCampaigns(d.campaigns ?? []);
         setAi(!!d.ai);
       },
       () => {
@@ -339,6 +345,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         text,
         mediaIds,
         thread,
+        campaignId,
         targets: picked.map((c) => ({ channelId: c.id, text: targets[c.id].text, settings: targets[c.id].settings })),
         publishAt: when ? new Date(when).toISOString() : null,
         mode,
@@ -351,6 +358,15 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         onSaved();
       }
     });
+  const pickCampaign = async (v: string) => {
+    if (v !== NEW_CAMPAIGN) return setCampaignId(v || null);
+    const name = await askText("New campaign", { placeholder: "Spring launch", ok: "Create" });
+    if (!name?.trim()) return;
+    const r = await newCampaign(name);
+    if (r.error || !r.campaign) return setError(r.error ?? "Couldn't make the campaign");
+    setCampaigns((all) => [...all, r.campaign!]);
+    setCampaignId(r.campaign.id);
+  };
   const del = async () => {
     if (!post || !(await askConfirm("Delete this post?", { ok: "Delete", danger: true }))) return;
     start(async () => {
@@ -934,6 +950,18 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 );
               })}
             </div>
+            <Select<string>
+              size="sm"
+              lead="Campaign"
+              ariaLabel="Campaign"
+              value={campaignId ?? ""}
+              onChange={(v) => void pickCampaign(v)}
+              options={[
+                { value: "", label: "None" },
+                ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })),
+                { value: NEW_CAMPAIGN, label: "New campaign" },
+              ]}
+            />
             <span role={error ? "alert" : undefined} className="min-w-0 flex-1 truncate text-[12px]">
               {error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : null}
             </span>

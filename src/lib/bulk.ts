@@ -21,6 +21,8 @@ export type BulkRow = {
   mediaUrl: string | null;
   firstComment: string | null;
   title: string | null;
+  /** A campaign by name: an existing one, or a new one made on import. */
+  campaign: string | null;
   /** Problems that stop the row being saved at all. */
   errors: string[];
   /** Settings a network needs before it can go out (a YouTube title): the row can only be a draft. */
@@ -35,6 +37,7 @@ const COLUMNS = {
   media: ["media", "media url", "media_url", "mediaurl", "image", "image url", "video", "url"],
   comment: ["first comment", "first_comment", "firstcomment", "comment"],
   title: ["title"],
+  campaign: ["campaign"],
 } as const;
 type Col = keyof typeof COLUMNS;
 
@@ -111,6 +114,8 @@ export function parseBulk(csv: string, channels: BulkChannel[], timeZone: string
     const mediaUrl = cell(r, "media") || null;
     const firstComment = cell(r, "comment") || null;
     const title = cell(r, "title") || null;
+    const campaign = cell(r, "campaign").replace(/\s+/g, " ").trim() || null;
+    if (campaign && [...campaign].length > 60) errors.push("Campaign names are up to 60 characters");
     const when = readWhen(cell(r, "date"), cell(r, "time"), timeZone);
     if (!when) errors.push("Use a date like 2026-11-05 and a time like 09:30");
     else if (when.getTime() < now.getTime() + 60000) errors.push("Pick a time in the future");
@@ -133,7 +138,7 @@ export function parseBulk(csv: string, channels: BulkChannel[], timeZone: string
       const settings = settingsFor(c.network, { firstComment, title });
       for (const f of n.fields ?? []) if (f.required && !settings[f.key]?.trim()) holds.push(`${c.name}: ${f.label} is required`);
     }
-    return { line: i + 2, at: when?.toISOString() ?? null, channelIds: ids, text, mediaUrl, firstComment, title, errors, holds };
+    return { line: i + 2, at: when?.toISOString() ?? null, channelIds: ids, text, mediaUrl, firstComment, title, campaign, errors, holds };
   });
   return { rows, error: rows.length ? null : "This file has a header and no rows" };
 }
@@ -166,4 +171,4 @@ export function queueTimes(n: number, slots: Slot[], timeZone: string, taken: Se
 }
 
 /** A sample file with every column, for people starting from nothing. */
-export const TEMPLATE = "date,time,channels,text,media url,first comment\n2026-12-01,09:30,LinkedIn | X,\"Our winter launch is live, read more at https://example.com\",,\n";
+export const TEMPLATE = "date,time,channels,text,media url,first comment,campaign\n2026-12-01,09:30,LinkedIn | X,\"Our winter launch is live, read more at https://example.com\",,,Winter launch\n";

@@ -135,9 +135,10 @@ export async function saveAlt(id: string, alt: string): Promise<{ error?: string
 export async function composerData() {
   const ctx = await getCtx();
   const { suggestedTimes } = await import("@/lib/analytics");
-  const [best, media] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId)]);
+  const { listCampaigns } = await import("@/lib/campaigns");
+  const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
   const { aiReady } = await import("@/lib/generations");
-  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null, ai: aiReady() };
+  return { best: best.status === "fulfilled" ? best.value : null, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
 }
 
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */
@@ -227,6 +228,51 @@ export async function removeChannelGroup(id: string): Promise<{ error?: string }
     const ctx = await writerCtx();
     const { deleteGroup } = await import("@/lib/channelGroups");
     await deleteGroup(ctx.workspaceId, ctx.brandIds, id);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+// Campaigns (campaigns.ts): listed with their counts, made from the composer, renamed and deleted from the calendar.
+
+export async function loadCampaigns() {
+  const b = await getBrandCtx();
+  const { listCampaigns, campaignCounts } = await import("@/lib/campaigns");
+  const campaigns = await listCampaigns(b.workspaceId, b.brandIds);
+  const counts = await campaignCounts(b.workspaceId, campaigns.map((c) => c.id)).catch(() => ({}) as Record<string, never>);
+  return campaigns.map((c) => ({ ...c, counts: counts[c.id] ?? { scheduled: 0, published: 0, failed: 0, drafts: 0, engagements: 0 } }));
+}
+
+export async function newCampaign(name: string): Promise<{ error?: string; campaign?: import("@/lib/campaignRules").Campaign }> {
+  try {
+    const { ctx } = await actor();
+    const { createCampaign } = await import("@/lib/campaigns");
+    // People who work on some brands make campaigns for their home brand; everyone else's are workspace-wide.
+    return { campaign: await createCampaign(ctx.workspaceId, ctx.userId, { name, brandId: ctx.brandIds ? homeBrand(ctx) : null }) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function renameCampaign(id: string, name: string, tone?: string): Promise<{ error?: string }> {
+  try {
+    const { ctx } = await actor();
+    const { listCampaigns, updateCampaign } = await import("@/lib/campaigns");
+    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id)) throw new Error("Campaign not found");
+    await updateCampaign(ctx.workspaceId, id, { name, ...(tone ? { tone } : {}) });
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function removeCampaign(id: string): Promise<{ error?: string }> {
+  try {
+    const { ctx } = await actor();
+    const { listCampaigns, deleteCampaign } = await import("@/lib/campaigns");
+    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id)) throw new Error("Campaign not found");
+    await deleteCampaign(ctx.workspaceId, id);
     return {};
   } catch (e) {
     return fail(e);
