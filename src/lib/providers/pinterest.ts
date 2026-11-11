@@ -14,6 +14,23 @@ type User = { id?: string; username: string; business_name?: string | null; prof
 const token = (body: Record<string, string>, what: string) =>
   call<Token>(`${API}/oauth/token`, { method: "POST", headers: { Authorization: basic(), "Content-Type": "application/x-www-form-urlencoded" }, body: form(body) }, { what });
 
+/** A board's section by name (case doesn't matter). Throws when the board has no such section. */
+async function sectionId(tok: string, boardId: string, name: string) {
+  const want = name.trim().toLowerCase();
+  let bookmark = "";
+  do {
+    const r = await call<{ items: { id: string; name: string }[]; bookmark?: string | null }>(
+      `${API}/boards/${encodeURIComponent(boardId)}/sections?${qs({ page_size: "250", ...(bookmark ? { bookmark } : {}) })}`,
+      { headers: auth(tok) },
+      { what: "Pinterest board sections" },
+    );
+    const hit = r.items.find((x) => x.name.trim().toLowerCase() === want);
+    if (hit) return hit.id;
+    bookmark = r.bookmark ?? "";
+  } while (bookmark);
+  throw new PostError(`Pinterest board section "${name}" wasn't found`);
+}
+
 async function boardId(tok: string, name: string) {
   const want = name.trim().toLowerCase();
   let bookmark = "";
@@ -104,6 +121,8 @@ export const pinterest: Provider = {
     const tok = s.accessToken;
     const m = p.media[0];
     const board_id = await boardId(tok, p.settings.board ?? "");
+    const section = (p.settings.section ?? "").trim();
+    const board_section_id = section ? await sectionId(tok, board_id, section) : null;
     const media_source = isVideo(m)
       ? {
           source_type: "video_id",
@@ -121,6 +140,7 @@ export const pinterest: Provider = {
         headers: json(tok),
         body: JSON.stringify({
           board_id,
+          ...(board_section_id ? { board_section_id } : {}),
           description: p.text,
           media_source,
           ...(title ? { title } : {}),

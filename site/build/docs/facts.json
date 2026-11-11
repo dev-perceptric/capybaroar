@@ -141,6 +141,21 @@
     ]
    },
    {
+    "key": "trial",
+    "label": "Trial Reel",
+    "kind": "select",
+    "initial": "off",
+    "options": [
+     "Off",
+     "On, share with followers yourself",
+     "On, share when it does well"
+    ],
+    "when": {
+     "key": "format",
+     "value": "reel"
+    }
+   },
+   {
     "key": "cover",
     "label": "Reel cover",
     "kind": "cover",
@@ -300,6 +315,49 @@
     "key": "cover",
     "label": "Thumbnail",
     "kind": "cover"
+   },
+   {
+    "key": "category",
+    "label": "Category",
+    "kind": "select",
+    "initial": "22",
+    "options": [
+     "Film and animation",
+     "Cars and vehicles",
+     "Music",
+     "Pets and animals",
+     "Sports",
+     "Travel and events",
+     "Gaming",
+     "People and blogs",
+     "Comedy",
+     "Entertainment",
+     "News and politics",
+     "How-to and style",
+     "Education",
+     "Science and technology",
+     "Nonprofits and activism"
+    ]
+   },
+   {
+    "key": "notify",
+    "label": "Notify subscribers",
+    "kind": "select",
+    "initial": "yes",
+    "options": [
+     "Yes",
+     "No"
+    ]
+   },
+   {
+    "key": "synthetic",
+    "label": "Altered or synthetic content",
+    "kind": "select",
+    "initial": "no",
+    "options": [
+     "No",
+     "Yes"
+    ]
    }
   ],
   "connect": "oauth",
@@ -391,6 +449,11 @@
     "label": "Board",
     "kind": "text",
     "required": true
+   },
+   {
+    "key": "section",
+    "label": "Board section",
+    "kind": "text"
    },
    {
     "key": "title",

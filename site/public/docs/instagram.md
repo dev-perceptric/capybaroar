@@ -22,12 +22,14 @@ Click Instagram in Channels and sign in with Meta. Pick the Instagram account yo
 4. **Check the preview**, then schedule, queue or post now.
 
 - Instagram only lets apps post to professional accounts (business or creator). You can switch for free in the Instagram app under account settings.
+- Make a Reel a Trial Reel to show it to non-followers first. Share it with your followers yourself in the Instagram app, or let Instagram share it when it does well.
 - A post needs at least one picture or video. A Reel is one video, and a Story is one picture or video.
 - A post takes up to 10 files, which Instagram shows as a carousel.
 - Add a cover for a Reel from its tab, and a first comment for hashtags or links.
 
 ## Instagram settings
 | Format | Post, Reel, Story (starts as Post) |
+| Trial Reel | Off, On, share with followers yourself, On, share when it does well (starts as Off, for Reels only) |
 | Reel cover | (for Reels only) |
 | First comment | Posted as a comment right after the post |
 

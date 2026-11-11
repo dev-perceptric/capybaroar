@@ -21,12 +21,14 @@ Click Pinterest in Channels, sign in and approve Capybaroar.
 3. **Open the Pinterest tab** to set the options below.
 4. **Check the preview**, then schedule, queue or post now.
 
-- Every Pin is one picture or one video, and goes to a board you pick.
+- Every Pin is one picture or one video, and goes to a board you pick. Add a board section by its name if you use sections.
 - Add a title and the link people visit when they click the Pin.
 - Descriptions can be up to 500 characters.
+- Alt text from your media library goes out with the Pin.
 
 ## Pinterest settings
 | Board | (required) |
+| Board section | Text |
 | Title | Text |
 | Link | Text |
 

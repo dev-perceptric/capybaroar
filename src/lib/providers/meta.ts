@@ -375,6 +375,13 @@ async function ready(url: (id: string) => string, id: string, field: "status_cod
   throw new Error("Media is still processing; will retry");
 }
 
+/** A Trial Reel is shown to non-followers first; it goes to followers by hand (MANUAL) or when it does well. */
+export function trialParams(settings: Record<string, string>): Record<string, string> {
+  if (settings.format !== "reel") return {};
+  const strategy = settings.trial === "manual" ? "MANUAL" : settings.trial === "auto" ? "SS_PERFORMANCE" : null;
+  return strategy ? { trial_params: JSON.stringify({ graduation_strategy: strategy }) } : {};
+}
+
 export const instagram: Provider = {
   network: "instagram",
   oauth: {
@@ -411,7 +418,7 @@ export const instagram: Provider = {
     const container = async (m: MediaFile, child: boolean) => {
       const body: Record<string, string> = { access_token: token };
       if (format === "story") Object.assign(body, { media_type: "STORIES", [isVideo(m) ? "video_url" : "image_url"]: m.url });
-      else if (isVideo(m)) Object.assign(body, { media_type: child ? "VIDEO" : "REELS", video_url: m.url }, !child && p.cover ? { cover_url: p.cover.url } : {});
+      else if (isVideo(m)) Object.assign(body, { media_type: child ? "VIDEO" : "REELS", video_url: m.url }, !child && p.cover ? { cover_url: p.cover.url } : {}, !child ? trialParams(p.settings) : {});
       else Object.assign(body, { image_url: m.url }, m.alt ? { alt_text: m.alt } : {});
       if (child) body.is_carousel_item = "true";
       else if (format !== "story") body.caption = p.text;

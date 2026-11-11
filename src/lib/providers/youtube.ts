@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxItem, type PostStats, type Provider, type Secret } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxItem, type PostStats, type Provider, type Publishable, type Secret } from "./types";
 
 // YouTube: Google sign-in (offline access) + YouTube Data API v3, resumable video upload from our server.
 // Until Google audits the app, uploads from an unverified API project are locked to private.
@@ -41,6 +41,16 @@ const tags = (s: string | undefined) =>
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
+
+const CATEGORIES = new Set(["1", "2", "10", "15", "17", "19", "20", "22", "23", "24", "25", "26", "27", "28", "29"]);
+
+/** The video's snippet and status: title, description, tags, category, visibility, made for kids and the synthetic content label. */
+export function videoResource(p: Pick<Publishable, "text" | "settings">) {
+  return {
+    snippet: { title: (p.settings.title ?? "").trim().slice(0, 100), description: p.text, tags: tags(p.settings.tags), categoryId: CATEGORIES.has(p.settings.category) ? p.settings.category : "22" },
+    status: { privacyStatus: p.settings.privacy || "public", selfDeclaredMadeForKids: p.settings.for_kids === "yes", containsSyntheticMedia: p.settings.synthetic === "yes" },
+  };
+}
 
 export const youtube: Provider = {
   network: "youtube",
@@ -91,14 +101,11 @@ export const youtube: Provider = {
     const video = p.media[0];
     const bytes = await video.bytes();
     const init = await send(
-      `${UPLOAD}/videos?${qs({ uploadType: "resumable", part: "snippet,status" })}`,
+      `${UPLOAD}/videos?${qs({ uploadType: "resumable", part: "snippet,status", notifySubscribers: p.settings.notify === "no" ? "false" : "true" })}`,
       {
         method: "POST",
         headers: { ...auth(token), "Content-Type": "application/json; charset=UTF-8", "X-Upload-Content-Length": String(bytes.length), "X-Upload-Content-Type": video.mime },
-        body: JSON.stringify({
-          snippet: { title: (p.settings.title ?? "").trim().slice(0, 100), description: p.text, tags: tags(p.settings.tags) },
-          status: { privacyStatus: p.settings.privacy || "public", selfDeclaredMadeForKids: p.settings.for_kids === "yes" },
-        }),
+        body: JSON.stringify(videoResource(p)),
       },
       "YouTube upload",
     );

@@ -22,6 +22,7 @@ Click YouTube in Channels and sign in with the Google account that owns the chan
 4. **Check the preview**, then schedule, queue or post now.
 
 - Every YouTube post is one video with a title. The post text becomes the description, up to 5,000 characters.
+- Pick a category, choose whether subscribers get a notification, and mark videos with realistic altered or AI-made content as altered or synthetic.
 - Set Visibility (Public, Unlisted or Private), Made for kids, tags and a thumbnail in the YouTube tab.
 - In the Inbox you can answer comments and hide them. YouTube doesn't let a hidden comment be shown again.
 
@@ -31,6 +32,9 @@ Click YouTube in Channels and sign in with the Google account that owns the chan
 | Visibility | Public, Unlisted, Private (starts as Public) |
 | Made for kids | No, Yes (starts as No) |
 | Thumbnail | Text |
+| Category | Film and animation, Cars and vehicles, Music, Pets and animals, Sports, Travel and events, Gaming, People and blogs, Comedy, Entertainment, News and politics, How-to and style, Education, Science and technology, Nonprofits and activism (starts as 22) |
+| Notify subscribers | Yes, No (starts as Yes) |
+| Altered or synthetic content | No, Yes (starts as No) |
 
 ## If a post is turned down
 
