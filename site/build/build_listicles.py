@@ -213,7 +213,7 @@ def cover_of(p):
 
 SIGNUP = '''<aside class="lx-signup" aria-label="Try Capybaroar">
 <img src="/icon.svg" alt="" width="48" height="48">
-<div><h2>Try Capybaroar free</h2><p>Tell the agent what you want, and it plans and writes a week of posts. Review them, then schedule to 12 networks from one calendar.</p>
+<div><h2>Try Capybaroar free</h2><p>Tell the agent what you want, and it plans and writes a week of posts. Review them, then schedule to 14 networks from one calendar.</p>
 <p class="lx-note">Free forever plan. 14 days of Pro free. No card needed.</p></div>
 <div class="lx-cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="/pricing">See pricing</a></div>
 </aside>'''

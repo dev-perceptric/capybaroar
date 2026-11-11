@@ -1,0 +1,13 @@
+{
+  "name": "capybaroar",
+  "version": "1.0.0",
+  "description": "Capybaroar from the terminal: list channels, schedule posts and threads, check results. Signs in through the browser.",
+  "type": "module",
+  "bin": { "capybaroar": "bin.js" },
+  "files": ["bin.js", "auth.js", "README.md"],
+  "dependencies": { "@capybaroar/sdk": "1.0.0" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "homepage": "https://capybaroar.com/api",
+  "keywords": ["capybaroar", "social media", "scheduler", "cli"]
+}

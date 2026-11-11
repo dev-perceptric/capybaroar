@@ -1,0 +1,12 @@
+{
+  "name": "@capybaroar/mcp",
+  "version": "1.0.0",
+  "description": "Capybaroar's MCP server for apps that start a local command: forwards to the hosted server at app.capybaroar.com.",
+  "type": "module",
+  "bin": { "capybaroar-mcp": "index.js" },
+  "files": ["index.js", "forward.js", "forward.d.ts", "README.md"],
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "homepage": "https://capybaroar.com/mcp",
+  "keywords": ["capybaroar", "mcp", "model context protocol", "social media"]
+}

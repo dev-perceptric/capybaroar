@@ -561,6 +561,7 @@ const DOMAINS: Partial<Record<Channel["network"], string>> = {
   telegram: "web.telegram.org",
   discord: "discord.com/channels",
   gbp: "google.com/maps",
+  wordpress: "your-site.com",
 };
 
 /** A desktop browser window with the network's feed column. */

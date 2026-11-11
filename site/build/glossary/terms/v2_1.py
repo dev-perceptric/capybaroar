@@ -1018,7 +1018,7 @@ TERMS += [
    'note': "Limits used by Capybaroar's composer, November 2026."},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan posts on a calendar or queue and publish to 12 networks, with previews for each one.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan posts on a calendar or queue and publish to 14 networks, with previews for each one.'},
   {'id': 'capybaroar', 'name': 'Capybaroar API', 'url': '/api', 'line': 'Send posts from your own store, blog or app straight into your schedule.'},
   {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Our free counter checks a post against each network\'s limit.'},
  ],

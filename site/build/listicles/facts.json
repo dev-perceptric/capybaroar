@@ -35,7 +35,7 @@
    "mastodon",
    "discord"
   ],
-  "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 12 networks from one calendar",
+  "kind": "an <a href=\"/\">agentic social media platform</a>: an <a href=\"/#agents\">AI agent</a> plans and writes your posts, and you <a href=\"/social-media-scheduler\">schedule</a> them to 14 networks from one calendar",
   "ai": "An AI agent plans and writes posts as drafts; AI writing, images and video from credits on paid plans",
   "inbox": "One inbox for comments and mentions on every plan, with suggested replies on paid plans",
   "approvals": "Approvals on Pro and Agency; clients who only approve take no seat",

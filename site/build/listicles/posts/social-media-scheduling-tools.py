@@ -9,7 +9,7 @@ POST = {
     'lead': 'There is no single best scheduler for everyone. A solo creator, a small business and a 20-client agency need different things. Here are 15 tools with real prices, and the kind of team each one fits.',
     'cover': {'type': 'calendar', 'networks': ['instagram', 'linkedin', 'tiktok', 'youtube', 'facebook']},
     'picks': [
-        ('Best overall', 'capybaroar', 'One calendar for 12 networks, an AI agent that drafts the week and a free plan to start.'),
+        ('Best overall', 'capybaroar', 'One calendar for 14 networks, an AI agent that drafts the week and a free plan to start.'),
         ('Best for solo creators', 'buffer', 'Free for 3 channels, then $5 a month per channel, billed yearly.'),
         ('Best for agencies', 'sendible', 'Unlimited users on every plan and a workspace for each client.'),
     ],
@@ -22,9 +22,9 @@ POST = {
 <li><b>Developers and AI-first teams:</b> Postiz and Capybaroar.</li></ul>
 <p>We read every price on each tool's own pricing page in November 2026. Prices change, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'calendar', 'bestFor': 'small teams that want an AI agent to draft the week', 'text': '''<p>Capybaroar fits small teams that want one calendar for every network and help writing the posts. It schedules to 12 networks, including Instagram Reels and Stories, LinkedIn company pages, TikTok, YouTube, Bluesky and Discord. Bulk upload and queue times help you fill the calendar fast, and you see a preview for each network.</p>
+        {'id': 'capybaroar', 'shot': 'calendar', 'bestFor': 'small teams that want an AI agent to draft the week', 'text': '''<p>Capybaroar fits small teams that want one calendar for every network and help writing the posts. It schedules to 14 networks, including Instagram Reels and Stories, LinkedIn company pages, TikTok, YouTube, Bluesky and Discord. Bulk upload and queue times help you fill the calendar fast, and you see a preview for each network.</p>
 <p>On paid plans, the AI agent plans and writes posts from one message and saves them as drafts for your review. Every plan, Free included, has one inbox, analytics, a link in bio page, and an MCP server and REST API. Free covers 3 channels and 30 posts a month. Creator is $29 a month, Pro is $49 for 5 members and Agency is $149 for 15 members and unlimited brands.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer fits solo creators and small brands that post to a few channels. You only pay for the channels you use: $5 a month per channel on Essentials or $10 on Team, both billed yearly. It posts to 12 networks, from Instagram and TikTok to Substack and Mastodon.</p>
+        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer fits solo creators and small brands that post to a few channels. You only pay for the channels you use: $5 a month per channel on Essentials or $10 on Team, both billed yearly. It posts to 14 networks, from Instagram and TikTok to Substack and Mastodon.</p>
 <p>The free plan covers 3 channels with 10 scheduled posts per channel. Every plan includes the AI Assistant and a community inbox for comments. When you grow into a team, Team adds unlimited team members, approvals and branded reports. Bigger setups get pricey, since each new channel adds to the bill.</p>'''},
         {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite fits brand teams with a budget and a lot of messages to answer. Standard covers up to 10 social accounts, unlimited scheduled posts, one inbox, and brand and competitor monitoring. Wisdom AI drafts posts and images on every plan, and MCP connectors let you work from ChatGPT, Claude, Copilot or Gemini.</p>
 <p>It's priced per user: $99 a month on Standard, $199 on Professional and $399 on Advanced, all billed yearly. Unlimited accounts start on Professional, and team approvals need Advanced. Bulk scheduling isn't available during the 14-day trial, and there's no free plan.</p>'''},

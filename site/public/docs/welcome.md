@@ -1,6 +1,6 @@
 # What is Capybaroar?
 
-Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 12 networks from one calendar.
+Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 14 networks from one calendar.
 
 ## What you can do
 
@@ -16,7 +16,7 @@ Capybaroar is an agentic social media platform: an AI agent plans and writes you
 
 - **MCP and API:** use Capybaroar from Claude, ChatGPT or Cursor, or from your own code.
 
-## The 12 networks
+## The 14 networks
 
 Instagram, Facebook, TikTok, LinkedIn profiles, LinkedIn Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon and Discord. Each one has its own page in these docs with what you can post and how to connect it.
 

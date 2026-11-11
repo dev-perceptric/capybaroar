@@ -31,7 +31,7 @@ TOOLS_CAP = {
     'utm': ('/tools/utm-builder', 'Build a tracked link', 'Add UTM tags to any link with our free UTM builder.'),
 }
 CAP = {
-    'sched': ('Schedule it with Capybaroar', 'Plan posts for 12 networks in one calendar, set queue times and let Capybaroar publish them on time.', '/social-media-scheduler', 'See the scheduler'),
+    'sched': ('Schedule it with Capybaroar', 'Plan posts for 14 networks in one calendar, set queue times and let Capybaroar publish them on time.', '/social-media-scheduler', 'See the scheduler'),
     'agent': ('Let the agent write it', 'Tell the Capybaroar agent what you need, and it plans and writes a week of posts as drafts for you to review.', '/#agents', 'See the agent'),
     'ana': ('Track it in Capybaroar', 'See reach, engagement and followers for every channel side by side, with your best times to post.', '/social-media-analytics', 'See analytics'),
     'inbox': ('Answer it in one inbox', 'Comments and mentions from your channels land in one Capybaroar inbox, with suggested replies on paid plans.', '/social-media-inbox', 'See the inbox'),

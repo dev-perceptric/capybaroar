@@ -557,7 +557,7 @@ TOOLS.append(dict(
 <tr><th>Email newsletter</th><td>Often 200 to 500 words</td></tr>
 <tr><th>Blog post</th><td>Long enough to fully answer the question, often 800 to 2,000 words</td></tr>
 </tbody></table></div>
-<p>For posts, the network's character limit matters more than words. Our <a href="/tools/character-counter">character counter</a> checks your text against the limit on 12 networks at once.</p>
+<p>For posts, the network's character limit matters more than words. Our <a href="/tools/character-counter">character counter</a> checks your text against the limit on 14 networks at once.</p>
 <h2>Is my text private?</h2>
 <p>Yes. Counting happens in your browser. Your text is kept only in this browser, so it's still there if you reload, and nothing is sent to Capybaroar or anyone else.</p>
 <div class="note">Turning a blog post into social posts? Paste it into Capybaroar's agent and get a week of drafts for every network, ready to check and schedule.</div>''',

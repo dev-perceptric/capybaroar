@@ -264,10 +264,12 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
 }
 
 /** Options for one connection: tools to leave out (the directory listing hides AI pictures and videos). */
-export type McpOptions = { hide?: ReadonlySet<string> };
+export type McpOptions = { hide?: ReadonlySet<string>; oauth?: boolean };
 
 async function one(msg: unknown, ops: Ops, timezone: string, opts: McpOptions = {}): Promise<unknown | null> {
-  const tools = opts.hide?.size ? TOOLS.filter((t) => !opts.hide!.has(t.name)) : TOOLS;
+  const shown = opts.hide?.size ? TOOLS.filter((t) => !opts.hide!.has(t.name)) : TOOLS;
+  // Apps that sign in (Claude, ChatGPT) see each tool's sign-in: ChatGPT reads securitySchemes on every tool.
+  const tools = opts.oauth ? shown.map((t) => ({ ...t, securitySchemes: [{ type: "oauth2", scopes: ["mcp"] }] })) : shown;
   if (typeof msg !== "object" || msg === null || Array.isArray(msg)) return reply(null, { error: err(-32600, "Invalid request") });
   const m = msg as Json;
   const isRequest = "id" in m && m.id !== null && m.id !== undefined;

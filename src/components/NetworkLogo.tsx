@@ -1,4 +1,4 @@
-import { siBluesky, siDiscord, siFacebook, siGoogle, siInstagram, siMastodon, siPinterest, siReddit, siTelegram, siThreads, siTiktok, siX, siYoutube } from "simple-icons";
+import { siBluesky, siDiscord, siFacebook, siGoogle, siInstagram, siMastodon, siPinterest, siReddit, siTelegram, siThreads, siTiktok, siWordpress, siX, siYoutube } from "simple-icons";
 import { networkOf, type NetworkId } from "@/lib/networks";
 import { Avatar } from "./ui";
 
@@ -18,6 +18,7 @@ const ICONS: Partial<Record<NetworkId, Icon>> = {
   telegram: siTelegram,
   discord: siDiscord,
   gbp: siGoogle,
+  wordpress: siWordpress,
 };
 
 /** A network's logo in its own color, with its name as the label. */

@@ -563,7 +563,7 @@
   "limit": 4096,
   "needsMedia": false,
   "inbox": null,
-  "paused": true,
+  "paused": false,
   "fields": [],
   "connect": "form",
   "asks": [],
@@ -602,6 +602,58 @@
   "connect": "oauth",
   "asks": [],
   "formFields": [],
+  "hasFollowers": false,
+  "hasStats": false,
+  "hasRevoke": false
+ },
+ {
+  "id": "wordpress",
+  "name": "WordPress",
+  "limit": 100000,
+  "needsMedia": false,
+  "inbox": null,
+  "paused": false,
+  "fields": [
+   {
+    "key": "title",
+    "label": "Title",
+    "kind": "text",
+    "required": true
+   },
+   {
+    "key": "status",
+    "label": "Status",
+    "kind": "select",
+    "initial": "publish",
+    "options": [
+     "Publish",
+     "Draft",
+     "Pending review"
+    ]
+   },
+   {
+    "key": "categories",
+    "label": "Categories",
+    "kind": "tags"
+   },
+   {
+    "key": "tags",
+    "label": "Tags",
+    "kind": "tags"
+   },
+   {
+    "key": "excerpt",
+    "label": "Excerpt",
+    "kind": "textarea"
+   }
+  ],
+  "connect": "form",
+  "asks": [],
+  "formFields": [
+   "Site address",
+   "Username",
+   "Application password"
+  ],
   "hasFollowers": false,
   "hasStats": false,
   "hasRevoke": false

@@ -73,7 +73,7 @@ TOOLS.append(dict(
 <li>Use small caps for a tagline under your name.</li>
 <li>Use gothic or outline letters for a gaming tag or a Discord name.</li>
 </ul>
-<div class="note">Planning posts for the week? Write your captions in Capybaroar, paste in your styled headings, and schedule them to 12 networks from one calendar.</div>
+<div class="note">Planning posts for the week? Write your captions in Capybaroar, paste in your styled headings, and schedule them to 14 networks from one calendar.</div>
 {A11Y}
 <h2>Why a style looks different on another phone</h2>
 <p>Each phone draws these symbols with its own font. The letters keep their style, bold stays bold and cursive stays cursive, but the exact shapes change a little between an iPhone, an Android phone and a computer. That's expected, and your text still reads the same everywhere.</p>''',
@@ -122,7 +122,7 @@ TOOLS.append(dict(
 <h2>Where fancy text works</h2>
 {WHERE_TABLE}
 {A11Y}
-<div class="note">Got your fancy heading? Paste it into a Capybaroar post and schedule it to Instagram, TikTok, X and 9 more networks at once.</div>''',
+<div class="note">Got your fancy heading? Paste it into a Capybaroar post and schedule it to Instagram, TikTok, X and 11 more networks at once.</div>''',
     faq=[('What is fancy text?', 'Fancy text is text made of special Unicode characters: styled letters and decorations like stars, brackets and frames. It looks like a different font, but it is still text, so it pastes anywhere.'),
          ('How do I copy fancy text?', 'Type your words, then press Copy next to the style you like. On a phone, the text is copied right away and you can paste it with a long press.'),
          ('Can I use fancy text in game names?', 'Often, yes. Many games and Discord allow it, but some block certain symbols or limit name length. Test your name in the game before you share it.'),

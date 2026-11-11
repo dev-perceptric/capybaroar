@@ -20,7 +20,7 @@ stats = ''.join(f'<div><small>{l}</small><b data-stat="{k}">0</b></div>' for k, 
 limits_table = ''.join(f'<tr><th>{n} {what.lower()}</th><td>{lim:,}</td></tr>' for i, n, what, lim, how in NETS)
 TOOLS.append(dict(
     slug='/tools/character-counter', key='counter', icon='i-text', group='write',
-    name='Character counter', line='Check your post against the limit on 12 networks.',
+    name='Character counter', line='Check your post against the limit on 14 networks.',
     title='Character Counter for Social Media: X, Instagram, LinkedIn and More | Capybaroar',
     desc='Free character counter for social media. See your count against the limit on X, Instagram, TikTok, LinkedIn, YouTube and 7 more, with X\'s own counting rules.',
     tag='Free tool', h1a='Character counter', h1b='for every social network',

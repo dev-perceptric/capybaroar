@@ -9,6 +9,7 @@ import { pinterest } from "./pinterest";
 import { reddit } from "./reddit";
 import { telegram } from "./telegram";
 import { tiktok } from "./tiktok";
+import { wordpress } from "./wordpress";
 import { x } from "./x";
 import { youtube } from "./youtube";
 import type { Provider } from "./types";
@@ -29,6 +30,7 @@ export const PROVIDERS: Record<NetworkId, Provider> = {
   telegram,
   discord,
   gbp,
+  wordpress,
 };
 
 export const providerOf = (n: string): Provider | null => PROVIDERS[n as NetworkId] ?? null;

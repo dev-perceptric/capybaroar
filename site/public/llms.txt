@@ -1,9 +1,9 @@
 # Capybaroar
 
-> Capybaroar is an agentic social media platform: an AI agent plans and writes posts, and people schedule them to 12 networks (Instagram, Facebook, TikTok, LinkedIn profiles and Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon, Discord) from one calendar. It has an MCP server and REST API on every plan.
+> Capybaroar is an agentic social media platform: an AI agent plans and writes posts, and people schedule them to 14 networks (Instagram, Facebook, TikTok, LinkedIn profiles and Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon, Discord) from one calendar. It has an MCP server and REST API on every plan.
 
 ## Get started
-- [What is Capybaroar?](https://capybaroar.com/docs/welcome.md): Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 12 networks from one calendar.
+- [What is Capybaroar?](https://capybaroar.com/docs/welcome.md): Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 14 networks from one calendar.
 - [Create your account](https://capybaroar.com/docs/create-account.md): Sign up with your email in under a minute. You start on 14 days of Pro, free, with no card.
 - [Connect your first channel](https://capybaroar.com/docs/connect-a-channel.md): A channel is one social account Capybaroar can post to, like your Instagram account or your LinkedIn Page.
 - [Schedule your first post](https://capybaroar.com/docs/schedule-your-first-post.md): Write a post once, check how it looks on each network, then schedule it, queue it or post it now.

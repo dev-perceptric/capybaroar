@@ -345,7 +345,7 @@ TERMS += [
    'note': 'Limits used by Capybaroar\'s composer, November 2026.'},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan and schedule posts for 12 networks on one calendar, with a queue, bulk upload and previews.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan and schedule posts for 14 networks on one calendar, with a queue, bulk upload and previews.'},
   {'id': 'capybaroar', 'name': 'Capybaroar Inbox', 'url': '/social-media-inbox', 'line': 'Answer comments and mentions from every connected channel in one inbox.'},
   {'id': 'capybaroar', 'name': 'Capybaroar Analytics', 'url': '/social-media-analytics', 'line': 'Compare reach, engagement and followers across channels and find your best times to post.'},
  ],
@@ -544,7 +544,7 @@ TERMS += [
    'note': 'Limits used by Capybaroar\'s composer, November 2026.'},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule posts to 12 networks from one calendar, with a queue, bulk upload, first comment and previews.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule posts to 14 networks from one calendar, with a queue, bulk upload, first comment and previews.'},
   {'name': 'Best time to post', 'url': '/tools/best-time-to-post', 'line': 'Our free tool suggests posting times to test for each network.'},
   {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Our free counter checks your caption against each network\'s limit before you schedule it.'},
  ],

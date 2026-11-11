@@ -25,7 +25,7 @@ export async function mcpPost(req: Request, pathKey?: string) {
     if (e instanceof ApiError && e.code === "invalid_json") return json(parseError(), 400);
     return errorResponse(e);
   }
-  const out = await handleMcp(body, auth.ops, auth.ctx.timezone, auth.ctx.via === "oauth" ? { hide: DIRECTORY_HIDDEN } : {});
+  const out = await handleMcp(body, auth.ops, auth.ctx.timezone, auth.ctx.via === "oauth" ? { hide: DIRECTORY_HIDDEN, oauth: true } : {});
   return out === null ? json(null, 202) : json(out);
 }
 

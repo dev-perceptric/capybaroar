@@ -195,7 +195,7 @@ start = f'''<section class="hero f-hero simple-hero gl-hero">
 </div>
 </section>
 <section aria-label="All docs"><div class="wrap">{cards}</div></section>'''
-html = page('/docs', 'sched', 'Capybaroar Docs: Guides for Every Channel and the AI Agent', 'Step-by-step guides for Capybaroar: connect your channels, schedule posts to 12 networks, use the AI agent and connect Claude, ChatGPT or Cursor.', start, [])
+html = page('/docs', 'sched', 'Capybaroar Docs: Guides for Every Channel and the AI Agent', 'Step-by-step guides for Capybaroar: connect your channels, schedule posts to 14 networks, use the AI agent and connect Claude, ChatGPT or Cursor.', start, [])
 html = re.sub(r'<section id="faq".*?</section>\n', '', html, count=1, flags=re.S)
 html = html.replace('</body>', DX_JS + '\n</body>', 1)
 open(P + 'docs.html', 'w').write(html)
@@ -203,7 +203,7 @@ open(P + 'docs.html', 'w').write(html)
 # ---------- search index, llms.txt, sitemap ----------
 json.dump([{'slug': p['slug'], 'title': p['title'], 'section': dict(SECTIONS)[p['section']], 'text': re.sub(r'\s+', ' ', _H.unescape(re.sub('<[^>]+>', ' ', p['lead'] + ' ' + p['body'])))[:2000]} for p in ORDERED],
           open(P + 'docs/search.json', 'w'), separators=(',', ':'))
-llms = ['# Capybaroar', '', '> Capybaroar is an agentic social media platform: an AI agent plans and writes posts, and people schedule them to 12 networks (Instagram, Facebook, TikTok, LinkedIn profiles and Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon, Discord) from one calendar. It has an MCP server and REST API on every plan.', '']
+llms = ['# Capybaroar', '', '> Capybaroar is an agentic social media platform: an AI agent plans and writes posts, and people schedule them to 14 networks (Instagram, Facebook, TikTok, LinkedIn profiles and Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon, Discord) from one calendar. It has an MCP server and REST API on every plan.', '']
 for s, name in SECTIONS:
     llms.append(f'## {name}')
     llms += [f'- [{p["title"]}](https://capybaroar.com/docs/{p["slug"]}.md): {re.sub("<[^>]+>", "", p["lead"])}' for p in ORDERED if p['section'] == s]

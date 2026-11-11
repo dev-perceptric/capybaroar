@@ -989,7 +989,7 @@ TERMS += [
   ]},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan and schedule your posts for 12 networks from one calendar.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Plan and schedule your posts for 14 networks from one calendar.'},
   {'name': 'CapCut', 'url': 'https://www.capcut.com/', 'domain': 'capcut.com', 'line': 'A video editor for cutting clips and adding text, music and captions.'},
   {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design tool for thumbnails, carousels and post graphics.'},
  ],
@@ -1472,7 +1472,7 @@ TERMS += [
   ]},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule one post to several of the 12 networks Capybaroar supports, with a preview for each.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Schedule one post to several of the 14 networks Capybaroar supports, with a preview for each.'},
   {'name': 'Character counter', 'url': '/tools/character-counter', 'line': 'Our free counter shows how long a caption is so you can trim it for shorter networks.'},
   {'name': 'Canva', 'url': 'https://www.canva.com/', 'domain': 'canva.com', 'line': 'A design tool for resizing one graphic into the shapes each network uses.'},
  ],

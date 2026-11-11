@@ -27,7 +27,7 @@ function publicLookup(hostname: string, options: { all?: boolean } | number, cb:
 export type SafeResponse = { status: number; headers: http.IncomingHttpHeaders; body: Readable };
 
 /** One request, no redirects followed. Rejects private addresses, plain IPs included. */
-export function safeRequest(url: URL, opts: { method?: string; headers?: Record<string, string>; body?: string; timeoutMs: number }): Promise<SafeResponse> {
+export function safeRequest(url: URL, opts: { method?: string; headers?: Record<string, string>; body?: string | Buffer; timeoutMs: number }): Promise<SafeResponse> {
   return new Promise((resolve, reject) => {
     const host = url.hostname.replace(/^\[|\]$/g, "");
     if (isIP(host) && !isPublicAddress(host)) return reject(new BlockedAddress(`${host} isn't on the public internet`));

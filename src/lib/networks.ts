@@ -14,7 +14,8 @@ export type NetworkId =
   | "mastodon"
   | "telegram"
   | "discord"
-  | "gbp";
+  | "gbp"
+  | "wordpress";
 
 /** A setting the composer shows for one network. Values are stored as strings in post_targets.settings. */
 export type NetworkField = {
@@ -243,13 +244,25 @@ export const NETWORKS: Network[] = [
   { id: "telegram", name: "Telegram", limit: 4096 },
   { id: "discord", name: "Discord", limit: 2000 },
   { id: "gbp", name: "Google Business", limit: 1500 },
+  {
+    id: "wordpress",
+    name: "WordPress",
+    limit: 100000,
+    fields: [
+      { key: "title", label: "Title", kind: "text", required: true, placeholder: "The post's title" },
+      { key: "status", label: "Status", kind: "select", initial: "publish", options: [{ value: "publish", label: "Publish" }, { value: "draft", label: "Draft" }, { value: "pending", label: "Pending review" }] },
+      { key: "categories", label: "Categories", kind: "tags", placeholder: "News, Recipes" },
+      { key: "tags", label: "Tags", kind: "tags", placeholder: "bread, baking" },
+      { key: "excerpt", label: "Excerpt", kind: "textarea", placeholder: "A short summary" },
+    ],
+  },
 ];
 
 export const networkOf = (id: NetworkId) => NETWORKS.find((n) => n.id === id)!;
 export const takesThread = (id: string) => NETWORKS.some((n) => n.id === id && n.thread);
 
 /** Networks switched off for now: hidden from Channels and Welcome, and they can't be connected. Remove an id to bring it back. */
-export const PAUSED: NetworkId[] = ["reddit", "telegram", "gbp"];
+export const PAUSED: NetworkId[] = ["reddit", "gbp"];
 export const isPaused = (id: string) => (PAUSED as string[]).includes(id);
 /** The networks people can connect. */
 export const OFFERED = NETWORKS.filter((n) => !isPaused(n.id));

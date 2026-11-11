@@ -125,3 +125,10 @@ test("every tool has a title and a read-only or destructive hint (directory rule
     assert.equal(typeof t.annotations.destructiveHint, "boolean", `${t.name} destructiveHint`);
   }
 });
+
+test("apps that sign in see securitySchemes on every tool (ChatGPT); key users don't", async () => {
+  const signed = (await handleMcp({ jsonrpc: "2.0", id: 1, method: "tools/list" }, {} as Ops, "UTC", { hide: DIRECTORY_HIDDEN, oauth: true })) as { result: { tools: { securitySchemes?: unknown[] }[] } };
+  assert.ok(signed.result.tools.length && signed.result.tools.every((t) => JSON.stringify(t.securitySchemes) === JSON.stringify([{ type: "oauth2", scopes: ["mcp"] }])));
+  const keyed = (await handleMcp({ jsonrpc: "2.0", id: 1, method: "tools/list" }, {} as Ops, "UTC")) as { result: { tools: { securitySchemes?: unknown[] }[] } };
+  assert.ok(keyed.result.tools.every((t) => t.securitySchemes === undefined));
+});

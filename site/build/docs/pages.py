@@ -11,7 +11,7 @@ SECTIONS = [
 PAGES = [
 {
  'slug': 'welcome', 'section': 'start', 'title': 'What is Capybaroar?', 'app': '/calendar', 'shot': 'calendar',
- 'lead': 'Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 12 networks from one calendar.',
+ 'lead': 'Capybaroar is an agentic social media platform: an AI agent plans and writes your posts, and you schedule them to 14 networks from one calendar.',
  'body': '''<h2 id="what-you-can-do">What you can do</h2>
 <ul>
 <li><b>Calendar:</b> plan, write and schedule posts for every channel in one place, with a preview for each network.</li>
@@ -21,7 +21,7 @@ PAGES = [
 <li><b>Link in bio:</b> one page for every link you share.</li>
 <li><b>MCP and API:</b> use Capybaroar from Claude, ChatGPT or Cursor, or from your own code.</li>
 </ul>
-<h2 id="networks">The 12 networks</h2>
+<h2 id="networks">The 14 networks</h2>
 <p>Instagram, Facebook, TikTok, LinkedIn profiles, LinkedIn Pages, YouTube, X, Threads, Pinterest, Bluesky, Mastodon and Discord. Each one has its own page in these docs with what you can post and how to connect it.</p>
 <h2 id="plans">Plans</h2>
 <p>The Free plan covers 3 channels and 30 scheduled posts a month for 1 person. Creator, Pro and Agency add more channels, AI credits, teammates, brands and approvals. New accounts get 14 days of Pro free, with no card needed. See <a href="/pricing">Pricing</a> for every limit.</p>

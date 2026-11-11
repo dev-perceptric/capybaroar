@@ -422,7 +422,7 @@ TERMS += [
   ]},
  ],
  'tools': [
-  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Publish your posts to 12 networks from one calendar, then embed the public ones on your website.'},
+  {'id': 'capybaroar', 'name': 'Capybaroar Scheduler', 'url': '/social-media-scheduler', 'line': 'Publish your posts to 14 networks from one calendar, then embed the public ones on your website.'},
   {'name': 'WordPress', 'url': 'https://wordpress.org/', 'domain': 'wordpress.org', 'line': 'Website software with embed blocks that turn a pasted post link into a live post.'},
   {'name': 'Google Analytics', 'url': 'https://marketingplatform.google.com/about/analytics/', 'domain': 'google.com', 'line': 'Website analytics for checking how visitors use pages that hold embedded posts.'},
  ],

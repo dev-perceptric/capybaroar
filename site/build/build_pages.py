@@ -24,7 +24,7 @@ PAGES = [
     ('/ai-social-media-agent', 'Agents'),
 ]
 PLATFORM = [
-    ('/social-media-scheduler', 'i-calendar', 'Scheduler', 'Plan and post to 12 networks'),
+    ('/social-media-scheduler', 'i-calendar', 'Scheduler', 'Plan and post to 14 networks'),
     ('/social-media-calendar', 'i-grid', 'Content calendar', 'Week, month and list, drag to move'),
     ('/posting-queue', 'i-clock', 'Posting queue', 'Set your times once, posts fill them'),
     ('/bulk-scheduling', 'i-upload', 'Bulk scheduling', 'A CSV or a stack of files at once'),
@@ -103,11 +103,11 @@ NAV_SPRITE = nav_sprite(open(P + 'index.html').read())
 
 # Floating Capybaroar card on the free tools and the blog: one line that fits what the visitor just did.
 PROMO_COPY = {
-    'text': ('Styled your text? Schedule the post.', 'Write it once and Capybaroar posts it to Instagram, TikTok, LinkedIn and 9 more networks on time.'),
-    'write': ('Post ready? Let it go out on time.', 'Capybaroar posts to 12 networks from one calendar and checks every limit before it goes out.'),
-    'image': ('Picture ready? Schedule the post.', 'Capybaroar crops it for each network and posts it to 12 networks from one calendar.'),
-    'plan': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 12 networks.'),
-    'index': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 12 networks.'),
+    'text': ('Styled your text? Schedule the post.', 'Write it once and Capybaroar posts it to Instagram, TikTok, LinkedIn and 11 more networks on time.'),
+    'write': ('Post ready? Let it go out on time.', 'Capybaroar posts to 14 networks from one calendar and checks every limit before it goes out.'),
+    'image': ('Picture ready? Schedule the post.', 'Capybaroar crops it for each network and posts it to 14 networks from one calendar.'),
+    'plan': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 14 networks.'),
+    'index': ('Plan a week of posts in minutes.', 'Capybaroar\'s agent drafts your posts and puts them on one calendar for 14 networks.'),
 }
 
 
@@ -247,7 +247,7 @@ def faq_html(qs):
 
 
 RELATED = {
-    'sched': ('/social-media-scheduler', 'i-calendar', 'Scheduler', 'Plan and post to 12 networks from one calendar.'),
+    'sched': ('/social-media-scheduler', 'i-calendar', 'Scheduler', 'Plan and post to 14 networks from one calendar.'),
     'inbox': ('/social-media-inbox', 'i-inbox', 'Inbox', 'Answer comments, mentions and messages in one list.'),
     'ana': ('/social-media-analytics', 'i-chart', 'Analytics', 'See what works and when to post.'),
     'bio': ('/link-in-bio', 'i-link', 'Link in bio', 'One page for every link you share.'),
@@ -453,9 +453,11 @@ SCHED_NETS = [
     ('bluesky', 'Bluesky', '300', 'Post', False, ''),
     ('mastodon', 'Mastodon', '500', 'Post', False, 'Visibility, content warning'),
     ('discord', 'Discord', '2,000', 'Message', False, ''),
+    ('telegram', 'Telegram', '4,096', 'Message', False, ''),
+    ('wordpress', 'WordPress', 'No limit', 'Blog post', False, 'Title, status, categories, tags, excerpt, featured image'),
 ]
 
-sched_body = hero('sched', 'Social media scheduler', 'Schedule posts to 12 networks', 'from one calendar',
+sched_body = hero('sched', 'Social media scheduler', 'Schedule posts to 14 networks', 'from one calendar',
                   'Write a post once, fit it to each network and pick a time. Capybaroar posts it for you, on time, every time.', hero_stage('sc-sched'))
 sched_body += tour([
     zrow('i-calendar', 'Calendar', 'See every post.', 'Move any of them.', 'Week, month and list views show drafts, scheduled and published posts side by side. Drag a post to a new day, or click an open hour to add one.',
@@ -494,7 +496,7 @@ sched_faq = [
     ('Can I upload many posts at once?', 'Yes. Upload a CSV file or a batch of pictures and videos. Each picture can get its own caption.'),
     ('Can my team and clients approve posts?', 'Yes. Turn on approvals for a brand and posts wait for a yes. Clients can approve from a review link without an account.'),
 ]
-open(P + 'social-media-scheduler.html', 'w').write(page('/social-media-scheduler', 'sched', 'Social media scheduler for 12 networks | Capybaroar',
+open(P + 'social-media-scheduler.html', 'w').write(page('/social-media-scheduler', 'sched', 'Social media scheduler for 14 networks | Capybaroar',
      'Schedule posts to Instagram, TikTok, LinkedIn, YouTube, X and 7 more networks from one calendar. Queue times, bulk upload and an agent that plans your week. Free plan available.',
      sched_body, sched_faq))
 
@@ -801,7 +803,7 @@ feature('/social-media-calendar', 'cal', 'Content calendar', 'A social media cal
     ('Can I see several brands at once?', 'Yes. See every brand together, or filter by one brand or one channel.'),
     ('Does the calendar show published posts?', 'Yes. Published posts stay on the calendar with a link to the live post.'),
 ], 'Social media content calendar with drag and drop | Capybaroar',
-   'Plan posts for 12 networks on one social media calendar. Week, month and list views, drag and drop, filters by brand and channel, and approvals on the calendar. Free plan.')
+   'Plan posts for 14 networks on one social media calendar. Week, month and list views, drag and drop, filters by brand and channel, and approvals on the calendar. Free plan.')
 
 # ---- Posting queue
 feature('/posting-queue', 'queue', 'Posting queue', 'Set your posting times once.', 'Every new post takes the next one.',
@@ -839,7 +841,7 @@ feature('/bulk-scheduling', 'bulk', 'Bulk scheduling', 'Schedule a month of post
     ('What happens to a row with a problem?', 'It is shown with its line number and the reason before you import, and is left out until you fix it.'),
     ('Can I upload threads?', 'Yes. In the text column, a line with only --- starts the next post. X, Bluesky, Threads and Mastodon post them as a thread.'),
 ], 'Bulk schedule social media posts from a CSV | Capybaroar',
-   'Schedule up to 500 posts from one CSV, or a stack of photos and videos with a caption each. Every row is checked before saving. Instagram, TikTok, LinkedIn and 9 more networks.')
+   'Schedule up to 500 posts from one CSV, or a stack of photos and videos with a caption each. Every row is checked before saving. Instagram, TikTok, LinkedIn and 11 more networks.')
 
 # ---- Media library
 feature('/media-library', 'media', 'Media library', 'Every picture and video,', 'ready for any post',

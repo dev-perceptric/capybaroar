@@ -301,7 +301,7 @@ def steps4(c):
 def others(cur):
     tiles = ''.join(f'<li><a class="ont" href="{C[o]["slug"]}">{net(o)}<span>{C[o]["name"]}</span></a></li>' for o in ORDER if o != cur)
     return f'''<section class="band-gray" aria-labelledby="oth-title"><div class="wrap">
-<header class="head"><h2 id="oth-title">Schedule everywhere. <span>12 networks, one calendar.</span></h2></header>
+<header class="head"><h2 id="oth-title">Schedule everywhere. <span>14 networks, one calendar.</span></h2></header>
 <ul class="onets">{tiles}</ul>
 <div class="nets-foot"><a class="btn ghost" href="/social-media-scheduler">See the scheduler{ico("i-arrow")}</a></div>
 </div></section>'''
