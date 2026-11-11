@@ -86,7 +86,29 @@ const ROW = "flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hove
 
 /** The bar over a post's text, inside the text's box (`boxClass`): undo, formatting, hashtags, mentions, short links,
  *  snippets and Claude. */
-export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area: Area; network: string | null; onError: (m: string) => void; aiOpen: boolean; setAiOpen: (v: boolean) => void }) {
+export type FormatKind = "thread" | "poll" | "carousel" | "slideshow";
+const FORMAT_LABELS: Record<FormatKind, string> = { thread: "Write a thread", poll: "Write an X poll", carousel: "Make a LinkedIn carousel", slideshow: "Make a TikTok slideshow" };
+
+export function TextTools({
+  area,
+  network,
+  brandId = null,
+  formats = [],
+  onFormat,
+  onError,
+  aiOpen,
+  setAiOpen,
+}: {
+  area: Area;
+  network: string | null;
+  brandId?: string | null;
+  /** AI formats the picked channels take; the composer makes them from the text. */
+  formats?: FormatKind[];
+  onFormat?: (kind: FormatKind) => void;
+  onError: (m: string) => void;
+  aiOpen: boolean;
+  setAiOpen: (v: boolean) => void;
+}) {
   const aiBtn = useRef<HTMLSpanElement>(null);
   const snipBtn = useRef<HTMLSpanElement>(null);
   const [snips, setSnips] = useState<Snippet[] | null>(null);
@@ -133,7 +155,8 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
     setWorking(null);
   };
 
-  const rewrite = async (how: string) => {
+  const [asked, setAsked] = useState("");
+  const rewrite = async (how: string, instruction?: string) => {
     const a = box();
     setAiOpen(false);
     if (!a) return;
@@ -148,7 +171,7 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
       return;
     }
     setWorking("ai");
-    const r = await aiRewrite(part, how, network);
+    const r = await aiRewrite(part, how, network, brandId, instruction);
     setWorking(null);
     if (r.error && (await creditGate(r.error))) return;
     if (r.error || r.text == null) onError(r.error ?? "Claude didn't answer, try again");
@@ -223,11 +246,39 @@ export function TextTools({ area, network, onError, aiOpen, setAiOpen }: { area:
 
       {aiOpen ? (
         <Floating anchor={aiBtn} placement="bottom-end" onClose={() => setAiOpen(false)} role="menu" className={MENU}>
+          <form
+            className="mb-1"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!asked.trim()) return;
+              const v = asked;
+              setAsked("");
+              void rewrite("ask", v);
+            }}
+          >
+            <input
+              autoFocus
+              aria-label="Ask for a change"
+              value={asked}
+              maxLength={500}
+              onChange={(e) => setAsked(e.target.value)}
+              placeholder="Tell Claude what to change"
+              className="h-8 w-full rounded-sm bg-paper px-2.5 text-[13px] outline-none placeholder:text-faint focus:shadow-focus"
+            />
+          </form>
           {AI.filter((x) => x.how !== "fit" || network).map((x) => (
             <button key={x.how} type="button" role="menuitem" className={ROW} onMouseDown={(e) => e.preventDefault()} onClick={() => rewrite(x.how)}>
               {x.label}
             </button>
           ))}
+          {formats.length && onFormat ? <div className="my-1 -mx-1.5 border-t border-line" /> : null}
+          {onFormat
+            ? formats.map((f) => (
+                <button key={f} type="button" role="menuitem" className={ROW} onMouseDown={(e) => e.preventDefault()} onClick={() => (setAiOpen(false), onFormat(f))}>
+                  {FORMAT_LABELS[f]}
+                </button>
+              ))
+            : null}
         </Floating>
       ) : null}
 

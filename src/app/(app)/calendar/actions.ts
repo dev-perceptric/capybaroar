@@ -141,7 +141,11 @@ export async function composerData() {
   // Without enough results of its own, the workspace sees each network's popular hours across Capybaroar.
   const own = best.status === "fulfilled" ? best.value : [];
   const popular = own.length ? {} : await import("@/lib/analytics").then((a) => a.popularTimes(ctx.timezone)).catch(() => ({}));
-  return { best: best.status === "fulfilled" ? best.value : null, popular, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
+  const { brandKits } = await import("@/lib/brands");
+  const kits = await brandKits(ctx.workspaceId)
+    .then((all) => Object.fromEntries(Object.entries(all).filter(([id]) => !ctx.brandIds || ctx.brandIds.includes(id))))
+    .catch(() => ({}));
+  return { best: best.status === "fulfilled" ? best.value : null, popular, kits, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
 }
 
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */
@@ -151,12 +155,16 @@ export async function bestSlots() {
   return suggestedTimes(ctx.workspaceId, ctx.timezone);
 }
 
-export async function aiRewrite(text: string, how: string, network: string | null): Promise<{ error?: string; text?: string }> {
+export async function aiRewrite(text: string, how: string, network: string | null, brandId?: string | null, instruction?: string): Promise<{ error?: string; text?: string }> {
   const { rewrite } = await import("@/lib/composer");
   try {
     const ctx = await writerCtx();
     const b = await getBrandCtx();
-    return { text: await rewrite({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: homeBrand(b) }, text, how as never, (network as never) ?? null) };
+    const { getBrandKit, mayUseBrand } = await import("@/lib/brands");
+    // The post's brand when the composer knows it, so its kit applies and its credits are used.
+    const brand = brandId && mayUseBrand(b, brandId) ? brandId : homeBrand(b);
+    const kit = await getBrandKit(ctx.workspaceId, brand);
+    return { text: await rewrite({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: brand }, text, how as never, (network as never) ?? null, kit, instruction) };
   } catch (e) {
     return fail(e);
   }
@@ -277,6 +285,41 @@ export async function removeCampaign(id: string): Promise<{ error?: string }> {
     if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id)) throw new Error("Campaign not found");
     await deleteCampaign(ctx.workspaceId, id);
     return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+// AI formats (composer.ts writes, slides.ts draws): a thread, an X poll, a LinkedIn carousel PDF or a TikTok slideshow.
+export async function aiFormat(
+  kind: "thread" | "poll" | "carousel" | "slideshow",
+  text: string,
+  network: string | null,
+  brandId: string | null,
+): Promise<{ error?: string; thread?: string[]; poll?: { question: string; options: string[] }; mediaIds?: string[] }> {
+  try {
+    const ctx = await writerCtx();
+    const b = await getBrandCtx();
+    const { getBrandKit, mayUseBrand } = await import("@/lib/brands");
+    const brand = brandId && mayUseBrand(b, brandId) ? brandId : homeBrand(b);
+    const kit = await getBrandKit(ctx.workspaceId, brand);
+    const sp = { workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: brand };
+    const c = await import("@/lib/composer");
+    if (kind === "thread") return { thread: await c.writeThread(sp, text, (network ?? "x") as never, kit) };
+    if (kind === "poll") return { poll: await c.writePoll(sp, text, kit) };
+    const slides = await c.writeSlides(sp, text, kind, kit);
+    const { adminClient } = await import("@/lib/supabase/server");
+    const { data: row } = brand ? await adminClient().from("brands").select("name, color").eq("id", brand).maybeSingle() : { data: null };
+    const { ACCENTS, CAROUSEL, SLIDESHOW } = await import("@/lib/formatRules");
+    const { slidesJpeg, slidesPdf } = await import("@/lib/slides");
+    const { saveMadeFile } = await import("@/lib/media");
+    const look = { ...(kind === "carousel" ? CAROUSEL : SLIDESHOW), brand: (row?.name as string | undefined) ?? "", accent: ACCENTS[(row?.color as string | undefined) ?? "gray"] ?? ACCENTS.gray };
+    const name = (slides[0].title || "Slides").replace(/[^\w ]+/g, "").trim().slice(0, 60) || "Slides";
+    if (kind === "carousel") return { mediaIds: [await saveMadeFile(ctx.workspaceId, ctx.userId, await slidesPdf(slides, look), `${name}.pdf`, "application/pdf")] };
+    const jpegs = await slidesJpeg(slides, look);
+    const ids: string[] = [];
+    for (const [i, j] of jpegs.entries()) ids.push(await saveMadeFile(ctx.workspaceId, ctx.userId, j, `${name} ${i + 1}.jpg`, "image/jpeg"));
+    return { mediaIds: ids };
   } catch (e) {
     return fail(e);
   }

@@ -68,6 +68,15 @@ async function manage(fn: (ctx: Ctx) => Promise<unknown>): Promise<{ error?: str
 export async function addBrand(name: string) {
   return manage((ctx) => createBrand(ctx.workspaceId, name));
 }
+export async function loadBrandKit(id: string) {
+  const ctx = await managerCtx();
+  const { getBrandKit } = await import("@/lib/brands");
+  return getBrandKit(ctx.workspaceId, id);
+}
+export async function saveBrandKitFor(id: string, kit: { voice: string; avoid: string; hashtags: string }) {
+  const { saveBrandKit } = await import("@/lib/brands");
+  return manage((ctx) => saveBrandKit(ctx.workspaceId, id, kit));
+}
 export async function saveBrandName(id: string, name: string) {
   return manage((ctx) => renameBrand(ctx.workspaceId, id, name));
 }

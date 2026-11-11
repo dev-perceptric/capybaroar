@@ -1,4 +1,5 @@
 import "server-only";
+import { EMPTY_KIT, cleanKit, type BrandKit } from "./brandKit";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { adminClient } from "./supabase/server";
@@ -140,4 +141,25 @@ export async function brandForReview(token: string): Promise<(Brand & { workspac
   if (!data) return null;
   const { data: b } = await db.from("brands").select("id, name, color, needs_approval").eq("id", data.brand_id).single();
   return b ? { ...(b as Brand), workspaceId: data.workspace_id as string } : null;
+}
+
+/** A brand's kit (029_brand_kit.sql); empty for a brand of another workspace. */
+export async function getBrandKit(workspaceId: string, brandId: string | null): Promise<BrandKit> {
+  if (!brandId) return EMPTY_KIT;
+  const { data } = await adminClient().from("brands").select("voice, avoid, hashtags").eq("id", brandId).eq("workspace_id", workspaceId).maybeSingle();
+  return data ? { voice: (data.voice as string) ?? "", avoid: (data.avoid as string[]) ?? [], hashtags: (data.hashtags as string[]) ?? [] } : EMPTY_KIT;
+}
+
+/** Every brand's kit by brand id, with its name, for the agent and the composer. */
+export async function brandKits(workspaceId: string): Promise<Record<string, BrandKit & { name: string }>> {
+  const { data, error } = await adminClient().from("brands").select("id, name, voice, avoid, hashtags").eq("workspace_id", workspaceId);
+  if (error) throw new Error(error.message);
+  return Object.fromEntries((data ?? []).map((b) => [b.id as string, { name: b.name as string, voice: (b.voice as string) ?? "", avoid: (b.avoid as string[]) ?? [], hashtags: (b.hashtags as string[]) ?? [] }]));
+}
+
+export async function saveBrandKit(workspaceId: string, brandId: string, input: { voice?: unknown; avoid?: unknown; hashtags?: unknown }) {
+  const kit = cleanKit(input);
+  const { error } = await adminClient().from("brands").update(kit).eq("id", brandId).eq("workspace_id", workspaceId);
+  if (error) throw new Error(error.message);
+  return kit;
 }

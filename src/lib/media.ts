@@ -125,3 +125,15 @@ export async function mediaThumbs(workspaceId: string, ids: string[]): Promise<{
   const { data: signed } = await db.storage.from(BUCKET).createSignedUrls(rows.map((r) => r.path as string), 3600);
   return rows.map((r, i) => ({ id: r.id as string, mime: r.mime as string, thumb: signed?.[i]?.signedUrl ?? null, alt: (r.alt as string | null) ?? null }));
 }
+
+/** Saves a file the server made (a carousel PDF, slideshow pictures) to the media library. Returns its id. */
+export async function saveMadeFile(workspaceId: string, userId: string, bytes: Buffer, name: string, mime: string): Promise<string> {
+  const safe = name.replace(/[^\w.-]+/g, "-").slice(-80);
+  const path = `${workspaceId}/${crypto.randomUUID()}-${safe}`;
+  const db = adminClient();
+  const up = await db.storage.from(BUCKET).upload(path, bytes, { contentType: mime });
+  if (up.error) throw new Error(`Couldn't save ${name}: ${up.error.message}`);
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name: name.slice(0, 200), mime, size: bytes.length, created_by: userId }).select("id").single();
+  if (error) throw new Error(error.message);
+  return data.id as string;
+}

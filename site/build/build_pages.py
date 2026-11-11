@@ -934,13 +934,17 @@ feature('/ai-studio', 'ai', 'AI Studio', 'Write, rewrite and make media', 'right
          ['Improve, shorter, longer', 'Casual or professional', 'A better first line, or hashtags', 'Fit to the network, or fix spelling only'], pills_mock('Rewrite', 'i-pen', REWRITE_NAMES, pick='Better hook', text='Fresh rye, out of the oven at 7. Come early.')),
     zrow('i-image', 'Pictures and videos', 'Make the picture', 'the post needs.', 'Describe it, pick a model and a shape, and it goes straight into the post when it is ready.',
          [f'Pictures: {", ".join(MODELS_IMG)}', f'Videos: {", ".join(MODELS_VID)}', 'Edit a picture by describing the change', 'A picture can start a video'], gallery_mock(), flip=True),
-    zrow('i-text', 'Writing tools', 'The small things,', 'done for you.', 'Save lines you use often, shorten links so clicks are counted, and add hashtags or mentions from the toolbar.',
-         ['Saved snippets', 'Short links with click counts', 'Bold and italic for networks that show them', 'Character counts for each network'], ZVIS['z-prev']),
+    zrow('i-layers', 'Formats', 'One idea,', 'every format.', 'Turn your text into a thread, an X poll, a LinkedIn carousel PDF or a TikTok photo slideshow. The slides are drawn in your brand color and land in the post.',
+         ['Threads of 3 to 10 posts', 'X polls with 2 to 4 options', 'LinkedIn carousels of 4 to 12 slides, as a PDF', 'TikTok slideshows of 3 to 10 pictures'], ZVIS['z-prev'], flip=True),
+    zrow('i-shield', 'Brand kit', 'Your voice,', 'every time.', 'Describe how the brand writes, list words it never uses and the hashtags it always adds. Every rewrite, format, agent post and Inbox reply follows it.',
+         ['Voice, words to avoid and hashtags per brand', 'Words to avoid flagged before you post', 'Ask for any change in your own words', 'Saved snippets and short links with click counts'], ZVIS['z-prev']),
 ], '', ('Better posts,', 'in less time.'), [
     ('Which AI writes the rewrites?', 'Claude, from Anthropic.'),
     ('Which models make pictures and videos?', f'Pictures: {", ".join(MODELS_IMG)}. Videos: {", ".join(MODELS_VID)}.'),
     ('How much does AI cost?', 'AI uses credits. Creator has 1,000 a month, Pro 2,500 and Agency 8,000, and you can buy more. Free has no AI.'),
     ('Are failed generations charged?', 'No. Credits are only used for what you get.'),
+    ('Can AI make a LinkedIn carousel or a TikTok slideshow?', 'Yes. Write what it\'s about, pick the format in the AI menu, and Capybaroar writes the slides and draws them: a PDF for LinkedIn, or pictures for a TikTok photo post. Each uses 15 credits.'),
+    ('What is a brand kit?', 'How a brand writes: a short description of its voice, words it never uses and hashtags it always adds. Set it in Settings, Brands. Every AI that writes for the brand follows it.'),
 ], 'AI Studio: AI captions, pictures and videos for social posts | Capybaroar',
    'Rewrite posts in one click with Claude, and make pictures and videos with FLUX.2, Nano Banana, Kling and Veo, right in the composer.')
 

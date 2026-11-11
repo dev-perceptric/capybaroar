@@ -8,6 +8,8 @@ import { hold, settle } from "./credits";
 import { AGENT_HOLD, AGENT_MIN, claudeCredits } from "./creditRules";
 import { ATTACHED, agentTools, systemPrompt, type CapyChoice } from "./agentTools";
 import { aiReady, attachToPost, waitForGeneration } from "./generations";
+import { brandKits } from "./brands";
+import { kitPrompt } from "./brandKit";
 import { callTool } from "./api/mcp";
 import { realOps } from "./api/ops";
 import { ApiError, id as checkId } from "./api/input";
@@ -105,7 +107,13 @@ async function converse(ctx: Ctx, brandId: string | null, chatId: string | null,
 
   const client = new Anthropic();
   const ai = aiReady();
-  const system = systemPrompt(ai, ctx.timezone, new Date(), capy);
+  const all = await brandKits(ctx.workspaceId).catch(() => ({}) as Awaited<ReturnType<typeof brandKits>>);
+  const kits = Object.entries(all)
+    .filter(([id]) => !ctx.brandIds || ctx.brandIds.includes(id))
+    .map(([, k]) => kitPrompt(k, k.name))
+    .filter(Boolean)
+    .join("\n");
+  const system = systemPrompt(ai, ctx.timezone, new Date(), capy, kits);
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     if (turn > 0 && !(await meter.room())) {
       await add({ role: "assistant", content: [{ type: "text", text: OUT_OF_CREDITS }] });

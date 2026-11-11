@@ -25,6 +25,8 @@ export const MAX_ACTION = 1000;
 
 /** Rewrite, fit to a network, suggested reply, caption. */
 export const WRITE_CREDITS = 4;
+/** An AI thread, poll, carousel or slideshow: a longer answer from Claude (about 5 cents of tokens). */
+export const FORMAT_CREDITS = 15;
 /** Build a link-in-bio page with AI. */
 export const BIO_CREDITS = 50;
 /** What an agent message holds when it starts, and holds again each time it uses that much. */

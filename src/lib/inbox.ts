@@ -1,4 +1,6 @@
 import "server-only";
+import { kitPrompt } from "./brandKit";
+import { getBrandKit } from "./brands";
 import Anthropic from "@anthropic-ai/sdk";
 import { adminClient } from "./supabase/server";
 import { providerOf } from "./providers";
@@ -268,7 +270,9 @@ export async function suggestReply(workspaceId: string, userId: string, itemId: 
     .slice(-20)
     .map((i) => `<message from="${i.mine ? "brand" : (i.author_name || "someone").replace(/"/g, "")}">${i.text.slice(0, 2000)}</message>`)
     .join("\n");
-  const system = [SUGGEST, ch ? `The account is ${ch.name} on ${network?.name}. Replies there are up to ${network?.limit} characters.` : ""].filter(Boolean).join("\n");
+  const kit = ch?.brand_id ? await getBrandKit(workspaceId, ch.brand_id as string) : null;
+  // Replies keep the voice and the words to avoid; hashtags are for posts, not replies.
+  const system = [SUGGEST, ch ? `The account is ${ch.name} on ${network?.name}. Replies there are up to ${network?.limit} characters.` : "", kitPrompt(kit ? { ...kit, hashtags: [] } : null)].filter(Boolean).join("\n");
   const content = [
     voice ? `The brand's recent posts:\n${voice}` : "",
     post.text ? `The post they're answering:\n<post>${post.text.slice(0, 2000)}</post>` : item.kind === "dm" ? "This is a direct message." : "",

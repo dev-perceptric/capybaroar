@@ -1,4 +1,5 @@
 import "server-only";
+import { kitPrompt, type BrandKit } from "./brandKit";
 import Anthropic from "@anthropic-ai/sdk";
 import { execFile } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -8,7 +9,8 @@ import { promisify } from "node:util";
 import { adminClient } from "./supabase/server";
 import { appUrl } from "./channels";
 import { withCredits, type Spender } from "./credits";
-import { WRITE_CREDITS } from "./creditRules";
+import { FORMAT_CREDITS, WRITE_CREDITS } from "./creditRules";
+import { jsonOf, parsePoll, parseSlides, parseThread, type Slide } from "./formatRules";
 import { networkOf, type NetworkId } from "./networks";
 
 // Tools for the composer: Claude rewrites, saved snippets, short links and video trims.
@@ -28,9 +30,12 @@ export const REWRITES = {
 } as const;
 export type Rewrite = keyof typeof REWRITES;
 
-export async function rewrite(sp: Spender, text: string, how: Rewrite, network: NetworkId | null): Promise<string> {
+/** Rewrites with one of REWRITES, or ("ask") with the person's own instruction (up to 500 characters). */
+export async function rewrite(sp: Spender, text: string, how: Rewrite | "ask", network: NetworkId | null, kit?: BrandKit, instruction?: string): Promise<string> {
   if (!text.trim()) throw new Error("Write something first");
-  if (!(how in REWRITES)) throw new Error("Unknown action");
+  if (how !== "ask" && !(how in REWRITES)) throw new Error("Unknown action");
+  const asked = (instruction ?? "").trim().slice(0, 500);
+  if (how === "ask" && !asked) throw new Error("Say what to change");
   const n = network ? networkOf(network) : null;
   const system = [
     "You rewrite social media posts inside Capybaroar.",
@@ -38,14 +43,55 @@ export async function rewrite(sp: Spender, text: string, how: Rewrite, network: 
     "Never invent facts, numbers, quotes, names or links. Keep every link and @mention exactly as written.",
     "Keep the language of the original.",
     n ? `The post is for ${n.name}, which allows up to ${n.limit} characters. Stay under it.` : "",
+    // "Fix spelling only" changes nothing else, so it doesn't add the brand's hashtags.
+    how === "fix" ? "" : kitPrompt(kit),
   ]
     .filter(Boolean)
     .join("\n");
   return withCredits(sp, { tool: "rewrite", note: how }, WRITE_CREDITS, async () => {
-    const out = await ask(system, [{ type: "text", text: `${REWRITES[how]}\n\n<post>\n${text}\n</post>` }], 4000);
+    const what = how === "ask" ? `Change the post as asked, and nothing else. The request comes from the person writing it:\n<request>${asked}</request>` : REWRITES[how];
+    const out = await ask(system, [{ type: "text", text: `${what}\n\n<post>\n${text}\n</post>` }], 4000);
     if (out === null) throw new Error("Claude can't rewrite this post");
     return out;
   });
+}
+
+const FORMAT_RULES = [
+  "You write social media content inside Capybaroar.",
+  "Reply with JSON only, in the shape asked for: no code fence, no notes.",
+  "Use only facts from the text you are given. Never invent numbers, prices, dates, quotes, names, results or links.",
+  "Keep the language of the text you are given.",
+];
+
+async function format(sp: Spender, note: string, system: string[], ask_: string, maxTokens = 3000): Promise<Record<string, unknown>> {
+  return withCredits(sp, { tool: "format", note }, FORMAT_CREDITS, async () => {
+    const out = await ask([...FORMAT_RULES, ...system].filter(Boolean).join("\n"), [{ type: "text", text: ask_ }], maxTokens);
+    if (out === null) throw new Error("Claude can't write this");
+    return jsonOf(out);
+  });
+}
+
+/** A thread of 3 to 10 posts from a text or an idea, each within the network's limit. */
+export async function writeThread(sp: Spender, text: string, network: NetworkId, kit?: BrandKit): Promise<string[]> {
+  if (!text.trim()) throw new Error("Write what the thread is about first");
+  const n = networkOf(network);
+  const o = await format(sp, "thread", [`It is for ${n.name}: every post must be under ${n.limit} characters.`, kitPrompt(kit)], `Turn this into a thread of 3 to 10 posts. The first post hooks the reader and stands on its own; each next post adds one point; the last post wraps up. Answer as {"posts": ["...", "..."]}.\n\n<text>\n${text.slice(0, 8000)}\n</text>`);
+  return parseThread(o, n.limit);
+}
+
+/** An X poll from a text or an idea: a question and 2 to 4 short options. */
+export async function writePoll(sp: Spender, text: string, kit?: BrandKit): Promise<{ question: string; options: string[] }> {
+  if (!text.trim()) throw new Error("Write what the poll is about first");
+  const o = await format(sp, "poll", ["The poll is for X: the question is under 280 characters and each option is 25 characters or fewer.", kit ? kitPrompt({ ...kit, hashtags: [] }) : ""], `Write a poll about this. Answer as {"question": "...", "options": ["...", "..."]} with 2 to 4 options.\n\n<text>\n${text.slice(0, 4000)}\n</text>`, 800);
+  return parsePoll(o, 280);
+}
+
+/** Slides for a LinkedIn carousel (4 to 12) or a TikTok slideshow (3 to 10): a short title and body each. */
+export async function writeSlides(sp: Spender, text: string, kind: "carousel" | "slideshow", kit?: BrandKit): Promise<Slide[]> {
+  if (!text.trim()) throw new Error("Write what the slides are about first");
+  const [min, max] = kind === "carousel" ? [4, 12] : [3, 10];
+  const o = await format(sp, kind, [kit ? kitPrompt({ ...kit, hashtags: [] }) : ""], `Turn this into ${min} to ${max} slides for a ${kind === "carousel" ? "LinkedIn carousel" : "TikTok photo slideshow"}. Slide 1 is a strong title that makes people swipe, with a one-line body. Each next slide makes one point: a title of at most 8 words and a body of at most 30 words. The last slide sums up. Answer as {"slides": [{"title": "...", "body": "..."}]}.\n\n<text>\n${text.slice(0, 8000)}\n</text>`);
+  return parseSlides(o, min, max);
 }
 
 /** One Claude call that answers with text. Null when Claude declines. */

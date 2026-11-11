@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Link2, Pencil, Plus, Trash2, Unlink, UserPlus, Users } from "lucide-react";
-import { Avatar, Badge, Button, CardHead, Checkbox, CopyButton, Dot, Field, IconButton, Input, PaneHead, Panel, Row, Switch } from "./ui";
+import { Link2, Palette, Pencil, Plus, Trash2, Unlink, UserPlus, Users } from "lucide-react";
+import { Avatar, Badge, Button, CardHead, Checkbox, CopyButton, Dot, Field, IconButton, Input, PaneHead, Panel, Row, Switch, TextArea } from "./ui";
 import { Modal } from "./Overlay";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -24,6 +24,8 @@ import {
   saveMemberBrands,
   saveMemberRole,
   withdrawInvite,
+  loadBrandKit,
+  saveBrandKitFor,
 } from "@/app/(app)/settings/actions";
 
 export type TeamInfo = {
@@ -56,6 +58,7 @@ function useRun() {
 
 export function BrandsSection({ team }: { team: TeamInfo }) {
   const { run, busy } = useRun();
+  const [kitFor, setKitFor] = useState<Brand | null>(null);
   const add = async () => {
     const name = await askText("New brand", { placeholder: "Brand name", ok: "Add" });
     if (name) run(() => addBrand(name), "Couldn't add the brand");
@@ -98,6 +101,9 @@ export function BrandsSection({ team }: { team: TeamInfo }) {
                   <Link2 />
                 </IconButton>
               )}
+              <IconButton label="Brand kit" disabled={busy} onClick={() => setKitFor(b)}>
+                <Palette />
+              </IconButton>
               <IconButton label="Rename" disabled={busy} onClick={() => rename(b)}>
                 <Pencil />
               </IconButton>
@@ -108,7 +114,62 @@ export function BrandsSection({ team }: { team: TeamInfo }) {
           ))}
         </div>
       </Panel>
+      {kitFor ? <BrandKitModal brand={kitFor} onClose={() => setKitFor(null)} /> : null}
     </>
+  );
+}
+
+/** A brand's voice, words to avoid and hashtags: every AI that writes for the brand follows them. */
+function BrandKitModal({ brand, onClose }: { brand: Brand; onClose: () => void }) {
+  const [kit, setKit] = useState<{ voice: string; avoid: string; hashtags: string } | null>(null);
+  const [error, setError] = useState("");
+  const [busy, start] = useTransition();
+  useEffect(() => {
+    loadBrandKit(brand.id).then(
+      (k) => setKit({ voice: k.voice, avoid: k.avoid.join(", "), hashtags: k.hashtags.join(" ") }),
+      () => setKit({ voice: "", avoid: "", hashtags: "" }),
+    );
+  }, [brand.id]);
+  const save = () =>
+    kit &&
+    start(async () => {
+      const r = await saveBrandKitFor(brand.id, { ...kit, hashtags: kit.hashtags.replace(/\s+/g, ",") });
+      if (r.error) setError(r.error);
+      else onClose();
+    });
+  return (
+    <Modal
+      title={`${brand.name} brand kit`}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button disabled={!kit || busy} onClick={save}>
+            {busy ? <Loader /> : null}
+            Save
+          </Button>
+        </>
+      }
+    >
+      {kit ? (
+        <div className="flex flex-col gap-4">
+          <Field label="Voice">
+            <TextArea rows={4} value={kit.voice} maxLength={1500} placeholder="Warm and plain. Short sentences. We say we, never I." onChange={(e) => setKit({ ...kit, voice: e.target.value })} />
+          </Field>
+          <Field label="Words to avoid">
+            <Input value={kit.avoid} placeholder="cheap, guys, synergy" onChange={(e) => setKit({ ...kit, avoid: e.target.value })} />
+          </Field>
+          <Field label="Hashtags to add">
+            <Input value={kit.hashtags} placeholder="#crumbandco #sourdough" onChange={(e) => setKit({ ...kit, hashtags: e.target.value })} />
+          </Field>
+          {error ? <p className="text-[12.5px] text-danger">{error}</p> : null}
+        </div>
+      ) : (
+        <Loader />
+      )}
+    </Modal>
   );
 }
 

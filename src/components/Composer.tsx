@@ -11,15 +11,17 @@ import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
-import { TextTools, mod, toggleStyle } from "./TextTools";
+import { TextTools, mod, toggleStyle, type FormatKind } from "./TextTools";
+import { creditGate } from "./creditGate";
 import { THREAD_MAX, networkOf, takesThread, type NetworkField, type ThreadPart } from "@/lib/networks";
 import { threadOf } from "@/lib/thread";
 import { toUploadable } from "@/lib/imageConvert";
+import { avoidedIn, type BrandKit } from "@/lib/brandKit";
 import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { approve, channelGroups, composerData, duplicate, loadComments, loadMedia, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
 import type { Campaign } from "@/lib/campaignRules";
 import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
 import { Floating } from "./Floating";
@@ -185,11 +187,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   const [best, setBest] = useState<{ day: number; hour: number }[]>([]);
   const [popular, setPopular] = useState<Record<string, { day: number; hour: number }[]>>({});
+  const [kits, setKits] = useState<Record<string, BrandKit>>({});
   useEffect(() => {
     composerData().then(
       (d) => {
         setBest(d.best ?? []);
         setPopular(d.popular ?? {});
+        setKits(d.kits ?? {});
         setLibrary((d.media ?? []) as Media[]);
         setCampaigns(d.campaigns ?? []);
         setAi(!!d.ai);
@@ -237,6 +241,9 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   // Channels that post the thread's later parts; the rest post the first only.
   const threaded = picked.filter((c) => takesThread(c.network));
   const threadLimit = threaded.length ? Math.min(...threaded.map((c) => networkOf(c.network).limit)) : null;
+  // The brand kit's words to avoid, anywhere in the post: the text each channel gets and the thread.
+  const kit = picked[0]?.brand_id ? kits[picked[0].brand_id] : undefined;
+  const avoided = kit?.avoid.length ? avoidedIn([text, ...picked.map((c) => targets[c.id]?.text ?? ""), ...thread.map((p) => p.text)].join("\n"), kit.avoid) : [];
   const threadPreview = (c: Channel) =>
     takesThread(c.network) ? thread.map((p) => ({ text: p.text, media: p.mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m)) })) : [];
   const problems = useMemo(
@@ -364,6 +371,37 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         onSaved();
       }
     });
+  // AI formats the picked channels take, made from the post's text (aiFormat).
+  const formats: FormatKind[] = [
+    ...(threaded.length ? (["thread"] as const) : []),
+    ...(picked.some((c) => c.network === "x") ? (["poll"] as const) : []),
+    ...(picked.some((c) => c.network === "linkedin" || c.network === "linkedin-page") ? (["carousel"] as const) : []),
+    ...(picked.some((c) => c.network === "tiktok") ? (["slideshow"] as const) : []),
+  ];
+  const [making, setMaking] = useState(false);
+  const makeFormat = async (kind: FormatKind) => {
+    const source = (active ? textOf(active) : text).trim();
+    if (!source) return setError("Write what it's about first");
+    if (kind === "thread" && thread.length && !(await askConfirm("Replace the thread?", { ok: "Replace" }))) return;
+    if ((kind === "carousel" || kind === "slideshow") && mediaIds.length && !(await askConfirm("Replace the files on this post?", { ok: "Replace" }))) return;
+    setError("");
+    setMaking(true);
+    const network = kind === "thread" ? (threaded[0]?.network ?? null) : null;
+    const r = await aiFormat(kind, source, network, picked[0]?.brand_id ?? null);
+    setMaking(false);
+    if (r.error && (await creditGate(r.error))) return;
+    if (r.error) return setError(r.error);
+    if (r.thread) {
+      setText(r.thread[0]);
+      setThread(r.thread.slice(1).map((t) => ({ text: t, mediaIds: [] })));
+    } else if (r.poll) {
+      const xs = picked.filter((c) => c.network === "x");
+      setTargets((t) => ({ ...t, ...Object.fromEntries(xs.map((c) => [c.id, { text: r.poll!.question, settings: { ...t[c.id].settings, poll: r.poll!.options.join("\n") } }])) }));
+    } else if (r.mediaIds) {
+      setLibrary((await loadMedia()) as Media[]);
+      setMediaIds(r.mediaIds);
+    }
+  };
   const pickCampaign = async (v: string) => {
     if (v !== NEW_CAMPAIGN) return setCampaignId(v || null);
     const name = await askText("New campaign", { placeholder: "Spring launch", ok: "Create" });
@@ -621,7 +659,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     }
                   >
                     <div className={boxClass}>
-                      {!locked ? <TextTools area={chanArea} network={active.network} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
+                      {!locked ? <TextTools area={chanArea} network={active.network} brandId={active.brand_id} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
                       <textarea ref={chanArea} rows={11} aria-label={`Text for ${active.name}`} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
                     </div>
                   </Field>
@@ -631,7 +669,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 <>
                   <Field label="Text">
                     <div className={boxClass}>
-                    {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
+                    {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} brandId={picked[0]?.brand_id ?? null} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
                     <textarea
                       ref={sharedArea}
                       aria-label="Text"
@@ -969,7 +1007,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               ]}
             />
             <span role={error ? "alert" : undefined} className="min-w-0 flex-1 truncate text-[12px]">
-              {error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : null}
+              {making ? <Loader /> : error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : avoided.length ? <span className="text-warning">Words to avoid: {avoided.join(", ")}</span> : null}
             </span>
             <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <Button variant="ghost" disabled={busy} onClick={() => submit("draft")} title={`${mod()}S`}>
