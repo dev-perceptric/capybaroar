@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 const noop = () => () => {};
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
-import { Badge, Button, Empty, IconButton, Page, Segmented } from "@/components/ui";
+import { Badge, Button, Empty, IconButton, LinkButton, Page, Segmented } from "@/components/ui";
 import { Select } from "@/components/Select";
 import { Sheet } from "@/components/Overlay";
 import { NetworkLogo } from "@/components/NetworkLogo";
@@ -215,6 +214,25 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               </button>
             </div>
             <span className="flex-1" />
+            {channels.length > 1 ? (
+              <Select<string>
+                size="sm"
+                lead="Channel"
+                ariaLabel="Channel"
+                className="max-w-72"
+                value={channel}
+                onChange={setChannel}
+                options={[
+                  { value: "all", label: "All channels", hint: String(inRange.length) },
+                  ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
+                ]}
+              />
+            ) : null}
+            {!channels.length && access.write ? (
+              <LinkButton href="/channels" variant="ghost" size="sm">
+                Connect a channel
+              </LinkButton>
+            ) : null}
             {campaigns.length ? (
               <Select<string>
                 size="sm"
@@ -236,27 +254,6 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
                 { value: "list", label: "List" },
               ]}
             />
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5 px-5 pt-0.5 pb-3">
-            {channels.length > 1 ? (
-              <Select<string>
-                size="sm"
-                lead="Channel"
-                ariaLabel="Channel"
-                className="w-full max-w-72"
-                value={channel}
-                onChange={setChannel}
-                options={[
-                  { value: "all", label: "All channels", hint: String(inRange.length) },
-                  ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
-                ]}
-              />
-            ) : null}
-            {access.write ? (
-              <Link href="/channels" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-dashed border-line-strong px-3 text-[12.5px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
-                <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}
-              </Link>
-            ) : null}
           </div>
         </div>
 
@@ -307,7 +304,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
           }}
         />
       ) : null}
-      <Sheet open={campaignSheet} onClose={() => setCampaignSheet(false)} label="Campaigns" title="Campaigns">
+      <Sheet open={campaignSheet} onClose={() => setCampaignSheet(false)} label="Campaigns" title="Campaigns" wide>
         <CampaignList
           campaigns={campaigns}
           onChange={reloadCampaigns}
@@ -629,6 +626,8 @@ function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Cha
   );
 }
 
+const CAMP_TH = "h-10 px-4 text-right font-medium";
+
 /** Every campaign with its posts by status and their engagements: show its posts, rename it or delete it. */
 function CampaignList({ campaigns, onChange, onShow }: { campaigns: (Campaign & { counts: CampaignCounts })[]; onChange: () => void; onShow: (id: string) => void }) {
   const add = async () => {
@@ -659,31 +658,52 @@ function CampaignList({ campaigns, onChange, onShow }: { campaigns: (Campaign & 
         </Button>
       </div>
       {campaigns.length ? (
-        <ul className="flex flex-col divide-y divide-line">
-          {campaigns.map((c) => (
-            <li key={c.id} className="flex flex-col gap-1.5 py-3">
-              <div className="flex items-center gap-2">
-                <span className="size-2.5 shrink-0 rounded-full" style={{ background: `var(--color-tone-${c.tone})` }} />
-                <button type="button" onClick={() => onShow(c.id)} className="min-w-0 flex-1 truncate text-left text-[13.5px] font-medium hover:underline">
-                  {c.name}
-                </button>
-                <IconButton label="Rename" onClick={() => rename(c)}>
-                  <Pencil size={14} />
-                </IconButton>
-                <IconButton label="Delete" onClick={() => del(c)}>
-                  <Trash2 size={14} />
-                </IconButton>
-              </div>
-              <div className="flex flex-wrap gap-1.5 pl-4.5">
-                <Badge tone="sky">{c.counts.scheduled} scheduled</Badge>
-                <Badge tone="green">{c.counts.published} published</Badge>
-                {c.counts.failed ? <Badge tone="red">{c.counts.failed} failed</Badge> : null}
-                {c.counts.drafts ? <Badge>{c.counts.drafts} drafts</Badge> : null}
-                <Badge>{fmtNum(c.counts.engagements)} engagements</Badge>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-x-auto rounded-lg bg-panel shadow-card">
+          <table className="w-full min-w-[560px] text-[13px]">
+            <thead>
+              <tr className="border-b border-line text-left text-[12px] text-muted">
+                <th className="h-10 px-4 font-medium">Campaign</th>
+                <th className={CAMP_TH}>Scheduled</th>
+                <th className={CAMP_TH}>Published</th>
+                <th className={CAMP_TH}>Failed</th>
+                <th className={CAMP_TH}>Drafts</th>
+                <th className={CAMP_TH}>Engagements</th>
+                <th className="h-10 w-px px-2 font-medium">
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {campaigns.map((c) => (
+                <tr key={c.id} className="border-b border-line last:border-b-0 hover:bg-hover">
+                  <td className="max-w-[220px] px-4 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="size-2.5 shrink-0 rounded-full" style={{ background: `var(--color-tone-${c.tone})` }} />
+                      <button type="button" onClick={() => onShow(c.id)} className="min-w-0 truncate text-left font-medium hover:underline">
+                        {c.name}
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{fmtNum(c.counts.scheduled)}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{fmtNum(c.counts.published)}</td>
+                  <td className={`px-4 py-2.5 text-right tabular-nums ${c.counts.failed ? "text-danger" : ""}`}>{fmtNum(c.counts.failed)}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{fmtNum(c.counts.drafts)}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{fmtNum(c.counts.engagements)}</td>
+                  <td className="px-2 py-1.5">
+                    <div className="flex items-center justify-end">
+                      <IconButton label="Rename" onClick={() => rename(c)}>
+                        <Pencil size={14} />
+                      </IconButton>
+                      <IconButton label="Delete" align="end" onClick={() => del(c)}>
+                        <Trash2 size={14} />
+                      </IconButton>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : null}
     </div>
   );

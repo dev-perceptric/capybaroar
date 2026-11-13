@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Badge, Button, Empty, Segmented } from "./ui";
+import { Badge, Button, Empty } from "./ui";
+import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { NetworkLogo } from "./NetworkLogo";
@@ -49,14 +50,6 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
           <Badge tone="violet">In review</Badge>
           {post.when ? <span className="text-[13px] font-medium">{post.when}</span> : null}
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          {post.targets.map((x) => (
-            <span key={x.channel.id} className="flex h-7 items-center gap-1.5 rounded-full bg-panel px-2.5 text-[12px] shadow-chip">
-              <NetworkLogo id={x.channel.network} size={14} />
-              <span className="max-w-40 truncate">{x.channel.name}</span>
-            </span>
-          ))}
-        </div>
         <p className="text-[13px] leading-relaxed whitespace-pre-line">{t?.text}</p>
         <span className="flex-1" />
         {error ? (
@@ -75,7 +68,17 @@ function ReviewItem({ token, post }: { token: string; post: ReviewPost }) {
         </div>
       </div>
       <div className="flex flex-col items-center gap-3 border-t border-line bg-paper p-4 md:border-t-0 md:border-l">
-        {post.targets.length > 1 ? <Segmented label="Preview" size="sm" value={view} onChange={setView} options={post.targets.map((x) => ({ value: x.channel.id, label: x.channel.name, icon: <NetworkLogo id={x.channel.network} size={14} /> }))} /> : null}
+        {post.targets.length > 1 ? (
+          <Select<string>
+            size="sm"
+            lead="Preview"
+            ariaLabel="Preview"
+            className="max-w-full"
+            value={view}
+            onChange={setView}
+            options={post.targets.map((x) => ({ value: x.channel.id, label: x.channel.name, icon: <NetworkLogo id={x.channel.network} size={14} /> }))}
+          />
+        ) : null}
         {t ? <Phone channel={t.channel} text={t.text} media={post.media} settings={t.settings} /> : null}
       </div>
     </section>

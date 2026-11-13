@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { ArrowLeft, ArrowUp, CheckCheck, ExternalLink, Eye, EyeOff, RotateCcw, Sparkles, ThumbsUp } from "lucide-react";
 import { Avatar, Badge, Button, Empty, IconButton, IconLink, Loading, Search, Segmented, bareArea, boxClass, timeAgo, useLoad } from "./ui";
 import { Select } from "./Select";
@@ -38,6 +39,7 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
   const [error, setError] = useState("");
   const [picked, setPicked] = useState<Picked | null>(null);
   const byId = new Map(channels.map((c) => [c.id, c]));
+  const attention = channels.filter((c) => errors[c.id] || c.status === "reconnect").length;
 
   useEffect(() => {
     const t = setTimeout(() => setTerm(q.trim()), 250);
@@ -155,13 +157,10 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
               ]}
             />
           ) : null}
-          {channels.some((c) => errors[c.id] || c.status === "reconnect") ? (
-            <p className="text-[12px] text-danger">
-              {channels
-                .filter((c) => errors[c.id] || c.status === "reconnect")
-                .map((c) => `${c.name}: ${c.status === "reconnect" ? "Reconnect this channel" : errors[c.id]}`)
-                .join(". ")}
-            </p>
+          {attention ? (
+            <Link href="/channels" className="text-[12px] text-danger hover:underline">
+              {attention} {attention === 1 ? "channel needs" : "channels need"} attention
+            </Link>
           ) : null}
           {error ? (
             <p role="alert" className="text-[12px] text-danger">
