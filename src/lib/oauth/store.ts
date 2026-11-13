@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { adminClient } from "../supabase/server";
 import { hashToken } from "../crypto";
 import { ApiError } from "../api/input";
@@ -61,23 +62,46 @@ async function issue(grantId: string): Promise<Pair> {
 export async function exchangeCode(f: Record<string, string>): Promise<Pair> {
   if (!f.code || !f.client_id || !f.redirect_uri) throw new OAuthError("invalid_request", "Send code, client_id, redirect_uri and code_verifier");
   const db = adminClient();
-  // Marks the code used in the same statement that finds it, so two requests can't both redeem it.
+  const hash = hashToken(f.code);
+  // Marks the code used in the same statement that finds it, so two requests can't both redeem it. The grant's id is
+  // written with it, so a second use can revoke what the first one got.
+  const grantId = randomUUID();
   const { data: c, error } = await db
     .from("oauth_codes")
-    .update({ used_at: new Date().toISOString() })
-    .eq("hash", hashToken(f.code))
+    .update({ used_at: new Date().toISOString(), grant_id: grantId })
+    .eq("hash", hash)
     .is("used_at", null)
     .gt("expires_at", new Date().toISOString())
     .select("client_id, workspace_id, user_id, redirect_uri, challenge")
     .maybeSingle();
   if (error) throw busy();
-  if (!c) throw new OAuthError("invalid_grant", "The code is wrong, used or expired");
+  if (!c) {
+    await revokeReused(hash);
+    throw new OAuthError("invalid_grant", "The code is wrong, used or expired");
+  }
   if (c.client_id !== f.client_id) throw new OAuthError("invalid_grant", "The code was issued to another app");
   if (!redirectMatches([c.redirect_uri as string], f.redirect_uri)) throw new OAuthError("invalid_grant", "The redirect_uri doesn't match the one used to sign in");
   if (!pkceOk(f.code_verifier, c.challenge as string)) throw new OAuthError("invalid_grant", "The code_verifier doesn't match the code_challenge");
-  const { data: g, error: e2 } = await db.from("oauth_grants").insert({ client_id: c.client_id, workspace_id: c.workspace_id, user_id: c.user_id }).select("id").single();
+  const { error: e2 } = await db.from("oauth_grants").insert({ id: grantId, client_id: c.client_id, workspace_id: c.workspace_id, user_id: c.user_id });
+  // A second use of the code got here first and wrote the grant as revoked.
+  if (e2?.code === "23505") throw new OAuthError("invalid_grant", "The code is wrong, used or expired");
   if (e2) throw busy();
-  return issue(g.id as string);
+  return issue(grantId);
+}
+
+/** A used code tried again means it leaked (RFC 6749 4.1.2): revoke the grant its first use made. When the first use
+ * hasn't written that grant yet, it's written here already revoked, and the first use then fails. Never throws. */
+async function revokeReused(hash: string) {
+  try {
+    const db = adminClient();
+    const { data: k } = await db.from("oauth_codes").select("client_id, workspace_id, user_id, grant_id").eq("hash", hash).not("used_at", "is", null).maybeSingle();
+    if (!k?.grant_id) return;
+    await db
+      .from("oauth_grants")
+      .upsert({ id: k.grant_id, client_id: k.client_id, workspace_id: k.workspace_id, user_id: k.user_id, revoked_at: new Date().toISOString() }, { onConflict: "id" });
+  } catch (e) {
+    console.error("oauth code reuse:", e instanceof Error ? e.message : e);
+  }
 }
 
 /** refresh_token: works once. A second use of the same refresh token revokes the whole grant. */

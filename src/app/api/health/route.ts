@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { adminClient } from "@/lib/supabase/server";
 import { MACHINE, VERSION } from "@/lib/opsdb";
 import { healthOf } from "@/lib/ops";
@@ -21,9 +22,17 @@ async function check() {
   return healthOf({ db, runs: runs(), beatAt, version: VERSION });
 }
 
-export async function GET() {
+// Everyone sees only { ok }; the database, runner and version need `Authorization: Bearer <HEALTH_TOKEN>`.
+const digest = (v: string) => createHash("sha256").update(v).digest();
+function detailed(req: Request) {
+  const token = process.env.HEALTH_TOKEN;
+  const m = /^Bearer\s+(\S+)$/i.exec((req.headers.get("authorization") ?? "").trim());
+  return !!token && !!m && timingSafeEqual(digest(m[1]), digest(token));
+}
+
+export async function GET(req: Request) {
   const h = await check();
-  return Response.json(h.body, { status: h.status, headers: { "Cache-Control": "no-store" } });
+  return Response.json(detailed(req) ? h.body : { ok: h.body.ok }, { status: h.status, headers: { "Cache-Control": "no-store" } });
 }
 
 export async function HEAD() {

@@ -4,6 +4,7 @@
 import { ApiError, MAX_BATCH, days, deleteArgs, generationInput, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
 import { ASPECTS, CAPY, KINDS, MAX_SCRIPT, MODELS, SECONDS, modelsFor } from "../genRules";
 import { EVENTS } from "./hookRules";
+import { MAX_RPC_BATCH } from "./limit";
 import type { Ops } from "./types";
 
 export const SERVER = { name: "capybaroar", title: "Capybaroar", version: "1.0.0" };
@@ -152,14 +153,16 @@ export const TOOLS: Tool[] = [
     title: "Add a webhook",
     description: `Have Capybaroar POST to an https URL when these events happen: ${EVENTS.join(", ")}. Returns a signing secret, shown once. Owners and admins only.`,
     inputSchema: { type: "object", properties: { url: { type: "string", description: "An https URL" }, events: { type: "array", items: { type: "string", enum: [...EVENTS] } } }, required: ["url", "events"] },
-    annotations: write,
+    // Sends the workspace's posts to an outside address from now on: clients should ask first.
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
   },
   {
     name: "set_webhook",
     title: "Turn a webhook on or off",
     description: "Turn a webhook on or off. Turning it on again starts its failure count over.",
     inputSchema: { type: "object", properties: { id: { type: "string" }, enabled: { type: "boolean" } }, required: ["id", "enabled"] },
-    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    // Turning one on starts sending to its outside address again; turning one off stops what another app relies on.
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
   },
   { name: "test_webhook", title: "Test a webhook", description: "Send a ping event to a webhook now, to check its URL answers.", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: write },
   {
@@ -314,10 +317,15 @@ async function one(msg: unknown, ops: Ops, timezone: string, opts: McpOptions = 
   }
 }
 
+/** How many messages a POST body carries, each counted against the key's rate limit (a batch over the cap counts 1:
+ * it is refused without running anything). */
+export const rpcCount = (body: unknown) => (Array.isArray(body) && body.length <= MAX_RPC_BATCH ? Math.max(1, body.length) : 1);
+
 /** One POST body: a message or a batch. null means "accepted, nothing to send back" (HTTP 202). */
 export async function handleMcp(body: unknown, ops: Ops, timezone: string, opts: McpOptions = {}): Promise<unknown | null> {
   if (Array.isArray(body)) {
     if (!body.length) return reply(null, { error: err(-32600, "Invalid request") });
+    if (body.length > MAX_RPC_BATCH) return reply(null, { error: err(-32600, `Send up to ${MAX_RPC_BATCH} messages in a batch`) });
     const out = [];
     for (const m of body) {
       const r = await one(m, ops, timezone, opts);

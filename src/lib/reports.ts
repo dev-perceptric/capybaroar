@@ -8,6 +8,7 @@ import { mayUseBrand } from "./brands";
 import { hashToken, newToken, open, seal } from "./crypto";
 import { mediaThumbs } from "./media";
 import { fmtNum, fmtParts } from "./format";
+import { LIMITS, retryIn, take } from "./limits";
 import type { Ctx } from "./session";
 import { RANGES, SCHEDULES, SECTIONS, periodAt, queueDue, reportSpan, runReportJob, type RangeKey, type ReportJob, type ReportStore, type Schedule, type SectionKey } from "./reportTimes";
 
@@ -246,6 +247,11 @@ export async function sendReportNow(ctx: Pick<Ctx, "workspaceId" | "brandIds">, 
   if (!r || r.workspace_id !== ctx.workspaceId || !mayUseBrand(ctx, r.brand_id)) throw new Error("Report not found");
   if (!r.send_to.length) throw new Error("Add an email to send to");
   if (!mailReady()) throw new Error("Email isn't set up on this server");
+  // At most 5 sends of one report an hour, and 50 report emails (one per address) a workspace a day.
+  const hour = await take(`report:${id}`, LIMITS.reportSend);
+  if (hour) throw new Error(`This report was sent ${LIMITS.reportSend.max} times this hour. ${retryIn(hour)}`);
+  const day = await take(`report-ws:${r.workspace_id}`, LIMITS.reportWorkspaceDay, r.send_to.length);
+  if (day) throw new Error(`Daily limit of ${LIMITS.reportWorkspaceDay.max} report emails reached. ${retryIn(day)}`);
   const ws = await workspaceOf(r.workspace_id);
   if (!ws || !(await deliver(r, ws))) throw new Error("Couldn't send the email");
   await adminClient().from("reports").update({ last_sent_at: new Date().toISOString() }).eq("id", id);

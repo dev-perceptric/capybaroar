@@ -1,6 +1,6 @@
 import "server-only";
 import { ApiError } from "./input";
-import { RateLimit } from "./limit";
+import { LIMITS, take } from "../limits";
 import { isAccessToken } from "../oauth/rules";
 import { oauthCtx } from "../oauth/store";
 import { keyCtx } from "./keys";
@@ -8,7 +8,6 @@ import { realOps } from "./ops";
 import type { ApiCtx, Ops } from "./types";
 
 // What every API and MCP request goes through: the key, the rate limit, the body and the error format.
-const limiter = new RateLimit();
 export const MAX_BODY = 1_000_000;
 
 export function json(body: unknown, status = 200, headers: Record<string, string> = {}) {
@@ -38,9 +37,15 @@ export async function authorize(req: Request, pathKey?: string): Promise<{ ctx: 
   if (!key) throw new ApiError(401, "unauthorized", "Send an API key from Settings as Authorization: Bearer cbr_...");
   // OAuth access tokens (apps connected through a sign-in) work wherever a key does.
   const ctx = !pathKey && isAccessToken(key) ? await oauthCtx(key) : await keyCtx(key);
-  const wait = limiter.take(ctx.keyId);
-  if (wait) throw Object.assign(new ApiError(429, "rate_limited", `Too many requests. Try again in ${wait} seconds.`), { wait });
+  await charge(ctx, 1);
   return { ctx, ops: realOps(ctx) };
+}
+
+/** Counts `n` requests against the key's limit, shared by every server. Throws 429 once it's over. */
+export async function charge(ctx: Pick<ApiCtx, "keyId">, n: number) {
+  if (n < 1) return;
+  const wait = await take(`api:${ctx.keyId}`, LIMITS.apiKeyMinute, n);
+  if (wait) throw Object.assign(new ApiError(429, "rate_limited", `Too many requests. Try again in ${wait} seconds.`), { wait });
 }
 
 export async function readJson(req: Request): Promise<unknown> {

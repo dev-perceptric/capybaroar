@@ -1,11 +1,17 @@
 import { cleanRegistration } from "@/lib/oauth/rules";
 import { registerClient } from "@/lib/oauth/store";
 import { oauthJson, preflight } from "@/lib/oauth/http";
+import { trustedIp } from "@/lib/clientIp";
+import { LIMITS, hashed, take } from "@/lib/limits";
 
 export const dynamic = "force-dynamic";
 
 // RFC 7591 dynamic client registration: MCP apps (Claude, Claude Code, others) register themselves as public clients.
 export async function POST(req: Request) {
+  // A bounded number of registrations an hour from one IP (LIMITS.oauthRegisterIp), so nobody can fill the table.
+  const ip = trustedIp(req.headers);
+  const wait = await take(hashed("oauth-register:ip", ip || "unknown"), LIMITS.oauthRegisterIp);
+  if (wait) return oauthJson({ error: "temporarily_unavailable", error_description: "Too many registrations. Try again later." }, 429, { "retry-after": String(wait) });
   let body: unknown;
   try {
     body = JSON.parse((await req.text()).slice(0, 20000));

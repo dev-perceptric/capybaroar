@@ -4,6 +4,7 @@ import { assertCanAddMember } from "./billing";
 import { hashToken, newToken, open, seal } from "./crypto";
 import { appUrl } from "./channels";
 import { emailsOf, sendEmail } from "./alerts";
+import { LIMITS, hashed, retryIn, take } from "./limits";
 import type { Ctx, Role } from "./session";
 
 // The people in a workspace and the invites waiting for them. Owners and admins manage both (checked by callers).
@@ -67,6 +68,12 @@ export async function createInvite(ctx: Ctx, input: { email: string; role: Role;
   const brandIds = await cleanBrands(ctx.workspaceId, input.brandIds);
   const members = await listMembers(ctx.workspaceId);
   if (members.some((m) => m.email.toLowerCase() === email)) throw new Error(`${email} is already a member`);
+  // At most 20 invites a workspace a day, and an address gets its invite and 3 more a day, from any workspace.
+  // Checked before the open invite is replaced, so a refused one leaves it as it was.
+  const ws = await take(`invite-ws:${ctx.workspaceId}`, LIMITS.inviteWorkspaceDay);
+  if (ws) throw new Error(`Daily limit of ${LIMITS.inviteWorkspaceDay.max} invites reached. ${retryIn(ws)}`);
+  const to = await take(hashed("invite-to", email), LIMITS.inviteAddressDay);
+  if (to) throw new Error(`${email} was invited too many times today. ${retryIn(to)}`);
   const db = adminClient();
   // A new invite to the same address replaces the open one.
   await db.from("invites").delete().eq("workspace_id", ctx.workspaceId).eq("email", email).is("accepted_at", null);

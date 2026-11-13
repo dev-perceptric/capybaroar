@@ -3,10 +3,27 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
 // link-in-bio pages open signed out.
-const OPEN = ["/login", "/signup", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/.well-known/"];
+const OPEN = ["/login", "/signup", "/reset", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/.well-known/"];
 
-/** Only paths on this site, so a link can't send someone elsewhere after signing in. */
-export const safeNext = (v: string | null | undefined) => (v && /^\/(?![/\\])/.test(v) ? v : "/calendar");
+const HOME = "/calendar";
+const site = () => process.env.APP_URL || "http://localhost:3000";
+
+/** Only paths on this site, so a link can't send someone elsewhere after signing in. Browsers drop tabs and line
+ * breaks from addresses and read "\\" as "/", so "/\t/evil.com" would leave: anything with those is refused, and
+ * what's left must resolve to this site's own origin. */
+export function safeNext(v: string | null | undefined): string {
+  if (!v || v.length > 2000 || !v.startsWith("/") || /[\u0000-\u0020\u007f-\u009f\\]/.test(v) || /^\/[/\\]/.test(v)) return HOME;
+  // Encoded slashes and backslashes right after the first one ("/%2F/evil.com") read as another site in some places.
+  if (/^\/%(2f|5c)/i.test(v)) return HOME;
+  try {
+    const base = new URL(site());
+    const u = new URL(v, base);
+    if (u.origin !== base.origin) return HOME;
+    return u.pathname + u.search + u.hash;
+  } catch {
+    return HOME;
+  }
+}
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

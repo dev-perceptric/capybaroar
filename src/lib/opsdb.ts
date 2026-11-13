@@ -4,6 +4,7 @@ import { adminClient } from "./supabase/server";
 import { appUrl } from "./channels";
 import { mailReady, sendEmail } from "./alerts";
 import { reportError, type AppError, type OpsStore } from "./ops";
+import { pruneLimits } from "./limits";
 
 // The Supabase side of ops.ts: turns, kept locks, the heartbeat and error tracking.
 export const MACHINE = process.env.FLY_MACHINE_ID || hostname();
@@ -63,11 +64,14 @@ export async function beat(startedAt: Date) {
   if (error) throw new Error(error.message);
 }
 
-/** Hourly: drop errors not seen in 30 days and beats from servers gone for a week. */
+/** Hourly: drop errors not seen in 30 days, beats from servers gone for a week, old limit counters and OAuth apps
+ * never approved after a week (prune_limits in 032_auth_limits.sql). */
 export async function cleanupOps() {
   const db = adminClient();
   const { error } = await db.from("app_errors").delete().lt("last_seen", new Date(Date.now() - 30 * 86400000).toISOString());
   if (error) throw new Error(error.message);
   const { error: e2 } = await db.from("runner_beats").delete().lt("beat_at", new Date(Date.now() - 7 * 86400000).toISOString());
   if (e2) throw new Error(e2.message);
+  // On its own, so a failure here never stops the rest of upkeep.
+  await pruneLimits().catch((e) => console.error("prune limits:", e instanceof Error ? e.message : e));
 }

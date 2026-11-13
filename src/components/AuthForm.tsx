@@ -5,11 +5,17 @@ import { useActionState } from "react";
 import { Button, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
-import { signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
+import { requestReset, setPassword, signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
 
-export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next?: string; email?: string }) {
+// login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link.
+type Mode = "login" | "signup" | "forgot" | "reset";
+const ACTIONS = { login: signIn, signup: signUp, forgot: requestReset, reset: setPassword };
+const SUBMIT = { login: "Sign in", signup: "Create account", forgot: "Send reset link", reset: "Save password" };
+
+export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; email?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
-  const [state, action, busy] = useActionState<AuthState, FormData>(mode === "login" ? signIn : signUp, {});
+  const [state, action, busy] = useActionState<AuthState, FormData>(ACTIONS[mode], {});
+  const google = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" && (mode === "login" || mode === "signup");
   return (
     <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
       <div className="w-full max-w-[400px] rounded-2xl bg-panel p-7 shadow-hover">
@@ -21,11 +27,11 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
         </div>
         {state.sent ? (
           <p role="status" className="mt-6 rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
-            Check your email for a link to finish signing up.
+            {mode === "forgot" ? "Check your email for a link to set a new password." : "Check your email for a link to finish signing up."}
           </p>
         ) : (
           <>
-            {process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" ? (
+            {google ? (
               <>
                 <form action={signInWithGoogle} className="mt-6">
                   {next ? <input type="hidden" name="next" value={next} /> : null}
@@ -54,12 +60,25 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
                   </Field>
                 </>
               ) : null}
-              <Field label="Email">
-                <Input name="email" type="email" autoComplete="email" defaultValue={email} required />
-              </Field>
-              <Field label="Password">
-                <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
-              </Field>
+              {mode !== "reset" ? (
+                <Field label="Email">
+                  <Input name="email" type="email" autoComplete="email" defaultValue={email} required />
+                </Field>
+              ) : null}
+              {mode !== "forgot" ? (
+                <Field
+                  label={mode === "reset" ? "New password" : "Password"}
+                  aside={
+                    mode === "login" ? (
+                      <Link href="/reset" className="text-[12px] text-muted underline-offset-2 hover:text-ink hover:underline">
+                        Forgot password?
+                      </Link>
+                    ) : null
+                  }
+                >
+                  <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
+                </Field>
+              ) : null}
               {state.error ? (
                 <p role="alert" className="text-[12px] text-danger">
                   {state.error}
@@ -67,13 +86,13 @@ export function AuthForm({ mode, next, email }: { mode: "login" | "signup"; next
               ) : null}
               <Button type="submit" disabled={busy} className="mt-1 w-full justify-center">
                 {busy ? <Loader /> : null}
-                {mode === "login" ? "Sign in" : "Create account"}
+                {SUBMIT[mode]}
               </Button>
             </form>
           </>
         )}
         <p className="mt-4 text-center text-[12px] text-muted">
-          {mode === "login" ? (
+          {mode === "reset" ? null : mode === "login" ? (
             <>
               New here?{" "}
               <Link href={`/signup${keep}`} className="font-medium text-ink underline underline-offset-2">
