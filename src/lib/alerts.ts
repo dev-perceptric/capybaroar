@@ -1,5 +1,5 @@
 import "server-only";
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 import { adminClient } from "./supabase/server";
 import { appUrl } from "./channels";
 import { networkOf, type NetworkId } from "./networks";
@@ -7,7 +7,7 @@ import type { TargetCtx } from "./publisher";
 
 // Emails owners and admins when a post fails or a channel needs reconnecting. Each failure is sent once
 // (alerts table); a channel's reconnect alert at most once a day. Off until SMTP_HOST is set.
-let transport: nodemailer.Transporter | null = null;
+let transport: Transporter | null = null;
 const mailer = () =>
   (transport ??= nodemailer.createTransport({
     host: process.env.SMTP_HOST,

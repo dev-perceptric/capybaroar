@@ -1,0 +1,111 @@
+# Caddy in front of everything on the VPS. Merge into /etc/caddy/Caddyfile, set the addresses below, then
+# `caddy validate --config /etc/caddy/Caddyfile` and `systemctl reload caddy` (ops/vps/CHECKLIST.md).
+#
+# - db.capybaroar.com: only Supabase's public APIs (/auth/v1, /rest/v1, /storage/v1, /realtime/v1) are open to the
+#   internet. Studio, /pg/ (pg-meta) and every other Kong route answer only from CAPY_ADMIN_IPS.
+# - Every site drops the client-IP headers a visitor can send (X-Forwarded-For, X-Real-IP, Forwarded,
+#   Fly-Client-IP) and sets X-Real-IP from the connection. The app counts link-in-bio visitors by X-Real-IP only.
+# - Security headers on, Server / Via / X-Powered-By / Kong's headers off.
+#
+# Addresses come from the environment Caddy runs with (systemctl edit caddy -> [Service] Environment=...), or edit
+# the defaults after ":-". Caddy in a container on the Supabase network: use kong:8000, and the app and site
+# containers' names.
+#   SUPABASE_KONG   Kong                                default 127.0.0.1:8000
+#   CAPY_WEB        the app container (port 3000 inside) default 127.0.0.1:3001
+#   CAPY_SITE       the homepage container (8080 inside) default 127.0.0.1:8081
+#   CAPY_ADMIN_IPS  your own addresses, space separated  default 127.0.0.1/32 (nobody: use an SSH tunnel)
+
+{
+	# Caddy is the first hop. It never trusts forwarded headers from the internet (no trusted_proxies here).
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+# Headers for every response, and the request headers a visitor may not set.
+(edge) {
+	request_header -X-Forwarded-For
+	request_header -X-Real-IP
+	request_header -Forwarded
+	request_header -Fly-Client-IP
+	request_header -X-Capy-Bio
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+		-Via
+		-X-Powered-By
+		-X-Kong-Upstream-Latency
+		-X-Kong-Proxy-Latency
+		-X-Kong-Request-Id
+	}
+}
+
+# Inside every reverse_proxy: the visitor's address, from the TCP connection.
+(upstream) {
+	header_up X-Real-IP {remote_host}
+	header_down -Server
+	header_down -Via
+	header_down -X-Powered-By
+}
+
+db.capybaroar.com {
+	import edge
+	header X-Frame-Options "DENY"
+
+	# Files people upload are served from here: never run them as a page on this origin.
+	@storage path /storage/v1/*
+	header @storage Content-Security-Policy "default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline'; sandbox"
+
+	@public path /auth/v1/* /rest/v1/* /storage/v1/* /realtime/v1/*
+	handle @public {
+		reverse_proxy {$SUPABASE_KONG:127.0.0.1:8000} {
+			import upstream
+		}
+	}
+
+	# Studio (/), /pg/ and everything else Kong routes: your addresses only. Kong still asks for Studio's
+	# DASHBOARD_USERNAME / DASHBOARD_PASSWORD, and /pg/ still needs the service key.
+	@staff remote_ip {$CAPY_ADMIN_IPS:127.0.0.1/32}
+	handle @staff {
+		reverse_proxy {$SUPABASE_KONG:127.0.0.1:8000} {
+			import upstream
+		}
+	}
+
+	# No fixed address? Remove the @staff lines above and use a password instead. Give it the same username and
+	# password as DASHBOARD_USERNAME / DASHBOARD_PASSWORD in Supabase's .env, because Kong checks them again
+	# (hash with: caddy hash-password). Caddy older than 2.8 spells it basicauth.
+	# handle {
+	# 	basic_auth {
+	# 		supabase <hash from caddy hash-password>
+	# 	}
+	# 	reverse_proxy {$SUPABASE_KONG:127.0.0.1:8000} {
+	# 		import upstream
+	# 	}
+	# }
+
+	handle {
+		respond 404
+	}
+}
+
+app.capybaroar.com {
+	import edge
+	header ?X-Frame-Options "SAMEORIGIN"
+	reverse_proxy {$CAPY_WEB:127.0.0.1:3001} {
+		import upstream
+	}
+}
+
+# The homepage and link-in-bio pages. Its nginx passes X-Real-IP on to the app.
+capybaroar.com, www.capybaroar.com {
+	import edge
+	@www host www.capybaroar.com
+	redir @www https://capybaroar.com{uri} permanent
+	reverse_proxy {$CAPY_SITE:127.0.0.1:8081} {
+		import upstream
+	}
+}

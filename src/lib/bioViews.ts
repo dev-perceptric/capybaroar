@@ -6,6 +6,7 @@
 // - Link previews, crawlers and scripts aren't visitors: their views and clicks aren't counted.
 // - Referrers are kept by host only ("instagram.com"), never the full address.
 import { createHmac } from "node:crypto";
+import { trustedIp } from "./clientIp";
 
 export const VIEW_GAP_MS = 30 * 60 * 1000;
 
@@ -25,9 +26,11 @@ export function visitorKey(salt: string, pageId: string, ip: string, ua: string,
 /** Whether a visit counts as a view: the visitor's last counted view on this page is 30 minutes old or more. */
 export const countsAsView = (lastCounted: Date | null, now: Date) => !lastCounted || now.getTime() - lastCounted.getTime() >= VIEW_GAP_MS;
 
-/** The client's IP: Fly's own header first (it can't be set by the visitor), then the first forwarded address. */
+/** The client's IP, from X-Real-IP only: Caddy on the VPS drops whatever the visitor sent and sets it from the
+ *  connection (ops/vps/Caddyfile.example), and the homepage's nginx passes it on. X-Forwarded-For and Fly-Client-IP
+ *  can be written by the visitor, so they are never read; with no X-Real-IP the answer is "". */
 export function clientIp(h: { get(name: string): string | null }) {
-  return (h.get("fly-client-ip") || h.get("x-forwarded-for")?.split(",")[0] || h.get("x-real-ip") || "").trim().slice(0, 64);
+  return trustedIp(h);
 }
 
 /** The host a visitor came from, without "www.", or "" for a direct visit or one from our own site. */

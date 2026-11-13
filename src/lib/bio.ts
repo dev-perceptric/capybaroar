@@ -426,7 +426,8 @@ export async function videoThumb(slug: string, blockId: string): Promise<string 
 
 // Views
 
-/** The secret the visitor hash is keyed with. TOKEN_KEY is set on every server that publishes. */
+/** The secret the visitor hash is keyed with: BIO_SALT, its own random value, so rotating TOKEN_KEY never touches it.
+ *  Until it is set, the old fallbacks keep counting the same way. */
 const viewSalt = () => process.env.BIO_SALT || process.env.TOKEN_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 /** Count a visit to a page (after the page is sent). Never throws: a lost view never breaks the page. */

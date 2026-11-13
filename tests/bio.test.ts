@@ -208,8 +208,12 @@ test("bio views: crawlers and previews aren't visitors; referrers are hosts only
   assert.equal(refHost(null, "app.capybaroar.com"), "");
 
   const h = (o: Record<string, string>) => ({ get: (k: string) => o[k] ?? null });
-  assert.equal(clientIp(h({ "fly-client-ip": "198.51.100.1", "x-forwarded-for": "10.0.0.1, 198.51.100.9" })), "198.51.100.1");
-  assert.equal(clientIp(h({ "x-forwarded-for": "198.51.100.9, 10.0.0.1" })), "198.51.100.9");
+  // The last X-Forwarded-For address is the one our proxy added; the first can be whatever the visitor sent.
+  assert.equal(clientIp(h({ "x-real-ip": "203.0.113.7", "fly-client-ip": "10.0.0.1", "x-forwarded-for": "10.0.0.2, 198.51.100.9" })), "198.51.100.9");
+  assert.equal(clientIp(h({ "x-forwarded-for": "6.6.6.6, 198.51.100.9" })), "198.51.100.9");
+  // X-Real-IP only when there's no X-Forwarded-For; Fly's header only on Fly.
+  assert.equal(clientIp(h({ "x-real-ip": " 198.51.100.1 " })), "198.51.100.1");
+  assert.equal(clientIp(h({ "fly-client-ip": "198.51.100.1" })), "");
 });
 
 test("bio views: a period's numbers have every day, direct visits and items added up", () => {

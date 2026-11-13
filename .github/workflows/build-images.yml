@@ -1,6 +1,9 @@
-# Build the app and the homepage images on every push and publish them to GitHub's container registry (ghcr.io).
+# Build the app and the homepage images on every push to the deploy branch and publish them to GitHub's container
+# registry (ghcr.io), only after the checks (checks.yml) pass on the same commit. Each image is tagged latest and with
+# the commit SHA, so a bad release can be rolled back by pinning the VPS to an earlier SHA.
 # The Hostinger VPS pulls these images. The database is the self-hosted Supabase at db.capybaroar.com; its public (anon) key
 # is baked into the browser build, so it lives here in the open like any browser key.
+# Actions are pinned to full commit SHAs (the tag each one was at is in the comment).
 name: Build images
 
 on:
@@ -10,24 +13,34 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: build-images-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
+    permissions:
+      contents: read
+
   web:
+    needs: checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           push: true
@@ -41,16 +54,22 @@ jobs:
           cache-to: type=gha,mode=max,scope=capybaroar-web
 
   site:
+    needs: checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: site
           push: true

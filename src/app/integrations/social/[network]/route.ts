@@ -4,6 +4,7 @@ import { providerOf } from "@/lib/providers";
 import { appUrl, redirectFor, saveAccounts } from "@/lib/channels";
 import { userClient } from "@/lib/supabase/server";
 import { STATE_COOKIE, STATE_PATH, callbackProblem, networkError } from "@/lib/oauthState";
+import { open } from "@/lib/crypto";
 import type { NetworkId } from "@/lib/networks";
 
 // The network sends people back here after they approve. The state ties it to the workspace that asked.
@@ -32,7 +33,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const p = providerOf(network);
   if (!p?.oauth) return back("This network isn't set up");
   try {
-    const accounts = await p.oauth.exchange({ code, verifier: row.verifier ?? "", redirect: redirectFor(network), input: (row.input ?? {}) as Record<string, string> });
+    // Sealed by the connect route; rows from before sealing hold the values as they are.
+    const kept = (row.input ?? {}) as Record<string, string>;
+    const input = typeof kept.sealed === "string" ? (JSON.parse(open(kept.sealed, `oauth:${state}`)) as Record<string, string>) : kept;
+    const accounts = await p.oauth.exchange({ code, verifier: row.verifier ?? "", redirect: redirectFor(network), input });
     await saveAccounts(row.workspace_id, network as NetworkId, accounts, (row.brand_id as string | null) ?? null);
   } catch (e) {
     return back(e instanceof Error ? e.message : String(e));

@@ -1,19 +1,25 @@
-# Typecheck and tests on every push. The app and homepage run on the Hostinger VPS; build-images.yml builds their
-# images and the VPS picks them up on its own.
+# Typecheck and tests. Pull requests and manual runs start it here; pushes to the deploy branch run it from
+# build-images.yml (workflow_call), which builds the images only after these checks pass. The app and homepage run
+# on the Hostinger VPS, which picks the images up on its own.
+# Actions are pinned to full commit SHAs (the tag each one was at is in the comment).
 name: Checks
 
 on:
-  push:
-    branches: [claude/compassionate-bell-kidk43]
   pull_request:
   workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm

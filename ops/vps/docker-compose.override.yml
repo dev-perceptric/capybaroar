@@ -1,0 +1,46 @@
+# Example override for the self-hosted Supabase in /docker/sb-capybaroar (copy it next to its docker-compose.yml as
+# docker-compose.override.yml; `docker compose` reads it on its own). Service names are the ones in Supabase's
+# docker-compose.yml; check yours with `docker compose config --services` and rename to match.
+#
+# 1. Every published port listens on 127.0.0.1 only. Caddy (on the host) is the one way in from outside. Docker
+#    publishes ports past ufw, so a port bound to 0.0.0.0 is open to the internet whatever ufw says.
+#    `!override` replaces the base file's port list instead of adding to it (needs Docker Compose 2.24.4 or newer).
+# 2. Sign-ups must confirm their email, and passwords are at least 8 characters.
+#
+# Caddy in a container on the same Docker network instead of on the host? Use `ports: !reset []` everywhere below
+# and point Caddy at kong:8000 and studio:3000.
+
+services:
+  db:
+    ports: !override
+      - "127.0.0.1:5432:5432"
+
+  # Supavisor, the connection pooler. Only the transaction port is published: its session port is also 5432, which
+  # the db line above takes, and the app and backups reach Postgres over the Docker network anyway.
+  supavisor:
+    ports: !override
+      - "127.0.0.1:6543:6543"
+
+  kong:
+    ports: !override
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8443:8443"
+
+  studio:
+    ports: !override
+      - "127.0.0.1:3000:3000"
+
+  meta:
+    ports: !override
+      - "127.0.0.1:8080:8080"
+
+  analytics:
+    ports: !override
+      - "127.0.0.1:4000:4000"
+
+  auth:
+    environment:
+      # Also set ENABLE_EMAIL_AUTOCONFIRM=false in .env (the base file maps it to GOTRUE_MAILER_AUTOCONFIRM). This line
+      # wins either way. Sign-ups then need Supabase's SMTP_* settings in .env to receive their confirmation email.
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_PASSWORD_MIN_LENGTH: "8"
