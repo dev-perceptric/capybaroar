@@ -225,33 +225,55 @@ export function TopPosts({ top, channels, timezone }: { top: Analytics["top"]; c
 }
 
 /** Each channel's followers over the period. */
-export function Followers({ data, channels }: { data: Analytics; channels: Channel[] }) {
+/** One row per channel: followers and their change, then posts, reach, engagements and rate in the period. */
+export function ChannelTable({ data, channels }: { data: Analytics; channels: Channel[] }) {
+  if (!channels.length) return <NoResults text="No channels yet" />;
+  const by = new Map(data.byChannel.map((r) => [r.channelId, r]));
   return (
-    <div className="grid gap-3 md:grid-cols-2 print:grid-cols-2">
-      {channels.map((c) => {
-        const points = data.followers.filter((m) => m.channel_id === c.id && m.followers != null).map((m) => ({ day: m.day, value: m.followers as number }));
-        const last = points.at(-1)?.value;
-        const first = points.find((p) => p.day >= data.since)?.value ?? points[0]?.value;
-        return (
-          <div key={c.id} className={`p-4 break-inside-avoid ${CARD}`}>
-            <div className="flex items-center gap-2">
-              <ChannelFace c={c} />
-              <NetworkLogo id={c.network} size={14} />
-              <h3 className="min-w-0 flex-1 truncate text-[13px] font-medium">{c.name}</h3>
-            </div>
-            <p className="mt-2 flex items-baseline gap-2">
-              <span className="text-[24px] leading-none font-semibold tracking-[-0.03em] tabular-nums">{last != null ? num(last) : "None yet"}</span>
-              {last != null && first != null && points.length > 1 ? (
-                <span className={`text-[12px] tabular-nums ${last - first >= 0 ? "text-success" : "text-danger"}`}>
-                  {last - first >= 0 ? "+" : ""}
-                  {num(last - first)}
-                </span>
-              ) : null}
-            </p>
-            {points.length > 1 ? <Line points={points} label={`${c.name} followers`} /> : <p className="mt-1 text-[12px] text-faint">Recorded once a day</p>}
-          </div>
-        );
-      })}
+    <div className={`overflow-x-auto ${CARD}`}>
+      <table className="w-full min-w-[820px] text-[13px] print:min-w-0">
+        <thead>
+          <tr className={HEAD}>
+            <th className="h-10 px-4 font-medium">Channel</th>
+            <th className={TH}>Followers</th>
+            <th className={TH}>Change</th>
+            <th className={TH}>Posts</th>
+            <th className={TH}>Reach</th>
+            <th className={TH}>Engagements</th>
+            <th className={TH}>Rate</th>
+            <th className="h-10 w-40 px-4 font-medium print:hidden">Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          {channels.map((c) => {
+            const points = data.followers.filter((m) => m.channel_id === c.id && m.followers != null).map((m) => ({ day: m.day, value: m.followers as number }));
+            const last = points.at(-1)?.value;
+            const first = points.find((p) => p.day >= data.since)?.value ?? points[0]?.value;
+            const change = last != null && first != null && points.length > 1 ? last - first : null;
+            const r = by.get(c.id);
+            return (
+              <tr key={c.id} className="border-b border-line last:border-b-0 hover:bg-hover">
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <ChannelFace c={c} />
+                    <NetworkLogo id={c.network} size={14} />
+                    <span className="min-w-0 wrap-break-word">{c.name}</span>
+                  </div>
+                </td>
+                <Num v={last} />
+                <td className={`px-4 py-2.5 text-right tabular-nums ${change == null ? "" : change >= 0 ? "text-success" : "text-danger"}`}>
+                  {change == null ? <span className="text-faint">–</span> : `${change >= 0 ? "+" : ""}${num(change)}`}
+                </td>
+                <td className="px-4 py-2.5 text-right tabular-nums">{num(r?.posts ?? 0)}</td>
+                <Num v={r?.withStats ? r.views : null} />
+                <Num v={r?.withStats ? r.engagement : null} />
+                <td className="px-4 py-2.5 text-right tabular-nums">{r?.rate != null ? pct(r.rate) : <span className="text-faint">–</span>}</td>
+                <td className="w-40 px-4 py-1.5 print:hidden">{points.length > 1 ? <Line points={points} label={`${c.name} followers`} compact /> : null}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -265,48 +287,8 @@ function ChannelFace({ c }: { c: Channel }) {
   );
 }
 
-/** Posts, reach, engagements and rate for each channel. */
-export function ChannelTable({ data, channels }: { data: Analytics; channels: Channel[] }) {
-  const by = new Map(data.byChannel.map((r) => [r.channelId, r]));
-  if (!channels.length) return <NoResults />;
-  return (
-    <div className={`overflow-x-auto ${CARD}`}>
-      <table className="w-full min-w-[560px] text-[13px] print:min-w-0">
-        <thead>
-          <tr className={HEAD}>
-            <th className="h-10 px-4 font-medium">Channel</th>
-            <th className={TH}>Posts</th>
-            <th className={TH}>Reach</th>
-            <th className={TH}>Engagements</th>
-            <th className={TH}>Rate</th>
-          </tr>
-        </thead>
-        <tbody>
-          {channels.map((c) => {
-            const r = by.get(c.id);
-            return (
-              <tr key={c.id} className="border-b border-line last:border-b-0">
-                <td className="px-4 py-2.5">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <NetworkLogo id={c.network} size={14} />
-                    <span className="min-w-0 truncate">{c.name}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-2.5 text-right tabular-nums">{num(r?.posts ?? 0)}</td>
-                <Num v={r?.withStats ? r.views : null} />
-                <Num v={r?.withStats ? r.engagement : null} />
-                <td className="px-4 py-2.5 text-right tabular-nums">{r?.rate != null ? pct(r.rate) : <span className="text-faint">–</span>}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 /** One channel's followers over time. */
-function Line({ points, label }: { points: { day: string; value: number }[]; label: string }) {
+function Line({ points, label, compact = false }: { points: { day: string; value: number }[]; label: string; compact?: boolean }) {
   const [hover, setHover] = useState<number | null>(null);
   const W = 480;
   const H = 80;
@@ -319,10 +301,11 @@ function Line({ points, label }: { points: { day: string; value: number }[]; lab
   const d = points.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(" ");
   const h = hover != null ? points[hover] : null;
   return (
-    <figure className="relative mt-2">
+    <figure className={`relative ${compact ? "" : "mt-2"}`}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="h-20 w-full"
+        preserveAspectRatio={compact ? "none" : undefined}
+        className={compact ? "h-8 w-full" : "h-20 w-full"}
         role="img"
         aria-label={`${label}: ${points[0].value} to ${points.at(-1)!.value}`}
         onMouseLeave={() => setHover(null)}

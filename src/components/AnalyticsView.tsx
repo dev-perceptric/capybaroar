@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Segmented } from "./ui";
 import { Select } from "./Select";
 import { NetworkLogo } from "./NetworkLogo";
-import { Bars, Followers, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
+import { Bars, ChannelTable, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
 import type { Channel } from "@/lib/channels";
 import type { Analytics } from "@/lib/analytics";
 import { fmtParts } from "@/lib/format";
@@ -75,8 +75,8 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
         <TopPosts top={data.top} channels={channels} timezone={timezone} />
       </Section>
 
-      <Section title="Followers">
-        <Followers data={data} channels={shown} />
+      <Section title="Channels">
+        <ChannelTable data={data} channels={shown} />
       </Section>
     </div>
   );

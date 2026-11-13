@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, FileText, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
@@ -12,6 +12,7 @@ import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
 import { PublishedView } from "./PublishedView";
+import { Thumb } from "./MediaThumb";
 import { TextTools, mod, toggleStyle, type FormatKind } from "./TextTools";
 import { creditGate } from "./creditGate";
 import { THREAD_MAX, networkOf, takesThread, type NetworkField, type ThreadPart } from "@/lib/networks";
@@ -1208,24 +1209,6 @@ function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { p
       ) : null}
       <input ref={upInput} type="file" multiple accept={PICK} className="hidden" onChange={(e) => e.target.files && (onUpload(e.target.files, upFor.current), (e.target.value = ""))} />
     </div>
-  );
-}
-
-function Thumb({ m, small = false }: { m: Media; small?: boolean }) {
-  return (
-    <span className={`relative block shrink-0 overflow-hidden rounded-lg bg-paper shadow-chip ${small ? "size-20" : "size-28"}`} title={m.name}>
-      {isPdf(m) ? (
-        <span className="flex size-full flex-col items-center justify-center gap-1.5 p-2 text-center">
-          <FileText size={small ? 18 : 22} className="text-muted" />
-          <span className="line-clamp-2 text-[10.5px] break-all text-body">{m.name}</span>
-        </span>
-      ) : m.mime.startsWith("video/") ? (
-        <video src={m.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={m.thumb ?? ""} alt={m.alt ?? ""} loading="lazy" decoding="async" className="size-full object-cover" />
-      )}
-    </span>
   );
 }
 

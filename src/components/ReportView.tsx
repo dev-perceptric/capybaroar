@@ -2,7 +2,7 @@
 
 import { Download } from "lucide-react";
 import { Button, Empty } from "./ui";
-import { Bars, ChannelTable, Followers, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
+import { Bars, ChannelTable, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
 import { Logo } from "./Logo";
 import type { ReportView as Report } from "@/lib/reports";
 import type { SectionKey } from "@/lib/reportTimes";
@@ -23,11 +23,12 @@ export function ReportView({ report: r }: { report: Report }) {
       </div>
     </>
   ));
-  add("growth", "Followers", () => <Followers data={d!} channels={r.channels} />);
+  // Followers and By channel are one table; it shows once, under the first of the two that's on.
+  const channelsAt = r.sections.find((k) => k === "growth" || k === "channels");
   add("top", "Top posts", () => <TopPosts top={d!.top} channels={r.channels} timezone={r.timezone} />);
   add("best", "Best time to post", () => <Heatmap cells={d!.best} />, r.timezone.replace(/_/g, " "));
   add("formats", "By format", () => <Formats formats={d!.formats} />);
-  add("channels", "By channel", () => <ChannelTable data={d!} channels={r.channels} />);
+  if (channelsAt) add(channelsAt, "Channels", () => <ChannelTable data={d!} channels={r.channels} />);
   if (r.notes) add("notes", "Notes", () => <p className="rounded-lg bg-panel p-4 text-[13px] leading-relaxed whitespace-pre-line shadow-card">{r.notes}</p>);
 
   return (
