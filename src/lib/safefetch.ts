@@ -6,6 +6,7 @@ import { lookup } from "node:dns";
 import http from "node:http";
 import https from "node:https";
 import { BlockList, isIP, type LookupFunction } from "node:net";
+import { isSelfAddress, isWebPort } from "./api/net";
 
 const blocked = new BlockList();
 for (const [net, bits] of [
@@ -40,9 +41,13 @@ for (const [net, bits] of [
 ] as const)
   blocked.addSubnet(net, bits, "ipv6");
 
-/** True for loopback, private, link-local, shared, reserved and multicast addresses (and anything that isn't an IP). */
+/**
+ * True for loopback, private, link-local, shared, reserved and multicast addresses, this server's own public addresses
+ * (45.90.109.7 and SELF_IPS), and anything that isn't an IP.
+ */
 export function isPrivateAddress(ip: string): boolean {
   const a = ip.replace(/^\[|\]$/g, "").replace(/%.*$/, "");
+  if (isSelfAddress(a)) return true;
   const kind = isIP(a);
   if (kind === 4) return blocked.check(a, "ipv4");
   if (kind !== 6) return true;
@@ -87,6 +92,7 @@ export function checkUrl(raw: string): URL {
   const host = u.hostname.replace(/^\[|\]$/g, "");
   if (isIP(host) && isPrivateAddress(host)) throw new Error("That address isn't reachable from here");
   if (/^(localhost|.*\.localhost|.*\.local|.*\.internal)$/i.test(host)) throw new Error("That address isn't reachable from here");
+  if (!isWebPort(u)) throw new Error("Use a link on port 443 or 80");
   return u;
 }
 

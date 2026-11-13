@@ -9,7 +9,53 @@ function v4(ip: string): number[] | null {
   return n.every((x) => x >= 0 && x <= 255) ? n : null;
 }
 
-function publicV4([a, b, c]: number[]): boolean {
+/** This server's own public addresses: always 45.90.109.7, plus any in SELF_IPS (a comma list). Read on each call. */
+export const SELF_IP = "45.90.109.7";
+let selfCache: { raw: string; v4: Set<string>; v6: Set<string> } | null = null;
+function selfAddresses(): { v4: Set<string>; v6: Set<string> } {
+  const raw = process.env.SELF_IPS ?? "";
+  if (selfCache?.raw === raw) return selfCache;
+  const v4s = new Set<string>();
+  const v6s = new Set<string>();
+  for (const ip of [SELF_IP, ...raw.split(",")].map((x) => x.trim()).filter(Boolean)) {
+    const kind = isIP(ip.replace(/^\[|\]$/g, ""));
+    if (kind === 4) {
+      const q = v4(ip);
+      if (q) v4s.add(q.join("."));
+    } else if (kind === 6) {
+      const g = v6(ip);
+      if (g) v6s.add(g.join(":"));
+    }
+  }
+  selfCache = { raw, v4: v4s, v6: v6s };
+  return selfCache;
+}
+
+/** True when this IPv4 or IPv6 address (any spelling) is one of this server's own. */
+export function isSelfAddress(ip: string): boolean {
+  const a = ip.replace(/^\[|\]$/g, "").replace(/%.*$/, "");
+  const kind = isIP(a);
+  const self = selfAddresses();
+  if (kind === 4) {
+    const q = v4(a);
+    return !!q && self.v4.has(q.join("."));
+  }
+  if (kind !== 6) return false;
+  const g = v6(a);
+  if (!g) return false;
+  if (self.v6.has(g.join(":"))) return true;
+  // IPv4 inside IPv6 (::ffff:a.b.c.d, 64:ff9b::a.b.c.d).
+  const mapped = (g.slice(0, 5).every((x) => x === 0) && g[5] === 0xffff) || (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((x) => x === 0));
+  return mapped && self.v4.has([g[6] >> 8, g[6] & 255, g[7] >> 8, g[7] & 255].join("."));
+}
+
+/** Only the web's own ports: 80 and 443 (an address without a port uses one of them). */
+export function isWebPort(url: URL): boolean {
+  return url.port === "" || url.port === "80" || url.port === "443";
+}
+
+function publicV4([a, b, c, d]: number[]): boolean {
+  if (selfAddresses().v4.has(`${a}.${b}.${c}.${d}`)) return false; // this server's own public address
   if (a === 0 || a === 10 || a === 127) return false; // this network, private, loopback
   if (a === 100 && b >= 64 && b <= 127) return false; // carrier NAT
   if (a === 169 && b === 254) return false; // link-local, cloud metadata
@@ -62,6 +108,7 @@ export function isPublicAddress(ip: string): boolean {
   if ((g[0] & 0xe000) !== 0x2000) return false;
   if (g[0] === 0x2001 && (g[1] === 0x0db8 || g[1] === 0)) return false;
   if (g[0] === 0x2002) return false;
+  if (selfAddresses().v6.has(g.join(":"))) return false; // this server's own public address
   return true;
 }
 
@@ -72,7 +119,12 @@ export function sniffMime(head: Uint8Array): string | null {
   if (at(0, 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) return "image/png";
   if (at(0, 0x47, 0x49, 0x46, 0x38)) return "image/gif";
   if (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x45, 0x42, 0x50)) return "image/webp";
-  if (at(4, 0x66, 0x74, 0x79, 0x70)) return at(8, 0x71, 0x74, 0x20, 0x20) ? "video/quicktime" : "video/mp4"; // "ftyp", brand "qt  "
+  if (at(4, 0x66, 0x74, 0x79, 0x70)) {
+    // "ftyp": an MP4 or MOV, unless its brand says it's a HEIC or AVIF picture or M4A audio in the same box format.
+    const brand = String.fromCharCode(...head.slice(8, 12));
+    if (/^(heic|heix|hevc|hevx|heim|heis|hevm|hevs|mif1|msf1|avif|avis|M4A |M4B |M4P )$/.test(brand)) return null;
+    return brand === "qt  " ? "video/quicktime" : "video/mp4";
+  }
   if (at(0, 0x52, 0x49, 0x46, 0x46) && at(8, 0x57, 0x41, 0x56, 0x45)) return "audio/wav"; // "RIFF" ... "WAVE"
   if (at(0, 0x49, 0x44, 0x33) || (head[0] === 0xff && (head[1] & 0xe0) === 0xe0)) return "audio/mpeg"; // "ID3" tag or an MP3 frame
   if (at(0, 0x4f, 0x67, 0x67, 0x53)) return "audio/ogg"; // "OggS"

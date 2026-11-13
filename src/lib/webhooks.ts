@@ -5,9 +5,11 @@ import { adminClient } from "./supabase/server";
 import { open as unseal, seal } from "./crypto";
 import { HOOK_TIMEOUT_MS, HOOK_TRIES, MAX_HOOKS, afterDelivery, afterTry, sign, type HookEvent } from "./api/hookRules";
 import { BlockedAddress, safeRequest } from "./api/fetchSafe";
+import { fillPool, newPool } from "./api/hookPool";
 
 // Webhooks: tell a workspace's own URLs what happened. emit() only writes deliveries and never throws, so nothing
-// that emits can fail because of a webhook. deliverDue() runs on its own loop, ten at a time side by side.
+// that emits can fail because of a webhook. deliverDue() runs on its own loop, ten at a time side by side, each
+// delivery on its own: a free slot takes the next due one at once, so a slow URL holds only its own slot.
 const WORKER = `${hostname()}:${process.pid}`;
 
 export type WebhookRow = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
@@ -119,13 +121,26 @@ async function deliverOne(d: Delivery) {
     .eq("id", d.webhook_id);
 }
 
-/** Claim due deliveries and send them side by side. Returns how many were claimed. */
+const pool = newPool();
+/** How long one call keeps filling free slots. Each try ends within HOOK_TIMEOUT_MS (a hard deadline in safeRequest). */
+const FILL_MS = 25000;
+
+/**
+ * Claim due deliveries and send them side by side, up to n at once on this server. Returns how many were claimed.
+ * It returns when nothing more is due (or after FILL_MS) without waiting for slow ones, which finish on their own.
+ */
 export async function deliverDue(n = 10): Promise<number> {
-  const { data, error } = await adminClient().rpc("claim_webhook_deliveries", { worker: WORKER, n });
-  if (error) throw new Error(error.message);
-  const list = (data ?? []) as Delivery[];
-  await Promise.all(list.map((d) => deliverOne(d).catch((e) => console.error("[webhooks] delivery", d.id, e instanceof Error ? e.message : e))));
-  return list.length;
+  return fillPool<Delivery>(pool, {
+    slots: n,
+    budgetMs: FILL_MS,
+    claim: async (k) => {
+      const { data, error } = await adminClient().rpc("claim_webhook_deliveries", { worker: WORKER, n: k });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as Delivery[];
+    },
+    work: deliverOne,
+    failed: (d, e) => console.error("[webhooks] delivery", d.id, e instanceof Error ? e.message : e),
+  });
 }
 
 /** Finished deliveries are history: keep a week. */

@@ -9,6 +9,9 @@ import assert from "node:assert/strict";
 import { checkUnpublish, planOf, unpublishTargets, UnpublishError, type UnpublishStore, type UnpublishTarget } from "../src/lib/unpublisher";
 import { AuthError, NotFound, PostError, call, type Provider, type Secret } from "../src/lib/providers/types";
 import { PROVIDERS } from "../src/lib/providers";
+import { mastodonNet } from "../src/lib/providers/mastodon";
+// Mastodon calls go through the safe fetch in the app; here they go to the faked global fetch.
+mastodonNet.fetch = (u, init) => globalThis.fetch(u, init);
 
 const secret: Secret = { accessToken: "tok", refreshToken: null, expiresAt: null, extra: {} };
 

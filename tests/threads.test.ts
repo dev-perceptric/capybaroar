@@ -7,7 +7,10 @@ import { cleanThread, partProblem, partSettings, splitThread, storedThread, thre
 import { NETWORKS, THREAD_MAX, takesThread } from "../src/lib/networks";
 import { ApiError, postFields } from "../src/lib/api/input";
 import { PROVIDERS } from "../src/lib/providers";
+import { mastodonNet } from "../src/lib/providers/mastodon";
 import type { Publishable, Secret } from "../src/lib/providers/types";
+// Mastodon calls go through the safe fetch in the app; here they go to the faked global fetch.
+mastodonNet.fetch = (u, init) => globalThis.fetch(u, init);
 
 test("only X, Bluesky, Threads and Mastodon post threads", () => {
   assert.deepEqual(NETWORKS.filter((n) => n.thread).map((n) => n.id).sort(), ["bluesky", "mastodon", "threads", "x"]);

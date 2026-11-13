@@ -9,7 +9,10 @@ import assert from "node:assert/strict";
 import { INBOX_DAYS, INBOX_MARGIN_MIN, runDue, runInbox, type InboxChannel, type InboxRow, type Job, type Store, type TargetCtx } from "../src/lib/publisher";
 import { AuthError, PostError, type InboxItem, type InboxQuery, type Provider } from "../src/lib/providers/types";
 import { PROVIDERS } from "../src/lib/providers";
+import { mastodonNet } from "../src/lib/providers/mastodon";
 import { NETWORKS } from "../src/lib/networks";
+// Mastodon calls go through the safe fetch in the app; here they go to the faked global fetch.
+mastodonNet.fetch = (u, init) => globalThis.fetch(u, init);
 
 type JobRow = Job & { done: boolean; lockedAt: number | null; lastError: string | null };
 

@@ -7,8 +7,11 @@ import https from "node:https";
 import { EventEmitter } from "node:events";
 import { Readable } from "node:stream";
 import { PROVIDERS } from "../src/lib/providers";
+import { mastodonNet } from "../src/lib/providers/mastodon";
 import { NETWORKS, type NetworkId } from "../src/lib/networks";
 import { AuthError, PostError, type Publishable, type Remote, type Secret } from "../src/lib/providers/types";
+// Mastodon calls go through the safe fetch in the app; here they go to the faked global fetch.
+mastodonNet.fetch = (u, init) => globalThis.fetch(u, init);
 
 const secret: Secret = { accessToken: "tok", refreshToken: null, expiresAt: null, extra: {} };
 const remote = (id: string, over: Partial<Remote> = {}): Remote => ({ id, url: null, at: new Date(), media: 0, text: "old", ...over });

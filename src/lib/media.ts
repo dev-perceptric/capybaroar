@@ -1,16 +1,12 @@
 import "server-only";
 import { adminClient } from "./supabase/server";
 import type { MediaFile } from "./providers/types";
+import { HEAD_BYTES, checkClaim, isUploadPath, judgeUpload } from "./uploadRules";
 
 export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string };
 
 const BUCKET = "media";
-export const MAX_BYTES = 250 * 1024 * 1024;
-export const ALLOWED = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime)|audio\/(mpeg|wav|ogg)|application\/pdf)$/;
-/** LinkedIn takes documents up to 100 MB. */
-export const MAX_PDF = 100 * 1024 * 1024;
-/** What people may upload themselves; audio comes from CapyAudio. */
-export const UPLOADS = /^(image\/(jpeg|png|gif|webp)|video\/(mp4|quicktime)|application\/pdf)$/;
+export { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS } from "./uploadRules";
 
 // Links for showing files are made for 2 hours and reused while they have more than an hour left. The same file keeps
 // the same address between visits, so the browser shows it from its cache, and most lists skip the call to storage.
@@ -44,25 +40,66 @@ export async function listMedia(workspaceId: string): Promise<(MediaRow & { thum
 
 /** Step 1 of an upload: check the file and hand back a one-time link the browser uploads to directly. */
 export async function prepareUpload(workspaceId: string, file: { name: string; type: string; size: number }) {
-  if (!UPLOADS.test(file.type)) throw new Error("Use JPG, PNG, GIF, WebP, MP4, MOV or PDF");
-  if (file.size > MAX_BYTES) throw new Error("Files are up to 250 MB");
-  if (file.type === "application/pdf" && file.size > MAX_PDF) throw new Error("PDFs are up to 100 MB");
-  const safe = file.name.replace(/[^\w.-]+/g, "-").slice(-80);
+  checkClaim(file);
+  const safe = String(file.name ?? "").replace(/[^\w.-]+/g, "-").slice(-80) || "file";
   const path = `${workspaceId}/${crypto.randomUUID()}-${safe}`;
   const { data, error } = await adminClient().storage.from(BUCKET).createSignedUploadUrl(path);
   if (error || !data) throw new Error(error?.message ?? "Couldn't start the upload");
   return { path, token: data.token };
 }
 
-/** Step 2: the file is in storage, so record it. The path must belong to this workspace. */
+/** The first bytes of a stored file, without downloading the rest. */
+async function headOf(path: string): Promise<Uint8Array> {
+  const { data: s, error } = await adminClient().storage.from(BUCKET).createSignedUrl(path, 60);
+  if (error || !s) throw new Error(error?.message ?? "Couldn't read the upload");
+  const res = await fetch(s.signedUrl, { headers: { Range: `bytes=0-${HEAD_BYTES - 1}` }, signal: AbortSignal.timeout(30000) });
+  if (!res.ok || !res.body) throw new Error("Couldn't read the upload");
+  // A server that ignores Range sends the whole file: read only the start, then stop.
+  const reader = res.body.getReader();
+  const out = new Uint8Array(HEAD_BYTES);
+  let n = 0;
+  try {
+    while (n < HEAD_BYTES) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const take = value.subarray(0, HEAD_BYTES - n);
+      out.set(take, n);
+      n += take.length;
+    }
+  } finally {
+    await reader.cancel().catch(() => undefined);
+  }
+  return out.subarray(0, n);
+}
+
+/**
+ * Step 2: the file is in storage, so record it. The path must be one prepareUpload made for this workspace. What
+ * the browser said is only a claim: the stored file's real size and first bytes decide, and a file that isn't an
+ * allowed kind, isn't what was claimed, or is too big is deleted and refused.
+ */
 export async function finishUpload(workspaceId: string, userId: string, file: { path: string; name: string; type: string; size: number }) {
-  if (!file.path.startsWith(`${workspaceId}/`)) throw new Error("Wrong workspace");
+  if (!isUploadPath(workspaceId, file.path)) throw new Error("Wrong workspace");
+  if (typeof file.type !== "string" || typeof file.name !== "string") throw new Error("Upload didn't finish");
   const db = adminClient();
   const dir = file.path.slice(0, file.path.lastIndexOf("/"));
   const base = file.path.slice(file.path.lastIndexOf("/") + 1);
-  const { data: found } = await db.storage.from(BUCKET).list(dir, { search: base, limit: 1 });
-  if (!found?.length) throw new Error("Upload didn't finish");
-  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path: file.path, name: file.name.slice(0, 200), mime: file.type, size: file.size, created_by: userId }).select("id").single();
+  const { data: found } = await db.storage.from(BUCKET).list(dir, { search: base, limit: 5 });
+  const obj = found?.find((f) => f.name === base);
+  if (!obj) throw new Error("Upload didn't finish");
+  const { data: had } = await db.from("media").select("id").eq("workspace_id", workspaceId).eq("path", file.path).maybeSingle();
+  if (had) return had.id as string;
+  const stored = Number((obj.metadata as { size?: unknown } | null)?.size);
+  if (!Number.isFinite(stored)) throw new Error("Upload didn't finish");
+  // A hiccup reading the file leaves it in place for a retry; only a refused file is deleted.
+  const head = await headOf(file.path);
+  let real: { mime: string; size: number };
+  try {
+    real = judgeUpload(file.type, head, stored);
+  } catch (e) {
+    await db.storage.from(BUCKET).remove([file.path]);
+    throw e;
+  }
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path: file.path, name: file.name.slice(0, 200), mime: real.mime, size: real.size, created_by: userId }).select("id").single();
   if (error) throw new Error(error.message);
   return data.id as string;
 }

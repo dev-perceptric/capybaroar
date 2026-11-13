@@ -1,25 +1,75 @@
 import { createHash } from "node:crypto";
-import { AuthError, PostError, call, form, isVideo, plainText, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Secret } from "./types";
+import { isIP } from "node:net";
+import { BlockedAddress, safeFetch } from "../api/fetchSafe";
+import { AuthError, NotFound, PostError, form, isVideo, plainText, qs, sleep, type Account, type InboxItem, type MediaFile, type Provider, type Secret } from "./types";
 
 // Mastodon: any server. The app is registered on that server the first time someone signs in with it.
 // write:favourites is for likes in the Inbox; channels connected before it was added answer 403 there until reconnected.
+// The server is the person's, so every call goes through safeFetch: public internet only, checked on the IP it
+// connects to, port 443, with a hard deadline.
+
+/** How calls reach the server. Tests point it at a fake fetch; the app never changes it. */
+export const mastodonNet: { fetch: (url: string, init: RequestInit & { timeoutMs?: number }) => Promise<Response> } = { fetch: safeFetch };
+
+/** One call to the server, with the same error mapping as call(): AuthError, PostError, NotFound or Error. */
+async function call<T = Record<string, unknown>>(url: string, init: RequestInit & { timeoutMs?: number } = {}, opts: { what: string } = { what: "Mastodon" }): Promise<T> {
+  let res: Response;
+  try {
+    res = await mastodonNet.fetch(url, { ...init, timeoutMs: init.timeoutMs ?? 60000 });
+  } catch (e) {
+    if (e instanceof BlockedAddress) throw new PostError(`${opts.what}: ${e.message}`);
+    throw e;
+  }
+  const text = await res.text();
+  let body: unknown = null;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = text;
+  }
+  if (res.ok) return body as T;
+  const msg = errorText(body) || `${res.status} ${res.statusText}`.trim();
+  if (res.status === 401) throw new AuthError(`${opts.what}: ${msg}`);
+  if (res.status === 400 || res.status === 403 || res.status === 422) throw new PostError(`${opts.what}: ${msg}`);
+  if (res.status === 404) throw new NotFound(`${opts.what}: ${msg}`);
+  throw new Error(`${opts.what}: ${msg}`);
+}
+
+function errorText(body: unknown): string {
+  if (!body) return "";
+  if (typeof body === "string") return body.slice(0, 300);
+  const b = body as Record<string, unknown>;
+  const e = b.error as Record<string, unknown> | string | undefined;
+  if (typeof e === "string") return String(b.error_description ?? b.message ?? e);
+  if (e && typeof e === "object") return String(e.message ?? JSON.stringify(e)).slice(0, 300);
+  return String(b.message ?? b.error_description ?? b.detail ?? b.title ?? JSON.stringify(b)).slice(0, 300);
+}
 const SCOPES = "read write:statuses write:media write:favourites";
 const VISIBILITY = new Set(["public", "unlisted", "private"]);
 
-/** "https://Mastodon.social/", "@me@mastodon.social" or "mastodon.social" → "mastodon.social". */
-function normalize(raw: string) {
-  let h = (raw ?? "").trim().toLowerCase();
+/**
+ * "https://Mastodon.social/", "@me@mastodon.social" or "mastodon.social" → "mastodon.social". A name only: no IP
+ * address, and no port other than 443.
+ */
+export function normalize(raw: string) {
+  let h = String(raw ?? "").trim().toLowerCase();
   h = h.replace(/^[a-z]+:\/\//, "");
   h = h.split(/[/?#]/)[0];
   if (h.includes("@")) h = h.slice(h.lastIndexOf("@") + 1);
-  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{1,5})?$/.test(h)) throw new PostError("Enter a Mastodon server, like mastodon.social");
+  h = h.replace(/:443$/, "");
+  // The last label starts with a letter, so no spelling of an IP address (1.2.3.4, 0x7f.1) gets through.
+  if (!/^([a-z0-9-]+\.)+[a-z][a-z0-9-]*$/.test(h) || isIP(h)) throw new PostError("Enter a Mastodon server, like mastodon.social");
   return h;
 }
 
 const instanceOf = (s: Secret) => {
   const i = s.extra?.instance;
   if (typeof i !== "string" || !i) throw new AuthError("Mastodon server is missing; reconnect the channel");
-  return i;
+  try {
+    return normalize(i);
+  } catch {
+    throw new AuthError("Mastodon server isn't valid; reconnect the channel");
+  }
 };
 
 const bearer = (token: string) => ({ Authorization: `Bearer ${token}` });
@@ -31,7 +81,7 @@ async function upload(base: string, tok: string, m: MediaFile) {
   const fd = new FormData();
   fd.append("file", new Blob([new Uint8Array(await m.bytes())], { type: m.mime }), m.name);
   if (m.alt?.trim()) fd.append("description", m.alt.trim().slice(0, 1500));
-  const r = await call<MediaAttachment>(`${base}/api/v2/media`, { method: "POST", headers: bearer(tok), body: fd, signal: AbortSignal.timeout(180000) }, { what: "Mastodon upload" });
+  const r = await call<MediaAttachment>(`${base}/api/v2/media`, { method: "POST", headers: bearer(tok), body: fd, timeoutMs: 180000 }, { what: "Mastodon upload" });
   // 202 means the server is still processing it (videos, large pictures): wait until it has a url.
   let att = r;
   for (let i = 0; !att.url; i++) {

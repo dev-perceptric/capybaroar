@@ -2,7 +2,11 @@ import "server-only";
 import { kitPrompt, type BrandKit } from "./brandKit";
 import Anthropic from "@anthropic-ai/sdk";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import { mkdtemp, open, rm, stat } from "node:fs/promises";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import type { ReadableStream as WebStream } from "node:stream/web";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -12,6 +16,7 @@ import { withCredits, type Spender } from "./credits";
 import { FORMAT_CREDITS, WRITE_CREDITS } from "./creditRules";
 import { jsonOf, parsePoll, parseSlides, parseThread, type Slide } from "./formatRules";
 import { networkOf, type NetworkId } from "./networks";
+import { sniffMime } from "./api/net";
 
 // Tools for the composer: Claude rewrites, saved snippets, short links and video trims.
 
@@ -225,27 +230,53 @@ export async function resolveLink(c: string, human = true): Promise<string | nul
 
 const run = promisify(execFile);
 
-/** Cut a video to [start, end] seconds with ffmpeg and save it as a new file in the library. The original stays. */
+/**
+ * Cut a video to [start, end] seconds with ffmpeg and save it as a new file in the library. The original stays.
+ * The file is streamed to disk, must really be an MP4 or MOV (its first bytes), and ffmpeg may only read it as one
+ * from that local file: no other demuxer, no network or other protocols, no references to other files.
+ */
 export async function trimVideo(workspaceId: string, userId: string, id: string, start: number, end: number): Promise<string> {
   if (!(start >= 0) || !(end > start) || end - start < 0.5) throw new Error("Pick at least half a second");
   const db = adminClient();
   const { data: m } = await db.from("media").select("path, name, mime").eq("id", id).eq("workspace_id", workspaceId).single();
   if (!m || !String(m.mime).startsWith("video/")) throw new Error("Video not found");
-  const { data: blob, error } = await db.storage.from("media").download(m.path as string);
-  if (error || !blob) throw new Error(error?.message ?? "Couldn't read the video");
+  const { data: link, error } = await db.storage.from("media").createSignedUrl(m.path as string, 600);
+  if (error || !link) throw new Error(error?.message ?? "Couldn't read the video");
   const dir = await mkdtemp(join(tmpdir(), "trim-"));
   try {
     const src = join(dir, "in");
     const out = join(dir, "out.mp4");
-    await writeFile(src, Buffer.from(await blob.arrayBuffer()));
-    await run("ffmpeg", ["-y", "-ss", start.toFixed(2), "-i", src, "-t", (end - start).toFixed(2), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", out], { timeout: 300000 });
-    const bytes = await readFile(out);
+    const got = await fetch(link.signedUrl, { signal: AbortSignal.timeout(300000) });
+    if (!got.ok || !got.body) throw new Error("Couldn't read the video");
+    await pipeline(Readable.fromWeb(got.body as WebStream<Uint8Array>), createWriteStream(src));
+    const head = Buffer.alloc(16);
+    const fh = await open(src, "r");
+    try {
+      await fh.read(head, 0, 16, 0);
+    } finally {
+      await fh.close();
+    }
+    const kind = sniffMime(head);
+    if (kind !== "video/mp4" && kind !== "video/quicktime") throw new Error("Only MP4 and MOV videos can be trimmed");
+    await run(
+      "ffmpeg",
+      [
+        "-nostdin", "-y", "-protocol_whitelist", "file", "-f", "mov", "-enable_drefs", "0",
+        "-ss", start.toFixed(2), "-i", `file:${src}`, "-t", (end - start).toFixed(2),
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", out,
+      ],
+      { timeout: 300000 },
+    );
+    const { size } = await stat(out);
     const name = `${String(m.name).replace(/\.[^.]+$/, "")}-trim.mp4`;
     const path = `${workspaceId}/${crypto.randomUUID()}-${name.replace(/[^\w.-]+/g, "-").slice(-80)}`;
-    const up = await db.storage.from("media").upload(path, bytes, { contentType: "video/mp4" });
+    const up = await db.storage.from("media").upload(path, createReadStream(out), { contentType: "video/mp4", duplex: "half" });
     if (up.error) throw new Error(up.error.message);
-    const { data: row, error: e2 } = await db.from("media").insert({ workspace_id: workspaceId, path, name: name.slice(0, 200), mime: "video/mp4", size: bytes.length, created_by: userId }).select("id").single();
-    if (e2) throw new Error(e2.message);
+    const { data: row, error: e2 } = await db.from("media").insert({ workspace_id: workspaceId, path, name: name.slice(0, 200), mime: "video/mp4", size, created_by: userId }).select("id").single();
+    if (e2) {
+      await db.storage.from("media").remove([path]);
+      throw new Error(e2.message);
+    }
     return row.id as string;
   } catch (e) {
     if (e instanceof Error && /ENOENT/.test(e.message)) throw new Error("Video trimming isn't set up on this server");
