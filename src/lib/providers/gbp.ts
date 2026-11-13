@@ -1,5 +1,5 @@
 import { PostError, call, form, isVideo, qs, type Account, type Provider } from "./types";
-import { googleRefresh } from "./youtube";
+import { googleRefresh, googleRevoke } from "./youtube";
 
 // Google Business Profile: Google sign-in + Account Management / Business Information APIs to list locations,
 // and the v4 localPosts API to post. Google must approve the project for Business Profile API access first.
@@ -75,6 +75,7 @@ export const gbp: Provider = {
     },
   },
   refresh: (s) => googleRefresh(s, id(), secret(), "Google Business"),
+  revoke: (s) => googleRevoke(s, "Google Business"),
   check: (p) => (p.text.length > 1500 ? "Google Business posts are up to 1,500 characters" : p.media.some(isVideo) ? "Google Business posts take pictures only" : null),
   publish: async (s, accountId, p) => {
     const image = p.media.find((m) => !isVideo(m));

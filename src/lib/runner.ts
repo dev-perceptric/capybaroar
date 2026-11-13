@@ -17,6 +17,8 @@ import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
 import { aiReady, runGenerations } from "./generations";
 import { runAutoTopUps, sweepHolds } from "./credits";
+import { runWorkspaceDelete } from "./workspaceDelete";
+import { pruneOld } from "./prune";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
@@ -256,6 +258,7 @@ export const supabaseStore: Store = {
     await adminClient().from("inbox_state").upsert({ channel_id: channelId, error: error.slice(0, 500) });
   },
   report: runReport,
+  deleteWorkspace: runWorkspaceDelete,
 };
 
 const BATCH = 5;
@@ -360,6 +363,11 @@ export function startRunner() {
       await sweepHolds().catch((e) => {
         console.error("credits sweep:", e instanceof Error ? e.message : e);
         void trackError(e, "runner: credits sweep");
+      });
+      // What's past its keep time (retention.ts).
+      await pruneOld().catch((e) => {
+        console.error("prune:", e instanceof Error ? e.message : e);
+        void trackError(e, "runner: prune");
       });
     }).catch((e) => {
       console.error("upkeep:", e);

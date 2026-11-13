@@ -84,6 +84,8 @@ export interface Store {
   event?(type: "post.published" | "post.failed", t: TargetCtx, extra: { url?: string | null; error?: string }): Promise<void>;
   /** Emails a scheduled report (kind "report"; rules in reportTimes.ts). Throws to retry. */
   report?(payload: Record<string, string>): Promise<void>;
+  /** Deletes a workspace (kind "workspace_delete"; order in retention.ts). Throws to retry. */
+  deleteWorkspace?(payload: Record<string, string>): Promise<void>;
 }
 
 /** Webhooks are told after the fact: a failure to tell them never touches the post. */
@@ -129,6 +131,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     else if (job.kind === "stats") await collectStats(store, providers, job.payload.targetId);
     else if (job.kind === "inbox") await collectInbox(store, providers, job.payload.channelId);
     else if (job.kind === "report") await store.report?.(job.payload);
+    else if (job.kind === "workspace_delete") await store.deleteWorkspace?.(job.payload);
     await store.jobDone(job.id, null);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

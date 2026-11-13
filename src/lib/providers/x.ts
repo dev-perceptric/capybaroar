@@ -146,6 +146,16 @@ export const x: Provider = {
     const t = await token({ grant_type: "refresh_token", refresh_token: s.refreshToken, client_id: clientId() }, "X refresh");
     return { accessToken: t.access_token, refreshToken: t.refresh_token ?? s.refreshToken, expiresAt: new Date(Date.now() + t.expires_in * 1000) };
   },
+  // POST /2/oauth2/revoke, with the app's Basic auth (confidential client). X doesn't say ending one token ends the
+  // other, so both go; the first failure is reported once both were tried.
+  revoke: async (s: Secret) => {
+    let failed: unknown = null;
+    for (const [tok, hint] of [[s.refreshToken, "refresh_token"], [s.accessToken, "access_token"]] as const) {
+      if (!tok) continue;
+      await call(`${API}/oauth2/revoke`, { method: "POST", headers: { Authorization: basic() }, body: form({ token: tok, token_type_hint: hint }) }, { what: "X disconnect" }).catch((e) => (failed ??= e));
+    }
+    if (failed) throw failed;
+  },
   check: (p) => {
     // Verify: X counts URLs as 23 and some scripts as 2; code points is the simple approximation.
     if ([...p.text].length > 280) return "X posts are up to 280 characters";

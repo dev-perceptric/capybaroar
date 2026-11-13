@@ -1,12 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { revokeConnectedApp } from "@/lib/oauth/store";
-import { unstable_rethrow } from "next/navigation";
-import { canManage, getCtx, managerCtx, type Ctx, type Role } from "@/lib/session";
-import { createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLink, setApproval } from "@/lib/brands";
+import { redirect, unstable_rethrow } from "next/navigation";
+import { WORKSPACE_COOKIE, canManage, getCtx, managerCtx, type Ctx, type Role } from "@/lib/session";
+import { deleteAccount, requestWorkspaceDelete } from "@/lib/workspaceDelete";
+import { BRAND_COOKIE, createBrand, createReviewLink, deleteBrand, renameBrand, revokeReviewLink, setApproval } from "@/lib/brands";
 import { createInvite, removeMember, revokeInvite, setMemberBrands, setMemberRole } from "@/lib/team";
-import { adminClient } from "@/lib/supabase/server";
+import { adminClient, userClient } from "@/lib/supabase/server";
 import { createApiKey, deleteApiKey } from "@/lib/api/keys";
 import { assertCanUseApprovals } from "@/lib/billing";
 import { createWebhook, deleteWebhook, setWebhookOn, testWebhook } from "@/lib/webhooks";
@@ -26,6 +28,41 @@ export async function saveWorkspace(name: string, timezone: string): Promise<{ e
   if (error) return { error: error.message };
   revalidatePath("/", "layout");
   return {};
+}
+
+/** Sign out and forget the picked workspace and brand, after a delete. */
+async function leave(): Promise<never> {
+  const jar = await cookies();
+  jar.delete(WORKSPACE_COOKIE);
+  jar.delete(BRAND_COOKIE);
+  await (await userClient()).auth.signOut();
+  redirect("/login");
+}
+
+/** Owners only, with the workspace's name typed. Everyone loses access at once; a job deletes the rest. */
+export async function deleteWorkspace(typed: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await getCtx();
+    if (ctx.role !== "owner") return { error: "Only owners can delete the workspace" };
+    if (typed.trim() !== ctx.workspaceName.trim()) return { error: "The name doesn't match" };
+    await requestWorkspaceDelete(ctx.workspaceId);
+  } catch (e) {
+    return fail(e);
+  }
+  return leave();
+}
+
+/** With the person's email typed. Refused while they own a workspace others use and no other owner is left. */
+export async function deleteMyAccount(typed: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await getCtx();
+    if (typed.trim().toLowerCase() !== ctx.email.trim().toLowerCase()) return { error: "The email doesn't match" };
+    const { blockedBy } = await deleteAccount(ctx.userId);
+    if (blockedBy.length) return { error: `Make someone else an owner of ${blockedBy.join(", ")} or delete it first` };
+  } catch (e) {
+    return fail(e);
+  }
+  return leave();
 }
 
 /** The workspace's best hours (up to 7) as queue times, from its own results. Empty until there's enough data. */

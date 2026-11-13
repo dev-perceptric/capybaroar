@@ -5,7 +5,8 @@ import { unstable_rethrow } from "next/navigation";
 import { isPaused } from "@/lib/networks";
 import { managerCtx, writerCtx } from "@/lib/session";
 import { adminClient } from "@/lib/supabase/server";
-import { readSecret, saveAccounts } from "@/lib/channels";
+import { saveAccounts } from "@/lib/channels";
+import { revokeChannel } from "@/lib/workspaceDelete";
 import { getBrandCtx, homeBrand, mayUseBrand, moveChannel } from "@/lib/brands";
 import { providerOf } from "@/lib/providers";
 import type { NetworkId } from "@/lib/networks";
@@ -34,17 +35,10 @@ export async function removeChannel(id: string): Promise<{ error?: string }> {
     const db = adminClient();
     const { data: ch } = await db.from("channels").select("brand_id, network, account_id").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
     if (!ch || !mayUseBrand(ctx, ch.brand_id as string | null)) return { error: "Channel not found" };
-    // End the app's access on the network too (TikTok asks for this), unless another workspace still uses the account.
-    // Best effort: a failed revoke never blocks disconnecting.
-    const p = providerOf(ch.network as string);
-    if (p?.revoke) {
-      try {
-        const { count } = await db.from("channels").select("id", { count: "exact", head: true }).eq("network", ch.network).eq("account_id", ch.account_id).neq("id", id);
-        if (!count) await p.revoke(await readSecret(id));
-      } catch {
-        // The token may already be gone; disconnecting still goes ahead.
-      }
-    }
+    // End the app's access on the network too (TikTok asks for this), unless a channel that stays still uses the same
+    // sign-in (another workspace, or another Google location). Best effort: a failed revoke never blocks disconnecting.
+    // Its Inbox items, results and posts' targets go with the row (on delete cascade).
+    await revokeChannel(id);
     const { error } = await db.from("channels").delete().eq("id", id).eq("workspace_id", ctx.workspaceId);
     if (error) return { error: error.message };
   } catch (e) {

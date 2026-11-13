@@ -68,6 +68,11 @@ export const reddit: Provider = {
       throw e;
     }
   },
+  // POST /api/v1/revoke_token with the app's Basic auth. Ending the refresh token ends its access tokens too.
+  revoke: async (s: Secret) => {
+    const [tok, hint] = s.refreshToken ? [s.refreshToken, "refresh_token"] : [s.accessToken, "access_token"];
+    await call("https://www.reddit.com/api/v1/revoke_token", { method: "POST", headers: { Authorization: basic(), "User-Agent": UA }, body: form({ token: tok, token_type_hint: hint }) }, { what: "Reddit disconnect" });
+  },
   check: (p) => {
     if (!sub(p.settings.subreddit ?? "")) return "Reddit needs a subreddit";
     const title = (p.settings.title ?? "").trim();

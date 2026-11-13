@@ -106,6 +106,7 @@ export const youtube: Provider = {
     },
   },
   refresh: (s) => googleRefresh(s, id(), secret(), "YouTube"),
+  revoke: (s) => googleRevoke(s, "YouTube"),
   check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "YouTube needs exactly one video" : youtubeTextProblem(p)),
   publish: async (s, _channelId, p) => {
     const token = s.accessToken;
@@ -240,6 +241,14 @@ export const youtube: Provider = {
     },
   },
 };
+
+/**
+ * Google's revoke (oauth2.googleapis.com/revoke). It ends the person's whole grant to the project, every token of it,
+ * so the caller only runs it when no other channel still relies on that sign-in (retention.ts revokeBlocked).
+ */
+export async function googleRevoke(s: Secret, name: string) {
+  await call("https://oauth2.googleapis.com/revoke", { method: "POST", body: form({ token: s.refreshToken || s.accessToken }) }, { what: `${name} disconnect` });
+}
 
 /** Google's refresh: keeps the old refresh token (Google rarely sends a new one); a revoked grant means reconnect. */
 export async function googleRefresh(s: Secret, clientId: string, clientSecret: string, name: string) {

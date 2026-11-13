@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { Settings } from "lucide-react";
 import { Page } from "@/components/ui";
 import { SettingsView } from "@/components/SettingsView";
@@ -20,7 +19,13 @@ import { appUrl } from "@/lib/channels";
 
 export default async function SettingsPage() {
   const ctx = await getCtx();
-  if (!canManage(ctx.role)) redirect("/calendar");
+  // Members who don't run the workspace see only their own account.
+  if (!canManage(ctx.role))
+    return (
+      <Page icon={<Settings />} title="Settings">
+        <SettingsView name={ctx.workspaceName} timezone={ctx.timezone} queue={[]} email={ctx.email} accountOnly />
+      </Page>
+    );
   const db = adminClient();
   const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys, apps, hooks, credits, history, { data: topUp }] = await Promise.all([
     db.from("workspaces").select("queue").eq("id", ctx.workspaceId).single(),
@@ -87,6 +92,8 @@ export default async function SettingsPage() {
           invites,
         }}
         api={keys ? { base: appUrl(), docs: "https://capybaroar.com/api", keys, apps, hooks } : undefined}
+        owner={ctx.role === "owner"}
+        email={ctx.email}
       />
     </Page>
   );

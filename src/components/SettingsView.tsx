@@ -4,13 +4,13 @@ import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from
 import { useSearchParams } from "next/navigation";
 import { Check, Plus, X } from "lucide-react";
 import { Button, CardHead, Chip, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
-import { askConfirm, tell } from "./Dialogs";
+import { askConfirm, askText, tell } from "./Dialogs";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
 import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
 import { ApiSection, type ApiInfo } from "./ApiSettings";
-import { bestQueue, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
+import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
 import { fmtTime } from "@/lib/format";
 
@@ -20,7 +20,7 @@ const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-type Tab = "general" | "brands" | "members" | "queue" | "api" | "billing";
+type Tab = "general" | "brands" | "members" | "queue" | "api" | "billing" | "account";
 
 const noSub = () => () => {};
 
@@ -35,18 +35,23 @@ export function SaveNote({ msg }: { msg: string }) {
 
 /**
  * Settings, like Claritia's: a nav on the left (a row of tabs on a phone) and one pane at a time. The open pane is in
- * the address (`?tab=brands`); older links with a hash (`#brands`, `#billing`) open the same pane.
+ * the address (`?tab=brands`); older links with a hash (`#brands`, `#billing`) open the same pane. `owner` adds Delete
+ * workspace to General; `accountOnly` (members who don't run the workspace) shows only Your account.
  */
-export function SettingsView({ name, timezone, queue, billing, team, api }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo }) {
+export function SettingsView({ name, timezone, queue, billing, team, api, owner = false, email, accountOnly = false }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo; owner?: boolean; email?: string; accountOnly?: boolean }) {
   const [tz, setTz] = useState(timezone);
-  const groups: { label: string; tabs: { id: Tab; label: string }[] }[] = [
-    {
-      label: "Workspace",
-      tabs: [{ id: "general", label: "General" }, ...(team ? [{ id: "brands" as const, label: "Brands" }, { id: "members" as const, label: "Members" }] : []), { id: "queue", label: "Queue" }],
-    },
-    ...(billing ? [{ label: "Plan", tabs: [{ id: "billing" as const, label: "Billing" }] }] : []),
-    ...(api ? [{ label: "Developers", tabs: [{ id: "api" as const, label: "API and MCP" }] }] : []),
-  ];
+  const account = email != null ? [{ label: "Account", tabs: [{ id: "account" as const, label: "Your account" }] }] : [];
+  const groups: { label: string; tabs: { id: Tab; label: string }[] }[] = accountOnly
+    ? account
+    : [
+        {
+          label: "Workspace",
+          tabs: [{ id: "general", label: "General" }, ...(team ? [{ id: "brands" as const, label: "Brands" }, { id: "members" as const, label: "Members" }] : []), { id: "queue", label: "Queue" }],
+        },
+        ...(billing ? [{ label: "Plan", tabs: [{ id: "billing" as const, label: "Billing" }] }] : []),
+        ...(api ? [{ label: "Developers", tabs: [{ id: "api" as const, label: "API and MCP" }] }] : []),
+        ...account,
+      ];
   const all = groups.flatMap((g) => g.tabs.map((t) => t.id));
   const known = (v: string | null | undefined): Tab | null => (v && (all as string[]).includes(v) ? (v as Tab) : null);
   const params = useSearchParams();
@@ -60,7 +65,7 @@ export function SettingsView({ name, timezone, queue, billing, team, api }: { na
   }
   // An older link with a hash (#brands) opens that pane. Read in the browser only.
   const fromHash = known(useSyncExternalStore(noSub, () => window.location.hash.slice(1), () => ""));
-  const tab: Tab = picked ?? fromQuery ?? fromHash ?? "general";
+  const tab: Tab = picked ?? fromQuery ?? fromHash ?? all[0] ?? "general";
   // On a phone the panes are one row of tabs that scrolls sideways: keep the open one in view.
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -92,18 +97,19 @@ export function SettingsView({ name, timezone, queue, billing, team, api }: { na
         ))}
       </nav>
       <div className="flex max-w-[760px] min-w-0 flex-1 flex-col gap-5">
-        {tab === "general" ? <General name={name} tz={tz} setTz={setTz} /> : null}
+        {tab === "general" ? <General name={name} tz={tz} setTz={setTz} owner={owner} /> : null}
         {tab === "brands" && team ? <BrandsSection team={team} /> : null}
         {tab === "members" && team ? <MembersSection team={team} /> : null}
         {tab === "queue" ? <Queue initial={queue} timezone={tz} /> : null}
         {tab === "api" && api ? <ApiSection api={api} /> : null}
         {tab === "billing" && billing ? <BillingSection info={billing} /> : null}
+        {tab === "account" && email != null ? <Account email={email} /> : null}
       </div>
     </div>
   );
 }
 
-function General({ name, tz, setTz }: { name: string; tz: string; setTz: (v: string) => void }) {
+function General({ name, tz, setTz, owner }: { name: string; tz: string; setTz: (v: string) => void; owner: boolean }) {
   const [n, setN] = useState(name);
   const [msg, setMsg] = useState("");
   const [busy, start] = useTransition();
@@ -130,7 +136,61 @@ function General({ name, tz, setTz }: { name: string; tz: string; setTz: (v: str
           <SaveNote msg={msg} />
         </div>
       </Panel>
+      {owner ? (
+        <Danger
+          title="Delete workspace"
+          button="Delete workspace"
+          ask={`Delete ${name}?`}
+          body="Its posts, channels, files and subscription end for everyone. This can't be undone."
+          typeWhat={name}
+          run={deleteWorkspace}
+        />
+      ) : null}
     </>
+  );
+}
+
+function Account({ email }: { email: string }) {
+  return (
+    <>
+      <PaneHead title="Your account" line={email} />
+      <Danger
+        title="Delete my account"
+        button="Delete my account"
+        ask="Delete your account?"
+        body="You leave every workspace, and workspaces where you're the only member are deleted. This can't be undone."
+        typeWhat={email}
+        run={deleteMyAccount}
+      />
+    </>
+  );
+}
+
+/** A delete that can't be undone: a confirm, then the name typed, then the server signs the person out. */
+function Danger({ title, button, ask, body, typeWhat, run }: { title: string; button: string; ask: string; body: string; typeWhat: string; run: (typed: string) => Promise<{ error?: string }> }) {
+  const [msg, setMsg] = useState("");
+  const [busy, start] = useTransition();
+  const go = async () => {
+    if (!(await askConfirm(ask, { body, ok: "Continue", danger: true }))) return;
+    const typed = await askText(`Type ${typeWhat} to confirm`, { placeholder: typeWhat, ok: button });
+    if (typed == null) return;
+    if (typed.trim().toLowerCase() !== typeWhat.trim().toLowerCase()) return setMsg("That doesn't match");
+    start(async () => {
+      const r = await run(typed);
+      setMsg(r?.error ?? "");
+    });
+  };
+  return (
+    <Panel className="overflow-hidden">
+      <CardHead label={title} />
+      <div className="flex flex-wrap items-center gap-3 px-4 py-3">
+        <Button variant="danger" disabled={busy} onClick={() => void go()}>
+          {busy ? <Loader /> : null}
+          {button}
+        </Button>
+        <SaveNote msg={msg} />
+      </div>
+    </Panel>
   );
 }
 
