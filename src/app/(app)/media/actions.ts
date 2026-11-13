@@ -31,7 +31,10 @@ export async function endUpload(file: FileInfo & { path: string }): Promise<{ er
     const ctx = await writerCtx();
     const f = fileInfo(file);
     if (!f.path) throw new Error("Upload didn't finish");
-    id = await finishUpload(ctx.workspaceId, ctx.userId, { ...f, path: f.path });
+    // A brand-limited member's upload belongs to the brand they're working in, so it stays with that brand.
+    const { getBrandCtx, homeBrand } = await import("@/lib/brands");
+    const b = await getBrandCtx();
+    id = await finishUpload(ctx.workspaceId, ctx.userId, { ...f, path: f.path }, homeBrand(b));
   } catch (e) {
     unstable_rethrow(e);
     return { error: e instanceof Error ? e.message : String(e) };
@@ -58,7 +61,7 @@ export async function mediaUsage(id: string): Promise<number> {
 export async function removeMedia(id: string) {
   const ctx = await writerCtx();
   if (!isUuid(id)) return;
-  await deleteMedia(ctx.workspaceId, id);
+  await deleteMedia(ctx.workspaceId, id, { brandIds: ctx.brandIds, userId: ctx.userId });
   revalidatePath("/media");
 }
 

@@ -133,13 +133,13 @@ export async function reject(postId: string, comment: string): Promise<{ error?:
 
 export async function loadMedia() {
   const ctx = await getCtx();
-  return listMedia(ctx.workspaceId);
+  return listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId });
 }
 
 export async function saveAlt(id: string, alt: string): Promise<{ error?: string }> {
   try {
     const ctx = await writerCtx();
-    await setAlt(ctx.workspaceId, id, alt);
+    await setAlt(ctx.workspaceId, id, alt, { brandIds: ctx.brandIds, userId: ctx.userId });
     return {};
   } catch (e) {
     return fail(e);
@@ -152,7 +152,7 @@ export async function composerData() {
   const ctx = await getCtx();
   const { suggestedTimes } = await import("@/lib/analytics");
   const { listCampaigns } = await import("@/lib/campaigns");
-  const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
+  const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
   const { aiReady } = await import("@/lib/generations");
   // Without enough results of its own, the workspace sees each network's popular hours across Capybaroar.
   const own = best.status === "fulfilled" ? best.value : [];

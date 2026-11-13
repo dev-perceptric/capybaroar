@@ -17,7 +17,7 @@ export default async function BioEditorPage({ searchParams }: { searchParams: Pr
   if (!brand) redirect("/calendar");
   const [page, media, posts, social, billing] = await Promise.all([
     getBioPage(b.workspaceId, brand.id),
-    listMedia(b.workspaceId),
+    listMedia(b.workspaceId, { brandIds: b.brandIds, userId: b.userId }),
     latestPosts(b.workspaceId, brand.id, 12),
     socialDefaults(b.workspaceId, brand.id),
     getBilling(b.workspaceId),

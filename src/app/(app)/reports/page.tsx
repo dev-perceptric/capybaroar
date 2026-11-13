@@ -23,7 +23,7 @@ export default async function ReportsPage() {
         />
       </Page>
     );
-  const [reports, media] = await Promise.all([listReports(ctx.workspaceId, ctx.scope), plan.whiteLabel ? listMedia(ctx.workspaceId) : []]);
+  const [reports, media] = await Promise.all([listReports(ctx.workspaceId, ctx.scope), plan.whiteLabel ? listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }) : []]);
   return (
     <ReportsView
       reports={reports}

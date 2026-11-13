@@ -252,7 +252,7 @@ export function realOps(ctx: ApiCtx): Ops {
       }
     },
     async media() {
-      return (await listMedia(ctx.workspaceId)).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));
+      return (await listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId })).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));
     },
     async nextSlot() {
       try {

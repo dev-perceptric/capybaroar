@@ -43,3 +43,17 @@ export function judgeUpload(claimed: string, head: Uint8Array, size: number): { 
   if (real === "application/pdf" && size > MAX_PDF) throw new Error("PDFs are up to 100 MB");
   return { mime: real, size };
 }
+
+/**
+ * Who is looking: members limited to some brands see those brands' files and the files they uploaded themselves.
+ * `brandIds` null sees every file in the workspace.
+ */
+export type MediaScope = { brandIds: string[] | null; userId: string };
+
+/** The PostgREST filter for a brand-limited member, or null for someone who sees everything. Ids must be UUIDs. */
+export function mediaFilter(scope?: MediaScope | null): string | null {
+  if (!scope?.brandIds) return null;
+  const brands = scope.brandIds.filter(isUuid);
+  const own = isUuid(scope.userId) ? `created_by.eq.${scope.userId}` : null;
+  return [brands.length ? `brand_id.in.(${brands.join(",")})` : null, own].filter(Boolean).join(",") || "id.is.null";
+}

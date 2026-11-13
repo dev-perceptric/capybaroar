@@ -89,3 +89,15 @@ test("ids that go into a filter string are plain UUIDs", () => {
     assert.equal(isUuid(bad), false, String(bad));
   }
 });
+
+test("media filter: brand-limited members see their brands' files and their own; everyone else sees all", async () => {
+  const { mediaFilter } = await import("../src/lib/uploadRules");
+  const u = "11111111-1111-4111-8111-111111111111";
+  const b1 = "22222222-2222-4222-8222-222222222222";
+  assert.equal(mediaFilter(null), null);
+  assert.equal(mediaFilter({ brandIds: null, userId: u }), null);
+  assert.equal(mediaFilter({ brandIds: [b1], userId: u }), `brand_id.in.(${b1}),created_by.eq.${u}`);
+  // Anything that isn't a UUID never reaches the filter string.
+  assert.equal(mediaFilter({ brandIds: ["x),id.neq.(0"], userId: "bad" }), "id.is.null");
+  assert.equal(mediaFilter({ brandIds: [], userId: u }), `created_by.eq.${u}`);
+});

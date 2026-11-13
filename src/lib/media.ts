@@ -1,7 +1,8 @@
 import "server-only";
 import { adminClient } from "./supabase/server";
 import type { MediaFile } from "./providers/types";
-import { HEAD_BYTES, checkClaim, isUploadPath, judgeUpload } from "./uploadRules";
+import { HEAD_BYTES, checkClaim, isUploadPath, isUuid, judgeUpload, mediaFilter, type MediaScope } from "./uploadRules";
+export type { MediaScope } from "./uploadRules";
 
 export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string };
 
@@ -28,9 +29,22 @@ async function showLinks(paths: string[]): Promise<(string | null)[]> {
   return paths.map((p) => shown.get(p)?.url ?? null);
 }
 
-export async function listMedia(workspaceId: string): Promise<(MediaRow & { thumb: string | null })[]> {
+/** Whether this member may see or change this file. */
+export async function mayUseMedia(workspaceId: string, id: string, scope?: MediaScope | null): Promise<boolean> {
+  if (!isUuid(id)) return false;
+  let q = adminClient().from("media").select("id").eq("workspace_id", workspaceId).eq("id", id);
+  const f = mediaFilter(scope);
+  if (f) q = q.or(f);
+  const { data } = await q.maybeSingle();
+  return !!data;
+}
+
+export async function listMedia(workspaceId: string, scope?: MediaScope | null): Promise<(MediaRow & { thumb: string | null })[]> {
   const db = adminClient();
-  const { data, error } = await db.from("media").select("id, path, name, mime, size, alt, created_at").eq("workspace_id", workspaceId).order("created_at", { ascending: false }).limit(200);
+  let q = db.from("media").select("id, path, name, mime, size, alt, created_at").eq("workspace_id", workspaceId);
+  const f = mediaFilter(scope);
+  if (f) q = q.or(f);
+  const { data, error } = await q.order("created_at", { ascending: false }).limit(200);
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as MediaRow[];
   if (!rows.length) return [];
@@ -77,7 +91,7 @@ async function headOf(path: string): Promise<Uint8Array> {
  * the browser said is only a claim: the stored file's real size and first bytes decide, and a file that isn't an
  * allowed kind, isn't what was claimed, or is too big is deleted and refused.
  */
-export async function finishUpload(workspaceId: string, userId: string, file: { path: string; name: string; type: string; size: number }) {
+export async function finishUpload(workspaceId: string, userId: string, file: { path: string; name: string; type: string; size: number }, brandId: string | null = null) {
   if (!isUploadPath(workspaceId, file.path)) throw new Error("Wrong workspace");
   if (typeof file.type !== "string" || typeof file.name !== "string") throw new Error("Upload didn't finish");
   const db = adminClient();
@@ -99,12 +113,13 @@ export async function finishUpload(workspaceId: string, userId: string, file: { 
     await db.storage.from(BUCKET).remove([file.path]);
     throw e;
   }
-  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path: file.path, name: file.name.slice(0, 200), mime: real.mime, size: real.size, created_by: userId }).select("id").single();
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, brand_id: isUuid(brandId) ? brandId : null, path: file.path, name: file.name.slice(0, 200), mime: real.mime, size: real.size, created_by: userId }).select("id").single();
   if (error) throw new Error(error.message);
   return data.id as string;
 }
 
-export async function deleteMedia(workspaceId: string, id: string) {
+export async function deleteMedia(workspaceId: string, id: string, scope?: MediaScope | null) {
+  if (!(await mayUseMedia(workspaceId, id, scope))) throw new Error("File not found");
   const db = adminClient();
   const { data } = await db.from("media").delete().eq("id", id).eq("workspace_id", workspaceId).select("path").maybeSingle();
   if (data?.path) await db.storage.from(BUCKET).remove([data.path]);
@@ -146,7 +161,8 @@ export async function mediaInfo(workspaceId: string, ids: string[]): Promise<(Me
   return (data ?? []).map((r) => ({ id: r.id as string, url: "", mime: r.mime as string, size: Number(r.size), name: r.name as string, alt: r.alt as string | null, bytes: async () => Buffer.alloc(0) }));
 }
 
-export async function setAlt(workspaceId: string, id: string, alt: string) {
+export async function setAlt(workspaceId: string, id: string, alt: string, scope?: MediaScope | null) {
+  if (!(await mayUseMedia(workspaceId, id, scope))) throw new Error("File not found");
   const { error } = await adminClient().from("media").update({ alt: alt.trim() || null }).eq("id", id).eq("workspace_id", workspaceId);
   if (error) throw new Error(error.message);
 }
