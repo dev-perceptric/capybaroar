@@ -12,7 +12,31 @@ import type { Channel } from "@/lib/channels";
 
 export type PreviewMedia = { id: string; mime: string; thumb: string | null; alt: string | null; name?: string };
 /** `thread`: a thread's posts after the first, shown under it as replies. */
-export type PreviewProps = { channel: Channel; text: string; media: PreviewMedia[]; settings: Record<string, string>; thread?: { text: string; media: PreviewMedia[] }[] };
+/** A post that went out: when, and its numbers as last checked. Without it the preview shows a post going out now. */
+export type Live = { at: string; views: number | null; likes: number | null; comments: number | null; shares: number | null };
+export type PreviewProps = { channel: Channel; text: string; media: PreviewMedia[]; settings: Record<string, string>; thread?: { text: string; media: PreviewMedia[] }[]; live?: Live };
+
+/** "1m", "5h", "3d", or the date once it's a week old; "now" for a post going out now. */
+function short(live?: Live) {
+  if (!live) return "1m";
+  const min = Math.max(1, Math.round((Date.now() - new Date(live.at).getTime()) / 60000));
+  if (min < 60) return `${min}m`;
+  if (min < 1440) return `${Math.round(min / 60)}h`;
+  if (min < 10080) return `${Math.round(min / 1440)}d`;
+  return new Date(live.at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+/** "Just now", "5 hours ago", "3 days ago", or the date. */
+function long(live?: Live) {
+  if (!live) return "Just now";
+  const min = Math.round((Date.now() - new Date(live.at).getTime()) / 60000);
+  const say = (n: number, unit: string) => `${n} ${unit}${n === 1 ? "" : "s"} ago`;
+  if (min < 1) return "Just now";
+  if (min < 60) return say(min, "minute");
+  if (min < 1440) return say(Math.round(min / 60), "hour");
+  if (min < 10080) return say(Math.round(min / 1440), "day");
+  return new Date(live.at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+const count = (n: number | null | undefined) => (n ?? 0).toLocaleString("en-US");
 
 /** The post, then its thread's later posts as replies. */
 function WithThread(p: PreviewProps) {
@@ -137,7 +161,7 @@ function Clamp({ text, lines, more = "more", className = "" }: { text: string; l
 
 /* ---------- Networks ---------- */
 
-function Instagram({ channel: c, text, media, settings }: PreviewProps) {
+function Instagram({ channel: c, text, media, settings, live }: PreviewProps) {
   const fmt = settings.format || "post";
   if (fmt === "story" || fmt === "reel")
     return (
@@ -149,7 +173,7 @@ function Instagram({ channel: c, text, media, settings }: PreviewProps) {
               <div className="h-full w-1/3 rounded bg-white" />
             </div>
             <div className="flex items-center gap-2 text-[13px] font-semibold">
-              <Face c={c} size={30} /> {handle(c)} <span className="font-normal opacity-70">1m</span>
+              <Face c={c} size={30} /> {handle(c)} <span className="font-normal opacity-70">{short(live)}</span>
             </div>
           </div>
         ) : (
@@ -207,16 +231,16 @@ function Instagram({ channel: c, text, media, settings }: PreviewProps) {
         <Bookmark size={24} />
       </div>
       <div className="px-3 pb-3 text-[13px]">
-        <p className="font-semibold">Be the first to like this</p>
+        <p className="font-semibold">{live?.likes ? `${count(live.likes)} like${live.likes === 1 ? "" : "s"}` : "Be the first to like this"}</p>
         <Clamp text={text ? `${handle(c)} ${text}` : ""} lines={2} className="mt-0.5" />
-        {settings.first_comment ? <p className="mt-1 text-neutral-500">View 1 comment</p> : null}
-        <p className="mt-1 text-[11px] text-neutral-400 uppercase">Just now</p>
+        {live?.comments ? <p className="mt-1 text-neutral-500">View {live.comments === 1 ? "1 comment" : `all ${count(live.comments)} comments`}</p> : settings.first_comment ? <p className="mt-1 text-neutral-500">View 1 comment</p> : null}
+        <p className="mt-1 text-[11px] text-neutral-400 uppercase">{long(live)}</p>
       </div>
     </div>
   );
 }
 
-function Facebook({ channel: c, text, media, settings }: PreviewProps) {
+function Facebook({ channel: c, text, media, settings, live }: PreviewProps) {
   if (settings.format === "reel") return <TikTokLike c={c} text={text} media={media} label="Facebook" />;
   if (settings.format === "story") return <Instagram channel={c} text={text} media={media} settings={settings} />;
   return (
@@ -226,7 +250,7 @@ function Facebook({ channel: c, text, media, settings }: PreviewProps) {
         <div className="min-w-0 flex-1 leading-tight">
           <p className="truncate text-[15px] font-semibold">{c.name}</p>
           <p className="flex items-center gap-1 text-[13px] text-[#65676b]">
-            Just now · <Globe size={12} />
+            {long(live)} · <Globe size={12} />
           </p>
         </div>
         <MoreHorizontal size={20} className="text-[#65676b]" />
@@ -289,14 +313,14 @@ function LinkedIn({ channel: c, text, media }: PreviewProps) {
   );
 }
 
-function XPost({ channel: c, text, media, settings }: PreviewProps) {
+function XPost({ channel: c, text, media, settings, live }: PreviewProps) {
   const poll = (settings.poll ?? "").split(/\r?\n/).map((o) => o.trim()).filter(Boolean).slice(0, 4);
   return (
     <div className="flex gap-3 bg-white px-4 py-3 text-[15px] text-[#0f1419]">
       <Face c={c} size={40} />
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1 truncate">
-          <span className="font-bold">{c.name}</span> <span className="text-[#536471]">@{handle(c)} · 1m</span>
+          <span className="font-bold">{c.name}</span> <span className="text-[#536471]">@{handle(c)} · {short(live)}</span>
         </p>
         <Clamp text={text} lines={12} className="mt-0.5 leading-snug" />
         {media.length ? <div className="mt-3 overflow-hidden rounded-2xl border border-[#cfd9de]">{<Grid media={media} />}</div> : null}
@@ -310,11 +334,17 @@ function XPost({ channel: c, text, media, settings }: PreviewProps) {
           </div>
         ) : null}
         <div className="mt-3 flex justify-between pr-6 text-[13px] text-[#536471]">
-          <MessageCircle size={18} />
-          <Repeat2 size={18} />
-          <Heart size={18} />
           <span className="flex items-center gap-1">
-            <BarIcon /> 0
+            <MessageCircle size={18} /> {live?.comments ? count(live.comments) : null}
+          </span>
+          <span className="flex items-center gap-1">
+            <Repeat2 size={18} /> {live?.shares ? count(live.shares) : null}
+          </span>
+          <span className="flex items-center gap-1">
+            <Heart size={18} /> {live?.likes ? count(live.likes) : null}
+          </span>
+          <span className="flex items-center gap-1">
+            <BarIcon /> {count(live?.views)}
           </span>
           <Bookmark size={18} />
         </div>
@@ -329,13 +359,13 @@ const BarIcon = () => (
   </svg>
 );
 
-function Threads({ channel: c, text, media }: PreviewProps) {
+function Threads({ channel: c, text, media, live }: PreviewProps) {
   return (
     <div className="flex gap-3 bg-white px-4 py-3 text-[15px] text-black">
       <Face c={c} size={36} />
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1.5">
-          <span className="font-semibold">{handle(c)}</span> <span className="text-neutral-400">1m</span>
+          <span className="font-semibold">{handle(c)}</span> <span className="text-neutral-400">{short(live)}</span>
           <span className="flex-1" />
           <MoreHorizontal size={18} className="text-neutral-500" />
         </p>
@@ -396,7 +426,7 @@ function TikTokLike({ c, text, media, label }: { c: Channel; text: string; media
   );
 }
 
-function YouTube({ channel: c, text, media, settings }: PreviewProps) {
+function YouTube({ channel: c, text, media, settings, live }: PreviewProps) {
   return (
     <div className="bg-white text-[#0f0f0f]">
       {media[0] ? (
@@ -412,7 +442,7 @@ function YouTube({ channel: c, text, media, settings }: PreviewProps) {
         <div className="min-w-0 flex-1">
           <p className="line-clamp-2 text-[15px] leading-snug font-semibold">{settings.title || <span className="opacity-40">Video title</span>}</p>
           <p className="mt-0.5 text-[12px] text-[#606060]">
-            {c.name} · 0 views · Just now {settings.privacy && settings.privacy !== "public" ? `· ${settings.privacy}` : ""}
+            {c.name} · {count(live?.views)} view{live?.views === 1 ? "" : "s"} · {long(live)} {settings.privacy && settings.privacy !== "public" ? `· ${settings.privacy}` : ""}
           </p>
           {text ? <Clamp text={text} lines={2} className="mt-1.5 text-[13px] text-[#606060]" /> : null}
         </div>
@@ -422,7 +452,7 @@ function YouTube({ channel: c, text, media, settings }: PreviewProps) {
   );
 }
 
-function Generic({ channel: c, text, media }: PreviewProps) {
+function Generic({ channel: c, text, media, live }: PreviewProps) {
   return (
     <div className="flex gap-3 bg-white px-4 py-3 text-[15px] text-black">
       <Face c={c} size={40} />
@@ -430,7 +460,7 @@ function Generic({ channel: c, text, media }: PreviewProps) {
         <p className="flex items-center gap-1.5 truncate">
           <span className="font-semibold">{c.name}</span>
           {c.username ? <span className="text-neutral-500">@{c.username}</span> : null}
-          <span className="text-neutral-400">· now</span>
+          <span className="text-neutral-400">· {live ? short(live) : "now"}</span>
         </p>
         <Clamp text={text} lines={10} className="mt-0.5 leading-snug" />
         {media.length ? <div className="mt-2 overflow-hidden rounded-xl">{<Grid media={media} />}</div> : null}

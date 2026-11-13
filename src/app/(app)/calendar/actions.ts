@@ -87,6 +87,16 @@ export async function deleteEverywhere(id: string, channelIds: string[]): Promis
   }
 }
 
+export async function editLive(id: string, changes: import("@/lib/editor").EditChange[]): Promise<{ error?: string; results?: import("@/lib/editor").EditResult[] }> {
+  const { editPost } = await import("@/lib/edit");
+  try {
+    const ctx = await writerCtx();
+    return { results: await editPost(ctx.workspaceId, id, changes, ctx) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
 export async function loadResults(postId: string) {
   const ctx = await getCtx();
   await assertPostAccess(ctx.workspaceId, postId, ctx.brandIds);

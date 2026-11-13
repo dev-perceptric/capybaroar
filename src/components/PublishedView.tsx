@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
 import { ExternalLink } from "lucide-react";
-import { Badge, IconLink, type Tone } from "./ui";
+import { Badge, Button, Field, IconLink, Input, TextArea, bareArea, boxClass, type Tone } from "./ui";
+import { Select } from "./Select";
+import { Loader } from "./Loader";
 import { ChannelFace } from "./NetworkLogo";
-import { Thumb } from "./MediaThumb";
 import { fmtDateTime, fmtNum } from "@/lib/format";
 import { networkOf } from "@/lib/networks";
-import { threadOf } from "@/lib/thread";
 import type { Channel } from "@/lib/channels";
 import type { Comment, PostRow, TargetResult, TargetRow } from "@/lib/posts";
-import { loadResults } from "@/app/(app)/calendar/actions";
+import type { EditResult } from "@/lib/editor";
+import { editLive } from "@/app/(app)/calendar/actions";
 
-type Media = { id: string; name: string; mime: string; thumb: string | null; alt: string | null };
 type Metrics = NonNullable<TargetResult["metrics"]>;
+type Draft = { text: string | null; settings: Record<string, string> };
 
 // Only a target that differs from "went out fine" gets a tag; the header already says Published.
 const STATE: Partial<Record<TargetRow["status"], { label: string; tone: Tone }>> = {
@@ -22,6 +23,9 @@ const STATE: Partial<Record<TargetRow["status"], { label: string; tone: Tone }>>
   publishing: { label: "Publishing", tone: "sky" },
 };
 
+/** Whether this channel's post can be changed on its network now. */
+export const editableTarget = (t: TargetRow, c: Channel | undefined) => !!c && t.status === "published" && !t.deleted_at && !!networkOf(c.network).edit;
+
 /** The numbers a network gave. Before the first check, the usual three show as dashes. */
 function statsOf(m: Metrics | null): { label: string; value: number | null }[] {
   if (!m) return ["Views", "Likes", "Comments"].map((label) => ({ label, value: null }));
@@ -29,62 +33,111 @@ function statsOf(m: Metrics | null): { label: string; value: number | null }[] {
   return [seen, { label: "Likes", value: m.likes }, { label: "Comments", value: m.comments }, { label: "Shares", value: m.shares }, { label: "Saves", value: m.saves }, { label: "Clicks", value: m.clicks }].filter((s) => s.value != null);
 }
 
-/** A post that went out: each channel's numbers and link, then what was posted. Nothing here is editable. */
-export function PublishedView({ post, channels, media, comments }: { post: PostRow; channels: Channel[]; media: Media[]; comments: Comment[] }) {
-  const [results, setResults] = useState<TargetResult[] | null>(null);
-  useEffect(() => {
-    loadResults(post.id).then(setResults, () => setResults([]));
-  }, [post.id]);
-  const thread = threadOf(post.thread);
-  const files = post.media_ids.map((id) => media.find((m) => m.id === id)).filter((m): m is Media => !!m);
-  const chan = (t: TargetRow) => channels.find((c) => c.id === t.channel_id) ?? null;
-  // Text and title as each channel got them; shown once when every channel got the same.
-  const versions = post.post_targets.map((t) => ({ t, title: (t.settings?.title ?? "").trim(), text: (t.text ?? post.text).trim() }));
-  const same = versions.every((v) => v.title === versions[0]?.title && v.text === versions[0]?.text);
-  const shown = same ? versions.slice(0, 1) : versions;
+/**
+ * A post that went out: each channel's numbers and link. The post itself shows in the preview. With `editing`, the
+ * channels whose network allows it get their text and allowed settings to change; typing updates the preview.
+ */
+export function PublishedView({
+  post,
+  channels,
+  comments,
+  results,
+  editing,
+  drafts,
+  onDraft,
+  onCancel,
+  onDone,
+}: {
+  post: PostRow;
+  channels: Channel[];
+  comments: Comment[];
+  results: TargetResult[] | null;
+  editing: boolean;
+  drafts: Record<string, Draft>;
+  onDraft: (channelId: string, d: Partial<Draft>) => void;
+  onCancel: () => void;
+  onDone: () => void;
+}) {
+  const chan = (t: TargetRow) => channels.find((c) => c.id === t.channel_id);
+  const editable = post.post_targets.filter((t) => editableTarget(t, chan(t)));
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [error, setError] = useState("");
+  const [busy, start] = useTransition();
+
+  const save = () =>
+    start(async () => {
+      setError("");
+      setErrors({});
+      const r = await editLive(
+        post.id,
+        editable.map((t) => ({ channelId: t.channel_id, text: drafts[t.channel_id]?.text ?? post.text, settings: drafts[t.channel_id]?.settings ?? {} })),
+      );
+      if (r.error) return setError(r.error);
+      const failed = (r.results ?? []).filter((x: EditResult) => x.result === "failed");
+      if (failed.length) return setErrors(Object.fromEntries(failed.map((x) => [x.channelId, x.error ?? "Couldn't save"])));
+      onDone();
+    });
+
+  if (editing)
+    return (
+      <div className="flex flex-col gap-6">
+        {editable.map((t) => {
+          const c = chan(t)!;
+          const n = networkOf(c.network);
+          const d = drafts[t.channel_id] ?? { text: t.text, settings: t.settings ?? {} };
+          const fields = (n.fields ?? []).filter((f) => n.edit!.settings.includes(f.key));
+          const text = d.text ?? post.text;
+          return (
+            <section key={t.id} className="flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <ChannelFace channel={c} size={24} badge={11} />
+                <span className="text-[13px] font-medium">{c.name}</span>
+              </div>
+              {fields.map((f) => (
+                <Field key={f.key} label={f.required ? `${f.label} *` : f.label}>
+                  {f.kind === "select" ? (
+                    <Select value={d.settings[f.key] ?? ""} onChange={(v) => onDraft(t.channel_id, { settings: { ...d.settings, [f.key]: v } })} placeholder="Choose" options={f.options ?? []} />
+                  ) : f.kind === "textarea" ? (
+                    <TextArea rows={2} value={d.settings[f.key] ?? ""} placeholder={f.placeholder} onChange={(e) => onDraft(t.channel_id, { settings: { ...d.settings, [f.key]: e.target.value } })} />
+                  ) : (
+                    <Input value={d.settings[f.key] ?? ""} placeholder={f.placeholder} onChange={(e) => onDraft(t.channel_id, { settings: { ...d.settings, [f.key]: e.target.value } })} />
+                  )}
+                </Field>
+              ))}
+              {n.edit!.text ? (
+                <Field label="Text">
+                  <div className={boxClass}>
+                    <textarea rows={8} aria-label={`Text for ${c.name}`} value={text} onChange={(e) => onDraft(t.channel_id, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
+                  </div>
+                  <span className={`text-[12px] tabular-nums ${[...text].length > n.limit ? "text-danger" : "text-muted"}`}>
+                    {[...text].length} / {n.limit}
+                  </span>
+                </Field>
+              ) : null}
+              {errors[t.channel_id] ? <p className="text-[12.5px] text-danger">{errors[t.channel_id]}</p> : null}
+            </section>
+          );
+        })}
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">
+          {error ? <span className="mr-auto text-[12px] text-danger">{error}</span> : null}
+          <Button variant="ghost" disabled={busy} onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button disabled={busy} onClick={save}>
+            {busy ? <Loader /> : null}
+            Save changes
+          </Button>
+        </div>
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         {post.post_targets.map((t) => (
-          <ChannelResult key={t.id} t={t} channel={chan(t)} result={results?.find((r) => r.targetId === t.id) ?? null} loading={!results} />
+          <ChannelResult key={t.id} t={t} channel={chan(t) ?? null} result={results?.find((r) => r.targetId === t.id) ?? null} loading={!results} />
         ))}
       </div>
-
-      {shown.some((v) => v.title || v.text) ? (
-        <section className="flex flex-col gap-4">
-          {shown.map(({ t, title, text }) => (
-            <div key={t.id} className="flex flex-col gap-1.5">
-              <p className="label-mono">{same ? "Text" : `Text for ${chan(t)?.name ?? "removed channel"}`}</p>
-              {title ? <p className="text-[15px] font-semibold wrap-break-word">{title}</p> : null}
-              {text ? <p className="text-[14px] leading-relaxed whitespace-pre-line wrap-break-word">{text}</p> : null}
-            </div>
-          ))}
-        </section>
-      ) : null}
-
-      {thread.length ? (
-        <section className="flex flex-col gap-3">
-          <p className="label-mono">Thread</p>
-          {thread.map((p, i) => (
-            <div key={i} className="flex flex-col gap-1 border-l-2 border-line pl-3">
-              <p className="text-[12px] text-muted">Post {i + 2}</p>
-              <p className="text-[14px] leading-relaxed whitespace-pre-line wrap-break-word">{p.text}</p>
-            </div>
-          ))}
-        </section>
-      ) : null}
-
-      {files.length ? (
-        <section className="flex flex-col gap-2">
-          <p className="label-mono">Media</p>
-          <div className="flex flex-wrap gap-2">
-            {files.map((m) => (
-              <Thumb key={m.id} m={m} />
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       {comments.length ? (
         <section className="flex flex-col gap-2">

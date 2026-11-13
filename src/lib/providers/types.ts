@@ -151,6 +151,13 @@ export type Provider = {
    * Throw AuthError (reconnect) or Error (it stays, with the message shown). May return a note about what's left.
    */
   unpublish?: (s: Secret, accountId: string, r: Remote) => Promise<{ note?: string | null } | void>;
+  /**
+   * Change a published post on the network: its text, and the settings listed in the network's `edit.settings`.
+   * `p` holds the whole new text and settings (unchanged ones too); files never change. Present only when the network's
+   * API allows editing a live post, and `edit` is set in networks.ts. Throw AuthError (reconnect), PostError (the change
+   * is wrong for the network, like too long) or Error (try again). The post stays as it was when this throws.
+   */
+  edit?: (s: Secret, accountId: string, r: Remote, p: Publishable) => Promise<void>;
   /** Why this post can't be deleted from here: an id that wasn't kept, a permission the channel wasn't given, too old. */
   unpublishable?: (s: Secret, r: Remote) => string | null;
 };

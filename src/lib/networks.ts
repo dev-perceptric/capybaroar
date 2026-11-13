@@ -45,6 +45,11 @@ export type Network = {
   thread?: boolean;
   /** Takes a PDF as a post of its own (LinkedIn's document post, shown as a carousel). */
   documents?: boolean;
+  /**
+   * A post that went out can be changed on the network (its provider has `edit`). `text`: the text can change;
+   * `settings`: the setting keys that can change too (YouTube's title and tags). Missing: it can't be edited.
+   */
+  edit?: { text: boolean; settings: string[] };
 };
 
 export const isPdfMime = (mime: string) => mime === "application/pdf";

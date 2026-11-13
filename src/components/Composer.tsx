@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
@@ -11,7 +11,7 @@ import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
-import { PublishedView } from "./PublishedView";
+import { PublishedView, editableTarget } from "./PublishedView";
 import { Thumb } from "./MediaThumb";
 import { TextTools, mod, toggleStyle, type FormatKind } from "./TextTools";
 import { creditGate } from "./creditGate";
@@ -21,9 +21,9 @@ import { toUploadable } from "@/lib/imageConvert";
 import { avoidedIn, type BrandKit } from "@/lib/brandKit";
 import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
-import type { Comment, PostRow } from "@/lib/posts";
+import type { Comment, PostRow, TargetResult } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, loadResults, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
 import type { Campaign } from "@/lib/campaignRules";
 import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
 import { Floating } from "./Floating";
@@ -98,6 +98,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   useEffect(() => {
     if (post) loadComments(post.id).then(setComments, () => setComments([]));
   }, [post]);
+  // A post that went out: its numbers, and editing it on the networks that allow it.
+  const [results, setResults] = useState<TargetResult[] | null>(null);
+  const [liveEdit, setLiveEdit] = useState(false);
+  useEffect(() => {
+    if (post && wentOut) loadResults(post.id).then(setResults, () => setResults([]));
+  }, [post, wentOut]);
   const [targets, setTargets] = useState<Record<string, Target>>(() => {
     if (post) return Object.fromEntries(post.post_targets.map((t) => [t.channel_id, { text: t.text, settings: t.settings ?? {} }]));
     const c = channels.find((x) => x.id === preset) ?? (channels.length === 1 ? channels[0] : undefined);
@@ -240,6 +246,14 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const shown = picked.find((c) => c.id === view) ?? active ?? picked[0] ?? null;
   const files = mediaIds.map((id) => (library ?? []).find((m) => m.id === id)).filter((m): m is Media => Boolean(m));
   const textOf = (c: Channel) => targets[c.id]?.text ?? text;
+  /** When this channel's post went out and how many saw it, for the preview of a post that went out. */
+  const liveOf = (c: Channel) => {
+    const t = post?.post_targets.find((x) => x.channel_id === c.id);
+    const r = t ? results?.find((x) => x.targetId === t.id) : null;
+    if (!r?.publishedAt) return undefined;
+    const m = r.metrics;
+    return { at: r.publishedAt, views: m ? (m.views ?? m.reach ?? m.impressions) : null, likes: m?.likes ?? null, comments: m?.comments ?? null, shares: m?.shares ?? null };
+  };
   // Channels that post the thread's later parts; the rest post the first only.
   const threaded = picked.filter((c) => takesThread(c.network));
   const threadLimit = threaded.length ? Math.min(...threaded.map((c) => networkOf(c.network).limit)) : null;
@@ -511,6 +525,12 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           ) : null}
           {post && access.write ? (
             <>
+              {wentOut && !liveEdit && post.post_targets.some((t) => editableTarget(t, channels.find((c) => c.id === t.channel_id))) ? (
+                <Button variant="ghost" size="sm" onClick={() => setLiveEdit(true)}>
+                  <Pencil size={14} />
+                  Edit
+                </Button>
+              ) : null}
               {post.status === "published" || post.status === "partial" ? <EvergreenButton postId={post.id} /> : null}
               <IconButton label={post.status === "published" || post.status === "partial" ? "Post again" : "Duplicate"} onClick={dup} disabled={busy}>
                 <Copy size={16} />
@@ -546,7 +566,20 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           <div className="min-h-0 overflow-y-auto">
             {wentOut && post ? (
               <div className="mx-auto w-full max-w-[720px] px-5 py-5">
-                <PublishedView post={post} channels={channels} media={library ?? []} comments={comments} />
+                <PublishedView
+                  post={post}
+                  channels={channels}
+                  comments={comments}
+                  results={results}
+                  editing={liveEdit}
+                  drafts={targets}
+                  onDraft={(id, d) => patch(id, d)}
+                  onCancel={() => {
+                    setTargets(Object.fromEntries(post.post_targets.map((t) => [t.channel_id, { text: t.text, settings: t.settings ?? {} }])));
+                    setLiveEdit(false);
+                  }}
+                  onDone={onSaved}
+                />
               </div>
             ) : (
               <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5 px-5 py-5">
@@ -973,9 +1006,9 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
             <FitBox width={device === "mobile" ? 340 : 560}>
               {shown ? (
                 device === "mobile" ? (
-                  <Phone channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} />
+                  <Phone channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} live={wentOut && !liveEdit ? liveOf(shown) : undefined} />
                 ) : (
-                  <Desktop channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} />
+                  <Desktop channel={shown} text={textOf(shown)} media={files} settings={targets[shown.id]?.settings ?? {}} thread={threadPreview(shown)} live={wentOut && !liveEdit ? liveOf(shown) : undefined} />
                 )
               ) : (
                 <div className="text-[13px] text-faint">Pick a channel to see the preview</div>
