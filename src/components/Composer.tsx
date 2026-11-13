@@ -3,9 +3,9 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, FileText, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Type, Upload, X } from "lucide-react";
+import { Check, Copy, Crop, FileText, History, ImagePlus, Layers, Monitor, MoreHorizontal, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
-import { Select } from "./Select";
+import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
 import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText, tell } from "./Dialogs";
@@ -291,15 +291,6 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   };
   const usable = groups.filter((g) => groupChannels(g, channels).length > 0);
 
-  const toggle = (c: Channel) =>
-    setTargets((t) => {
-      if (t[c.id]) {
-        const rest = { ...t };
-        delete rest[c.id];
-        return rest;
-      }
-      return { ...t, [c.id]: { text: null, settings: initialSettings(c) } };
-    });
   const patch = (id: string, p: Partial<Target>) => setTargets((t) => ({ ...t, [id]: { ...t[id], ...p } }));
   const setSetting = (id: string, key: string, value: string) => setTargets((t) => ({ ...t, [id]: { ...t[id], settings: { ...t[id].settings, [key]: value } } }));
 
@@ -561,22 +552,21 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 }
               >
                 {channels.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {channels.map((c) => (
-                      <Chip
-                        key={c.id}
-                        size="lg"
-                        on={Boolean(targets[c.id])}
-                        disabled={locked}
-                        title={`${c.name}, ${networkOf(c.network).name}`}
-                        onClick={() => toggle(c)}
-                        className={c.status === "reconnect" ? "opacity-60" : ""}
-                      >
-                        <ChannelFace channel={c} size={28} badge={12} />
-                        <span className="max-w-32 truncate">{c.name}</span>
-                      </Chip>
-                    ))}
-                  </div>
+                  <MultiSelect<string>
+                    ariaLabel="Channels"
+                    noun={["channel", "channels"]}
+                    placeholder="Pick channels"
+                    disabled={locked}
+                    allowAll={false}
+                    values={pickedIds}
+                    onChange={setPicked}
+                    canPick={(id) => {
+                      const brand = picked[0]?.brand_id;
+                      const c = channels.find((x) => x.id === id);
+                      return picked.length && c && c.brand_id !== brand ? "Another brand's channel" : null;
+                    }}
+                    options={channels.map((c) => ({ value: c.id, label: c.name, icon: <ChannelFace channel={c} size={22} badge={10} />, hint: c.status === "reconnect" ? "Reconnect" : networkOf(c.network).name }))}
+                  />
                 ) : (
                   <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-full border border-dashed border-line-strong px-4 text-[13px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
                     Connect a channel
@@ -585,13 +575,21 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               </Field>
               {!locked && (usable.length || pickedIds.length > 1) ? (
                 <div className="-mt-2 flex flex-wrap items-center gap-1.5">
-                  {usable.map((g) => (
-                    <Chip key={g.id} size="sm" on={isGroup(g, pickedIds, channels)} onClick={() => setPicked(groupChannels(g, channels))} title={`${groupChannels(g, channels).length} channels`}>
-                      <Layers size={12} />
-                      {g.name}
-                      <span className="text-muted tabular-nums">{groupChannels(g, channels).length}</span>
-                    </Chip>
-                  ))}
+                  {usable.length ? (
+                    <Select<string>
+                      size="sm"
+                      lead="Group"
+                      ariaLabel="Channel group"
+                      className="w-56 max-w-full"
+                      value={usable.find((g) => isGroup(g, pickedIds, channels))?.id ?? ""}
+                      onChange={(id) => {
+                        const g = usable.find((x) => x.id === id);
+                        if (g) setPicked(groupChannels(g, channels));
+                      }}
+                      placeholder="Pick a group"
+                      options={usable.map((g) => ({ value: g.id, label: g.name, hint: String(groupChannels(g, channels).length) }))}
+                    />
+                  ) : null}
                   {pickedIds.length > 1 && !usable.some((g) => isGroup(g, pickedIds, channels)) ? (
                     <Chip size="sm" dashed onClick={saveGroup}>
                       <Plus size={12} />
@@ -621,28 +619,22 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               ) : null}
 
               {picked.length ? (
-                <div role="tablist" aria-label="Edit for" className="flex flex-wrap gap-1.5 border-t border-line pt-4">
-                  <Chip size="sm" role="tab" aria-selected={!active} title="All channels" on={!active} onClick={() => setTab("all")}>
-                    <Layers size={14} /> All
-                  </Chip>
-                  {picked.map((c) => (
-                    <Chip
-                      key={c.id}
-                      size="sm"
-                      role="tab"
-                      aria-selected={active?.id === c.id}
-                      title={c.name}
-                      on={active?.id === c.id}
-                      onClick={() => {
-                        setTab(c.id);
-                        setView(c.id);
-                      }}
-                    >
-                      <NetworkLogo id={c.network} size={14} />
-                      <span className="max-w-28 truncate">{c.name}</span>
-                      {targets[c.id].text != null ? <Type size={11} className="text-muted" aria-label="Own text" /> : null}
-                    </Chip>
-                  ))}
+                <div className="border-t border-line pt-4">
+                  <Select<string>
+                    size="sm"
+                    lead="Text for"
+                    ariaLabel="Text for"
+                    className="w-full max-w-80"
+                    value={active?.id ?? "all"}
+                    onChange={(id) => {
+                      setTab(id);
+                      if (id !== "all") setView(id);
+                    }}
+                    options={[
+                      { value: "all", label: "All channels", icon: <Layers size={14} /> },
+                      ...picked.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: targets[c.id].text != null ? "Own text" : undefined })),
+                    ]}
+                  />
                 </div>
               ) : null}
 

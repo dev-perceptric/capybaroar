@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { Button, Chip, ErrorNote, Field, Input, LinkButton, TextArea } from "./ui";
+import { Select } from "./Select";
 import { Modal } from "./Overlay";
 import { Loader } from "./Loader";
 import { BioCard } from "./BioCard";
@@ -62,13 +63,16 @@ export function TemplateGallery({
   const shown = group === "all" ? cards : cards.filter((c) => c.t.group === group);
   return (
     <Modal title="Templates" onClose={onClose} wide>
-      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Kind of page">
-        {[{ id: "all" as const, name: "All" }, ...TEMPLATE_GROUPS].map((g) => (
-          <Chip key={g.id} size="sm" role="tab" aria-selected={group === g.id} on={group === g.id} onClick={() => setGroup(g.id)}>
-            {g.name}
-            <span className="text-muted tabular-nums">{g.id === "all" ? cards.length : cards.filter((c) => c.t.group === g.id).length}</span>
-          </Chip>
-        ))}
+      <div>
+        <Select<string>
+          size="sm"
+          lead="Kind"
+          ariaLabel="Kind of page"
+          className="w-60 max-w-full"
+          value={group}
+          onChange={(v) => setGroup(v as TemplateGroup | "all")}
+          options={[{ id: "all" as const, name: "All" }, ...TEMPLATE_GROUPS].map((g) => ({ value: g.id, label: g.name, hint: String(g.id === "all" ? cards.length : cards.filter((c) => c.t.group === g.id).length) }))}
+        />
       </div>
       <ul className="-m-1 grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto p-1 sm:grid-cols-3" aria-label="Templates">
         {shown.map(({ t, view }) => (

@@ -2,10 +2,11 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Download, FileUp, ImagePlus, Sparkles, X } from "lucide-react";
-import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, Th, inputLook, type Tone } from "./ui";
+import { Badge, Button, Field, IconButton, Input, Segmented, TextArea, Th, inputLook, type Tone } from "./ui";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
+import { MultiSelect } from "./Select";
 import { askConfirm, tell } from "./Dialogs";
 import { dialogIn, fadeIn } from "@/lib/motion";
 import { fmtDateTime } from "@/lib/format";
@@ -436,17 +437,7 @@ function MediaTab({ channels, busy, setBusy, onSaved }: { channels: Channel[] } 
       <div className="grid min-h-0 flex-1 lg:grid-cols-[320px_minmax(0,1fr)]" {...drop}>
         <aside className="flex flex-col gap-5 overflow-y-auto border-b border-line bg-paper p-5 lg:border-r lg:border-b-0">
           <Field label="Channels">
-            <div className="flex flex-wrap gap-1.5">
-              {channels.map((c) => {
-                const on = picked.includes(c.id);
-                return (
-                  <Chip key={c.id} on={on} onClick={() => setPicked((p) => (on ? p.filter((x) => x !== c.id) : [...p, c.id]))}>
-                    <NetworkLogo id={c.network} size={14} />
-                    <span className="max-w-36 truncate">{c.name}</span>
-                  </Chip>
-                );
-              })}
-            </div>
+            <MultiSelect<string> ariaLabel="Channels" noun={["channel", "channels"]} placeholder="Pick channels" values={picked} onChange={setPicked} options={channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} /> }))} />
           </Field>
           <Field label="When">
             <div className="flex flex-wrap items-center gap-2">

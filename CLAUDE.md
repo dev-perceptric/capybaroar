@@ -10,6 +10,7 @@ Schedule posts to every social channel from one calendar. Our own code on the Om
 - A record's state is a `Badge` (6px tag, soft fill, deep text, no frame). Section labels are gray Inter (`label-mono`); mono is only for code, keys and ids.
 - Shared parts only (`src/components/ui.tsx`): `Page`, `Button`/`LinkButton`, `IconButton`/`IconLink`, `Chip`, `Field`, `Input`, `TextArea`, `TabNav`, `Segmented`, `Badge`, `Panel`, `CardHead`, `Rows`/`Row`, `PaneHead`, `CopyField`, `StatCards`, `Empty`, `ErrorNote`, `Loading`, `boxClass`/`bareArea` for a text box with a toolbar; `Modal`/`Sheet` (`Overlay.tsx`), `Select`, dialogs (`Dialogs.tsx`), `ToolIntro` (a line break in its title turns the rest gray), `Loader`, `ChannelFace` (`NetworkLogo.tsx`).
 - No `<select>`, `window.prompt`, `window.confirm` or `window.alert`.
+- Picking from a list that can grow (channels, groups, brands, campaigns, models, kinds) is a dropdown: `Select` for one, `MultiSelect` for several. Never a row of chips.
 - Networks show their logo (`NetworkLogo`), with the name as the label.
 
 ## Copy

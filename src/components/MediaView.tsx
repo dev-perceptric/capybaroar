@@ -3,7 +3,8 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Image as ImageIcon, Sparkles, Trash2, Upload } from "lucide-react";
-import { Button, Chip, ErrorNote, IconButton, Input, Page } from "./ui";
+import { Button, ErrorNote, IconButton, Input, Page } from "./ui";
+import { Select } from "./Select";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { askConfirm } from "./Dialogs";
@@ -95,11 +96,20 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
         {files.length > 8 ? (
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <Input aria-label="Search" placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} className="w-56 max-w-full" />
-            {(["all", "image", "video", "pdf"] as const).map((k) => (
-              <Chip key={k} size="sm" on={kind === k} onClick={() => setKind(k)}>
-                {k === "all" ? "All" : k === "image" ? "Pictures" : k === "video" ? "Videos" : "PDFs"}
-              </Chip>
-            ))}
+            <Select<"all" | "image" | "video" | "pdf">
+              size="sm"
+              lead="Type"
+              ariaLabel="Type"
+              className="w-44"
+              value={kind}
+              onChange={setKind}
+              options={[
+                { value: "all", label: "All" },
+                { value: "image", label: "Pictures" },
+                { value: "video", label: "Videos" },
+                { value: "pdf", label: "PDFs" },
+              ]}
+            />
           </div>
         ) : null}
         {shown ? (

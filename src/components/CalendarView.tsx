@@ -7,10 +7,10 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
-import { Badge, Button, Chip, Empty, IconButton, Page, Segmented } from "@/components/ui";
+import { Badge, Button, Empty, IconButton, Page, Segmented } from "@/components/ui";
 import { Select } from "@/components/Select";
 import { Sheet } from "@/components/Overlay";
-import { ChannelFace, NetworkLogo } from "@/components/NetworkLogo";
+import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
 import { loadCampaigns, loadPosts, move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
@@ -237,19 +237,21 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               ]}
             />
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto px-5 pt-0.5 pb-3 [scrollbar-width:none]">
-            <Chip on={channel === "all"} onClick={() => setChannel("all")}>
-              All channels
-              <span className={`tabular-nums ${channel === "all" ? "text-ink/60" : "text-faint"}`}>{inRange.length}</span>
-            </Chip>
-            {channels.map((c) => (
-              <Chip key={c.id} on={channel === c.id} onClick={() => setChannel(c.id)} className="pl-1.5">
-                <ChannelFace channel={c} size={20} badge={11} />
-                <span className="max-w-40 truncate">{c.name}</span>
-                {c.status === "reconnect" ? <AlertTriangle size={12} className="text-danger" aria-label="Needs reconnecting" /> : null}
-                <span className={`tabular-nums ${channel === c.id ? "text-ink/60" : "text-faint"}`}>{counts.get(c.id) ?? 0}</span>
-              </Chip>
-            ))}
+          <div className="flex flex-wrap items-center gap-1.5 px-5 pt-0.5 pb-3">
+            {channels.length > 1 ? (
+              <Select<string>
+                size="sm"
+                lead="Channel"
+                ariaLabel="Channel"
+                className="w-full max-w-72"
+                value={channel}
+                onChange={setChannel}
+                options={[
+                  { value: "all", label: "All channels", hint: String(inRange.length) },
+                  ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
+                ]}
+              />
+            ) : null}
             {access.write ? (
               <Link href="/channels" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-dashed border-line-strong px-3 text-[12.5px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
                 <Plus size={13} /> {channels.length ? "Add" : "Connect a channel"}

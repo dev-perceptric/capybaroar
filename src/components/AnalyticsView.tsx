@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Chip, Segmented } from "./ui";
+import { Segmented } from "./ui";
+import { Select } from "./Select";
 import { NetworkLogo } from "./NetworkLogo";
 import { Bars, Followers, Formats, Heatmap, Section, Tiles, TopPosts } from "./Charts";
 import type { Channel } from "@/lib/channels";
@@ -38,17 +39,19 @@ export function AnalyticsView({ data, channels, channel, timezone }: { data: Ana
           ]}
         />
       </div>
-      <div className="-mx-4 mt-4 flex gap-1.5 overflow-x-auto px-4 py-0.5 [scrollbar-width:none] md:mx-0 md:px-0.5">
-        <Chip on={!channel} onClick={() => go("channel", null)}>
-          All channels
-        </Chip>
-        {channels.map((c) => (
-          <Chip key={c.id} on={channel === c.id} onClick={() => go("channel", c.id)}>
-            <NetworkLogo id={c.network} size={14} />
-            <span className="max-w-40 truncate">{c.name}</span>
-          </Chip>
-        ))}
-      </div>
+      {channels.length > 1 ? (
+        <div className="mt-4">
+          <Select<string>
+            size="sm"
+            lead="Channel"
+            ariaLabel="Channel"
+            className="w-full max-w-72"
+            value={channel ?? ""}
+            onChange={(v) => go("channel", v || null)}
+            options={[{ value: "", label: "All channels" }, ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} /> }))]}
+          />
+        </div>
+      ) : null}
 
       <div className="mt-5">
         <Tiles data={data} />

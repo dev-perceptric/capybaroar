@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Button, Chip, Field, Segmented, TextArea } from "./ui";
+import { Button, Field, Segmented, TextArea } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { ASPECTS, CAPY, KINDS, MAX_PROMPT, MAX_SCRIPT, SECONDS, capyPick, modelOf, modelsFor, type Aspect, type GenKind, type Seconds } from "@/lib/genRules";
@@ -99,18 +99,20 @@ export function GenerateForm({ pictures, onStarted, primary = false }: { picture
         </button>
       </div>
       {others ? (
-        <div className="flex flex-wrap gap-1.5">
-          <Chip size="sm" on={!chosen} onClick={() => setChosen(null)}>
-            Let Capy pick
-          </Chip>
-          {modelsFor(kind)
-            .filter((m) => (picture ? !!m.picture : m.picture !== "needs"))
-            .map((m) => (
-              <Chip key={m.id} size="sm" on={chosen === m.id} onClick={() => setChosen(m.id)}>
-                {m.name} <span className="text-muted tabular-nums">{m.credits({ prompt, seconds: secs })}</span>
-              </Chip>
-            ))}
-        </div>
+        <Select<string>
+          size="sm"
+          lead="Model"
+          ariaLabel="Model"
+          className="w-64 max-w-full"
+          value={chosen ?? ""}
+          onChange={(v) => setChosen(v || null)}
+          options={[
+            { value: "", label: "Let Capy pick" },
+            ...modelsFor(kind)
+              .filter((m) => (picture ? !!m.picture : m.picture !== "needs"))
+              .map((m) => ({ value: m.id, label: m.name, hint: `${m.credits({ prompt, seconds: secs })} credits` })),
+          ]}
+        />
       ) : null}
       {error ? <p className="text-[12px] text-danger">{error}</p> : null}
     </div>

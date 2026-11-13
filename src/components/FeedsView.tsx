@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, Plus, Rss, Trash2 } from "lucide-react";
 import { Badge, Button, CardHead, Chip, Field, IconButton, Input, Panel, Row, Segmented, Switch, timeAgo } from "./ui";
 import { Modal } from "./Overlay";
-import { Select } from "./Select";
+import { MultiSelect, Select } from "./Select";
 import { ToolIntro } from "./ToolIntro";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
@@ -122,7 +122,6 @@ function FeedDialog({ feed, channels, brands, brandId, onClose, onDone }: { feed
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   const mine = channels.filter((c) => c.brand_id === brand && !networkOf(c.network).needsMedia);
-  const flip = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   const save = () =>
     start(async () => {
       setError("");
@@ -151,15 +150,11 @@ function FeedDialog({ feed, channels, brands, brandId, onClose, onDone }: { feed
         <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/feed" disabled={!!feed} autoFocus={!feed} inputMode="url" />
       </Field>
       <Field label="Channels">
-        <div className="flex flex-wrap gap-1.5">
-          {mine.map((c) => (
-            <Chip key={c.id} on={picked.includes(c.id)} onClick={() => flip(c.id)}>
-              <NetworkLogo id={c.network} size={14} />
-              <span className="max-w-40 truncate">{c.name}</span>
-            </Chip>
-          ))}
-          {!mine.length ? <span className="text-[12px] text-muted">Connect a channel that posts text first</span> : null}
-        </div>
+        {mine.length ? (
+          <MultiSelect<string> ariaLabel="Channels" noun={["channel", "channels"]} placeholder="Pick channels" values={picked} onChange={setPicked} options={mine.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} /> }))} />
+        ) : (
+          <span className="text-[12px] text-muted">Connect a channel that posts text first</span>
+        )}
       </Field>
       <Field
         label="Template"

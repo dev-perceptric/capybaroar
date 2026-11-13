@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowUp, CheckCheck, ExternalLink, Eye, EyeOff, RotateCcw, Sparkles, ThumbsUp } from "lucide-react";
-import { Avatar, Badge, Button, Chip, Dot, Empty, IconButton, IconLink, Loading, Search, Segmented, bareArea, boxClass, timeAgo, useLoad } from "./ui";
+import { Avatar, Badge, Button, Empty, IconButton, IconLink, Loading, Search, Segmented, bareArea, boxClass, timeAgo, useLoad } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { NetworkLogo } from "./NetworkLogo";
-import { HoverTip } from "./Floating";
 import { askConfirm } from "./Dialogs";
 import { networkOf } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
@@ -142,23 +141,28 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
             <Select<Kind> size="sm" value={kind} options={KINDS} onChange={setKind} lead="Kind" ariaLabel="Kind" className="w-40" />
             {listBusy ? <Loader /> : null}
           </div>
-          <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 pt-0.5 pb-0.5 [scrollbar-width:none]">
-            <Chip size="sm" on={!channel} onClick={() => setChannel(null)}>
-              All
-            </Chip>
-            {channels.map((c) => (
-              <Chip key={c.id} size="sm" on={channel === c.id} onClick={() => setChannel(channel === c.id ? null : c.id)}>
-                <NetworkLogo id={c.network} size={14} />
-                <span className="max-w-32 truncate">{c.name}</span>
-                {errors[c.id] || c.status === "reconnect" ? (
-                  <span className="relative inline-flex">
-                    <Dot tone="red" />
-                    <HoverTip text={c.status === "reconnect" ? "Reconnect this channel" : errors[c.id]} wrap />
-                  </span>
-                ) : null}
-              </Chip>
-            ))}
-          </div>
+          {channels.length > 1 ? (
+            <Select<string>
+              size="sm"
+              lead="Channel"
+              ariaLabel="Channel"
+              className="w-full max-w-72"
+              value={channel ?? ""}
+              onChange={(v) => setChannel(v || null)}
+              options={[
+                { value: "", label: "All channels" },
+                ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : errors[c.id] ? "Error" : undefined })),
+              ]}
+            />
+          ) : null}
+          {channels.some((c) => errors[c.id] || c.status === "reconnect") ? (
+            <p className="text-[12px] text-danger">
+              {channels
+                .filter((c) => errors[c.id] || c.status === "reconnect")
+                .map((c) => `${c.name}: ${c.status === "reconnect" ? "Reconnect this channel" : errors[c.id]}`)
+                .join(". ")}
+            </p>
+          ) : null}
           {error ? (
             <p role="alert" className="text-[12px] text-danger">
               {error}
