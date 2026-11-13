@@ -3,7 +3,7 @@
 import { unstable_rethrow } from "next/navigation";
 import { canApprove, getCtx, writerCtx } from "@/lib/session";
 import { getBrandCtx, homeBrand } from "@/lib/brands";
-import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
+import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postResults, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
 import { listMedia, setAlt } from "@/lib/media";
 import type { ChannelResult, PlanItem } from "@/lib/unpublisher";
 
@@ -85,6 +85,12 @@ export async function deleteEverywhere(id: string, channelIds: string[]): Promis
   } catch (e) {
     return fail(e);
   }
+}
+
+export async function loadResults(postId: string) {
+  const ctx = await getCtx();
+  await assertPostAccess(ctx.workspaceId, postId, ctx.brandIds);
+  return postResults(ctx.workspaceId, postId);
 }
 
 export async function loadComments(postId: string) {

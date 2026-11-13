@@ -197,6 +197,27 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   return { id: id!, publishAt: at?.toISOString() ?? null, status };
 }
 
+export type TargetResult = {
+  targetId: string;
+  publishedAt: string | null;
+  metrics: { fetchedAt: string; views: number | null; reach: number | null; impressions: number | null; likes: number | null; comments: number | null; shares: number | null; saves: number | null; clicks: number | null } | null;
+};
+
+/** When each channel of a post went out and its latest numbers (none until the first stats check). */
+export async function postResults(workspaceId: string, postId: string): Promise<TargetResult[]> {
+  const { data, error } = await adminClient()
+    .from("post_targets")
+    .select("id, published_at, post_metrics(fetched_at, views, reach, impressions, likes, comments, shares, saves, clicks)")
+    .eq("workspace_id", workspaceId)
+    .eq("post_id", postId);
+  if (error) throw new Error(error.message);
+  type M = { fetched_at: string; views: number | null; reach: number | null; impressions: number | null; likes: number | null; comments: number | null; shares: number | null; saves: number | null; clicks: number | null };
+  return ((data ?? []) as unknown as { id: string; published_at: string | null; post_metrics: M | M[] | null }[]).map((r) => {
+    const m = Array.isArray(r.post_metrics) ? (r.post_metrics[0] ?? null) : r.post_metrics;
+    return { targetId: r.id, publishedAt: r.published_at, metrics: m ? { fetchedAt: m.fetched_at, views: m.views, reach: m.reach, impressions: m.impressions, likes: m.likes, comments: m.comments, shares: m.shares, saves: m.saves, clicks: m.clicks } : null };
+  });
+}
+
 /** One post of this workspace, or null when there is none. */
 export async function getPost(workspaceId: string, id: string): Promise<PostRow | null> {
   const { data, error } = await adminClient().from("posts").select(COLS).eq("id", id).eq("workspace_id", workspaceId).maybeSingle();

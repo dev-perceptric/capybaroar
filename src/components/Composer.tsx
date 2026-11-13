@@ -11,6 +11,7 @@ import { ChannelFace, NetworkLogo } from "./NetworkLogo";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { Desktop, Phone } from "./Previews";
 import { DeletePost } from "./DeletePost";
+import { PublishedView } from "./PublishedView";
 import { TextTools, mod, toggleStyle, type FormatKind } from "./TextTools";
 import { creditGate } from "./creditGate";
 import { THREAD_MAX, networkOf, takesThread, type NetworkField, type ThreadPart } from "@/lib/networks";
@@ -488,7 +489,9 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           <h2 className="text-[16px] font-semibold tracking-[-0.02em]">{post ? (locked ? "Post" : "Edit post") : "New post"}</h2>
           {inReview ? <Badge tone="violet">In review</Badge> : null}
           {locked && error ? <span className="min-w-0 truncate text-[12px] text-danger">{error}</span> : null}
-          {picked.length ? (
+          {wentOut && post ? (
+            <Badge tone={post.status === "published" ? "green" : post.status === "partial" ? "amber" : "gray"}>{post.status === "published" ? "Published" : post.status === "partial" ? "Partly published" : "Deleted"}</Badge>
+          ) : picked.length ? (
             <span className="flex items-center gap-1 text-[12px] text-muted">
               to {picked.length} channel{picked.length === 1 ? "" : "s"}
             </span>
@@ -540,395 +543,401 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(440px,560px)]">
           {/* Editor */}
           <div className="min-h-0 overflow-y-auto">
-            <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5 px-5 py-5">
-              <Field
-                label="Channels"
-                aside={
-                  !locked && channels.length > 1 ? (
-                    <Button variant="plain" size="sm" className="-mr-1.5" disabled={!everyone} title={everyone ? undefined : "Pick a channel first to choose its brand"} onClick={() => setPicked(allOn ? [] : (everyone ?? []))}>
-                      {allOn ? "Clear" : "Select all"}
-                    </Button>
-                  ) : null
-                }
-              >
-                {channels.length ? (
-                  <MultiSelect<string>
-                    ariaLabel="Channels"
-                    noun={["channel", "channels"]}
-                    placeholder="Pick channels"
-                    disabled={locked}
-                    allowAll={false}
-                    values={pickedIds}
-                    onChange={setPicked}
-                    canPick={(id) => {
-                      const brand = picked[0]?.brand_id;
-                      const c = channels.find((x) => x.id === id);
-                      return picked.length && c && c.brand_id !== brand ? "Another brand's channel" : null;
-                    }}
-                    options={channels.map((c) => ({ value: c.id, label: c.name, icon: <ChannelFace channel={c} size={22} badge={10} />, hint: c.status === "reconnect" ? "Reconnect" : networkOf(c.network).name }))}
-                  />
-                ) : (
-                  <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-full border border-dashed border-line-strong px-4 text-[13px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
-                    Connect a channel
-                  </Link>
-                )}
-              </Field>
-              {!locked && (usable.length || pickedIds.length > 1) ? (
-                <div className="-mt-2 flex flex-wrap items-center gap-1.5">
-                  {usable.length ? (
+            {wentOut && post ? (
+              <div className="mx-auto w-full max-w-[720px] px-5 py-5">
+                <PublishedView post={post} channels={channels} media={library ?? []} comments={comments} />
+              </div>
+            ) : (
+              <div className="mx-auto flex w-full max-w-[720px] flex-col gap-5 px-5 py-5">
+                <Field
+                  label="Channels"
+                  aside={
+                    !locked && channels.length > 1 ? (
+                      <Button variant="plain" size="sm" className="-mr-1.5" disabled={!everyone} title={everyone ? undefined : "Pick a channel first to choose its brand"} onClick={() => setPicked(allOn ? [] : (everyone ?? []))}>
+                        {allOn ? "Clear" : "Select all"}
+                      </Button>
+                    ) : null
+                  }
+                >
+                  {channels.length ? (
+                    <MultiSelect<string>
+                      ariaLabel="Channels"
+                      noun={["channel", "channels"]}
+                      placeholder="Pick channels"
+                      disabled={locked}
+                      allowAll={false}
+                      values={pickedIds}
+                      onChange={setPicked}
+                      canPick={(id) => {
+                        const brand = picked[0]?.brand_id;
+                        const c = channels.find((x) => x.id === id);
+                        return picked.length && c && c.brand_id !== brand ? "Another brand's channel" : null;
+                      }}
+                      options={channels.map((c) => ({ value: c.id, label: c.name, icon: <ChannelFace channel={c} size={22} badge={10} />, hint: c.status === "reconnect" ? "Reconnect" : networkOf(c.network).name }))}
+                    />
+                  ) : (
+                    <Link href="/channels" className="inline-flex h-9 w-fit items-center rounded-full border border-dashed border-line-strong px-4 text-[13px] text-muted transition-colors hover:border-ink/40 hover:text-ink">
+                      Connect a channel
+                    </Link>
+                  )}
+                </Field>
+                {!locked && (usable.length || pickedIds.length > 1) ? (
+                  <div className="-mt-2 flex flex-wrap items-center gap-1.5">
+                    {usable.length ? (
+                      <Select<string>
+                        size="sm"
+                        lead="Group"
+                        ariaLabel="Channel group"
+                        className="w-56 max-w-full"
+                        value={usable.find((g) => isGroup(g, pickedIds, channels))?.id ?? ""}
+                        onChange={(id) => {
+                          const g = usable.find((x) => x.id === id);
+                          if (g) setPicked(groupChannels(g, channels));
+                        }}
+                        placeholder="Pick a group"
+                        options={usable.map((g) => ({ value: g.id, label: g.name, hint: String(groupChannels(g, channels).length) }))}
+                      />
+                    ) : null}
+                    {pickedIds.length > 1 && !usable.some((g) => isGroup(g, pickedIds, channels)) ? (
+                      <Chip size="sm" dashed onClick={saveGroup}>
+                        <Plus size={12} />
+                        Save as group
+                      </Chip>
+                    ) : null}
+                    {usable.length ? (
+                      <>
+                        <button ref={groupMenuBtn} type="button" aria-label="Manage groups" title="Manage groups" aria-expanded={groupMenu} onClick={() => setGroupMenu(!groupMenu)} className="flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink">
+                          <MoreHorizontal size={14} />
+                        </button>
+                        {groupMenu ? (
+                          <Floating anchor={groupMenuBtn} placement="bottom-start" onClose={() => setGroupMenu(false)} role="menu" className="min-w-56 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu">
+                            <p className="px-2.5 pt-1 pb-1.5 text-[11.5px] font-medium text-faint">Groups</p>
+                            {usable.map((g) => (
+                              <button key={g.id} type="button" role="menuitem" onClick={() => deleteGroup(g)} className="flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover">
+                                <Layers size={13} className="text-muted" />
+                                <span className="min-w-0 flex-1 truncate">{g.name}</span>
+                                <Trash2 size={13} className="text-danger" />
+                              </button>
+                            ))}
+                          </Floating>
+                        ) : null}
+                      </>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {picked.length ? (
+                  <div className="border-t border-line pt-4">
                     <Select<string>
                       size="sm"
-                      lead="Group"
-                      ariaLabel="Channel group"
-                      className="w-56 max-w-full"
-                      value={usable.find((g) => isGroup(g, pickedIds, channels))?.id ?? ""}
+                      lead="Text for"
+                      ariaLabel="Text for"
+                      className="w-full max-w-80"
+                      value={active?.id ?? "all"}
                       onChange={(id) => {
-                        const g = usable.find((x) => x.id === id);
-                        if (g) setPicked(groupChannels(g, channels));
+                        setTab(id);
+                        if (id !== "all") setView(id);
                       }}
-                      placeholder="Pick a group"
-                      options={usable.map((g) => ({ value: g.id, label: g.name, hint: String(groupChannels(g, channels).length) }))}
+                      options={[
+                        { value: "all", label: "All channels", icon: <Layers size={14} /> },
+                        ...picked.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: targets[c.id].text != null ? "Own text" : undefined })),
+                      ]}
                     />
-                  ) : null}
-                  {pickedIds.length > 1 && !usable.some((g) => isGroup(g, pickedIds, channels)) ? (
-                    <Chip size="sm" dashed onClick={saveGroup}>
-                      <Plus size={12} />
-                      Save as group
-                    </Chip>
-                  ) : null}
-                  {usable.length ? (
-                    <>
-                      <button ref={groupMenuBtn} type="button" aria-label="Manage groups" title="Manage groups" aria-expanded={groupMenu} onClick={() => setGroupMenu(!groupMenu)} className="flex size-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink">
-                        <MoreHorizontal size={14} />
-                      </button>
-                      {groupMenu ? (
-                        <Floating anchor={groupMenuBtn} placement="bottom-start" onClose={() => setGroupMenu(false)} role="menu" className="min-w-56 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu">
-                          <p className="px-2.5 pt-1 pb-1.5 text-[11.5px] font-medium text-faint">Groups</p>
-                          {usable.map((g) => (
-                            <button key={g.id} type="button" role="menuitem" onClick={() => deleteGroup(g)} className="flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover">
-                              <Layers size={13} className="text-muted" />
-                              <span className="min-w-0 flex-1 truncate">{g.name}</span>
-                              <Trash2 size={13} className="text-danger" />
-                            </button>
-                          ))}
-                        </Floating>
-                      ) : null}
-                    </>
-                  ) : null}
-                </div>
-              ) : null}
+                  </div>
+                ) : null}
 
-              {picked.length ? (
-                <div className="border-t border-line pt-4">
-                  <Select<string>
-                    size="sm"
-                    lead="Text for"
-                    ariaLabel="Text for"
-                    className="w-full max-w-80"
-                    value={active?.id ?? "all"}
-                    onChange={(id) => {
-                      setTab(id);
-                      if (id !== "all") setView(id);
-                    }}
-                    options={[
-                      { value: "all", label: "All channels", icon: <Layers size={14} /> },
-                      ...picked.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: targets[c.id].text != null ? "Own text" : undefined })),
-                    ]}
-                  />
-                </div>
-              ) : null}
+                {active ? (
+                  <>
+                    <Field
+                      label={`Text for ${active.name}`}
+                      aside={
+                        targets[active.id].text != null && !locked ? (
+                          <Button variant="plain" size="sm" className="-my-1" onClick={() => patch(active.id, { text: null })}>
+                            Use shared text
+                          </Button>
+                        ) : null
+                      }
+                    >
+                      <div className={boxClass}>
+                        {!locked ? <TextTools area={chanArea} network={active.network} brandId={active.brand_id} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
+                        <textarea ref={chanArea} rows={11} aria-label={`Text for ${active.name}`} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
+                      </div>
+                    </Field>
+                    <Counter c={active} text={textOf(active)} />
+                  </>
+                ) : (
+                  <>
+                    <Field label="Text">
+                      <div className={boxClass}>
+                      {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} brandId={picked[0]?.brand_id ?? null} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
+                      <textarea
+                        ref={sharedArea}
+                        aria-label="Text"
+                        rows={12}
+                        value={text}
+                        readOnly={locked}
+                        onChange={(e) => setText(e.target.value)}
+                        onPaste={(e) => {
+                          if (!locked && e.clipboardData.files.length) {
+                            e.preventDefault();
+                            void upload(e.clipboardData.files);
+                          }
+                        }}
+                        placeholder="What do you want to share?"
+                        className={`${bareArea} resize-y text-[14px] leading-relaxed`}
+                      />
+                      </div>
+                    </Field>
+                    {picked.length ? (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        {picked.map((c) => (
+                          <Counter key={c.id} c={c} text={textOf(c)} />
+                        ))}
+                      </div>
+                    ) : null}
+                  </>
+                )}
 
-              {active ? (
-                <>
-                  <Field
-                    label={`Text for ${active.name}`}
-                    aside={
-                      targets[active.id].text != null && !locked ? (
-                        <Button variant="plain" size="sm" className="-my-1" onClick={() => patch(active.id, { text: null })}>
-                          Use shared text
-                        </Button>
-                      ) : null
-                    }
-                  >
-                    <div className={boxClass}>
-                      {!locked ? <TextTools area={chanArea} network={active.network} brandId={active.brand_id} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
-                      <textarea ref={chanArea} rows={11} aria-label={`Text for ${active.name}`} value={textOf(active)} readOnly={locked} onChange={(e) => patch(active.id, { text: e.target.value })} className={`${bareArea} resize-y text-[14px] leading-relaxed`} />
-                    </div>
-                  </Field>
-                  <Counter c={active} text={textOf(active)} />
-                </>
-              ) : (
-                <>
-                  <Field label="Text">
-                    <div className={boxClass}>
-                    {!locked ? <TextTools area={sharedArea} network={picked.length === 1 ? picked[0].network : null} brandId={picked[0]?.brand_id ?? null} formats={formats} onFormat={makeFormat} onError={setError} aiOpen={aiOpen} setAiOpen={setAiOpen} /> : null}
-                    <textarea
-                      ref={sharedArea}
-                      aria-label="Text"
-                      rows={12}
-                      value={text}
-                      readOnly={locked}
-                      onChange={(e) => setText(e.target.value)}
-                      onPaste={(e) => {
-                        if (!locked && e.clipboardData.files.length) {
-                          e.preventDefault();
-                          void upload(e.clipboardData.files);
-                        }
-                      }}
-                      placeholder="What do you want to share?"
-                      className={`${bareArea} resize-y text-[14px] leading-relaxed`}
-                    />
-                    </div>
-                  </Field>
-                  {picked.length ? (
-                    <div className="flex flex-wrap gap-x-4 gap-y-1">
-                      {picked.map((c) => (
-                        <Counter key={c.id} c={c} text={textOf(c)} />
-                      ))}
-                    </div>
-                  ) : null}
-                </>
-              )}
-
-              {/* Media */}
-              <div className="flex flex-col gap-2">
-                <p className="text-[12.5px] font-medium text-body">Media</p>
-                <div className="flex flex-wrap gap-2">
-                  {files.map((m, i) => (
-                    <div
-                      key={m.id}
-                      draggable={!locked && files.length > 1}
-                      onDragStart={(e) => {
-                        setDragId(m.id);
-                        e.dataTransfer.effectAllowed = "move";
-                        e.dataTransfer.setData("text/x-capybaroar-media", m.id);
-                      }}
-                      onDragEnd={() => setDragId(null)}
-                      onDragOver={(e) => {
-                        if (!dragId || dragId === m.id) return;
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setMediaIds((ids) => {
-                          const from = ids.indexOf(dragId);
-                          const to = ids.indexOf(m.id);
-                          if (from < 0 || to < 0 || from === to) return ids;
-                          const next = [...ids];
-                          next.splice(from, 1);
-                          next.splice(to, 0, dragId);
-                          return next;
-                        });
-                      }}
-                      onDrop={(e) => {
-                        if (dragId) {
+                {/* Media */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-[12.5px] font-medium text-body">Media</p>
+                  <div className="flex flex-wrap gap-2">
+                    {files.map((m, i) => (
+                      <div
+                        key={m.id}
+                        draggable={!locked && files.length > 1}
+                        onDragStart={(e) => {
+                          setDragId(m.id);
+                          e.dataTransfer.effectAllowed = "move";
+                          e.dataTransfer.setData("text/x-capybaroar-media", m.id);
+                        }}
+                        onDragEnd={() => setDragId(null)}
+                        onDragOver={(e) => {
+                          if (!dragId || dragId === m.id) return;
                           e.preventDefault();
                           e.stopPropagation();
-                          setDragId(null);
-                        }
-                      }}
-                      className={`group/thumb relative ${files.length > 1 && !locked ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === m.id ? "opacity-40" : ""}`}
-                    >
-                      <Thumb m={m} />
-                      {files.length > 1 ? <span className="absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-panel text-[10px] font-semibold tabular-nums shadow-chip">{i + 1}</span> : null}
-                      {!locked ? (
-                        <>
-                          <span className="absolute top-1.5 right-1.5 hidden gap-1 group-focus-within/thumb:flex group-hover/thumb:flex">
-                            {!isPdf(m) ? (
-                              <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
-                                {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
+                          setMediaIds((ids) => {
+                            const from = ids.indexOf(dragId);
+                            const to = ids.indexOf(m.id);
+                            if (from < 0 || to < 0 || from === to) return ids;
+                            const next = [...ids];
+                            next.splice(from, 1);
+                            next.splice(to, 0, dragId);
+                            return next;
+                          });
+                        }}
+                        onDrop={(e) => {
+                          if (dragId) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDragId(null);
+                          }
+                        }}
+                        className={`group/thumb relative ${files.length > 1 && !locked ? "cursor-grab active:cursor-grabbing" : ""} ${dragId === m.id ? "opacity-40" : ""}`}
+                      >
+                        <Thumb m={m} />
+                        {files.length > 1 ? <span className="absolute top-1.5 left-1.5 flex size-5 items-center justify-center rounded-full bg-panel text-[10px] font-semibold tabular-nums shadow-chip">{i + 1}</span> : null}
+                        {!locked ? (
+                          <>
+                            <span className="absolute top-1.5 right-1.5 hidden gap-1 group-focus-within/thumb:flex group-hover/thumb:flex">
+                              {!isPdf(m) ? (
+                                <button type="button" title={m.mime.startsWith("video/") ? "Trim" : "Crop"} aria-label={m.mime.startsWith("video/") ? "Trim" : "Crop"} onClick={() => setEditing(m)} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
+                                  {m.mime.startsWith("video/") ? <Scissors size={13} /> : <Crop size={13} />}
+                                </button>
+                              ) : null}
+                              <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
+                                <X size={13} />
+                              </button>
+                            </span>
+                            {!m.mime.startsWith("video/") && !isPdf(m) ? (
+                              <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1.5 bottom-1.5 h-5 rounded-full bg-panel px-1.5 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
+                                {m.alt ? "Alt text" : "Add alt"}
                               </button>
                             ) : null}
-                            <button type="button" title="Remove" aria-label="Remove" onClick={() => setMediaIds((ids) => ids.filter((x) => x !== m.id))} className="flex size-6 items-center justify-center rounded-full bg-panel shadow-chip transition-shadow hover:shadow-pill">
-                              <X size={13} />
-                            </button>
-                          </span>
-                          {!m.mime.startsWith("video/") && !isPdf(m) ? (
-                            <button type="button" onClick={() => editAlt(m)} className={`absolute inset-x-1.5 bottom-1.5 h-5 rounded-full bg-panel px-1.5 text-[10px] font-medium shadow-chip ${m.alt ? "text-muted" : ""}`}>
-                              {m.alt ? "Alt text" : "Add alt"}
-                            </button>
-                          ) : null}
-                        </>
-                      ) : null}
+                          </>
+                        ) : null}
+                      </div>
+                    ))}
+                    {uploading.map((u) => (
+                      <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 rounded-lg p-2 text-center text-[11px] ${u.error ? "bg-danger-soft text-danger" : "border border-dashed border-line-strong text-muted"}`}>
+                        {u.error ? (
+                          <>
+                            <span className="line-clamp-3">{u.error}</span>
+                            <Button variant="plain" size="sm" onClick={() => setUploading((all) => all.filter((x) => x.key !== u.key))}>
+                              Dismiss
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Loader />
+                            <span className="line-clamp-2 break-all">{u.name}</span>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    {gens.pending.map((g) => (
+                      <PendingTile key={g.id} p={g} onDismiss={() => gens.dismiss(g.id)} />
+                    ))}
+                    {!locked ? (
+                      <button
+                        type="button"
+                        onClick={() => fileInput.current?.click()}
+                        className="flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong text-[12px] text-muted transition-colors hover:border-ink/40 hover:text-ink"
+                      >
+                        <Upload size={18} />
+                        Upload
+                      </button>
+                    ) : null}
+                    {!locked ? (
+                      <button
+                        type="button"
+                        onClick={() => setPicking(picking === "media" ? null : "media")}
+                        aria-pressed={picking === "media"}
+                        className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "media" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
+                      >
+                        <ImagePlus size={18} />
+                        From library
+                      </button>
+                    ) : null}
+                    {!locked && ai ? (
+                      <button
+                        type="button"
+                        onClick={() => setPicking(picking === "generate" ? null : "generate")}
+                        aria-pressed={picking === "generate"}
+                        className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "generate" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
+                      >
+                        <Sparkles size={18} />
+                        Generate
+                      </button>
+                    ) : null}
+                  </div>
+                  <input ref={fileInput} type="file" multiple accept={PICK} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
+                  {picking === "generate" ? (
+                    <div className="rounded-lg bg-paper p-3 shadow-track">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-[13px] font-medium">Generate</span>
+                        <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
+                          Done
+                        </Button>
+                      </div>
+                      <GenerateForm pictures={[...files, ...(library ?? []).filter((m) => !mediaIds.includes(m.id))]} onStarted={gens.add} />
                     </div>
-                  ))}
-                  {uploading.map((u) => (
-                    <div key={u.key} className={`flex size-28 flex-col items-center justify-center gap-2 rounded-lg p-2 text-center text-[11px] ${u.error ? "bg-danger-soft text-danger" : "border border-dashed border-line-strong text-muted"}`}>
-                      {u.error ? (
-                        <>
-                          <span className="line-clamp-3">{u.error}</span>
-                          <Button variant="plain" size="sm" onClick={() => setUploading((all) => all.filter((x) => x.key !== u.key))}>
-                            Dismiss
-                          </Button>
-                        </>
+                  ) : picking ? (
+                    <div className="rounded-lg bg-paper p-3 shadow-track">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-[13px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
+                        <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
+                          Done
+                        </Button>
+                      </div>
+                      {library === null ? (
+                        <Loader />
+                      ) : library.length ? (
+                        <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto">
+                          {library
+                            .filter((m) => !m.mime.startsWith("audio/") && (picking === "media" || !m.mime.startsWith("video/")))
+                            .map((m) => {
+                              const on = picking === "media" ? mediaIds.includes(m.id) : targets[picking.cover]?.settings.cover === m.id;
+                              return (
+                                <button
+                                  key={m.id}
+                                  type="button"
+                                  onClick={() => {
+                                    if (picking === "media") setMediaIds((ids) => (ids.includes(m.id) ? ids.filter((x) => x !== m.id) : [...ids, m.id]));
+                                    else {
+                                      setSetting(picking.cover, "cover", m.id);
+                                      setPicking(null);
+                                    }
+                                  }}
+                                  className="relative"
+                                >
+                                  <Thumb m={m} small />
+                                  {on ? (
+                                    <span className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-signal text-on-signal">
+                                      <Check size={12} />
+                                    </span>
+                                  ) : null}
+                                </button>
+                              );
+                            })}
+                        </div>
                       ) : (
-                        <>
-                          <Loader />
-                          <span className="line-clamp-2 break-all">{u.name}</span>
-                        </>
+                        <p className="text-[12px] text-muted">No files yet. Drop some here.</p>
                       )}
                     </div>
-                  ))}
-                  {gens.pending.map((g) => (
-                    <PendingTile key={g.id} p={g} onDismiss={() => gens.dismiss(g.id)} />
-                  ))}
-                  {!locked ? (
-                    <button
-                      type="button"
-                      onClick={() => fileInput.current?.click()}
-                      className="flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-line-strong text-[12px] text-muted transition-colors hover:border-ink/40 hover:text-ink"
-                    >
-                      <Upload size={18} />
-                      Upload
-                    </button>
-                  ) : null}
-                  {!locked ? (
-                    <button
-                      type="button"
-                      onClick={() => setPicking(picking === "media" ? null : "media")}
-                      aria-pressed={picking === "media"}
-                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "media" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
-                    >
-                      <ImagePlus size={18} />
-                      From library
-                    </button>
-                  ) : null}
-                  {!locked && ai ? (
-                    <button
-                      type="button"
-                      onClick={() => setPicking(picking === "generate" ? null : "generate")}
-                      aria-pressed={picking === "generate"}
-                      className={`flex size-28 flex-col items-center justify-center gap-1.5 rounded-lg text-[12px] transition-colors ${picking === "generate" ? "bg-signal-soft text-ink shadow-picked" : "border border-dashed border-line-strong text-muted hover:border-ink/40 hover:text-ink"}`}
-                    >
-                      <Sparkles size={18} />
-                      Generate
-                    </button>
                   ) : null}
                 </div>
-                <input ref={fileInput} type="file" multiple accept={PICK} className="hidden" onChange={(e) => e.target.files && void upload(e.target.files).then(() => (e.target.value = ""))} />
-                {picking === "generate" ? (
-                  <div className="rounded-lg bg-paper p-3 shadow-track">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-[13px] font-medium">Generate</span>
-                      <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
-                        Done
-                      </Button>
-                    </div>
-                    <GenerateForm pictures={[...files, ...(library ?? []).filter((m) => !mediaIds.includes(m.id))]} onStarted={gens.add} />
-                  </div>
-                ) : picking ? (
-                  <div className="rounded-lg bg-paper p-3 shadow-track">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-[13px] font-medium">{picking === "media" ? "Your library" : "Pick a cover picture"}</span>
-                      <Button variant="plain" size="sm" className="-mr-1.5" onClick={() => setPicking(null)}>
-                        Done
-                      </Button>
-                    </div>
-                    {library === null ? (
-                      <Loader />
-                    ) : library.length ? (
-                      <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto">
-                        {library
-                          .filter((m) => !m.mime.startsWith("audio/") && (picking === "media" || !m.mime.startsWith("video/")))
-                          .map((m) => {
-                            const on = picking === "media" ? mediaIds.includes(m.id) : targets[picking.cover]?.settings.cover === m.id;
-                            return (
-                              <button
-                                key={m.id}
-                                type="button"
-                                onClick={() => {
-                                  if (picking === "media") setMediaIds((ids) => (ids.includes(m.id) ? ids.filter((x) => x !== m.id) : [...ids, m.id]));
-                                  else {
-                                    setSetting(picking.cover, "cover", m.id);
-                                    setPicking(null);
-                                  }
-                                }}
-                                className="relative"
-                              >
-                                <Thumb m={m} small />
-                                {on ? (
-                                  <span className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-signal text-on-signal">
-                                    <Check size={12} />
-                                  </span>
-                                ) : null}
-                              </button>
-                            );
-                          })}
+
+                {threadLimit !== null || thread.length ? (
+                  <ThreadEditor
+                    parts={thread}
+                    onChange={setThread}
+                    limit={threadLimit}
+                    library={library}
+                    locked={locked}
+                    onUpload={(list, i) => void upload(list, undefined, (id) => setThread((t) => t.map((p, j) => (j === i ? { ...p, mediaIds: [...p.mediaIds, id] } : p))))}
+                  />
+                ) : null}
+
+                {active?.network === "tiktok" ? <TikTokCreator info={tiktokInfo[active.id]} /> : null}
+
+                {active
+                  ? fieldsFor(active)
+                      .filter((f) => !f.when || targets[active.id].settings[f.when.key] === f.when.value)
+                      .map((f) => (
+                        <SettingField
+                          key={f.key}
+                          f={f}
+                          value={targets[active.id].settings[f.key] ?? ""}
+                          locked={locked}
+                          onChange={(v) => setSetting(active.id, f.key, v)}
+                          cover={(library ?? []).find((m) => m.id === targets[active.id].settings[f.key]) ?? null}
+                          onPickCover={() => setPicking({ cover: active.id })}
+                        />
+                      ))
+                  : null}
+
+                {active?.network === "tiktok" ? <TikTokConsent brand={targets[active.id].settings.brand ?? "off"} /> : null}
+
+                {comments.length ? (
+                  <div className="flex flex-col gap-2 border-t border-line pt-4">
+                    <p className="text-[12.5px] font-medium text-body">Approval</p>
+                    {comments.map((c) => (
+                      <div key={c.id} className="flex flex-col gap-0.5 text-[12px]">
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span className="font-medium">{c.author_name || "Review link"}</span>
+                          {c.kind === "approved" ? <Badge tone="green">Approved</Badge> : c.kind === "rejected" ? <Badge tone="red">Changes asked</Badge> : null}
+                          <span className="text-faint">{fmtDateTime(c.created_at)}</span>
+                        </span>
+                        {c.body ? <p className="whitespace-pre-line text-ink">{c.body}</p> : null}
                       </div>
-                    ) : (
-                      <p className="text-[12px] text-muted">No files yet. Drop some here.</p>
-                    )}
+                    ))}
+                  </div>
+                ) : null}
+
+                {post?.post_targets.some((t) => t.error || t.url || t.note) ? (
+                  <div className="flex flex-col gap-1.5 border-t border-line pt-4">
+                    {post.post_targets.map((t) => {
+                      const c = channels.find((x) => x.id === t.channel_id);
+                      return (
+                        <p key={t.id} className="flex flex-wrap items-center gap-2 text-[12px]">
+                          {c ? <NetworkLogo id={c.network} size={12} /> : null}
+                          <span className="font-medium">{c?.name ?? "Removed channel"}</span>
+                          {t.url && !t.deleted_at ? (
+                            <a href={t.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                              Open post
+                            </a>
+                          ) : null}
+                          {t.deleted_at ? <Badge>Deleted</Badge> : null}
+                          {t.error ? <span className="text-danger">{t.error}</span> : null}
+                          {t.note ? <span className="text-warning">{t.note}</span> : null}
+                        </p>
+                      );
+                    })}
                   </div>
                 ) : null}
               </div>
-
-              {threadLimit !== null || thread.length ? (
-                <ThreadEditor
-                  parts={thread}
-                  onChange={setThread}
-                  limit={threadLimit}
-                  library={library}
-                  locked={locked}
-                  onUpload={(list, i) => void upload(list, undefined, (id) => setThread((t) => t.map((p, j) => (j === i ? { ...p, mediaIds: [...p.mediaIds, id] } : p))))}
-                />
-              ) : null}
-
-              {active?.network === "tiktok" ? <TikTokCreator info={tiktokInfo[active.id]} /> : null}
-
-              {active
-                ? fieldsFor(active)
-                    .filter((f) => !f.when || targets[active.id].settings[f.when.key] === f.when.value)
-                    .map((f) => (
-                      <SettingField
-                        key={f.key}
-                        f={f}
-                        value={targets[active.id].settings[f.key] ?? ""}
-                        locked={locked}
-                        onChange={(v) => setSetting(active.id, f.key, v)}
-                        cover={(library ?? []).find((m) => m.id === targets[active.id].settings[f.key]) ?? null}
-                        onPickCover={() => setPicking({ cover: active.id })}
-                      />
-                    ))
-                : null}
-
-              {active?.network === "tiktok" ? <TikTokConsent brand={targets[active.id].settings.brand ?? "off"} /> : null}
-
-              {comments.length ? (
-                <div className="flex flex-col gap-2 border-t border-line pt-4">
-                  <p className="text-[12.5px] font-medium text-body">Approval</p>
-                  {comments.map((c) => (
-                    <div key={c.id} className="flex flex-col gap-0.5 text-[12px]">
-                      <span className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium">{c.author_name || "Review link"}</span>
-                        {c.kind === "approved" ? <Badge tone="green">Approved</Badge> : c.kind === "rejected" ? <Badge tone="red">Changes asked</Badge> : null}
-                        <span className="text-faint">{fmtDateTime(c.created_at)}</span>
-                      </span>
-                      {c.body ? <p className="whitespace-pre-line text-ink">{c.body}</p> : null}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-
-              {post?.post_targets.some((t) => t.error || t.url || t.note) ? (
-                <div className="flex flex-col gap-1.5 border-t border-line pt-4">
-                  {post.post_targets.map((t) => {
-                    const c = channels.find((x) => x.id === t.channel_id);
-                    return (
-                      <p key={t.id} className="flex flex-wrap items-center gap-2 text-[12px]">
-                        {c ? <NetworkLogo id={c.network} size={12} /> : null}
-                        <span className="font-medium">{c?.name ?? "Removed channel"}</span>
-                        {t.url && !t.deleted_at ? (
-                          <a href={t.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
-                            Open post
-                          </a>
-                        ) : null}
-                        {t.deleted_at ? <Badge>Deleted</Badge> : null}
-                        {t.error ? <span className="text-danger">{t.error}</span> : null}
-                        {t.note ? <span className="text-warning">{t.note}</span> : null}
-                      </p>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </div>
+            )}
           </div>
 
           {/* Preview */}
