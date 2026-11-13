@@ -22,6 +22,18 @@ const expires = (t: Token) => new Date(Date.now() + (t.expires_in ?? 3600) * 100
 const strip = (u?: string | null) => (u ? u.split("?")[0].replace(/&amp;/g, "&") : null);
 const sub = (s: string) => s.trim().replace(/^\/?r\//i, "");
 
+type Errors = [string, string, string?][];
+
+/** Reddit's api_type=json errors. RATELIMIT ("you are doing that too much") clears by itself, so it's retried. */
+function refused(errors: Errors | undefined, what: string) {
+  if (!errors?.length) return;
+  const msg = errors.map((e) => e[1] || e[0]).join("; ");
+  if (errors.some((e) => e[0] === "RATELIMIT")) throw new Error(`${what}: ${msg}`);
+  throw new PostError(`${what}: ${msg}`);
+}
+
+const hasEdit = (s: Secret) => Array.isArray(s.extra.scopes) && (s.extra.scopes as unknown[]).includes("edit");
+
 export const reddit: Provider = {
   network: "reddit",
   oauth: {
@@ -76,18 +88,12 @@ export const reddit: Provider = {
       resubmit: "true",
       ...(image ? { kind: "link", url: image.url } : { kind: "self", text: p.text }),
     };
-    const r = await call<{ json: { errors?: [string, string, string?][]; data?: { id?: string; name?: string; url?: string } } }>(
+    const r = await call<{ json: { errors?: Errors; data?: { id?: string; name?: string; url?: string } } }>(
       `${API}/api/submit`,
       { method: "POST", headers: auth(s.accessToken), body: form(body) },
       { what: "Reddit post" },
     );
-    const errors = r.json?.errors ?? [];
-    if (errors.length) {
-      const msg = errors.map((e) => e[1] || e[0]).join("; ");
-      // RATELIMIT ("you are doing that too much") clears by itself, so retry it.
-      if (errors.some((e) => e[0] === "RATELIMIT")) throw new Error(`Reddit post: ${msg}`);
-      throw new PostError(`Reddit post: ${msg}`);
-    }
+    refused(r.json?.errors, "Reddit post");
     const d = r.json?.data;
     if (!d?.name) throw new Error("Reddit post: no post id in the answer");
     // Verify: data.url is the post's comments page for self posts; for link posts it may be the linked address.
@@ -104,8 +110,17 @@ export const reddit: Provider = {
   },
   unpublishable: (s, r) => {
     if (!/^t3_\w+$/.test(r.id)) return "Capybaroar didn't keep this post's id";
-    const scopes = Array.isArray(s.extra.scopes) ? (s.extra.scopes as unknown[]) : [];
-    return scopes.includes("edit") ? null : "Reconnect Reddit to delete from here";
+    return hasEdit(s) ? null : "Reconnect Reddit to delete from here";
+  },
+  // POST /api/editusertext (scope "edit"): only a text (self) post's body. The title can't change, and a picture went
+  // out as a link post, which has no text.
+  edit: async (s, _name, r, p) => {
+    if (!/^t3_\w+$/.test(r.id)) throw new PostError("Capybaroar didn't keep this post's id");
+    if (!hasEdit(s)) throw new PostError("Reconnect Reddit to edit from here");
+    if (r.media) throw new PostError("Reddit can't change the text of a link post");
+    if (p.text.length > 40000) throw new PostError("Reddit posts are up to 40,000 characters");
+    const res = await call<{ json?: { errors?: Errors } }>(`${API}/api/editusertext`, { method: "POST", headers: auth(s.accessToken), body: form({ api_type: "json", thing_id: r.id, text: p.text }) }, { what: "Reddit edit" });
+    refused(res?.json?.errors, "Reddit edit");
   },
   // POST /api/del with the post's fullname (scope "edit"). A post that's already deleted answers 200 too.
   unpublish: async (s, _name, r) => {

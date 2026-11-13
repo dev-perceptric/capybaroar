@@ -20,6 +20,9 @@ async function all<K extends string, T>(base: string, key: K, token: string, par
   return out;
 }
 
+/** A post's name as publish keeps it: "accounts/{a}/locations/{l}/localPosts/{p}". */
+const POST_NAME = /^accounts\/[^/]+\/locations\/[^/]+\/localPosts\/[^/]+$/;
+
 export const gbp: Provider = {
   network: "gbp",
   oauth: {
@@ -92,7 +95,17 @@ export const gbp: Provider = {
     );
     return { id: r.name, url: r.searchUrl ?? null };
   },
-  unpublishable: (_s, r) => (/^accounts\/[^/]+\/locations\/[^/]+\/localPosts\/[^/]+$/.test(r.id) ? null : "Capybaroar didn't keep this post's id"),
+  unpublishable: (_s, r) => (POST_NAME.test(r.id) ? null : "Capybaroar didn't keep this post's id"),
+  // PATCH /v4/{name}?updateMask=summary: the text. Every changed field must be named in the mask.
+  edit: async (s, _accountId, r, p) => {
+    if (!POST_NAME.test(r.id)) throw new PostError("Capybaroar didn't keep this post's id");
+    if (p.text.length > 1500) throw new PostError("Google Business posts are up to 1,500 characters");
+    await call(
+      `https://mybusiness.googleapis.com/v4/${r.id}?${qs({ updateMask: "summary" })}`,
+      { method: "PATCH", headers: { ...auth(s.accessToken), "Content-Type": "application/json" }, body: JSON.stringify({ summary: p.text }) },
+      { what: "Google Business edit" },
+    );
+  },
   unpublish: async (s, _accountId, r) => {
     // The name keeps its slashes: it is the path.
     await call(`https://mybusiness.googleapis.com/v4/${r.id}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "Google Business delete" });

@@ -164,7 +164,20 @@ async function post(tok: string, author: string, p: Publishable): Promise<Publis
 async function remove(tok: string, urn: string) {
   await call(`https://api.linkedin.com/rest/posts/${encodeURIComponent(urn)}`, { method: "DELETE", headers: { ...rest(tok), "X-RestLi-Method": "DELETE" } }, { what: "LinkedIn delete" });
 }
-const unpublishable = (_s: Secret, r: { id: string }) => (/^urn:li:(share|ugcPost):/.test(r.id) ? null : "Capybaroar didn't keep this post's id");
+/**
+ * POST /rest/posts/{urn} with X-RestLi-Method PARTIAL_UPDATE: only the commentary (and ad fields) can change, so
+ * visibility, resharing and a PDF's title stay as they went out. LinkedIn answers 204.
+ */
+async function change(tok: string, urn: string, p: Publishable) {
+  if (unpublishable(null, { id: urn })) throw new PostError("Capybaroar didn't keep this post's id");
+  if ([...p.text].length > 3000) throw new PostError("LinkedIn posts are up to 3,000 characters");
+  await call(
+    `https://api.linkedin.com/rest/posts/${encodeURIComponent(urn)}`,
+    { method: "POST", headers: { ...rest(tok), "X-RestLi-Method": "PARTIAL_UPDATE" }, body: JSON.stringify({ patch: { $set: { commentary: escape(p.text) } } }) },
+    { what: "LinkedIn edit" },
+  );
+}
+const unpublishable = (_s: Secret | null, r: { id: string }) => (/^urn:li:(share|ugcPost):/.test(r.id) ? null : "Capybaroar didn't keep this post's id");
 
 const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
 const clean = (o: PostStats): PostStats => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as PostStats;
@@ -299,6 +312,7 @@ export const linkedin: Provider = {
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:person:${accountId}`, p),
   unpublishable,
   unpublish: (s, _accountId, r) => remove(s.accessToken, r.id),
+  edit: (s, _accountId, r, p) => change(s.accessToken, r.id, p),
   // Verify: member posts read through socialActions may need r_member_social, which this app doesn't ask for (then {}).
   postStats: (s, _accountId, remoteId) => stats(s.accessToken, remoteId),
 };
@@ -344,6 +358,7 @@ export const linkedinPage: Provider = {
   publish: (s, accountId, p) => post(s.accessToken, `urn:li:organization:${accountId}`, p),
   unpublishable,
   unpublish: (s, _accountId, r) => remove(s.accessToken, r.id),
+  edit: (s, _accountId, r, p) => change(s.accessToken, r.id, p),
   followers: async (s, accountId) => {
     const r = await call<{ firstDegreeSize?: number }>(
       `https://api.linkedin.com/rest/networkSizes/${encodeURIComponent(`urn:li:organization:${accountId}`)}?edgeType=COMPANY_FOLLOWED_BY_MEMBER`,

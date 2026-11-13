@@ -109,6 +109,12 @@ export function postBody(p: Pick<Publishable, "text" | "settings">, extra: { fea
   };
 }
 
+/** A change to a post that went out: everything people can set, an emptied excerpt, category or tag list included. */
+export function editBody(p: Pick<Publishable, "text" | "settings">, terms: { categories: number[]; tags: number[] }) {
+  const { title, content, status } = postBody(p);
+  return { title, content, status, excerpt: (p.settings.excerpt ?? "").trim(), categories: terms.categories, tags: terms.tags };
+}
+
 export const wordpress: Provider = {
   network: "wordpress",
   form: {
@@ -146,6 +152,14 @@ export const wordpress: Provider = {
     const [categories, tags] = [await termIds(site, auth, "categories", listOf(p.settings.categories)), await termIds(site, auth, "tags", listOf(p.settings.tags))];
     const r = await wp<{ id: number; link?: string }>(site, auth, "/wp/v2/posts", { method: "POST", json: postBody(p, { featured, categories, tags }) }, "WordPress post");
     return { id: String(r.id), url: r.link ?? null };
+  },
+  // POST /wp/v2/posts/{id}: the text, title, status, excerpt, categories and tags. The featured picture stays.
+  edit: async (s, _accountId, r, p) => {
+    if (!(p.settings.title ?? "").trim()) throw new PostError("WordPress posts need a title");
+    if (!/^\d+$/.test(r.id)) throw new PostError("Capybaroar didn't keep this post's id");
+    const { site, auth } = creds(s);
+    const [categories, tags] = [await termIds(site, auth, "categories", listOf(p.settings.categories)), await termIds(site, auth, "tags", listOf(p.settings.tags))];
+    await wp(site, auth, `/wp/v2/posts/${r.id}`, { method: "POST", json: editBody(p, { categories, tags }) }, "WordPress edit");
   },
   // Moves the post to the trash, where it can be restored.
   unpublish: async (s, _accountId, r) => {

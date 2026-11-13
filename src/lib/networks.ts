@@ -75,8 +75,9 @@ export const NETWORKS: Network[] = [
       RESHARE,
       DOC_TITLE,
     ],
+    edit: { text: true, settings: [] },
   },
-  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, documents: true, fields: [FIRST_COMMENT, RESHARE, DOC_TITLE], inbox: { like: true } },
+  { id: "linkedin-page", name: "LinkedIn Page", limit: 3000, documents: true, fields: [FIRST_COMMENT, RESHARE, DOC_TITLE], inbox: { like: true }, edit: { text: true, settings: [] } },
   {
     id: "facebook",
     name: "Facebook",
@@ -86,6 +87,7 @@ export const NETWORKS: Network[] = [
       FIRST_COMMENT,
     ],
     inbox: { like: true, hide: true },
+    edit: { text: true, settings: [] },
   },
   {
     id: "instagram",
@@ -175,6 +177,7 @@ export const NETWORKS: Network[] = [
       { key: "synthetic", label: "Altered or synthetic content", kind: "select", initial: "no", options: [{ value: "no", label: "No" }, { value: "yes", label: "Yes" }] },
     ],
     inbox: { hide: true, hideOnce: true },
+    edit: { text: true, settings: ["title", "tags", "category", "privacy", "for_kids", "synthetic"] },
   },
   {
     id: "x",
@@ -224,6 +227,7 @@ export const NETWORKS: Network[] = [
       { key: "title", label: "Title", kind: "text", placeholder: "Up to 100 characters" },
       { key: "link", label: "Link", kind: "text", placeholder: "https://" },
     ],
+    edit: { text: true, settings: ["title", "link"] },
   },
   {
     id: "reddit",
@@ -233,6 +237,7 @@ export const NETWORKS: Network[] = [
       { key: "subreddit", label: "Subreddit", kind: "text", required: true, placeholder: "r/yoursubreddit" },
       { key: "title", label: "Title", kind: "text", required: true, placeholder: "Up to 300 characters" },
     ],
+    edit: { text: true, settings: [] },
   },
   { id: "bluesky", name: "Bluesky", limit: 300, inbox: { like: true }, thread: true },
   {
@@ -245,10 +250,11 @@ export const NETWORKS: Network[] = [
     ],
     inbox: { like: true },
     thread: true,
+    edit: { text: true, settings: ["spoiler"] },
   },
-  { id: "telegram", name: "Telegram", limit: 4096 },
-  { id: "discord", name: "Discord", limit: 2000 },
-  { id: "gbp", name: "Google Business", limit: 1500 },
+  { id: "telegram", name: "Telegram", limit: 4096, edit: { text: true, settings: [] } },
+  { id: "discord", name: "Discord", limit: 2000, edit: { text: true, settings: [] } },
+  { id: "gbp", name: "Google Business", limit: 1500, edit: { text: true, settings: [] } },
   {
     id: "wordpress",
     name: "WordPress",
@@ -260,6 +266,7 @@ export const NETWORKS: Network[] = [
       { key: "tags", label: "Tags", kind: "tags", placeholder: "bread, baking" },
       { key: "excerpt", label: "Excerpt", kind: "textarea", placeholder: "A short summary" },
     ],
+    edit: { text: true, settings: ["title", "status", "categories", "tags", "excerpt"] },
   },
 ];
 

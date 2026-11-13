@@ -20,6 +20,15 @@ async function errorOf(res: Response, what: string) {
   return `${what}: ${res.status} ${msg}`;
 }
 
+/** Discord's own error code in a JSON body (10008 Unknown Message, 10015 Unknown Webhook), or 0. */
+function codeOf(body: string) {
+  try {
+    return Number((JSON.parse(body) as { code?: number }).code ?? 0);
+  } catch {
+    return 0;
+  }
+}
+
 export const discord: Provider = {
   network: "discord",
   form: {
@@ -73,6 +82,27 @@ export const discord: Provider = {
     const guild = m.guild_id ?? (typeof s.extra?.guild_id === "string" ? s.extra.guild_id : null);
     return { id: m.id, url: guild ? `https://discord.com/channels/${guild}/${m.channel_id}/${m.id}` : null };
   },
+  // PATCH /webhooks/{id}/{token}/messages/{message.id} with the new content. Files left out of the request stay on the
+  // message. 404 is the message (10008, deleted) or the webhook (10015, connect the channel again).
+  edit: async (s, _accountId, r, p) => {
+    if (!/^\d+$/.test(r.id)) throw new PostError("Discord didn't return this message's id");
+    if ([...p.text].length > 2000) throw new PostError("Discord messages are up to 2000 characters");
+    if (!p.text.trim() && !r.media) throw new PostError("Discord messages need text or files");
+    const res = await fetch(`${s.accessToken.replace(/\/$/, "")}/messages/${r.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: p.text }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (res.ok) return;
+    const body = await res.text();
+    const code = codeOf(body);
+    const msg = `Discord edit: ${res.status} ${body.slice(0, 300)}`;
+    if (res.status === 401 || (res.status === 404 && code === 10015)) throw new AuthError(msg);
+    if (res.status === 404 && code === 10008) throw new PostError("This message is no longer on Discord");
+    if (res.status === 400 || res.status === 403 || res.status === 413 || res.status === 422) throw new PostError(msg);
+    throw new Error(msg);
+  },
   // Without the message id (publish kept "{channel}:{time}") there is nothing to delete.
   unpublishable: (_s, r) => (/^\d+$/.test(r.id) ? null : "Discord didn't return this message's id"),
   // DELETE /webhooks/{id}/{token}/messages/{message.id}: 204. A 404 is either the message (10008, already deleted)
@@ -81,12 +111,7 @@ export const discord: Provider = {
     const res = await fetch(`${s.accessToken.replace(/\/$/, "")}/messages/${r.id}`, { method: "DELETE", signal: AbortSignal.timeout(30000) });
     if (res.ok) return;
     const body = await res.text();
-    let code = 0;
-    try {
-      code = Number((JSON.parse(body) as { code?: number }).code ?? 0);
-    } catch {
-      // not JSON
-    }
+    const code = codeOf(body);
     if (res.status === 404 && code === 10008) return;
     const msg = `Discord delete: ${res.status} ${body.slice(0, 300)}`;
     if (res.status === 401 || (res.status === 404 && code === 10015)) throw new AuthError(msg);

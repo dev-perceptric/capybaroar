@@ -52,6 +52,25 @@ export function videoResource(p: Pick<Publishable, "text" | "settings">) {
   };
 }
 
+/** The title and description rules, for a new video and for a change to one. */
+export function youtubeTextProblem(p: Pick<Publishable, "text" | "settings">): string | null {
+  const title = (p.settings.title ?? "").trim();
+  if (!title) return "YouTube needs a title";
+  if (title.length > 100) return "YouTube titles are up to 100 characters";
+  if (/[<>]/.test(title) || /[<>]/.test(p.text)) return "YouTube titles and descriptions can't contain < or >";
+  if (Buffer.byteLength(p.text, "utf8") > 5000) return "YouTube descriptions are up to 5,000 characters";
+  return null;
+}
+
+/** The fields of `o` named in `keys` that have a value. */
+const pick = (o: Record<string, unknown> | undefined, keys: string[]) => Object.fromEntries(keys.filter((k) => o?.[k] !== undefined && o?.[k] !== null).map((k) => [k, o![k]]));
+
+/** A 403 for a missing scope: channels connected before youtube.force-ssl was asked for. */
+const reconnectFor = (what: string) => (e: unknown) => {
+  if (e instanceof PostError && /scope|insufficient/i.test(e.message)) throw new PostError(`Reconnect YouTube to ${what} from here`);
+  throw e;
+};
+
 export const youtube: Provider = {
   network: "youtube",
   oauth: {
@@ -87,15 +106,7 @@ export const youtube: Provider = {
     },
   },
   refresh: (s) => googleRefresh(s, id(), secret(), "YouTube"),
-  check: (p) => {
-    if (p.media.length !== 1 || !isVideo(p.media[0])) return "YouTube needs exactly one video";
-    const title = (p.settings.title ?? "").trim();
-    if (!title) return "YouTube needs a title";
-    if (title.length > 100) return "YouTube titles are up to 100 characters";
-    if (/[<>]/.test(title) || /[<>]/.test(p.text)) return "YouTube titles and descriptions can't contain < or >";
-    if (Buffer.byteLength(p.text, "utf8") > 5000) return "YouTube descriptions are up to 5,000 characters";
-    return null;
-  },
+  check: (p) => (p.media.length !== 1 || !isVideo(p.media[0]) ? "YouTube needs exactly one video" : youtubeTextProblem(p)),
   publish: async (s, _channelId, p) => {
     const token = s.accessToken;
     const video = p.media[0];
@@ -129,12 +140,27 @@ export const youtube: Provider = {
   },
   // videos.delete takes youtube.force-ssl, asked for since the Inbox; a channel connected before that answers 403.
   unpublish: async (s, _channelId, r) => {
-    try {
-      await call(`${API}/videos?${qs({ id: r.id })}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "YouTube delete" });
-    } catch (e) {
-      if (e instanceof PostError && /scope|insufficient/i.test(e.message)) throw new PostError("Reconnect YouTube to delete from here");
-      throw e;
-    }
+    await call(`${API}/videos?${qs({ id: r.id })}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "YouTube delete" }).catch(reconnectFor("delete"));
+  },
+  // videos.update (youtube.force-ssl, 50 quota units + 1 for the read). It replaces the whole snippet and status:
+  // a writable field left out is wiped, so the video is read first and the fields Capybaroar doesn't set are sent
+  // back as they are (default language, embedding, license, public stats; a scheduled time only while private).
+  edit: async (s, _channelId, r, p) => {
+    const problem = youtubeTextProblem(p);
+    if (problem) throw new PostError(problem);
+    const token = s.accessToken;
+    type Video = { snippet?: Record<string, unknown>; status?: Record<string, unknown> };
+    const cur = await call<{ items?: Video[] }>(`${API}/videos?${qs({ part: "snippet,status", id: r.id })}`, { headers: auth(token) }, { what: "YouTube video" });
+    const v = cur.items?.[0];
+    if (!v) throw new PostError("This video is no longer on YouTube");
+    const next = videoResource(p);
+    const keep = ["embeddable", "license", "publicStatsViewable", ...(next.status.privacyStatus === "private" ? ["publishAt"] : [])];
+    const body = { id: r.id, snippet: { ...pick(v.snippet, ["defaultLanguage"]), ...next.snippet }, status: { ...pick(v.status, keep), ...next.status } };
+    await call(
+      `${API}/videos?${qs({ part: "snippet,status" })}`,
+      { method: "PUT", headers: { ...auth(token), "Content-Type": "application/json; charset=UTF-8" }, body: JSON.stringify(body) },
+      { what: "YouTube edit" },
+    ).catch(reconnectFor("edit"));
   },
   followers: async (s, channelId) => {
     const r = await call<{ items?: Channel[] }>(`${API}/channels?${qs({ part: "statistics", id: channelId })}`, { headers: auth(s.accessToken) }, { what: "YouTube subscribers" });

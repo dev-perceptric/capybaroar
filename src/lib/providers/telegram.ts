@@ -121,6 +121,28 @@ export const telegram: Provider = {
     const more = r.media > 1 || (r.media > 0 && [...r.text].length > CAPTION);
     return more ? { note: "Only the first message was deleted. Delete the rest in Telegram." } : undefined;
   },
+  // editMessageText for a text post, editMessageCaption for media (an album's caption is on its first message).
+  // Text too long for a caption went out as a second message whose id wasn't kept, so that one is edited in Telegram.
+  edit: async (_s, chatId, r, p) => {
+    if (!/^\d+$/.test(r.id)) throw new PostError("Capybaroar didn't keep this message's id");
+    const length = [...p.text].length;
+    const message_id = Number(r.id);
+    if (!r.media) {
+      if (!p.text.trim()) throw new PostError("Telegram posts need text or media");
+      if (length > 4096) throw new PostError("Telegram posts are up to 4096 characters");
+    } else {
+      if ([...r.text].length > CAPTION) throw new PostError("Telegram sent this text as its own message. Edit it in Telegram.");
+      if (length > CAPTION) throw new PostError(`Telegram captions are up to ${CAPTION} characters`);
+    }
+    try {
+      if (!r.media) await tg<Message | boolean>("editMessageText", { chat_id: chatId, message_id, text: p.text, link_preview_options: { is_disabled: false } }, "Telegram edit");
+      else await tg<Message | boolean>("editMessageCaption", { chat_id: chatId, message_id, caption: p.text }, "Telegram edit");
+    } catch (e) {
+      // The same text again: nothing to change.
+      if (e instanceof PostError && /message is not modified/i.test(e.message)) return;
+      throw e;
+    }
+  },
   followers: async (_s, chatId) => {
     const n = await tg<number>("getChatMemberCount", { chat_id: chatId }, "Telegram members");
     return typeof n === "number" ? n : null;

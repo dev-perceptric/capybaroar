@@ -340,6 +340,16 @@ export const facebook: Provider = {
     const id = r.id.startsWith(FB_STORY) ? r.id.slice(FB_STORY.length) : r.id;
     await call(G(`${id}?${qs({ access_token: s.accessToken })}`), { method: "DELETE" }, { what: "Facebook delete" });
   },
+  // POST /{page_post_id} with the new message (Pages API, Update a Post): feed and photo posts, kept as
+  // "{page}_{post}". Only posts made by this app can be changed. Videos and Reels (a bare video id) have no documented
+  // update, and Stories no text.
+  edit: async (s, _pageId, r, p) => {
+    if (r.id.startsWith(FB_STORY)) throw new PostError("A Facebook Story has no text to change");
+    if (!/^\d+_\d+$/.test(r.id)) throw new PostError("Facebook doesn't let apps change a video's or Reel's text. Edit it on Facebook.");
+    if ([...p.text].length > 63206) throw new PostError("Facebook posts are up to 63,206 characters");
+    const res = await call<{ success?: boolean } | null>(G(r.id), { method: "POST", body: form({ message: p.text, access_token: s.accessToken }) }, { what: "Facebook edit" });
+    if (res?.success === false) throw new Error("Facebook edit: the change wasn't saved");
+  },
   followers: async (s, pageId) => (await call<{ followers_count?: number }>(G(`${pageId}?${qs({ fields: "followers_count", access_token: s.accessToken })}`), {}, { what: "Facebook followers" })).followers_count ?? null,
   // Stories have no documented insights in the Stories API: no numbers rather than a failing call.
   postStats: (s, _pageId, remoteId) => (remoteId.startsWith(FB_STORY) ? Promise.resolve({}) : stats(() => facebookStats(s.accessToken, remoteId))),

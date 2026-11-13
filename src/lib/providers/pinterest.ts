@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider } from "./types";
+import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type MediaFile, type Provider, type Publishable } from "./types";
 
 // Pinterest: OAuth + API v5. Image pins from a link; video pins uploaded through Pinterest's media upload.
 const API = "https://api.pinterest.com/v5";
@@ -71,6 +71,14 @@ async function uploadVideo(tok: string, video: MediaFile) {
 /** A 404 from call() comes back as a plain Error; the post was deleted. */
 const gone = (e: unknown) => e instanceof Error && !(e instanceof AuthError) && !(e instanceof PostError) && /\b404\b|not found/i.test(e.message);
 
+/** The title, description and link limits, for a new pin and for a change to one. */
+export function pinTextProblem(p: Pick<Publishable, "text" | "settings">): string | null {
+  if ((p.settings.title ?? "").trim().length > 100) return "Pinterest titles are up to 100 characters";
+  if (p.text.length > 800) return "Pinterest descriptions are up to 800 characters";
+  if ((p.settings.link ?? "").trim().length > 2048) return "Pinterest links are up to 2,048 characters";
+  return null;
+}
+
 export const pinterest: Provider = {
   network: "pinterest",
   oauth: {
@@ -113,9 +121,7 @@ export const pinterest: Provider = {
   check: (p) => {
     if (p.media.length !== 1) return "Pinterest needs one picture or one video";
     if (!(p.settings.board ?? "").trim()) return "Pinterest needs a board";
-    if ((p.settings.title ?? "").length > 100) return "Pinterest titles are up to 100 characters";
-    if (p.text.length > 800) return "Pinterest descriptions are up to 800 characters";
-    return null;
+    return pinTextProblem(p);
   },
   publish: async (s, _accountId, p) => {
     const tok = s.accessToken;
@@ -154,6 +160,19 @@ export const pinterest: Provider = {
   },
   unpublish: async (s, _accountId, r) => {
     await call(`${API}/pins/${encodeURIComponent(r.id)}`, { method: "DELETE", headers: auth(s.accessToken) }, { what: "Pinterest delete" });
+  },
+  // PATCH /v5/pins/{id} (pins:write, boards:write): description, title and link; an empty one is cleared with null.
+  // Pinterest marks this endpoint beta, not open to every app: an app without it answers 403, shown as the error.
+  edit: async (s, _accountId, r, p) => {
+    const problem = pinTextProblem(p);
+    if (problem) throw new PostError(problem);
+    const title = (p.settings.title ?? "").trim();
+    const link = (p.settings.link ?? "").trim();
+    await call(
+      `${API}/pins/${encodeURIComponent(r.id)}`,
+      { method: "PATCH", headers: json(s.accessToken), body: JSON.stringify({ description: p.text, title: title || null, link: link || null }) },
+      { what: "Pinterest edit" },
+    );
   },
   followers: async (s) => (await call<User>(`${API}/user_account`, { headers: auth(s.accessToken) }, { what: "Pinterest followers" })).follower_count ?? null,
   postStats: async (s, _accountId, remoteId) => {

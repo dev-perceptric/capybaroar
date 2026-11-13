@@ -127,6 +127,27 @@ export const mastodon: Provider = {
   unpublish: async (s, _accountId, r) => {
     await call(`https://${instanceOf(s)}/api/v1/statuses/${encodeURIComponent(r.id)}`, { method: "DELETE", headers: bearer(s.accessToken) }, { what: "Mastodon delete" });
   },
+  // PUT /api/v1/statuses/:id (write:statuses) changes the text and the content warning; visibility can't change.
+  // The edit replaces the attachments with media_ids, so the post is read first and its files are sent back as they are.
+  edit: async (s, _accountId, r, p) => {
+    if ([...p.text].length > 500) throw new PostError("Mastodon posts are up to 500 characters");
+    if (!p.text.trim() && !r.media) throw new PostError("Mastodon posts need text or media");
+    const url = `https://${instanceOf(s)}/api/v1/statuses/${encodeURIComponent(r.id)}`;
+    const cur = await call<{ media_attachments?: { id: string }[]; sensitive?: boolean; spoiler_text?: string; language?: string | null; poll?: unknown }>(url, { headers: bearer(s.accessToken) }, { what: "Mastodon post" });
+    if (cur.poll) throw new PostError("This Mastodon post has a poll. Edit it on Mastodon.");
+    const spoiler = (p.settings.spoiler ?? "").trim();
+    // A content warning hides the files too; taking one off shows them again, otherwise the post keeps its setting.
+    const sensitive = spoiler ? true : cur.spoiler_text ? false : Boolean(cur.sensitive);
+    await call(
+      url,
+      {
+        method: "PUT",
+        headers: { ...bearer(s.accessToken), "Content-Type": "application/json" },
+        body: JSON.stringify({ status: p.text, spoiler_text: spoiler, sensitive, media_ids: (cur.media_attachments ?? []).map((m) => m.id), ...(cur.language ? { language: cur.language } : {}) }),
+      },
+      { what: "Mastodon edit" },
+    );
+  },
   followers: async (s) => {
     const me = await call<Me>(`https://${instanceOf(s)}/api/v1/accounts/verify_credentials`, { headers: bearer(s.accessToken) }, { what: "Mastodon followers" });
     return me.followers_count ?? null;
