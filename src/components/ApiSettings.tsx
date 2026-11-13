@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { AppWindow, BookOpen, KeyRound, Plus, Send, Trash2, Webhook } from "lucide-react";
-import { Badge, Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
+import { AppWindow, BookOpen, KeyRound, Plus, Send, Trash2 } from "lucide-react";
+import { Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
+import { HoverTip } from "./Floating";
 import { Modal } from "./Overlay";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { fmtDate } from "@/lib/format";
@@ -144,6 +145,9 @@ function ConnectedApps({ apps }: { apps: App[] }) {
   );
 }
 
+const TH = "h-10 px-4 font-medium whitespace-nowrap";
+const TD = "px-4 py-2.5";
+
 /** Webhooks: URLs told when posts go out, fail or wait for approval, and when a channel needs reconnecting. */
 function Webhooks({ hooks }: { hooks: Hook[] }) {
   const router = useRouter();
@@ -183,40 +187,51 @@ function Webhooks({ hooks }: { hooks: Hook[] }) {
         </Button>
       </CardHead>
       {hooks.length ? (
-        <div className="divide-y divide-line">
-          {hooks.map((h) => (
-            <Row
-              key={h.id}
-              top
-              lead={
-                <span className="flex size-8 items-center justify-center rounded-md bg-paper text-muted shadow-track">
-                  <Webhook size={15} />
-                </span>
-              }
-              title={<span className="font-mono text-[12px] font-normal wrap-anywhere whitespace-normal">{h.url}</span>}
-              sub={
-                <>
-                  <span className="mt-1.5 flex flex-wrap items-center gap-1">
-                    {h.enabled ? null : <Badge tone="red">Off</Badge>}
-                    {h.events.map((e) => (
-                      <Badge key={e}>{e}</Badge>
-                    ))}
-                  </span>
-                  <span className={`mt-1 block ${h.last_error ? "text-danger" : ""}`}>{last(h)}</span>
-                </>
-              }
-            >
-              <span className="mx-1 flex">
-                <Switch on={h.enabled} label={h.enabled ? "Turn off" : "Turn on"} disabled={busy} onChange={(on) => run(() => saveWebhookOn(h.id, on), "Couldn't change the webhook")} />
-              </span>
-              <IconButton label="Send a test" align="end" disabled={busy} onClick={() => run(() => sendTestWebhook(h.id), "Couldn't send the test", "Test sent")}>
-                <Send />
-              </IconButton>
-              <IconButton label="Delete webhook" align="end" disabled={busy} onClick={() => del(h)}>
-                <Trash2 />
-              </IconButton>
-            </Row>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-[13px]">
+            <thead>
+              <tr className="border-b border-line text-left text-[12px] text-muted">
+                <th className={TH}>URL</th>
+                <th className={TH}>Events</th>
+                <th className={TH}>Last delivery</th>
+                <th className={TH}>On</th>
+                <th className={TH}>
+                  <span className="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {hooks.map((h) => (
+                <tr key={h.id} className="border-b border-line last:border-b-0 hover:bg-hover">
+                  <td className={`${TD} max-w-[280px]`}>
+                    <span className="font-mono text-[12px] wrap-anywhere">{h.url}</span>
+                  </td>
+                  <td className={`${TD} whitespace-nowrap`}>
+                    <span tabIndex={0} className="cursor-default rounded-xs outline-none focus-visible:shadow-focus">
+                      {h.events.length} {h.events.length === 1 ? "event" : "events"}
+                      <HoverTip text={h.events.map((e) => EVENT_LABEL[e] ?? e).join(", ")} wrap />
+                    </span>
+                  </td>
+                  <td className={`${TD} text-[12.5px] ${h.last_error ? "text-danger" : "text-muted"}`}>
+                    <span className="wrap-break-word">{last(h)}</span>
+                  </td>
+                  <td className={TD}>
+                    <Switch on={h.enabled} label={h.enabled ? "Turn off" : "Turn on"} disabled={busy} onChange={(on) => run(() => saveWebhookOn(h.id, on), "Couldn't change the webhook")} />
+                  </td>
+                  <td className={`${TD} text-right`}>
+                    <span className="inline-flex items-center justify-end gap-1">
+                      <IconButton label="Send a test" align="end" disabled={busy} onClick={() => run(() => sendTestWebhook(h.id), "Couldn't send the test", "Test sent")}>
+                        <Send />
+                      </IconButton>
+                      <IconButton label="Delete webhook" align="end" disabled={busy} onClick={() => del(h)}>
+                        <Trash2 />
+                      </IconButton>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
         <p className="px-4 py-6 text-center text-[13px] text-muted">No webhooks yet</p>

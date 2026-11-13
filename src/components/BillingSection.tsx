@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
-import { Badge, Button, CardHead, Input, LinkButton, PaneHead, Panel, Row, Rows, Segmented, StatCards, Switch } from "./ui";
+import { Badge, Button, CardHead, LinkButton, PaneHead, Panel, Segmented, StatCards, Switch } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { tell } from "./Dialogs";
 import { fmtDate, fmtNum } from "@/lib/format";
-import { saveAutoTopUp, saveBrandLimit } from "@/app/(app)/settings/actions";
+import { saveAutoTopUp } from "@/app/(app)/settings/actions";
 
 type PlanId = "free" | "creator" | "pro" | "agency";
 
@@ -29,7 +29,6 @@ export type BillingInfo = {
   credits: { planTotal: number; planLeft: number; bought: number; left: number; refillAt: string | null } | null;
   packs: { credits: number; price: number }[];
   autoTopUp: { pack: number | null; max: number };
-  brandLimits: { id: string; name: string; limit: number | null; used: number }[] | null;
   history: { key: string; at: string; what: string; model: string | null; person: string | null; credits: number }[];
 };
 
@@ -72,13 +71,14 @@ export function BillingSection({ info }: { info: BillingInfo }) {
           </Button>
         ) : null}
       </PaneHead>
-      <div className="flex flex-wrap items-center gap-2 text-[13px]">
-        <span className="font-medium">{cur.name}</span>
-        {info.paying && info.interval ? <Badge>{info.interval === "year" ? "Yearly" : "Monthly"}</Badge> : null}
-        {info.trialDays > 0 ? <Badge tone="yellow">Trial, {info.trialDays} {info.trialDays === 1 ? "day" : "days"} left</Badge> : null}
-        {info.status === "past_due" ? <Badge tone="red">Payment due</Badge> : null}
-        {info.paying && info.periodEnd ? <span className="text-muted">Renews {fmtDate(info.periodEnd, { year: true })}</span> : null}
-      </div>
+      {(info.paying && info.interval) || info.trialDays > 0 || info.status === "past_due" || (info.paying && info.periodEnd) ? (
+        <div className="flex flex-wrap items-center gap-2 text-[13px]">
+          {info.paying && info.interval ? <Badge>{info.interval === "year" ? "Yearly" : "Monthly"}</Badge> : null}
+          {info.trialDays > 0 ? <Badge tone="yellow">{cur.name} trial, {info.trialDays} {info.trialDays === 1 ? "day" : "days"} left</Badge> : null}
+          {info.status === "past_due" ? <Badge tone="red">Payment due</Badge> : null}
+          {info.paying && info.periodEnd ? <span className="text-muted">Renews {fmtDate(info.periodEnd, { year: true })}</span> : null}
+        </div>
+      ) : null}
       <StatCards
         cards={usage.map((u) => ({
           label: u.label,
@@ -89,7 +89,6 @@ export function BillingSection({ info }: { info: BillingInfo }) {
       />
 
       {info.credits && cur.ai ? <Credits info={info} paid={paid} busy={busy} run={run} /> : null}
-      {info.brandLimits ? <BrandLimits brands={info.brandLimits} /> : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <h3 className="text-[15px] font-semibold tracking-[-0.01em]">Plans</h3>
@@ -144,26 +143,7 @@ export function BillingSection({ info }: { info: BillingInfo }) {
         })}
       </div>
 
-      {info.history.length ? (
-        <Panel>
-          <CardHead label="Credit history">
-            <LinkButton href="/api/credits/usage" variant="ghost" size="sm" aria-label="Download CSV">
-              <Download size={14} />
-              CSV
-            </LinkButton>
-          </CardHead>
-          <div className="divide-y divide-line">
-            {info.history.map((h) => (
-              <Row key={h.key} title={h.what} sub={[fmtDate(h.at, { year: true }), h.model, h.person].filter(Boolean).join(", ")}>
-                <span className={`text-[13px] tabular-nums ${h.credits > 0 ? "text-success" : "text-body"}`}>
-                  {h.credits > 0 ? "+" : ""}
-                  {fmtNum(h.credits)}
-                </span>
-              </Row>
-            ))}
-          </div>
-        </Panel>
-      ) : null}
+      {info.history.length ? <History rows={info.history} /> : null}
     </>
   );
 }
@@ -230,38 +210,57 @@ function Credits({ info, paid, busy, run }: { info: BillingInfo; paid: boolean; 
   );
 }
 
-function BrandLimits({ brands }: { brands: { id: string; name: string; limit: number | null; used: number }[] }) {
-  return (
-    <Rows label="Brand credit limits">
-      {brands.map((b) => (
-        <BrandLimit key={b.id} brand={b} />
-      ))}
-    </Rows>
-  );
-}
+const HEAD = "border-b border-line text-left text-[12px] text-muted";
+const TH = "h-10 px-4 font-medium whitespace-nowrap";
+const TD = "px-4 py-2.5";
+const FIRST = 10;
 
-function BrandLimit({ brand }: { brand: { id: string; name: string; limit: number | null; used: number } }) {
-  const router = useRouter();
-  const [value, setValue] = useState(brand.limit == null ? "" : String(brand.limit));
-  const [saving, setSaving] = useState(false);
-  const save = async () => {
-    const t = value.trim();
-    const next = t === "" ? null : Number(t);
-    if (next === brand.limit) return;
-    if (next != null && (!Number.isInteger(next) || next < 0)) {
-      await tell("Enter a whole number of credits");
-      return;
-    }
-    setSaving(true);
-    const r = await saveBrandLimit(brand.id, next);
-    setSaving(false);
-    if (r.error) await tell(r.error);
-    else router.refresh();
-  };
+/** Where credits went, newest first: the first 10, then the rest on Show more. */
+function History({ rows }: { rows: BillingInfo["history"] }) {
+  const [all, setAll] = useState(false);
+  const shown = all ? rows : rows.slice(0, FIRST);
   return (
-    <Row title={brand.name} sub={`${fmtNum(brand.used)} used this month`}>
-      {saving ? <Loader /> : null}
-      <Input aria-label={`Credit limit for ${brand.name}`} inputMode="numeric" placeholder="No limit" className="w-32" value={value} onChange={(e) => setValue(e.target.value)} onBlur={save} onKeyDown={(e) => e.key === "Enter" && (e.currentTarget as HTMLInputElement).blur()} />
-    </Row>
+    <Panel className="overflow-hidden">
+      <CardHead label="Credit history">
+        <LinkButton href="/api/credits/usage" variant="ghost" size="sm" aria-label="Download CSV">
+          <Download size={14} />
+          CSV
+        </LinkButton>
+      </CardHead>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[600px] text-[13px]">
+          <thead>
+            <tr className={HEAD}>
+              <th className={TH}>Date</th>
+              <th className={TH}>What</th>
+              <th className={TH}>Model</th>
+              <th className={TH}>Person</th>
+              <th className={`${TH} text-right`}>Credits</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((h) => (
+              <tr key={h.key} className="border-b border-line last:border-b-0 hover:bg-hover">
+                <td className={`${TD} whitespace-nowrap text-muted`}>{fmtDate(h.at, { year: true })}</td>
+                <td className={`${TD} wrap-break-word`}>{h.what}</td>
+                <td className={`${TD} text-muted`}>{h.model ?? ""}</td>
+                <td className={`${TD} wrap-anywhere text-muted`}>{h.person ?? ""}</td>
+                <td className={`${TD} text-right tabular-nums ${h.credits > 0 ? "text-success" : "text-body"}`}>
+                  {h.credits > 0 ? "+" : ""}
+                  {fmtNum(h.credits)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {rows.length > FIRST && !all ? (
+        <div className="flex justify-center border-t border-line px-4 py-2.5">
+          <Button variant="plain" size="sm" onClick={() => setAll(true)}>
+            Show more
+          </Button>
+        </div>
+      ) : null}
+    </Panel>
   );
 }
