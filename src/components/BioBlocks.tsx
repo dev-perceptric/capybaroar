@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AtSign, CalendarClock, ChevronDown, GripVertical, Heading, ImagePlus, LayoutGrid, Link2, Mail, Pilcrow, Plus, Trash2, Video, X } from "lucide-react";
-import { Badge, Button, Field, IconButton, Input, Segmented, Switch, TextArea, inputLook } from "./ui";
+import { Badge, Button, Field, IconButton, Input, Panel, Segmented, Switch, TextArea, inputLook } from "./ui";
 import { Floating } from "./Floating";
 import { askConfirm } from "./Dialogs";
 import { SocialIcon } from "./BioIcons";
@@ -24,7 +24,7 @@ import {
   type SocialItem,
 } from "@/lib/bioBlocks";
 
-// The Blocks tab: the page's blocks as cards. Drag a card by its handle (or press the arrow keys on it) to move it,
+// The Blocks tab: the page's blocks as rows in one card. Drag a row by its handle (or press the arrow keys on it) to move it,
 // open it to edit in place, switch it off to hide it without losing it.
 
 export type Img = { id: string; name: string; thumb: string | null };
@@ -201,49 +201,51 @@ export function BioBlocks({
         {tools ? <div className="ml-auto flex flex-wrap items-center gap-2">{tools}</div> : null}
       </div>
       {blocks.length ? (
-        <ul ref={list} className="flex flex-col gap-2" aria-label="Blocks">
-          {blocks.map((b, i) => {
-            const s = summary(b);
-            const state = scheduleState(b, now);
-            const isOpen = open === b.id;
-            const waiting = placeholdersIn(b).length > 0;
-            const tag = waiting ? <Badge tone="amber">{b.type === "email" ? "Add your email" : "Add your link"}</Badge> : b.hidden ? <Badge>Hidden</Badge> : state === "waiting" ? <Badge tone="amber">Scheduled</Badge> : state === "ended" ? <Badge>Ended</Badge> : state === "live" ? <Badge tone="green">Live</Badge> : null;
-            return (
-              <li key={b.id} data-block={b.id} className={`rounded-lg bg-panel transition-shadow duration-[var(--duration-fast)] ${dragging === b.id ? "relative z-10 shadow-hover" : "shadow-card"}`}>
-                <div className="flex min-h-14 items-center gap-1.5 py-2 pr-2 pl-1">
-                  <button
-                    type="button"
-                    aria-label={`Move ${s.title}`}
-                    onPointerDown={grab(b.id)}
-                    onKeyDown={keys(i)}
-                    className="flex size-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-full text-faint transition-colors hover:bg-hover hover:text-ink active:cursor-grabbing"
-                  >
-                    <GripVertical size={16} />
-                  </button>
-                  <span className={`flex size-7 shrink-0 items-center justify-center rounded-md bg-paper text-muted shadow-track [&_svg]:size-3.5 ${b.hidden ? "opacity-50" : ""}`}>{ICONS[b.type]}</span>
-                  <button type="button" onClick={() => setOpen(isOpen ? null : b.id)} aria-expanded={isOpen} className={`min-w-0 flex-1 px-1.5 text-left ${b.hidden ? "opacity-50" : ""}`}>
-                    <span className="block truncate text-[13px] font-medium">{s.title}</span>
-                    {s.sub ? <span className="block truncate text-[12px] text-muted">{s.sub}</span> : null}
-                    {tag ? <span className="mt-1 flex sm:hidden">{tag}</span> : null}
-                  </button>
-                  {tag ? <span className="hidden sm:contents">{tag}</span> : null}
-                  <Switch on={!b.hidden} label={b.hidden ? "Show" : "Hide"} onChange={(on) => update(b.id, { hidden: !on || undefined })} />
-                  <IconButton label="Delete" onClick={() => void remove(b)}>
-                    <Trash2 />
-                  </IconButton>
-                  <IconButton label={isOpen ? "Close" : "Edit"} align="end" onClick={() => setOpen(isOpen ? null : b.id)}>
-                    <ChevronDown className={`transition-transform duration-[var(--duration-fast)] ${isOpen ? "rotate-180" : ""}`} />
-                  </IconButton>
-                </div>
-                {isOpen ? (
-                  <div className="flex flex-col gap-4 border-t border-line px-4 py-4">
-                    <BlockFields b={b} update={(p) => update(b.id, p)} images={images} posts={posts} pick={pick} />
+        <Panel>
+          <ul ref={list} className="divide-y divide-line" aria-label="Blocks">
+            {blocks.map((b, i) => {
+              const s = summary(b);
+              const state = scheduleState(b, now);
+              const isOpen = open === b.id;
+              const waiting = placeholdersIn(b).length > 0;
+              const tag = waiting ? <Badge tone="amber">{b.type === "email" ? "Add your email" : "Add your link"}</Badge> : b.hidden ? <Badge>Hidden</Badge> : state === "waiting" ? <Badge tone="amber">Scheduled</Badge> : state === "ended" ? <Badge>Ended</Badge> : state === "live" ? <Badge tone="green">Live</Badge> : null;
+              return (
+                <li key={b.id} data-block={b.id} className={`bg-panel transition-shadow duration-[var(--duration-fast)] first:rounded-t-lg last:rounded-b-lg ${dragging === b.id ? "relative z-10 rounded-lg shadow-hover" : ""}`}>
+                  <div className="flex min-h-12 items-center gap-1.5 py-1.5 pr-2 pl-1">
+                    <button
+                      type="button"
+                      aria-label={`Move ${s.title}`}
+                      onPointerDown={grab(b.id)}
+                      onKeyDown={keys(i)}
+                      className="flex size-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-full text-faint transition-colors hover:bg-hover hover:text-ink active:cursor-grabbing"
+                    >
+                      <GripVertical size={16} />
+                    </button>
+                    <span className={`flex size-7 shrink-0 items-center justify-center rounded-md bg-paper text-muted shadow-track [&_svg]:size-3.5 ${b.hidden ? "opacity-50" : ""}`}>{ICONS[b.type]}</span>
+                    <button type="button" onClick={() => setOpen(isOpen ? null : b.id)} aria-expanded={isOpen} className={`min-w-0 flex-1 px-1.5 text-left ${b.hidden ? "opacity-50" : ""}`}>
+                      <span className="block truncate text-[13px] font-medium">{s.title}</span>
+                      {s.sub ? <span className="block truncate text-[12px] text-muted">{s.sub}</span> : null}
+                      {tag ? <span className="mt-1 flex sm:hidden">{tag}</span> : null}
+                    </button>
+                    {tag ? <span className="hidden sm:contents">{tag}</span> : null}
+                    <Switch on={!b.hidden} label={b.hidden ? "Show" : "Hide"} onChange={(on) => update(b.id, { hidden: !on || undefined })} />
+                    <IconButton label="Delete" onClick={() => void remove(b)}>
+                      <Trash2 />
+                    </IconButton>
+                    <IconButton label={isOpen ? "Close" : "Edit"} align="end" onClick={() => setOpen(isOpen ? null : b.id)}>
+                      <ChevronDown className={`transition-transform duration-[var(--duration-fast)] ${isOpen ? "rotate-180" : ""}`} />
+                    </IconButton>
                   </div>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
+                  {isOpen ? (
+                    <div className="flex flex-col gap-4 border-t border-line px-4 py-4">
+                      <BlockFields b={b} update={(p) => update(b.id, p)} images={images} posts={posts} pick={pick} />
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
       ) : null}
     </div>
   );

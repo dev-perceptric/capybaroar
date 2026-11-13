@@ -691,9 +691,11 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                     </Field>
                     {picked.length ? (
                       <div className="flex flex-wrap gap-x-4 gap-y-1">
-                        {picked.map((c) => (
-                          <Counter key={c.id} c={c} text={textOf(c)} />
-                        ))}
+                        {/* One counter per network: the longest text among its channels, so over-limit still shows. */}
+                        {[...new Set(picked.map((c) => c.network))].map((net) => {
+                          const longest = picked.filter((c) => c.network === net).reduce((a, b) => (count(textOf(b)) > count(textOf(a)) ? b : a));
+                          return <Counter key={net} c={longest} text={textOf(longest)} />;
+                        })}
                       </div>
                     ) : null}
                   </>
@@ -944,20 +946,19 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           {/* Preview */}
           <aside className="hidden min-h-0 flex-col border-l border-line bg-paper lg:flex">
             <div className="flex min-h-14 shrink-0 flex-wrap items-center gap-2 border-b border-line bg-panel px-4 py-2.5">
-              <div className="flex min-w-0 flex-1 gap-1 overflow-x-auto">
-                {picked.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    title={c.name}
-                    aria-pressed={shown?.id === c.id}
-                    onClick={() => setView(c.id)}
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-[background-color,box-shadow] ${shown?.id === c.id ? "bg-signal-soft shadow-picked" : "bg-panel shadow-chip hover:shadow-pill"}`}
-                  >
-                    <NetworkLogo id={c.network} size={16} />
-                  </button>
-                ))}
-              </div>
+              {picked.length ? (
+                <Select<string>
+                  size="sm"
+                  lead="Preview"
+                  ariaLabel="Preview"
+                  className="min-w-0 max-w-64 flex-1"
+                  value={shown?.id ?? ""}
+                  onChange={setView}
+                  options={picked.map((c) => ({ value: c.id, label: c.name, icon: <ChannelFace channel={c} size={16} badge={9} /> }))}
+                />
+              ) : (
+                <span className="flex-1" />
+              )}
               <Segmented
                 label="Preview on"
                 size="sm"

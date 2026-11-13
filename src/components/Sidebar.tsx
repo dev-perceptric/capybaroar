@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, FileText, Image as ImageIcon, Inbox, Link2, LogOut, PanelLeftClose, PanelLeftOpen, Plug, Settings } from "lucide-react";
-import { Avatar, Dot } from "./ui";
+import { Avatar, Dot, Input } from "./ui";
 import { Floating, HoverTip } from "./Floating";
 import { tell } from "./Dialogs";
 import { Logo } from "./Logo";
@@ -148,11 +148,14 @@ export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name:
 
 const MENU = "min-w-56 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu";
 const ROW = "flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover";
+/** More brands than this, and the menu gets a search box. */
+const SEARCH_FROM = 8;
 
 /** The brand every screen shows, and the workspace when there are several. People with nothing to switch see the
     workspace's name. */
 function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
   const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
   const [busy, start] = useTransition();
   const button = useRef<HTMLButtonElement>(null);
   const router = useRouter();
@@ -164,6 +167,9 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
       </p>
     );
   const current = s.brands.find((b) => b.id === s.brand) ?? null;
+  const searchable = s.brands.length > SEARCH_FROM;
+  const term = searchable ? q.trim().toLowerCase() : "";
+  const brands = term ? s.brands.filter((b) => b.name.toLowerCase().includes(term)) : s.brands;
   const pick = (fn: () => Promise<{ error?: string }>) => {
     setOpen(false);
     start(async () => {
@@ -180,7 +186,10 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
         aria-haspopup="menu"
         aria-expanded={open}
         disabled={busy}
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setQ("");
+          setOpen(!open);
+        }}
         title={`${workspace}: ${current?.name ?? "All brands"}`}
         className="flex h-9 w-full items-center gap-2 rounded-md bg-panel px-3 text-left text-[13px] font-medium shadow-chip transition-shadow hover:shadow-pill aria-expanded:shadow-focus disabled:opacity-60 rail:size-9 rail:justify-center rail:px-0"
       >
@@ -190,20 +199,24 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
       </button>
       {open ? (
         <Floating anchor={button} placement="bottom-start" matchWidth onClose={() => setOpen(false)} role="menu" className={MENU}>
-          {manager && s.brands.length > 1 ? (
-            <button type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchBrand("all"))}>
-              <span className="size-2 rounded-full border border-line-strong" />
-              <span className="flex-1">All brands</span>
-              {!current ? <Check size={14} /> : null}
-            </button>
-          ) : null}
-          {s.brands.map((b) => (
-            <button key={b.id} type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchBrand(b.id))}>
-              <Dot tone={b.color} />
-              <span className="min-w-0 flex-1 truncate">{b.name}</span>
-              {current?.id === b.id ? <Check size={14} /> : null}
-            </button>
-          ))}
+          {searchable ? <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search brands" aria-label="Search brands" className="mb-1 h-8" /> : null}
+          <div className="max-h-72 overflow-y-auto">
+            {manager && s.brands.length > 1 && !term ? (
+              <button type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchBrand("all"))}>
+                <span className="size-2 rounded-full border border-line-strong" />
+                <span className="flex-1">All brands</span>
+                {!current ? <Check size={14} /> : null}
+              </button>
+            ) : null}
+            {brands.map((b) => (
+              <button key={b.id} type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchBrand(b.id))}>
+                <Dot tone={b.color} />
+                <span className="min-w-0 flex-1 truncate">{b.name}</span>
+                {current?.id === b.id ? <Check size={14} /> : null}
+              </button>
+            ))}
+            {term && !brands.length ? <p className="flex h-8 items-center px-2.5 text-muted">No matches</p> : null}
+          </div>
           {manager ? (
             <Link href="/settings?tab=brands" role="menuitem" className={`${ROW} mt-1 text-muted`} onClick={() => setOpen(false)}>
               Manage brands
@@ -212,12 +225,14 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
           {s.workspaces.length > 1 ? (
             <div className="mt-1 border-t border-line pt-1">
               <p className="label-mono flex h-6 items-center px-2">Workspaces</p>
-              {s.workspaces.map((w) => (
-                <button key={w.id} type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchWorkspace(w.id))}>
-                  <span className="min-w-0 flex-1 truncate">{w.name}</span>
-                  {w.id === s.workspaceId ? <Check size={14} /> : null}
-                </button>
-              ))}
+              <div className="max-h-48 overflow-y-auto">
+                {s.workspaces.map((w) => (
+                  <button key={w.id} type="button" role="menuitem" className={ROW} onClick={() => pick(() => switchWorkspace(w.id))}>
+                    <span className="min-w-0 flex-1 truncate">{w.name}</span>
+                    {w.id === s.workspaceId ? <Check size={14} /> : null}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : null}
         </Floating>

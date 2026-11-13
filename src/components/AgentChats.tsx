@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MoreHorizontal, SquarePen, Trash2 } from "lucide-react";
-import { Floating } from "./Floating";
+import { Floating, type Placement } from "./Floating";
 import { askConfirm, tell } from "./Dialogs";
 import { deleteChat, recentChats } from "@/app/(app)/agents/actions";
 
@@ -32,8 +32,13 @@ function useChats() {
 
 const row = "relative flex h-8 w-full items-center rounded-md pr-8 pl-2.5 text-left text-[13px] transition-colors";
 
-function List({ onPick }: { onPick?: () => void }) {
+/** The newest chats a sidebar shows before "All chats". */
+const SIDEBAR_CHATS = 6;
+
+function List({ onPick, limit }: { onPick?: () => void; limit?: number }) {
   const [chats, setChats] = useChats();
+  const [all, setAll] = useState(false);
+  const allButton = useRef<HTMLButtonElement>(null);
   const current = useSearchParams().get("chat");
   const router = useRouter();
   const [, start] = useTransition();
@@ -46,12 +51,18 @@ function List({ onPick }: { onPick?: () => void }) {
       const r = await deleteChat(c.id);
       if (r.error) return void (await tell("Couldn't delete the chat", r.error));
       setChats((all) => (all ?? []).filter((x) => x.id !== c.id));
+      // Another list of the same chats (the sidebar and the All chats menu) looks again too.
+      window.dispatchEvent(new Event(CHATS_EVENT));
       if (current === c.id) router.push("/agents");
     });
   };
+  const list = chats ?? [];
+  const more = limit != null && list.length > limit;
+  // The newest few, plus the open chat when it's older than those.
+  const shown = more ? list.filter((c, i) => i < limit || c.id === current) : list;
   return (
     <div className="flex flex-col gap-0.5">
-      {(chats ?? []).map((c) => (
+      {shown.map((c) => (
         <div key={c.id} className="group/chat relative">
           <Link
             href={`/agents?chat=${c.id}`}
@@ -85,6 +96,15 @@ function List({ onPick }: { onPick?: () => void }) {
           ) : null}
         </div>
       ))}
+      {more ? (
+        <>
+          <button ref={allButton} type="button" aria-haspopup="dialog" aria-expanded={all} onClick={() => setAll(!all)} className={`${row} text-muted hover:bg-hover hover:text-ink`}>
+            All chats
+            <span className="ml-auto pl-2 text-[11px] text-faint tabular-nums">{list.length}</span>
+          </button>
+          {all ? <ChatsMenu anchor={allButton} placement="right-start" onClose={() => setAll(false)} /> : null}
+        </>
+      ) : null}
       <Link href="/agents" onClick={onPick} className={`${row} gap-2 font-medium text-ink hover:bg-hover ${chats?.length ? "mt-1" : ""}`}>
         <SquarePen size={14} className="shrink-0 text-muted" />
         New chat
@@ -101,17 +121,17 @@ export function SidebarChats() {
     <div className="relative mt-0.5 mb-1 hidden pl-4 before:absolute before:top-1 before:bottom-1 before:left-[17px] before:w-px before:bg-line md:block rail:hidden">
       <div className="pl-2">
         <Suspense fallback={null}>
-          <List />
+          <List limit={SIDEBAR_CHATS} />
         </Suspense>
       </div>
     </div>
   );
 }
 
-/** The same list for phones, opened from the Agents header. */
-export function ChatsMenu({ anchor, onClose }: { anchor: React.RefObject<HTMLElement | null>; onClose: () => void }) {
+/** The same list for phones, opened from the Agents header, and every chat from the sidebar's All chats. */
+export function ChatsMenu({ anchor, onClose, placement = "bottom-end" }: { anchor: React.RefObject<HTMLElement | null>; onClose: () => void; placement?: Placement }) {
   return (
-    <Floating anchor={anchor} placement="bottom-end" onClose={onClose} className="max-h-[70vh] w-72 overflow-y-auto rounded-lg bg-panel p-1.5 shadow-menu">
+    <Floating anchor={anchor} placement={placement} onClose={onClose} className="max-h-[70vh] w-72 overflow-y-auto rounded-lg bg-panel p-1.5 shadow-menu">
       <Suspense fallback={null}>
         <List onPick={onClose} />
       </Suspense>
