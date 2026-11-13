@@ -200,7 +200,9 @@ function errorText(body: unknown): string {
   const e = b.error as Record<string, unknown> | string | undefined;
   if (typeof e === "string") return String(b.error_description ?? b.message ?? e);
   if (e && typeof e === "object") return String(e.message ?? e.error_user_msg ?? JSON.stringify(e)).slice(0, 300);
-  return String(b.message ?? b.error_description ?? JSON.stringify(b)).slice(0, 300);
+  // X answers with a problem object: { title, detail, reason }.
+  if (b.reason === "client-not-enrolled") return "the X app isn't attached to a Project in the X developer portal";
+  return String(b.message ?? b.error_description ?? b.detail ?? b.title ?? JSON.stringify(b)).slice(0, 300);
 }
 
 export const form = (o: Record<string, string>) => new URLSearchParams(o);
