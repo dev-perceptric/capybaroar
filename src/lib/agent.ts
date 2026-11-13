@@ -92,7 +92,7 @@ async function converse(ctx: Ctx, brandId: string | null, chatId: string | null,
     if (error) throw new Error(error.message);
     id = data.id as string;
   } else {
-    const { data } = await db.from("agent_chats").select("id").eq("id", id).eq("user_id", ctx.userId).maybeSingle();
+    const { data } = await db.from("agent_chats").select("id").eq("id", id).eq("user_id", ctx.userId).eq("workspace_id", ctx.workspaceId).maybeSingle();
     if (!data) throw new Error("Chat not found");
   }
   const { data: rows } = await db.from("agent_messages").select("role, content").eq("chat_id", id).order("id");

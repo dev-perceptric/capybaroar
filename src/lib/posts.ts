@@ -150,6 +150,10 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
     if (!EDITABLE.includes(cur.status)) throw new Error("This post already went out");
   }
   const channels = await listChannels(workspaceId);
+  // Every channel and file must be this workspace's, drafts too (the API checks the same in ops.ts).
+  if (input.targets.some((t) => !channels.some((c) => c.id === t.channelId))) throw new Error("Channel not found");
+  const fileIds = [...new Set([...input.mediaIds, ...(input.thread ?? []).flatMap((p) => p.mediaIds)])];
+  if (fileIds.length && (await mediaInfo(workspaceId, fileIds)).length !== fileIds.length) throw new Error("File not found");
   const brands = [...new Set(input.targets.map((t) => channels.find((c) => c.id === t.channelId)?.brand_id ?? null))];
   if (brands.length > 1) throw new Error("Pick channels from one brand");
   const brandId = input.targets.length ? brands[0] : (cur?.brand_id ?? actor?.brandId ?? null);

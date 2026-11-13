@@ -286,7 +286,8 @@ export async function renameCampaign(id: string, name: string, tone?: string): P
   try {
     const { ctx } = await actor();
     const { listCampaigns, updateCampaign } = await import("@/lib/campaigns");
-    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id)) throw new Error("Campaign not found");
+    // Brand-limited members change only their brands' campaigns, never the ones shared by every brand.
+    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id && (!ctx.brandIds || (!!c.brand_id && ctx.brandIds.includes(c.brand_id))))) throw new Error("Campaign not found");
     await updateCampaign(ctx.workspaceId, id, { name, ...(tone ? { tone } : {}) });
     return {};
   } catch (e) {
@@ -298,7 +299,8 @@ export async function removeCampaign(id: string): Promise<{ error?: string }> {
   try {
     const { ctx } = await actor();
     const { listCampaigns, deleteCampaign } = await import("@/lib/campaigns");
-    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id)) throw new Error("Campaign not found");
+    // Brand-limited members change only their brands' campaigns, never the ones shared by every brand.
+    if (!(await listCampaigns(ctx.workspaceId, ctx.brandIds)).some((c) => c.id === id && (!ctx.brandIds || (!!c.brand_id && ctx.brandIds.includes(c.brand_id))))) throw new Error("Campaign not found");
     await deleteCampaign(ctx.workspaceId, id);
     return {};
   } catch (e) {

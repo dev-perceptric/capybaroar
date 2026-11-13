@@ -2,20 +2,33 @@ import { NextResponse, type NextRequest } from "next/server";
 import { adminClient } from "@/lib/supabase/server";
 import { providerOf } from "@/lib/providers";
 import { appUrl, redirectFor, saveAccounts } from "@/lib/channels";
+import { userClient } from "@/lib/supabase/server";
+import { STATE_COOKIE, STATE_PATH, callbackProblem, networkError } from "@/lib/oauthState";
 import type { NetworkId } from "@/lib/networks";
 
 // The network sends people back here after they approve. The state ties it to the workspace that asked.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ network: string }> }) {
   const { network } = await params;
   const q = request.nextUrl.searchParams;
-  const back = (error?: string) => NextResponse.redirect(`${appUrl()}/channels${error ? `?error=${encodeURIComponent(error)}` : `?connected=${network}`}`);
+  const back = (error?: string) => {
+    const res = NextResponse.redirect(`${appUrl()}/channels${error ? `?error=${encodeURIComponent(error)}` : `?connected=${network}`}`);
+    res.cookies.set(STATE_COOKIE, "", { httpOnly: true, secure: true, sameSite: "lax", path: STATE_PATH, maxAge: 0 });
+    return res;
+  };
   const state = q.get("state");
   const code = q.get("code");
-  if (q.get("error")) return back(q.get("error_description") || q.get("error") || "Sign-in was cancelled");
+  if (q.get("error")) return back(networkError(q.get("error")));
   if (!state || !code) return back("Sign-in didn't finish");
   const db = adminClient();
-  const { data: row } = await db.from("oauth_states").delete().eq("state", state).eq("network", network).select("workspace_id, brand_id, verifier, input, created_at").maybeSingle();
-  if (!row || Date.now() - new Date(row.created_at).getTime() > 15 * 60 * 1000) return back("Sign-in expired, try again");
+  const { data: claims } = await (await userClient()).auth.getClaims();
+  const sessionUserId = (claims?.claims?.sub as string | undefined) ?? null;
+  const cookieState = request.cookies.get(STATE_COOKIE)?.value ?? null;
+  // Only the person who started it, in the browser that started it, can finish it. Checked before the state is used up.
+  if (!sessionUserId || cookieState !== state) return back(callbackProblem({ state, cookieState, rowUserId: null, sessionUserId, createdAt: new Date() }) ?? "Sign-in didn't finish");
+  const { data: row } = await db.from("oauth_states").delete().eq("state", state).eq("network", network).eq("user_id", sessionUserId).select("workspace_id, brand_id, user_id, verifier, input, created_at").maybeSingle();
+  if (!row) return back("Sign-in expired, try again");
+  const problem = callbackProblem({ state, cookieState, rowUserId: row.user_id as string | null, sessionUserId, createdAt: row.created_at as string });
+  if (problem) return back(problem);
   const p = providerOf(network);
   if (!p?.oauth) return back("This network isn't set up");
   try {
