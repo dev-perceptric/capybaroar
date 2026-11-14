@@ -171,6 +171,8 @@ home = home.replace('/site.js?v=1', '/site.js?v=2')
 open(P + 'index.html', 'w').write(home)
 
 for f in ['api.html', 'terms.html', 'privacy.html', 'data-deletion.html', 'security.html', 'subprocessors.html', 'dpa.html', '404.html']:
+    if not os.path.exists(P + f):  # /dpa is held back until the legal pages are published
+        continue
     s = open(P + f).read()
     open(P + f, 'w').write(renav(s))
 
@@ -213,7 +215,7 @@ def checks(items):
 
 def zrow(tag_icon, tag, h2a, h2b, para, items, visual, flip=False, more=None):
     m = f'<a class="more" href="{more[0]}">{more[1]}{ico("i-arrow")}</a>' if more else ''
-    return f'''<article class="z{' flip' if flip else ''}">
+    return f'''<article class="z{' flip' if flip else ''}" data-tab="{tag}" data-ico="{tag_icon}">
 <div class="z-text">
 <p class="tag">{ico(tag_icon)}{tag}</p>
 <h2>{h2a} <span>{h2b}</span></h2>
@@ -329,7 +331,7 @@ def page(slug, key, title, desc, body, faqs):
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{json.dumps(ld, separators=(',', ':'))}</script>
 </head>
 <body>
@@ -379,8 +381,26 @@ def points(items):
     return '<ul class="points2">' + ''.join(f'<li>{ico(i)}<div><h3>{t}</h3><p>{d}</p></div></li>' for i, t, d in items) + '</ul>'
 
 
+TABS_JS = ("<script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;"
+           "x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}"
+           "tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;"
+           "if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script>")
+
+
 def tour(rows):
-    return f'<section id="tour" aria-label="Feature tour"><div class="wrap zig">{"".join(rows)}</div></section>'
+    """The feature tour as tabs: one tab per row (its tag), one pane open at a time, so the page stays short."""
+    tabs, panes = [], []
+    for k, row in enumerate(rows):
+        m = re.match(r'<article class="z(?: flip)?" data-tab="([^"]+)" data-ico="([^"]+)">', row)
+        assert m, row[:80]
+        tag, ic = m.group(1), m.group(2)
+        on = k == 0
+        tabs.append(f'<button class="ft-tab" role="tab" id="ft-t{k}" aria-controls="ft-p{k}" aria-selected="{"true" if on else "false"}" tabindex="{0 if on else -1}">{ico(ic)}{tag}</button>')
+        body = row[m.end():]
+        body = re.sub(r'<p class="tag">.*?</p>\n', '', body, count=1)
+        panes.append(f'<article class="z ft-pane" role="tabpanel" id="ft-p{k}" aria-labelledby="ft-t{k}"{"" if on else " hidden"}>{body}')
+    return (f'<section id="tour" class="ft" aria-label="Feature tour"><div class="wrap">'
+            f'<div class="ft-tabs" role="tablist" aria-label="Features">{"".join(tabs)}</div>{"".join(panes)}</div></section>{TABS_JS}')
 
 
 # =====================================================================================================

@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a posting queue?","acceptedAnswer":{"@type":"Answer","text":"A set of times you want to post on each day. When you add a post to the queue, it takes the next free time."}},{"@type":"Question","name":"How far ahead does the queue look?","acceptedAnswer":{"@type":"Answer","text":"Up to 8 weeks. If every time in that span is taken, Capybaroar tells you, so you can add more times."}},{"@type":"Question","name":"Which time zone do queue times use?","acceptedAnswer":{"@type":"Answer","text":"Your workspace's time zone, set in Settings."}},{"@type":"Question","name":"Can bulk uploads use the queue?","acceptedAnswer":{"@type":"Answer","text":"Yes. A stack of files or a feed can fill your queue times in order."}},{"@type":"Question","name":"Is the queue on the free plan?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every plan has a posting queue."}}]}</script>
 </head>
 <body>
@@ -112,9 +112,8 @@
 </div>
 <div class="toast" id="s-toast"><svg class="ico" style="width:14px;height:14px"><use href="#i-check-circle"/></svg>Scheduled to 4 channels</div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-clock"/></svg>Time slots</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-send"/></svg>Add to queue</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-clock"/></svg>Time slots</p>
 <h2>Your hours, <span>day by day.</span></h2>
 <p>Choose different times for each day of the week, in your workspace's time zone.</p>
 <ul class="checks"><li>Different times for each day</li><li>Your workspace's time zone</li><li>Several times a day if you like</li><li>Change them any time</li></ul>
@@ -125,16 +124,15 @@
 <div class="qlist"><div class="qrow"><span class="qd">Mon</span><div class="qs"><span class="slot full"><b>9:00 AM</b><span class="badge">Filled</span></span><span class="slot full"><b>12:30 PM</b><span class="badge">Filled</span></span><span class="slot full"><b>5:00 PM</b><span class="badge">Filled</span></span></div></div><div class="qrow"><span class="qd">Tue</span><div class="qs"><span class="slot full"><b>9:00 AM</b><span class="badge">Filled</span></span><span class="slot full"><b>12:30 PM</b><span class="badge">Filled</span></span><span class="slot"><b>5:00 PM</b></span></div></div><div class="qrow"><span class="qd">Wed</span><div class="qs"><span class="slot full"><b>9:00 AM</b><span class="badge">Filled</span></span><span class="slot next rv pop"><b>12:30 PM</b><span class="badge y">Next post</span></span><span class="slot"><b>5:00 PM</b></span></div></div><div class="qrow"><span class="qd">Thu</span><div class="qs"><span class="slot"><b>9:00 AM</b></span><span class="slot"><b>12:30 PM</b></span><span class="slot"><b>5:00 PM</b></span></div></div><div class="qrow"><span class="qd">Fri</span><div class="qs"><span class="slot"><b>9:00 AM</b></span><span class="slot"><b>12:30 PM</b></span></div></div></div>
 <div class="qfoot rv pop"><svg class="ico"><use href="#i-clock"/></svg>New posts take the next free time: <b>Wed, 12:30 PM</b></div>
 </div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-send"/></svg>Add to queue</p>
 <h2>Write it. <span>Press Add to queue.</span></h2>
 <p>The post takes the next free time in the next 8 weeks. No date picking, no gaps.</p>
 <ul class="checks"><li>Next free time, found for you</li><li>Bulk uploads can fill the queue</li><li>RSS feeds and evergreen posts use it too</li><li>Your AI can find the next free time with MCP</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-clock"/></svg>Queue<span class="sub">Crumb &amp; Co.</span></div><div class="csv"><div class="crow rv pop"><span class="cd">Mon 9:00</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg></span><span class="ct">Croissant day</span></div><div class="crow rv pop"><span class="cd">Mon 12:30</span><span class="cl"><svg class="nl"><use href="#n-linkedin"/></svg></span><span class="ct">Hiring a night baker</span></div><div class="crow rv pop"><span class="cd">Tue 9:00</span><span class="cl"><svg class="nl"><use href="#n-x"/></svg><svg class="nl"><use href="#n-bluesky"/></svg></span><span class="ct">New flour</span></div><div class="crow rv pop"><span class="cd">Tue 12:30</span><span class="cl"><svg class="nl"><use href="#n-tiktok"/></svg></span><span class="ct">Next free time</span></div></div></div></div>
-</article></div></section><section class="closing" aria-labelledby="closing-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section class="closing" aria-labelledby="closing-title">
 <div class="wrap">
 <div class="closing-card">
 <div>

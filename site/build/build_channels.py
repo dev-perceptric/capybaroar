@@ -419,7 +419,7 @@ def simple(slug, title, desc, tag_icon, tag, h1a, h1b, lead, empty_t, empty_l):
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=6">
+<link rel="stylesheet" href="/home.css?v=8">
 </head>
 <body>
 {sprites}<a class="skip" href="#main">Skip to content</a>

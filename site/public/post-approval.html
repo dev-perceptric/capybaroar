@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Who can approve posts?","acceptedAnswer":{"@type":"Answer","text":"Owners, admins and clients of that brand, or anyone with the brand's review link."}},{"@type":"Question","name":"Which plans have approvals?","acceptedAnswer":{"@type":"Answer","text":"Pro and Agency."}},{"@type":"Question","name":"Does my client need an account?","acceptedAnswer":{"@type":"Answer","text":"No. A review link is enough."}},{"@type":"Question","name":"Do posts from AI wait for approval too?","acceptedAnswer":{"@type":"Answer","text":"Yes. In a brand that needs approval, an editor's posts wait for a yes however they were made."}}]}</script>
 </head>
 <body>
@@ -112,18 +112,16 @@
 </div>
 <div class="toast" id="s-toast"><svg class="ico" style="width:14px;height:14px"><use href="#i-check-circle"/></svg>Scheduled to 4 channels</div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-check-circle"/></svg>Review</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-link"/></svg>Review links</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-check-circle"/></svg>Review</p>
 <h2>Approve or reject, <span>with a reason.</span></h2>
 <p>Posts in review show on the calendar. Approve them as they are, or send them back with what should change.</p>
 <ul class="checks"><li>Turn on approval per brand</li><li>Reject with a note for the writer</li><li>Emails when a post is sent, approved or rejected</li><li>Approved posts go out at their time</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-check-circle"/></svg>In review</div><div class="csv"><div class="crow rv pop"><span class="cd">Thu 9 AM</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg><svg class="nl"><use href="#n-facebook"/></svg></span><span class="ct">Croissant day is back</span></div><div class="crow rv pop"><span class="cd">Fri 12 PM</span><span class="cl"><svg class="nl"><use href="#n-linkedin"/></svg></span><span class="ct">We are hiring a night baker</span></div><div class="crow rv pop"><span class="cd">Sat 10 AM</span><span class="cl"><svg class="nl"><use href="#n-tiktok"/></svg></span><span class="ct">How we shape a loaf</span></div></div><div class="mk-foot"><span class="pill">Reject</span><span class="pill dark">Approve</span></div></div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-link"/></svg>Review links</p>
 <h2>Clients approve <span>without an account.</span></h2>
 <p>Send your client a review link. They see each post as it will look and approve or reject it there.</p>
 <ul class="checks"><li>No account or seat needed</li><li>Posts shown as they will look</li><li>A note with every rejection</li><li>Webhooks for your own tools</li></ul>
@@ -144,7 +142,7 @@
 </div>
 <div class="p-count"><span id="p-cnt">212 / 3,000</span><i><b id="p-bar" style="width:7%"></b></i></div>
 </div>
-</article></div></section><section class="closing" aria-labelledby="closing-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section class="closing" aria-labelledby="closing-title">
 <div class="wrap">
 <div class="closing-card">
 <div>

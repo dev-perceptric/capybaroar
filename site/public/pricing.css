@@ -57,3 +57,10 @@
   .menu{grid-template-columns:repeat(2,minmax(0,1fr))}
   .netrow li{height:36px;font-size:13px}
 }
+
+/* Compact: icon beside the words, and the compare table one group at a time */
+.every li{flex-direction:row;align-items:flex-start;gap:12px;padding:16px}
+.every li>div{display:flex;flex-direction:column;gap:2px}
+.every h3{margin-top:0}
+.compare tbody[hidden]{display:none}
+.ev-ic{flex-shrink:0}

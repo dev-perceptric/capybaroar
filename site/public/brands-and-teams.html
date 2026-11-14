@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a brand?","acceptedAnswer":{"@type":"Answer","text":"A client or business in your workspace, with its own channels, calendar, inbox and reports."}},{"@type":"Question","name":"How many brands and seats do I get?","acceptedAnswer":{"@type":"Answer","text":"Free and Creator have 1 brand and 1 seat. Pro has 5 brands and 5 seats. Agency has no brand limit and 15 seats."}},{"@type":"Question","name":"Do clients take a seat?","acceptedAnswer":{"@type":"Answer","text":"Clients who only approve posts don't need a seat. They can also approve from a review link without an account."}},{"@type":"Question","name":"Can I limit an editor to some brands?","acceptedAnswer":{"@type":"Answer","text":"Yes, on Agency."}}]}</script>
 </head>
 <body>
@@ -112,25 +112,23 @@
 </div>
 <div class="toast" id="s-toast"><svg class="ico" style="width:14px;height:14px"><use href="#i-check-circle"/></svg>Scheduled to 4 channels</div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-layers"/></svg>Brands</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-users"/></svg>Team</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-layers"/></svg>Brands</p>
 <h2>A brand per client. <span>Nothing gets mixed up.</span></h2>
 <p>Each brand has its own channels, calendar, inbox and reports. A post can only go to one brand's channels.</p>
 <ul class="checks"><li>Own channels, calendar and results</li><li>Saved channel groups, like All socials</li><li>Switch brands in one click</li><li>Pro has 5 brands, Agency has no limit</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-layers"/></svg>Brands</div><div class="csv"><div class="crow rv pop"><span class="cd">Crumb &amp; Co.</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg><svg class="nl"><use href="#n-facebook"/></svg><svg class="nl"><use href="#n-tiktok"/></svg></span><span class="ct">12 posts this week</span></div><div class="crow rv pop"><span class="cd">Northside Gym</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg><svg class="nl"><use href="#n-youtube"/></svg></span><span class="ct">8 posts this week</span></div><div class="crow rv pop"><span class="cd">Bloom Florist</span><span class="cl"><svg class="nl"><use href="#n-pinterest"/></svg><svg class="nl"><use href="#n-instagram"/></svg></span><span class="ct">5 posts, 2 in review</span></div><div class="crow rv pop"><span class="cd">Lakeview Dental</span><span class="cl"><svg class="nl"><use href="#n-facebook"/></svg><svg class="nl"><use href="#n-linkedin"/></svg></span><span class="ct">3 posts this week</span></div></div></div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-users"/></svg>Team</p>
 <h2>The right access <span>for each person.</span></h2>
 <p>Owners and admins run the workspace. Editors write posts. On Agency, editors can be limited to the brands they work on.</p>
 <ul class="checks"><li>Owners, admins, editors and clients</li><li>Editors limited to their brands on Agency</li><li>Clients approve without taking a seat</li><li>Pro has 5 seats, Agency has 15</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-users"/></svg>Team</div><div class="csv"><div class="crow rv pop"><span class="cd">Owner</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg><svg class="nl"><use href="#n-linkedin"/></svg></span><span class="ct">Maya, every brand</span></div><div class="crow rv pop"><span class="cd">Editor</span><span class="cl"><svg class="nl"><use href="#n-tiktok"/></svg></span><span class="ct">Leo, Crumb &amp; Co.</span></div><div class="crow rv pop"><span class="cd">Client</span><span class="cl"><svg class="nl"><use href="#n-facebook"/></svg></span><span class="ct">Sam, approves Crumb &amp; Co.</span></div></div></div></div>
-</article></div></section><section id="roles" class="band-gray" aria-labelledby="roles-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section id="roles" class="band-gray" aria-labelledby="roles-title">
 <div class="wrap">
 <header class="head">
 <p class="tag"><svg class="ico"><use href="#i-shield"/></svg>Roles</p>

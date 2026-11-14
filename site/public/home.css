@@ -1291,3 +1291,19 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mgal img{display:block;width:100%;height:100%;object-fit:cover}
 .mgal .badge{position:absolute;left:6px;bottom:6px;background:var(--panel)}
 .mk-text{padding:14px 14px 0;font-size:13px;line-height:1.5;color:var(--ink)}
+
+/* Feature tour as tabs (feature and network pages) */
+.ft{padding:72px 0 96px}
+.ft-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 48px}
+.ft-tab{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 18px;border:0;border-radius:999px;background:var(--panel);box-shadow:var(--sh-pill);font:500 15px/1 var(--font);color:var(--ink-2);cursor:pointer;transition:background-color .15s,box-shadow .15s}
+.ft-tab .ico{width:16px;height:16px}
+.ft-tab:hover{color:var(--ink)}
+.ft-tab[aria-selected=true]{background:var(--y-3);color:var(--y-ink);box-shadow:0 0 0 1px var(--y-h)}
+.ft-pane{min-height:480px}
+.ft-pane[hidden]{display:none}
+@media (max-width:640px){
+  .ft{padding:48px 0 64px}
+  .ft-tabs{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;margin:0 calc(-1 * var(--gutter)) 32px;padding:2px var(--gutter);scrollbar-width:none}
+  .ft-tab{flex-shrink:0}
+  .ft-pane{min-height:0}
+}

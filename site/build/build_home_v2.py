@@ -174,7 +174,7 @@ if len(keep) == 5 and "\n".join(details) not in faq:
 out = lines[:t0] + [who, bento] + lines[t1 + 1:p0] + [pricing] + lines[p1 + 1:f0] + [faq] + lines[f1 + 1:]
 html = "\n".join(out)
 html = html.replace("<head>", '<head>\n<meta name="robots" content="noindex">', 1)
-html = html.replace('<link rel="stylesheet" href="/home.css?v=6">', '<link rel="stylesheet" href="/home.css?v=6">\n<link rel="stylesheet" href="/home-v2.css?v=1">', 1)
+html = html.replace('<link rel="stylesheet" href="/home.css?v=8">', '<link rel="stylesheet" href="/home.css?v=8">\n<link rel="stylesheet" href="/home-v2.css?v=1">', 1)
 html = html.replace('<a class="btn ghost" href="#tour">', '<a class="btn ghost" href="#features">')
 tabjs = """<script>
 (function(){var tabs=[].slice.call(document.querySelectorAll('.v2-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}

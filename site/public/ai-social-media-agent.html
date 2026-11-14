@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What can the agent do?","acceptedAnswer":{"@type":"Answer","text":"Everything you can do in the app through the API: read channels and results, write, schedule and change posts, and make pictures and videos."}},{"@type":"Question","name":"Will it post without asking?","acceptedAnswer":{"@type":"Answer","text":"No. It writes drafts unless you ask it to schedule, and asks before deleting."}},{"@type":"Question","name":"Which plans have the agent?","acceptedAnswer":{"@type":"Answer","text":"Creator, Pro and Agency. It uses AI credits."}},{"@type":"Question","name":"Can I use my own AI instead?","acceptedAnswer":{"@type":"Answer","text":"Yes. Connect Claude, ChatGPT or Cursor with MCP on any plan."}}]}</script>
 </head>
 <body>
@@ -93,27 +93,24 @@
 <div class="a-in"><span class="ph">Ask the agent</span><span class="pill" data-tool><svg class="ico"><use href="#i-image"/></svg>CapyImage</span><span class="pill" data-tool><svg class="ico"><use href="#i-video"/></svg>CapyVideo</span><span class="pill" data-tool><svg class="ico"><use href="#i-mic"/></svg>CapyAudio</span><span class="pill" data-tool><svg class="ico"><use href="#i-pen"/></svg>Rewrite</span></div>
 </div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-spark"/></svg>Plan</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-image"/></svg>Media</button><button class="ft-tab" role="tab" id="ft-t2" aria-controls="ft-p2" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-shield"/></svg>Safe</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-spark"/></svg>Plan</p>
 <h2>One message. <span>A full week.</span></h2>
 <p>Ask for a week of posts about a launch, an event or your usual topics. The agent drafts each one at a good time.</p>
 <ul class="checks"><li>Reads your channels and recent posts</li><li>Writes in your voice</li><li>Uses your queue and best times</li><li>Drafts wait for you to check them</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-spark"/></svg>Agent drafts</div><div class="csv"><div class="crow rv pop"><span class="cd">Mon 9 AM</span><span class="cl"><svg class="nl"><use href="#n-linkedin"/></svg></span><span class="ct">Why we bake at 4 AM</span></div><div class="crow rv pop"><span class="cd">Tue 12 PM</span><span class="cl"><svg class="nl"><use href="#n-instagram"/></svg></span><span class="ct">Rye, close up</span></div><div class="crow rv pop"><span class="cd">Thu 5 PM</span><span class="cl"><svg class="nl"><use href="#n-tiktok"/></svg><svg class="nl"><use href="#n-youtube"/></svg></span><span class="ct">Shaping in 30 seconds</span></div></div></div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-image"/></svg>Media</p>
 <h2>Pictures and videos <span>made for each post.</span></h2>
 <p>The agent can make a picture or a short video for a post and attach it when it is ready.</p>
 <ul class="checks"><li>Top image and video models</li><li>Attached to the right draft</li><li>Saved to your library</li><li>Uses your AI credits</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-image"/></svg>Media<span class="sub">48 files</span></div><div class="mgal"><figure class="rv pop"><img src="/img/food/croissant.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/coffee.webp" alt="" loading="lazy" decoding="async"><span class="badge">Add alt</span></figure><figure class="rv pop"><img src="/img/food/rack.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/shape.webp" alt="" loading="lazy" decoding="async"><span class="badge">Video</span></figure><figure class="rv pop"><img src="/img/food/shelf.webp" alt="" loading="lazy" decoding="async"><span class="badge">Add alt</span></figure></div></div></div>
-</article><article class="z">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p2" aria-labelledby="ft-t2" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-shield"/></svg>Safe</p>
 <h2>You stay <span>in charge.</span></h2>
 <p>The agent works with the same checks as you: plan limits, brands and approvals. It asks before deleting anything.</p>
 <ul class="checks"><li>Drafts unless you ask to schedule</li><li>Asks before deleting</li><li>Approvals still apply</li><li>Or use your own AI through MCP</li></ul>
@@ -134,7 +131,7 @@
 </div>
 <div class="p-count"><span id="p-cnt">212 / 3,000</span><i><b id="p-bar" style="width:7%"></b></i></div>
 </div>
-</article></div></section><section class="closing" aria-labelledby="closing-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section class="closing" aria-labelledby="closing-title">
 <div class="wrap">
 <div class="closing-card">
 <div>

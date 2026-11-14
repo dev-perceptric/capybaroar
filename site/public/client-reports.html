@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which plans have reports?","acceptedAnswer":{"@type":"Answer","text":"Pro and Agency. Agency reports carry your own logo and color."}},{"@type":"Question","name":"What can a report show?","acceptedAnswer":{"@type":"Answer","text":"Summary, followers, top posts, best time to post, results by format and by channel, and your notes."}},{"@type":"Question","name":"Can reports be emailed?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each report can be emailed every week or every month."}},{"@type":"Question","name":"Do clients need an account?","acceptedAnswer":{"@type":"Answer","text":"No. They open the report from its link."}}]}</script>
 </head>
 <body>
@@ -89,9 +89,8 @@
 </div>
 </div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-file"/></svg>Build it</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-mail"/></svg>Send it</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-file"/></svg>Build it</p>
 <h2>Pick what matters. <span>Leave out the rest.</span></h2>
 <p>Choose the sections and the period, and add your own notes for the client.</p>
 <ul class="checks"><li>Summary, followers and top posts</li><li>Best time to post, by format and by channel</li><li>Your own notes</li><li>7, 30 or 90 days, or last month</li></ul>
@@ -103,9 +102,8 @@
 <div class="rep-acts rv pop"><span class="pill"><svg class="ico"><use href="#i-link"/></svg>Copy link</span><span class="pill"><svg class="ico"><use href="#i-file"/></svg>PDF</span></div>
 <div class="rep-mail rv pop"><svg class="ico"><use href="#i-mail"/></svg><span>Email this report every month to 2 people</span><span class="sw"></span></div>
 </div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-mail"/></svg>Send it</p>
 <h2>A link, a PDF <span>or an email.</span></h2>
 <p>Share a link that is always up to date, print a PDF, or have the report emailed at 9 AM every week or month.</p>
 <ul class="checks"><li>A link anyone can open</li><li>Print to an A4 PDF</li><li>Weekly or monthly email</li><li>On Agency: your logo and color</li></ul>
@@ -122,7 +120,7 @@
 </div>
 </div>
 </div>
-</article></div></section><section class="closing" aria-labelledby="closing-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section class="closing" aria-labelledby="closing-title">
 <div class="wrap">
 <div class="closing-card">
 <div>

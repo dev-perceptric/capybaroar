@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/home.css?v=7">
+<link rel="stylesheet" href="/home.css?v=8">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many posts can I upload at once?","acceptedAnswer":{"@type":"Answer","text":"Up to 500 rows per CSV file."}},{"@type":"Question","name":"Which columns does the CSV need?","acceptedAnswer":{"@type":"Answer","text":"date, time, channels and text. media url, first comment and title are optional."}},{"@type":"Question","name":"Can I move from Buffer, Hootsuite or Later?","acceptedAnswer":{"@type":"Answer","text":"Yes. Export your posts as a CSV, then match your columns to Capybaroar's: date, time, channels and text."}},{"@type":"Question","name":"What happens to a row with a problem?","acceptedAnswer":{"@type":"Answer","text":"It is shown with its line number and the reason before you import, and is left out until you fix it."}},{"@type":"Question","name":"Can I upload threads?","acceptedAnswer":{"@type":"Answer","text":"Yes. In the text column, a line with only --- starts the next post. X, Bluesky, Threads and Mastodon post them as a thread."}}]}</script>
 </head>
 <body>
@@ -112,9 +112,8 @@
 </div>
 <div class="toast" id="s-toast"><svg class="ico" style="width:14px;height:14px"><use href="#i-check-circle"/></svg>Scheduled to 4 channels</div>
 </div></div></div></div>
-</section><section id="tour" aria-label="Feature tour"><div class="wrap zig"><article class="z">
+</section><section id="tour" class="ft" aria-label="Feature tour"><div class="wrap"><div class="ft-tabs" role="tablist" aria-label="Features"><button class="ft-tab" role="tab" id="ft-t0" aria-controls="ft-p0" aria-selected="true" tabindex="0"><svg class="ico"><use href="#i-upload"/></svg>CSV upload</button><button class="ft-tab" role="tab" id="ft-t1" aria-controls="ft-p1" aria-selected="false" tabindex="-1"><svg class="ico"><use href="#i-image"/></svg>A stack of files</button></div><article class="z ft-pane" role="tabpanel" id="ft-p0" aria-labelledby="ft-t0">
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-upload"/></svg>CSV upload</p>
 <h2>One row, <span>one post.</span></h2>
 <p>Up to 500 posts per file. Capybaroar reads the columns, matches your channels and shows every problem by row before you import.</p>
 <ul class="checks"><li>Up to 500 posts per file</li><li>Column names are matched for you</li><li>Every row checked before saving</li><li>Schedule them or save them as drafts</li></ul>
@@ -131,16 +130,15 @@
 <div class="weeks"><span class="pill">1 week</span><span class="pill">2 weeks</span><span class="pill pick">4 weeks</span><span class="pill">8 weeks</span><span class="pill">12 weeks</span><span class="pill">26 weeks</span></div>
 </div>
 </div></div>
-</article><article class="z flip">
+</article><article class="z ft-pane" role="tabpanel" id="ft-p1" aria-labelledby="ft-t1" hidden>
 <div class="z-text">
-<p class="tag"><svg class="ico"><use href="#i-image"/></svg>A stack of files</p>
 <h2>Drop 30 photos. <span>Get 30 posts.</span></h2>
 <p>Give each picture or video its own caption, then spread them one a day or over your queue times.</p>
 <ul class="checks"><li>A caption for each file</li><li>One a day, or your queue times</li><li>Pictures and videos up to 250 MB</li><li>Plan limits checked before saving</li></ul>
 
 </div>
 <div class="z-vis dots mk-vis " aria-hidden="true" data-reveal><div class="win mk-win"><div class="win-h"><svg class="ico"><use href="#i-image"/></svg>Media<span class="sub">48 files</span></div><div class="mgal"><figure class="rv pop"><img src="/img/food/croissant.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/coffee.webp" alt="" loading="lazy" decoding="async"><span class="badge">Add alt</span></figure><figure class="rv pop"><img src="/img/food/rack.webp" alt="" loading="lazy" decoding="async"><span class="badge">Alt text</span></figure><figure class="rv pop"><img src="/img/food/shape.webp" alt="" loading="lazy" decoding="async"><span class="badge">Video</span></figure><figure class="rv pop"><img src="/img/food/shelf.webp" alt="" loading="lazy" decoding="async"><span class="badge">Add alt</span></figure></div></div></div>
-</article></div></section><section id="columns" class="band-gray" aria-labelledby="columns-title">
+</article></div></section><script>(function(){var tabs=[].slice.call(document.querySelectorAll('.ft-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();</script><section id="columns" class="band-gray" aria-labelledby="columns-title">
 <div class="wrap">
 <header class="head">
 <p class="tag"><svg class="ico"><use href="#i-file"/></svg>CSV columns</p>
