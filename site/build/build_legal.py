@@ -31,9 +31,14 @@ def nice_date(iso):
 
 
 # ---------- /subprocessors ----------
+import datetime
+TODAY = datetime.date.today().isoformat()
+def live(x):
+    return x['active'] and (not x.get('starts') or x['starts'] <= TODAY)
+soon = [x for x in SUBS['subprocessors'] if x.get('starts') and x['starts'] > TODAY]
 rows = []
 for s in SUBS['subprocessors']:
-    if not s['active']:
+    if not live(s):
         continue
     dpa = f'<a href="{e(s["dpa"])}">Terms</a>' if s['dpa'] else ''
     rows.append(f'<tr><th scope="row">{e(s["name"])}</th><td>{e(s["purpose"])}</td><td>{e(s["data"])}</td><td>{e(s["location"])}<br><span class="muted">{e(s["transfer"])}</span></td><td>{dpa}</td></tr>')
@@ -47,6 +52,7 @@ page('subprocessors', 'Subprocessors', 'The companies that help Capybaroar run t
 <tbody>
 {chr(10).join(rows)}
 </tbody></table></div>
+{('<h2>Starting soon</h2><ul>' + ''.join(f'<li><strong>{e(x["name"])}</strong> from {nice_date(x["starts"])}: {e(x["purpose"])}. Data: {e(x["data"])}. Where: {e(x["location"])}.</li>' for x in soon) + '</ul>') if soon else ''}
 <h2>Services you choose</h2>
 <ul>{chosen}</ul>
 <h2>Changes</h2>
@@ -103,7 +109,7 @@ CO = json.load(open(os.path.join(ROOT, 'compliance', 'company.json')))
 POL = json.load(open(os.path.join(ROOT, 'compliance', 'policies.json')))
 WHO = f'{e(CO["legal_name"])}, doing business as {e(CO["dba"])}'
 MAIL = f'<a href="mailto:{e(CO["contact"])}">{e(CO["contact"])}</a>'
-active = [x for x in SUBS['subprocessors'] if x['active']]
+active = [x for x in SUBS['subprocessors'] if live(x)]
 
 # ---------- /dpa: the Common Paper DPA cover page, filled in ----------
 CP = 'https://commonpaper.com/standards/data-processing-agreement/1.1/'
