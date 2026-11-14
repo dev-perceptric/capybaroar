@@ -104,3 +104,5 @@
 .v2-pane-demo,.v2-tile,.v2-plan{border-radius:16px;background:var(--panel);box-shadow:var(--sh-lift);overflow:hidden}
 .v2-hot{box-shadow:0 0 0 2px var(--y-h),var(--sh-lift)}
 .v2-features{background:var(--canvas);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+/* Two-tone headings break between the dark and the gray part, never mid-phrase ("your / AI."). */
+.head h2>span{display:block}
