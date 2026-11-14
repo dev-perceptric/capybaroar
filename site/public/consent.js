@@ -27,6 +27,7 @@
     + '.cc-sw[aria-checked=true]{background:var(--y,#ffd202)}.cc-sw[aria-checked=true]::after{transform:translateX(16px)}'
     + '.cc-sw:focus-visible,.cc button:focus-visible{outline:0;box-shadow:var(--sh-focus)}'
     + '.cc-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}.cc-acts .btn{height:36px;padding:0 16px;font-size:14px}'
+    + '.cc-acts .cc-yes{background:var(--y,#ffd202);color:var(--y-ink,#262209);box-shadow:0 0 0 1px var(--y-h,#e6bd00)}.cc-acts .cc-yes:hover{background:var(--y-h,#e6bd00)}'
     + '.cc-more{margin-left:auto;border:0;background:none;padding:0 4px;font:500 14px/36px var(--font,system-ui);color:var(--ink,#171717);cursor:pointer;text-decoration:underline;text-underline-offset:3px}'
     + '.cc-foot{border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left}.cc-foot:hover{text-decoration:underline}'
     + '@media (max-width:640px){.cc{left:16px;right:16px;bottom:16px;width:auto}}';
@@ -47,7 +48,7 @@
         ? '<div class="cc-row"><div><b>Needed</b><small>Sign-in, security and your settings</small></div><span class="cc-on">Always on</span></div>'
           + '<div class="cc-row"><div><b id="cc-an">Analytics</b><small>Counts visits so we can improve the site</small></div><button type="button" class="cc-sw" role="switch" aria-labelledby="cc-an" aria-checked="' + on + '"></button></div>'
           + '<div class="cc-acts"><button type="button" class="btn ghost" data-cc="n">Reject all</button><button type="button" class="btn" data-cc="save">Save</button></div>'
-        : '<div class="cc-acts"><button type="button" class="btn ghost" data-cc="n">Reject all</button><button type="button" class="btn ghost" data-cc="a">Accept all</button><button type="button" class="cc-more" data-cc="more">Choose</button></div>');
+        : '<div class="cc-acts"><button type="button" class="btn cc-yes" data-cc="a">Accept all</button><button type="button" class="btn ghost" data-cc="n">Reject all</button><button type="button" class="cc-more" data-cc="more">Choose</button></div>');
     document.body.appendChild(box);
     var sw = box.querySelector('.cc-sw');
     if (sw) sw.addEventListener('click', function(){ sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') !== 'true'); });

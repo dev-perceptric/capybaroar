@@ -93,7 +93,7 @@
 
 <script src="/site.js?v=2" defer></script>
 <script src="/nav.js?v=1" defer></script>
-<script src="/consent.js?v=1" defer></script>
+<script src="/consent.js?v=2" defer></script>
 <script>(function(){var i=document.querySelector('[data-dx-search]'),box=document.querySelector('[data-dx-results]'),idx=null;if(!i)return;
 function load(){return idx?Promise.resolve(idx):fetch('/docs/search.json').then(function(r){return r.json()}).then(function(d){idx=d;return d})}
 i.addEventListener('input',function(){var q=i.value.trim().toLowerCase();if(!q){box.hidden=true;box.innerHTML='';return}

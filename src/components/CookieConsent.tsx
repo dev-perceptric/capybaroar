@@ -71,11 +71,11 @@ export function CookieConsent() {
         </div>
       ) : (
         <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Button onClick={() => save(true)} className="!bg-signal !text-on-signal hover:!bg-signal-strong">
+            Accept all
+          </Button>
           <Button variant="ghost" onClick={() => save(false)}>
             Reject all
-          </Button>
-          <Button variant="ghost" onClick={() => save(true)}>
-            Accept all
           </Button>
           <button type="button" onClick={() => setDetails(true)} className="ml-auto px-1 font-medium text-ink underline underline-offset-2">
             Choose

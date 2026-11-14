@@ -140,7 +140,7 @@ def renav(s):
     if '/nav.js' not in s:
         s = s.replace('</body>', '<script src="/nav.js?v=1" defer></script>\n</body>', 1)
     if '/consent.js' not in s:
-        s = s.replace('</body>', '<script src="/consent.js?v=1" defer></script>\n</body>', 1)
+        s = s.replace('</body>', '<script src="/consent.js?v=2" defer></script>\n</body>', 1)
     return s
 
 
@@ -351,7 +351,7 @@ def page(slug, key, title, desc, body, faqs):
 
 <script src="/site.js?v=2" defer></script>
 <script src="/nav.js?v=1" defer></script>
-<script src="/consent.js?v=1" defer></script>
+<script src="/consent.js?v=2" defer></script>
 </body>
 </html>
 '''
