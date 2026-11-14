@@ -6,6 +6,9 @@ export type PolicyDoc = "terms" | "privacy" | "dpa";
 export const DOCS: PolicyDoc[] = ["terms", "privacy", "dpa"];
 export type Policy = { doc: PolicyDoc; title: string; version: string; url: string };
 
+/** Whether the documents in compliance/policies.json are live. Until they are, nobody is asked to accept them. */
+export const policiesPublished = (src: Record<string, unknown> = POLICIES) => src.published === true;
+
 export const currentPolicies = (src: Record<string, unknown> = POLICIES): Policy[] =>
   DOCS.map((doc) => {
     const p = src[doc] as { title: string; version: string; url: string };

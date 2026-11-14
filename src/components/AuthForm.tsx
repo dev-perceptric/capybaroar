@@ -7,6 +7,7 @@ import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { requestReset, setPassword, signIn, signInWithGoogle, signOut, signUp, type AuthState } from "@/app/login/actions";
 import { verifyMfa } from "@/app/mfa/actions";
+import { policiesPublished } from "@/lib/policyRules";
 
 // login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link; mfa
 // asks for the code from the authenticator app (or a backup code) after a password or Google (/mfa).
@@ -113,7 +114,7 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
                   <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
                 </Field>
               ) : null}
-              {mode === "signup" ? (
+              {mode === "signup" && policiesPublished() ? (
                 <label className="flex items-start gap-2 text-[12px] leading-relaxed text-muted">
                   <Checkbox checked={agree} onChange={setAgree} label="I agree to the Terms, Privacy Policy and Data Processing Agreement" className="mt-0.5" />
                   <input type="hidden" name="agree" value={agree ? "yes" : ""} />
@@ -138,7 +139,7 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
                   {state.error}
                 </p>
               ) : null}
-              <Button type="submit" disabled={busy || (mode === "signup" && !agree)} className="mt-1 w-full justify-center">
+              <Button type="submit" disabled={busy || (mode === "signup" && policiesPublished() && !agree)} className="mt-1 w-full justify-center">
                 {busy ? <Loader /> : null}
                 {SUBMIT[mode]}
               </Button>

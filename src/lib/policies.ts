@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { adminClient } from "./supabase/server";
-import { stillToAccept, type Policy } from "./policyRules";
+import { policiesPublished, stillToAccept, type Policy } from "./policyRules";
 
 /** What this person accepted so far (every version). */
 export const acceptedBy = cache(async (userId: string) => {
@@ -12,6 +12,7 @@ export const acceptedBy = cache(async (userId: string) => {
 
 /** The current documents this person still has to accept. On a database hiccup, nothing: never lock people out. */
 export async function pendingFor(userId: string): Promise<{ pending: Policy[]; first: boolean }> {
+  if (!policiesPublished()) return { pending: [], first: false };
   try {
     const had = await acceptedBy(userId);
     return { pending: stillToAccept(had), first: had.length === 0 };

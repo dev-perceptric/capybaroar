@@ -6,7 +6,7 @@ import { userClient } from "@/lib/supabase/server";
 import { trustedIp } from "@/lib/clientIp";
 import { LIMITS, hashed, retryIn, takeAll } from "@/lib/limits";
 import { safeNext } from "@/proxy";
-import { currentPolicies } from "@/lib/policyRules";
+import { currentPolicies, policiesPublished } from "@/lib/policyRules";
 import { recordAcceptance } from "@/lib/policies";
 import { audit } from "@/lib/audit";
 import { firstWorkspaceId } from "@/lib/mfa";
@@ -62,7 +62,7 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   const password = String(form.get("password") ?? "");
   const short = tooShort(password);
   if (short) return { error: short };
-  if (form.get("agree") !== "yes") return { error: "Accept the Terms, Privacy Policy and Data Processing Agreement to continue" };
+  if (policiesPublished() && form.get("agree") !== "yes") return { error: "Accept the Terms, Privacy Policy and Data Processing Agreement to continue" };
   const stop = await limited("signup", email);
   if (stop) return { error: stop };
   const sb = await userClient();
@@ -77,7 +77,7 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   });
   if (error) return { error: error.message };
   // Proof of consent. An address that already has an account comes back with no identities: nothing to record.
-  if (data.user?.id && data.user.identities?.length !== 0) await recordAcceptance(data.user.id, currentPolicies(), "signup").catch((e) => console.error("consent:", e instanceof Error ? e.message : e));
+  if (policiesPublished() && data.user?.id && data.user.identities?.length !== 0) await recordAcceptance(data.user.id, currentPolicies(), "signup").catch((e) => console.error("consent:", e instanceof Error ? e.message : e));
   if (!data.session) return { sent: true };
   redirect(next);
 }

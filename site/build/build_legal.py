@@ -17,6 +17,9 @@ SHELL_TOP, SHELL_BOTTOM = tpl[:head_end], tpl[foot_start + len('</main>'):]
 
 
 def page(slug, title, description, body):
+    # Until compliance/policies.json says published, the new DPA, privacy policy and terms stay out of the site.
+    if slug in ('dpa', 'privacy') and not json.load(open(os.path.join(ROOT, 'compliance', 'policies.json'))).get('published'):
+        return
     top, n1 = re.subn(r'<title>[^<]*</title>', f'<title>{e(title)} | Capybaroar</title>', SHELL_TOP, count=1)
     top, n2 = re.subn(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{e(description)}">', top, count=1)
     assert n1 == 1 and n2 == 1, 'privacy page head changed: update build_legal.py'
@@ -232,22 +235,32 @@ t = re.sub(r'<p>These terms cover your use of Capybaroar, a service run by [^<]*
 if 'id="dpa"' not in t:
     t = t.replace('<h2>Connected channels</h2>', f'<h2 id="dpa">Personal data</h2>\n<p>Our <a href="/privacy">Privacy Policy</a> explains how we handle personal data. When you use Capybaroar for a business and the GDPR or a similar law applies to the personal data in your workspace, our <a href="/dpa">Data Processing Agreement</a> is part of these terms.</p>\n<h2>Connected channels</h2>', 1)
 t = t.replace('<p>We may update these terms and will post the new date here. If you keep using Capybaroar after a change, you accept the new terms.</p>', '<p>We may update these terms and will post the new version here. For important changes, we ask you to accept the new terms in the app before they apply to you.</p>')
-open(P + 'terms.html', 'w').write(t)
+if POL.get('published'):
+    open(P + 'terms.html', 'w').write(t)
 
 # ---------- footer links on every page, and the sitemap ----------
 OLD = '<li><a href="/data-deletion">Data deletion</a></li></ul></nav>'
 NEW = '<li><a href="/data-deletion">Data deletion</a></li><li><a href="/security">Security</a></li><li><a href="/subprocessors">Subprocessors</a></li><li><a href="/dpa">DPA</a></li></ul></nav>'
 PHASE1 = '<li><a href="/data-deletion">Data deletion</a></li><li><a href="/security">Security</a></li><li><a href="/subprocessors">Subprocessors</a></li></ul></nav>'
+WANT = NEW if POL.get('published') else PHASE1
 for f in glob.glob(P + '**/*.html', recursive=True):
     s = open(f).read()
-    if NEW in s:
+    if WANT in s:
         continue
-    t = s.replace(PHASE1, NEW) if PHASE1 in s else s.replace(OLD, NEW)
+    t = s
+    for have in (NEW, PHASE1, OLD):
+        if have in t:
+            t = t.replace(have, WANT)
+            break
     if t != s:
         open(f, 'w').write(t)
 
 sm = open(P + 'sitemap.xml').read()
-for slug in ['security', 'subprocessors', 'dpa']:
+if not POL.get('published'):
+    sm = sm.replace('  <url><loc>https://capybaroar.com/dpa</loc></url>\n', '')
+    if os.path.exists(P + 'dpa.html'):
+        os.remove(P + 'dpa.html')
+for slug in ['security', 'subprocessors'] + (['dpa'] if POL.get('published') else []):
     loc = f'  <url><loc>https://capybaroar.com/{slug}</loc></url>\n'
     if loc not in sm:
         sm = sm.replace('  <url><loc>https://capybaroar.com/data-deletion</loc></url>\n', '  <url><loc>https://capybaroar.com/data-deletion</loc></url>\n' + loc, 1)
@@ -256,4 +269,4 @@ open(P + 'sitemap.xml', 'w').write(sm)
 # security.txt (RFC 9116): where to report, until when this file holds.
 os.makedirs(P + '.well-known', exist_ok=True)
 open(P + '.well-known/security.txt', 'w').write('Contact: mailto:hello@capybaroar.com\nExpires: 2027-11-14T00:00:00.000Z\nPreferred-Languages: en\nCanonical: https://capybaroar.com/.well-known/security.txt\nPolicy: https://capybaroar.com/security\n')
-print('built /subprocessors, /security, /dpa, /privacy, /terms, footer links, sitemap, security.txt')
+print('built /subprocessors, /security' + (', /dpa, /privacy, /terms' if POL.get('published') else ' (DPA, privacy and terms held back until published)') + ', footer links, sitemap, security.txt')

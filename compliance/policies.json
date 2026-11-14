@@ -1,6 +1,20 @@
 {
   "_note": "Bump a version (a date) when a document changes in a way people should accept again. Signed-in people see a notice and accept the new versions once.",
-  "terms": { "title": "Terms of Service", "version": "2026-11-14", "url": "https://capybaroar.com/terms" },
-  "privacy": { "title": "Privacy Policy", "version": "2026-11-14", "url": "https://capybaroar.com/privacy" },
-  "dpa": { "title": "Data Processing Agreement", "version": "2026-11-14", "url": "https://capybaroar.com/dpa" }
+  "published": false,
+  "_published_note": "Set to true once compliance/company.json has the legal name, address and EU representative and a lawyer has read the documents. While false, the old privacy and terms pages stay live, /dpa isn't published, and sign-up and the app don't ask anyone to accept these versions.",
+  "terms": {
+    "title": "Terms of Service",
+    "version": "2026-11-14",
+    "url": "https://capybaroar.com/terms"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "version": "2026-11-14",
+    "url": "https://capybaroar.com/privacy"
+  },
+  "dpa": {
+    "title": "Data Processing Agreement",
+    "version": "2026-11-14",
+    "url": "https://capybaroar.com/dpa"
+  }
 }

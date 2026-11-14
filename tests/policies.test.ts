@@ -36,3 +36,11 @@ test("the shipped policies file has every document with a version and a link", (
     assert.ok(p.title);
   }
 });
+
+test("nothing is asked until the documents are published", async () => {
+  const { policiesPublished } = await import("../src/lib/policyRules");
+  assert.equal(policiesPublished({ published: false }), false);
+  assert.equal(policiesPublished({}), false);
+  assert.equal(policiesPublished({ published: "yes" }), false);
+  assert.equal(policiesPublished({ published: true }), true);
+});
