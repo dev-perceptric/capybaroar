@@ -19,6 +19,7 @@ import { aiReady, runGenerations } from "./generations";
 import { runAutoTopUps, sweepHolds } from "./credits";
 import { runWorkspaceDelete } from "./workspaceDelete";
 import { pruneOld } from "./prune";
+import { sendSubprocessorNotices } from "./subprocessorNotices";
 import { runDataExport } from "./exports";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
@@ -395,6 +396,11 @@ export function startRunner() {
       await pruneOld().catch((e) => {
         console.error("prune:", e instanceof Error ? e.message : e);
         void trackError(e, "runner: prune");
+      });
+      // Emails before a new subprocessor starts (subprocessorNotices.ts); a stopped run picks up next hour.
+      await sendSubprocessorNotices().catch((e) => {
+        console.error("subprocessor notices:", e instanceof Error ? e.message : e);
+        void trackError(e, "runner: subprocessor notices");
       });
     }).catch((e) => {
       console.error("upkeep:", e);

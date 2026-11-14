@@ -16,14 +16,16 @@ import { listApiKeys } from "@/lib/api/keys";
 import { listConnectedApps } from "@/lib/oauth/store";
 import { listWebhooks } from "@/lib/webhooks";
 import { appUrl } from "@/lib/channels";
+import { lastExports } from "@/lib/exports";
 
 export default async function SettingsPage() {
   const ctx = await getCtx();
   // Members who don't run the workspace see only their own account.
+  const exports = await lastExports(ctx.userId, ctx.workspaceId, ctx.role === "owner").catch(() => ({ account: null, workspace: null }));
   if (!canManage(ctx.role))
     return (
       <Page icon={<Settings />} title="Settings">
-        <SettingsView name={ctx.workspaceName} timezone={ctx.timezone} queue={[]} email={ctx.email} accountOnly />
+        <SettingsView name={ctx.workspaceName} timezone={ctx.timezone} queue={[]} email={ctx.email} accountOnly exports={exports} />
       </Page>
     );
   const db = adminClient();
@@ -94,6 +96,7 @@ export default async function SettingsPage() {
         api={keys ? { base: appUrl(), docs: "https://capybaroar.com/api", keys, apps, hooks } : undefined}
         owner={ctx.role === "owner"}
         email={ctx.email}
+        exports={exports}
       />
     </Page>
   );

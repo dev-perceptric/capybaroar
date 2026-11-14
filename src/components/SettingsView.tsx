@@ -10,6 +10,11 @@ import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
 import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
 import { ApiSection, type ApiInfo } from "./ApiSettings";
+import { AuditLog } from "./AuditLog";
+import { DataExport } from "./DataExport";
+import { TwoFactor } from "./TwoFactor";
+import { RequireTwoFactor } from "./RequireTwoFactor";
+import type { ExportView } from "@/lib/exportRules";
 import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
 import { fmtTime } from "@/lib/format";
@@ -20,7 +25,8 @@ const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-type Tab = "general" | "brands" | "members" | "queue" | "api" | "billing" | "account";
+type Tab = "general" | "brands" | "members" | "queue" | "audit" | "api" | "billing" | "account";
+type Exports = { account: ExportView | null; workspace: ExportView | null };
 
 const noSub = () => () => {};
 
@@ -38,7 +44,7 @@ export function SaveNote({ msg }: { msg: string }) {
  * the address (`?tab=brands`); older links with a hash (`#brands`, `#billing`) open the same pane. `owner` adds Delete
  * workspace to General; `accountOnly` (members who don't run the workspace) shows only Your account.
  */
-export function SettingsView({ name, timezone, queue, billing, team, api, owner = false, email, accountOnly = false }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo; owner?: boolean; email?: string; accountOnly?: boolean }) {
+export function SettingsView({ name, timezone, queue, billing, team, api, owner = false, email, accountOnly = false, exports = { account: null, workspace: null } }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo; owner?: boolean; email?: string; accountOnly?: boolean; exports?: Exports }) {
   const [tz, setTz] = useState(timezone);
   const account = email != null ? [{ label: "Account", tabs: [{ id: "account" as const, label: "Your account" }] }] : [];
   const groups: { label: string; tabs: { id: Tab; label: string }[] }[] = accountOnly
@@ -46,7 +52,7 @@ export function SettingsView({ name, timezone, queue, billing, team, api, owner 
     : [
         {
           label: "Workspace",
-          tabs: [{ id: "general", label: "General" }, ...(team ? [{ id: "brands" as const, label: "Brands" }, { id: "members" as const, label: "Members" }] : []), { id: "queue", label: "Queue" }],
+          tabs: [{ id: "general", label: "General" }, ...(team ? [{ id: "brands" as const, label: "Brands" }, { id: "members" as const, label: "Members" }] : []), { id: "queue", label: "Queue" }, ...(team ? [{ id: "audit" as const, label: "Audit log" }] : [])],
         },
         ...(billing ? [{ label: "Plan", tabs: [{ id: "billing" as const, label: "Billing" }] }] : []),
         ...(api ? [{ label: "Developers", tabs: [{ id: "api" as const, label: "API and MCP" }] }] : []),
@@ -97,19 +103,20 @@ export function SettingsView({ name, timezone, queue, billing, team, api, owner 
         ))}
       </nav>
       <div className="flex max-w-[760px] min-w-0 flex-1 flex-col gap-5">
-        {tab === "general" ? <General name={name} tz={tz} setTz={setTz} owner={owner} /> : null}
+        {tab === "general" ? <General name={name} tz={tz} setTz={setTz} owner={owner} exports={exports} /> : null}
         {tab === "brands" && team ? <BrandsSection team={team} /> : null}
         {tab === "members" && team ? <MembersSection team={team} /> : null}
         {tab === "queue" ? <Queue initial={queue} timezone={tz} /> : null}
+        {tab === "audit" && team ? <AuditLog timezone={tz} people={team.members.map((m) => ({ userId: m.userId, name: m.name, email: m.email }))} /> : null}
         {tab === "api" && api ? <ApiSection api={api} /> : null}
         {tab === "billing" && billing ? <BillingSection info={billing} /> : null}
-        {tab === "account" && email != null ? <Account email={email} /> : null}
+        {tab === "account" && email != null ? <Account email={email} exports={exports} /> : null}
       </div>
     </div>
   );
 }
 
-function General({ name, tz, setTz, owner }: { name: string; tz: string; setTz: (v: string) => void; owner: boolean }) {
+function General({ name, tz, setTz, owner, exports }: { name: string; tz: string; setTz: (v: string) => void; owner: boolean; exports: Exports }) {
   const [n, setN] = useState(name);
   const [msg, setMsg] = useState("");
   const [busy, start] = useTransition();
@@ -136,6 +143,8 @@ function General({ name, tz, setTz, owner }: { name: string; tz: string; setTz: 
           <SaveNote msg={msg} />
         </div>
       </Panel>
+      <RequireTwoFactor />
+      {owner ? <DataExport account={null} workspace={exports.workspace} owner only="workspace" /> : null}
       {owner ? (
         <Danger
           title="Delete workspace"
@@ -150,10 +159,12 @@ function General({ name, tz, setTz, owner }: { name: string; tz: string; setTz: 
   );
 }
 
-function Account({ email }: { email: string }) {
+function Account({ email, exports }: { email: string; exports: Exports }) {
   return (
     <>
       <PaneHead title="Your account" line={email} />
+      <TwoFactor />
+      <DataExport account={exports.account} workspace={null} owner={false} only="account" />
       <Danger
         title="Delete my account"
         button="Delete my account"
