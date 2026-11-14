@@ -8,7 +8,7 @@ import { providerOf } from "./providers";
 import { AuthError, type Provider, type Published, type Secret } from "./providers/types";
 import { takesThread } from "./networks";
 import { threadOf, type StoredPart } from "./thread";
-import { STATS_AFTER_MIN, runDue, runInbox, type Job, type Store, type TargetCtx } from "./publisher";
+import { STATS_AFTER_MIN, runDue, runInbox, runJob, type Job, type Store, type TargetCtx } from "./publisher";
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
 import { deliverDue, emit, pruneDeliveries } from "./webhooks";
@@ -19,6 +19,7 @@ import { aiReady, runGenerations } from "./generations";
 import { runAutoTopUps, sweepHolds } from "./credits";
 import { runWorkspaceDelete } from "./workspaceDelete";
 import { pruneOld } from "./prune";
+import { runDataExport } from "./exports";
 
 // Runs inside the web server: every 15 seconds it publishes due posts and runs Inbox reads, every 10 minutes it
 // queues an Inbox read for each channel that has one, and once an hour it refreshes tokens that expire soon and
@@ -28,6 +29,8 @@ const WORKER = `${hostname()}:${process.pid}`;
 // Jobs claimed and still running, publish and stats apart from Inbox reads (each loop lets go of its own when it ends).
 const held = new HeldJobs();
 const heldInbox = new HeldJobs();
+// Data exports run on their own claim and loop (037_exports.sql), one at a time.
+const heldExports = new HeldJobs();
 
 const canRefresh = (p: Provider, s: Secret) => (p.refreshable ? p.refreshable(s) : Boolean(s.refreshToken));
 
@@ -259,6 +262,7 @@ export const supabaseStore: Store = {
   },
   report: runReport,
   deleteWorkspace: runWorkspaceDelete,
+  dataExport: runDataExport,
 };
 
 const BATCH = 5;
@@ -339,6 +343,29 @@ export function startRunner() {
     }
   };
   setInterval(make, 4000);
+  // Data exports: their own claim and loop, so minutes of zipping gigabytes never hold up publishing.
+  let exporting = false;
+  const exportJobs = async () => {
+    if (exporting) return;
+    exporting = true;
+    try {
+      const { data, error } = await adminClient().rpc("claim_export_jobs", { worker: WORKER, n: 1 });
+      // Until migration 037 is in, claim_jobs still hands exports to the publish loop.
+      if (error?.code === "PGRST202") return;
+      if (error) throw new Error(error.message);
+      for (const job of (data ?? []) as Job[]) {
+        heldExports.hold([job.id]);
+        await runJob(supabaseStore, providerOf, job);
+      }
+    } catch (e) {
+      console.error("exports:", e instanceof Error ? e.message : e);
+      void trackError(e, "runner: exports");
+    } finally {
+      heldExports.clear();
+      exporting = false;
+    }
+  };
+  setInterval(exportJobs, 20000);
   // Automatic credit top-ups: each request is claimed by one server (credits.ts).
   let topping = false;
   const topUps = async () => {
@@ -384,7 +411,7 @@ export function startRunner() {
   }, 300000);
   setTimeout(hourly, 30000);
   // Jobs still running keep their lock; the beat tells /api/health this server's runner is alive.
-  setInterval(() => void keepHeld(opsStore, held, WORKER).then(() => keepHeld(opsStore, heldInbox, WORKER)), 60000);
+  setInterval(() => void keepHeld(opsStore, held, WORKER).then(() => keepHeld(opsStore, heldInbox, WORKER)).then(() => keepHeld(opsStore, heldExports, WORKER)), 60000);
   const bootedAt = new Date();
   const alive = () => beat(bootedAt).catch((e) => console.error("beat:", e instanceof Error ? e.message : e));
   setInterval(alive, 60000);

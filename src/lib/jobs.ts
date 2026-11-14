@@ -1,7 +1,7 @@
 import "server-only";
 import { adminClient } from "./supabase/server";
 
-export type JobKind = "publish" | "stats" | "workspace_delete";
+export type JobKind = "publish" | "stats" | "workspace_delete" | "data_export";
 
 export async function enqueue(kind: JobKind, payload: Record<string, unknown>, runAfter = new Date()) {
   const { error } = await adminClient().from("jobs").insert({ kind, payload, run_after: runAfter.toISOString() });

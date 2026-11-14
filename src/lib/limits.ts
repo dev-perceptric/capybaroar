@@ -23,6 +23,13 @@ export const LIMITS = {
   // Subprocessor change notices: the sign-up form on capybaroar.com sends a confirm email.
   subscribeIp: { windowS: 3600, max: 5 },
   subscribeEmail: { windowS: 86400, max: 3 },
+  // Data exports (exports.ts): one of each kind per person per day; starting a failed one again doesn't count.
+  exportAccountDay: { windowS: 86400, max: 1 },
+  exportWorkspaceDay: { windowS: 86400, max: 1 },
+  // Two-factor codes (sign-in, set-up, turning off, new backup codes): 5 tries per person per 10 minutes.
+  mfaCode: { windowS: 600, max: 5 },
+  // Starting a new authenticator app set-up, which makes a factor in Supabase Auth each time.
+  mfaEnroll: { windowS: 3600, max: 10 },
 } as const;
 
 /** A bucket name that never holds an address or IP as it is. */

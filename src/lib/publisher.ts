@@ -86,6 +86,8 @@ export interface Store {
   report?(payload: Record<string, string>): Promise<void>;
   /** Deletes a workspace (kind "workspace_delete"; order in retention.ts). Throws to retry. */
   deleteWorkspace?(payload: Record<string, string>): Promise<void>;
+  /** Builds a data export (kind "data_export"; exportZip.ts). Throws to retry. */
+  dataExport?(payload: Record<string, string>): Promise<void>;
 }
 
 /** Webhooks are told after the fact: a failure to tell them never touches the post. */
@@ -132,6 +134,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     else if (job.kind === "inbox") await collectInbox(store, providers, job.payload.channelId);
     else if (job.kind === "report") await store.report?.(job.payload);
     else if (job.kind === "workspace_delete") await store.deleteWorkspace?.(job.payload);
+    else if (job.kind === "data_export") await store.dataExport?.(job.payload);
     await store.jobDone(job.id, null);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
