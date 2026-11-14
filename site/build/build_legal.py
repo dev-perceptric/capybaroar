@@ -204,7 +204,10 @@ page('privacy', 'Privacy Policy', 'How Capybaroar collects, uses and protects pe
 <ul><li>Unfinished sign-ins to a network: 1 hour.</li>
 <li>Inbox comments and messages you&rsquo;ve closed: 180 days.</li>
 <li>Agent chats: 365 days after the last message.</li>
-<li>Records of background work, like publishing and reading jobs: 30 days.</li></ul>
+<li>Records of background work, like publishing and reading jobs: 30 days.</li>
+<li>Exports you download: 24 hours.</li>
+<li>The security log of who did what in a workspace (Settings, Audit log): 365 days. It keeps the name or email of the person who acted, even after their account is deleted, so the workspace keeps an accurate record.</li>
+<li>Sign-ups for subprocessor change emails: 7 days if never confirmed, 30 days after you unsubscribe.</li></ul>
 <p>When you disconnect a channel, we delete its access token and its inbox, and ask the network to end our access where it offers a way to. An owner can delete a workspace in Settings: we cancel its subscription, end its access on the networks that offer a way to, and delete its files and data. You can delete your account in Settings too, which also deletes workspaces where you&rsquo;re the only member. We keep invoices as long as tax law requires.</p>
 <h2>How we protect it</h2>
 <p>See our <a href="/security">security page</a>.</p>

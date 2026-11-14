@@ -1,5 +1,5 @@
 import "server-only";
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { adminClient } from "./supabase/server";
 import { PER_MINUTE, RateLimit } from "./api/limit";
 
@@ -32,8 +32,9 @@ export const LIMITS = {
   mfaEnroll: { windowS: 3600, max: 10 },
 } as const;
 
-/** A bucket name that never holds an address or IP as it is. */
-export const hashed = (kind: string, v: string) => `${kind}:${createHash("sha256").update(v.trim().toLowerCase()).digest("hex").slice(0, 32)}`;
+/** A bucket name that never holds an address or IP as it is. Keyed, so an IP can't be found by trying every address. */
+const limitSalt = () => process.env.AUDIT_SALT || process.env.BIO_SALT || process.env.TOKEN_KEY || "";
+export const hashed = (kind: string, v: string) => `${kind}:${createHmac("sha256", limitSalt()).update(v.trim().toLowerCase()).digest("hex").slice(0, 32)}`;
 
 const local = new Map<string, RateLimit>();
 

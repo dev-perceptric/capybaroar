@@ -25,6 +25,9 @@ export async function pruneOld(now = new Date()) {
     // A day past the keep time, so a clock a little ahead of the database's never asks the guard trigger (036) for a
     // row it still keeps, which would refuse the whole delete.
     ["audit_events", () => db.from("audit_events").delete().lt("created_at", iso(auditCutoff(now)))],
+    // Subprocessor notice sign-ups never confirmed after 7 days, or unsubscribed 30 days ago.
+    ["subprocessor_subscribers", () => db.from("subprocessor_subscribers").delete().is("confirmed_at", null).lt("created_at", iso(new Date(now.getTime() - 7 * 86400000)))],
+    ["subprocessor_unsubscribed", () => db.from("subprocessor_subscribers").delete().lt("unsubscribed_at", iso(new Date(now.getTime() - 30 * 86400000)))],
   ];
   const failed: string[] = [];
   for (const [what, run] of steps) {
