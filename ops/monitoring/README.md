@@ -118,7 +118,8 @@ Do this once, before step 12 of `ops/vps/CHECKLIST.md`.
 4. **Copy this folder up and make the push password.** From your computer, in the repo:
 
    ```sh
-   scp -r ops/monitoring root@<compliance server>:/opt/capy-monitoring
+   scp -r ops/monitoring deploy@<compliance server>:/tmp/capy-monitoring
+   ssh deploy@<compliance server> 'sudo mv /tmp/capy-monitoring /opt/capy-monitoring' 
    ```
 
    Then on the server:

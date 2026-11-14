@@ -224,11 +224,11 @@ about 1.5 GB of database and 1 GB of media per team, gzip shrinking the dump to 
 | Database dumps | 0.3 GB x 42 = 13 GB | 3 GB x 42 = 126 GB |
 | Media | 55 GB | 550 GB |
 | Stored | about 68 GB | about 680 GB |
-| B2 storage at $5/TB a month | $0.34 | $3.40 |
+| B2 storage at $6.95/TB a month | $0.47 | $4.73 |
 | Downloads (monthly test restore, free up to 3x what is stored) | $0 | $0 |
 | API calls (listing and uploads; check) | under $0.10 | under $0.10 |
-| **Monthly total** | **about $0.40** | **about $3.50** |
+| **Monthly total** | **about $0.55** | **about $4.85** |
 
-$5/TB a month and free downloads up to 3x the stored amount (then $0.01/GB) are from backblaze.com/cloud-storage/pricing
-(read 2026-11-13). The first 10 GB being free, the price of API calls and Object Lock having no extra charge are
+$6.95/TB a month is from backblaze.com/cloud-storage/pricing (read 2026-11-14); free downloads up to 3x the stored
+amount (then $0.01/GB) were read there on 2026-11-13. The first 10 GB being free, the price of API calls and Object Lock having no extra charge are
 "check". A heartbeat monitor's free tier covers one daily check (check).
