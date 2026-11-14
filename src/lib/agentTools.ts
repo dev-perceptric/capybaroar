@@ -3,7 +3,7 @@
 // same checks. Pure, so tests check the tool list without Claude or Supabase.
 import type Anthropic from "@anthropic-ai/sdk";
 import { TOOLS, instructions } from "./api/mcp";
-import { CAPY, type GenKind } from "./genRules";
+import { CAPY, modelOf, type GenKind } from "./genRules";
 
 /** How files added with + start the message block that lists them (and how the chat finds that block). */
 export const ATTACHED = "Attached from Media: ";
@@ -16,6 +16,13 @@ export type CapyChoice = "auto" | GenKind;
 
 export function capyChoice(v: unknown): CapyChoice {
   return v === "image" || v === "video" || v === "audio" ? v : "auto";
+}
+
+/** The model the user picked in the chat box, when it's a real model of the kind they picked; otherwise Capy picks. */
+export function pickedModel(v: unknown, capy: CapyChoice): string | null {
+  if (capy === "auto" || typeof v !== "string") return null;
+  const m = modelOf(v);
+  return m && m.kind === capy ? m.id : null;
 }
 
 export const RULES = `You are the agent inside Capybaroar, a tool that schedules social media posts. You run this workspace for the user: plan, write, schedule, change and delete posts, manage the media library, make pictures and videos, read analytics and the posting queue, and manage webhooks.
@@ -35,9 +42,11 @@ Pictures, videos and audio (Capy):
 - A picture is usually done when generate_media answers: attach its media id with media_ids. A video takes a few minutes: save its post as a draft, then call attach_when_done with the post id and the generation id, and the video is added to the draft when it's done. Don't schedule a post whose file isn't done.
 - Each file costs credits (get_credits shows what's left), and so does this chat, so make one per post unless the user asks for options.`;
 
-export function systemPrompt(ai: boolean, timezone: string, now: Date, capy: CapyChoice = "auto", kits = "") {
+export function systemPrompt(ai: boolean, timezone: string, now: Date, capy: CapyChoice = "auto", kits = "", model: string | null = null) {
   const what = { image: "a picture", video: "a video", audio: "audio" } as const;
-  const picked = ai && capy !== "auto" ? `\n- For this message the user picked ${CAPY[capy].name}: make ${what[capy]} (generate_media kind "${capy}") for what they ask.` : "";
+  const named = model ? modelOf(model) : null;
+  const using = named ? ` with ${named.name} (generate_media model "${named.id}"); the user chose it, so don't pick another` : "";
+  const picked = ai && capy !== "auto" ? `\n- For this message the user picked ${CAPY[capy].name}: make ${what[capy]} (generate_media kind "${capy}")${using} for what they ask.` : "";
   return `${RULES}\n${instructions(timezone)}${ai ? MEDIA_RULES + picked : ""}${kits ? `\nWhen you write for a brand, follow its brand kit.\n${kits}` : ""}\nNow: ${now.toISOString()}.`;
 }
 

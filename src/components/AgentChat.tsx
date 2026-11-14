@@ -13,7 +13,7 @@ import { Markdown } from "./Markdown";
 import { ChatsMenu, CHATS_EVENT } from "./AgentChats";
 import { send } from "@/app/(app)/agents/actions";
 import { loadMedia } from "@/app/(app)/calendar/actions";
-import { CAPY, type GenKind } from "@/lib/genRules";
+import { CAPY, MODELS, modelOf, type GenKind } from "@/lib/genRules";
 import { creditGate } from "./creditGate";
 
 // The Agent, like ChatGPT: chats live in the sidebar (AgentChats), the first screen is a drawing, a title, the box and
@@ -37,12 +37,23 @@ type File = { id: string; name: string; mime: string; thumb: string | null };
 
 const MAKE_KEY = "cb_agent_make";
 const MAKE_ICON: Record<Make, React.ReactNode> = { auto: <Sparkles />, image: <ImageIcon />, video: <Video />, audio: <AudioLines /> };
+/** The least a model of this kind costs, in credits, for a short request (5 seconds for video and sound). */
+const fromCredits = (kind: GenKind) => Math.min(...MODELS.filter((m) => m.kind === kind).map((m) => m.credits({ prompt: "x".repeat(40), seconds: 5 })));
+const creditWord = (n: number) => `${n} credit${n === 1 ? "" : "s"}`;
 const MAKES: { value: Make; label: string; line: string }[] = [
   { value: "auto", label: "Auto", line: "The agent decides what each post needs" },
-  { value: "image", label: CAPY.image.name, line: "Pictures and edits, from 8 credits" },
-  { value: "video", label: CAPY.video.name, line: "Short videos with sound, from 210 credits" },
-  { value: "audio", label: CAPY.audio.name, line: "Voiceovers, music and sound effects, from 1 credit" },
+  { value: "image", label: CAPY.image.name, line: `Pictures and edits, from ${creditWord(fromCredits("image"))}` },
+  { value: "video", label: CAPY.video.name, line: `Short videos with sound, from ${creditWord(fromCredits("video"))}` },
+  { value: "audio", label: CAPY.audio.name, line: `Voiceovers, music and sound effects, from ${creditWord(fromCredits("audio"))}` },
 ];
+const MODEL_KEY = "cb_agent_models";
+/** The models people can pick for a kind, with what each costs for a short request. */
+const modelsFor = (kind: GenKind) =>
+  MODELS.filter((m) => m.kind === kind).map((m) => ({
+    id: m.id,
+    name: m.name,
+    line: `${creditWord(m.credits({ prompt: "x".repeat(40), seconds: 5 }))}${m.kind === "video" ? " for 5 seconds" : ""}${m.picture === "needs" ? ", needs a picture" : ""}`,
+  }));
 
 type Starter = { make: Make; icon: React.ReactNode; title: string; line: string; text: string };
 const TEXT_STARTERS: Starter[] = [
@@ -64,6 +75,8 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
   const [make, setMake] = useState<Make>("auto");
+  // The model picked for each kind; none means Capy picks.
+  const [models, setModels] = useState<Partial<Record<GenKind, string>>>({});
   const [history, setHistory] = useState(false);
   const historyBtn = useRef<HTMLButtonElement>(null);
   const router = useRouter();
@@ -74,6 +87,10 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
       const saved = localStorage.getItem(MAKE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after the first paint, so the server and browser render the same
       if (MAKES.some((m) => m.value === saved)) setMake(saved as Make);
+      const kept = JSON.parse(localStorage.getItem(MODEL_KEY) ?? "{}") as Record<string, unknown>;
+      const ok: Partial<Record<GenKind, string>> = {};
+      for (const k of ["image", "video", "audio"] as GenKind[]) if (typeof kept[k] === "string" && modelOf(kept[k] as string)?.kind === k) ok[k] = kept[k] as string;
+      setModels(ok);
     } catch {
       // no saved choice
     }
@@ -82,6 +99,17 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
     setMake(v);
     try {
       localStorage.setItem(MAKE_KEY, v);
+    } catch {
+      // kept for this visit only
+    }
+  };
+  const pickModel = (kind: GenKind, id: string | null) => {
+    const next = { ...models };
+    if (id) next[kind] = id;
+    else delete next[kind];
+    setModels(next);
+    try {
+      localStorage.setItem(MODEL_KEY, JSON.stringify(next));
     } catch {
       // kept for this visit only
     }
@@ -105,7 +133,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
     setPending({ text: t, files: sent.map((f) => f.name) });
     setError("");
     start(async () => {
-      const r = await send(chatId, t, make, sent.map((f) => f.id));
+      const r = await send(chatId, t, make, sent.map((f) => f.id), make === "auto" ? undefined : models[make]);
       setPending(null);
       if (r.error) {
         if (!(await creditGate(r.error))) setError(r.error);
@@ -120,7 +148,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
   const lastUser = [...messages].reverse().find((m) => m.role === "user")?.text;
 
   const empty = !messages.length && !pending;
-  const box = <Composer text={text} setText={setText} files={files} setFiles={setFiles} make={make} setMake={pickMake} ai={ai} busy={busy} error={error} onSend={() => submit()} big={empty} />;
+  const box = <Composer text={text} setText={setText} files={files} setFiles={setFiles} make={make} setMake={pickMake} model={make === "auto" ? null : (models[make] ?? null)} setModel={(id) => make !== "auto" && pickModel(make, id)} ai={ai} busy={busy} error={error} onSend={() => submit()} big={empty} />;
   const actions = (
     <div className="flex items-center gap-1.5">
       {credits != null ? (
@@ -209,11 +237,12 @@ function Avatar() {
 }
 
 /** The message box: + and Make on the left, send on the right, files added with + above the text. */
-function Composer({ text, setText, files, setFiles, make, setMake, ai, busy, error, onSend, big }: { text: string; setText: (v: string) => void; files: File[]; setFiles: (f: File[]) => void; make: Make; setMake: (m: Make) => void; ai: boolean; busy: boolean; error: string; onSend: () => void; big: boolean }) {
+function Composer({ text, setText, files, setFiles, make, setMake, model, setModel, ai, busy, error, onSend, big }: { text: string; setText: (v: string) => void; files: File[]; setFiles: (f: File[]) => void; make: Make; setMake: (m: Make) => void; model: string | null; setModel: (id: string | null) => void; ai: boolean; busy: boolean; error: string; onSend: () => void; big: boolean }) {
   const area = useRef<HTMLTextAreaElement>(null);
   const plus = useRef<HTMLButtonElement>(null);
   const makeBtn = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState<"files" | "make" | null>(null);
+  const modelBtn = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState<"files" | "make" | "model" | null>(null);
   useEffect(() => {
     const el = area.current;
     if (!el) return;
@@ -277,6 +306,20 @@ function Composer({ text, setText, files, setFiles, make, setMake, ai, busy, err
             <ChevronDown size={12} className="text-faint" />
           </button>
         ) : null}
+        {ai && make !== "auto" ? (
+          <button
+            ref={modelBtn}
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={open === "model"}
+            aria-label="Model"
+            onClick={() => setOpen(open === "model" ? null : "model")}
+            className={`inline-flex h-8 items-center gap-1.5 rounded-full pr-2.5 pl-3 text-[13px] font-medium whitespace-nowrap text-ink transition-shadow ${model ? "bg-signal-soft shadow-picked" : "shadow-chip hover:shadow-pill"}`}
+          >
+            {model ? (modelOf(model)?.name ?? "Capy picks") : "Capy picks"}
+            <ChevronDown size={12} className="text-faint" />
+          </button>
+        ) : null}
         {error ? (
           <p role="alert" className="min-w-0 pl-1 text-[12px] text-danger">
             {error}
@@ -309,6 +352,31 @@ function Composer({ text, setText, files, setFiles, make, setMake, ai, busy, err
                 <span className="block text-[12px] text-muted">{m.line}</span>
               </span>
               {m.value === make ? <Check size={14} className="text-ink" /> : <span />}
+            </button>
+          ))}
+        </Floating>
+      ) : null}
+      {open === "model" && make !== "auto" ? (
+        <Floating anchor={modelBtn} placement="top-start" gap={8} onClose={() => setOpen(null)} role="listbox" className="w-[320px] max-w-[calc(100vw-32px)] rounded-xl bg-panel p-1.5 shadow-menu">
+          <p className="px-2 pt-1 pb-1.5 text-[11.5px] font-medium text-faint">Model</p>
+          {[{ id: null as string | null, name: "Capy picks", line: "The best model for each request" }, ...modelsFor(make)].map((m) => (
+            <button
+              key={m.id ?? "auto"}
+              type="button"
+              role="option"
+              aria-selected={m.id === model}
+              onClick={() => {
+                setModel(m.id);
+                setOpen(null);
+                area.current?.focus();
+              }}
+              className="grid w-full grid-cols-[minmax(0,1fr)_16px] items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-hover"
+            >
+              <span>
+                <span className="block text-[13px] font-medium text-ink">{m.name}</span>
+                <span className="block text-[12px] text-muted">{m.line}</span>
+              </span>
+              {m.id === model ? <Check size={14} className="text-ink" /> : <span />}
             </button>
           ))}
         </Floating>

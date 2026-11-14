@@ -3,10 +3,10 @@
 import { getCtx } from "@/lib/session";
 import { getBrandCtx } from "@/lib/brands";
 import { agentTurn } from "@/lib/agent";
-import { capyChoice } from "@/lib/agentTools";
+import { capyChoice, pickedModel } from "@/lib/agentTools";
 import { adminClient } from "@/lib/supabase/server";
 
-export async function send(chatId: string | null, text: string, capy?: unknown, mediaIds?: string[]): Promise<{ chatId?: string; error?: string }> {
+export async function send(chatId: string | null, text: string, capy?: unknown, mediaIds?: string[], model?: unknown): Promise<{ chatId?: string; error?: string }> {
   const ctx = await getCtx();
   if (ctx.role === "client") return { error: "Clients can only approve or reject posts" };
   if (!text.trim()) return { error: "Write a message" };
@@ -21,7 +21,8 @@ export async function send(chatId: string | null, text: string, capy?: unknown, 
       files = (data ?? []).map((m) => ({ id: m.id as string, name: m.name as string }));
     }
     const { brand } = await getBrandCtx();
-    return await agentTurn(ctx, brand?.id ?? null, chatId, text.trim(), capyChoice(capy), files);
+    const kind = capyChoice(capy);
+    return await agentTurn(ctx, brand?.id ?? null, chatId, text.trim(), kind, files, pickedModel(model, kind));
   } catch (e) {
     return { error: e instanceof Error ? e.message : String(e) };
   }

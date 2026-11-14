@@ -7,6 +7,7 @@ import { assertCanUseAi } from "./billing";
 import { hold, settle } from "./credits";
 import { AGENT_HOLD, AGENT_MIN, claudeCredits } from "./creditRules";
 import { ATTACHED, agentTools, systemPrompt, type CapyChoice } from "./agentTools";
+import { modelOf } from "./genRules";
 import { aiReady, attachToPost, waitForGeneration } from "./generations";
 import { brandKits } from "./brands";
 import { kitPrompt } from "./brandKit";
@@ -27,7 +28,9 @@ const MAX_TURNS = 20;
 
 export const OUT_OF_CREDITS = "I stopped here because the credits ran out. What I saved is kept. Buy more in Settings, Billing.";
 
-async function runTool(ctx: Ctx, brandId: string | null, name: string, input: Record<string, unknown>): Promise<string> {
+async function runTool(ctx: Ctx, brandId: string | null, name: string, input: Record<string, unknown>, model: string | null = null): Promise<string> {
+  // The model picked in the chat box wins for files of its kind, whatever the agent asked for.
+  if (name === "generate_media" && model && modelOf(model)?.kind === input.kind) input = { ...input, model };
   const api: ApiCtx = { keyId: "agent", workspaceId: ctx.workspaceId, workspaceName: ctx.workspaceName, timezone: ctx.timezone, userId: ctx.userId, role: ctx.role as ApiCtx["role"], brandIds: ctx.brandIds, spendBrand: brandId };
   const ops = realOps(api);
   if (name === "attach_when_done") {
@@ -52,7 +55,7 @@ async function runTool(ctx: Ctx, brandId: string | null, name: string, input: Re
 export type ChatMessage = { role: "user" | "assistant"; content: Anthropic.MessageParam["content"] };
 
 /** Send one user message and run the agent until it answers. Every message is saved, append-only. */
-export async function agentTurn(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice = "auto", files: { id: string; name: string }[] = []): Promise<{ chatId: string }> {
+export async function agentTurn(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice = "auto", files: { id: string; name: string }[] = [], model: string | null = null): Promise<{ chatId: string }> {
   await assertCanUseAi(ctx.workspaceId);
   const sp = { workspaceId: ctx.workspaceId, userId: ctx.userId, brandId };
   const key = `agent:${randomUUID()}`;
@@ -65,7 +68,7 @@ export async function agentTurn(ctx: Ctx, brandId: string | null, chatId: string
   let used = 0;
   let seq = 1;
   try {
-    return await converse(ctx, brandId, chatId, text, capy, files, {
+    return await converse(ctx, brandId, chatId, text, capy, files, model, {
       spent: (n) => void (used += n),
       // Before each round: hold more when this message has used what it holds. False when none is left.
       async room() {
@@ -84,7 +87,7 @@ export async function agentTurn(ctx: Ctx, brandId: string | null, chatId: string
 
 type Meter = { spent: (credits: number) => void; room: () => Promise<boolean> };
 
-async function converse(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice, files: { id: string; name: string }[], meter: Meter): Promise<{ chatId: string }> {
+async function converse(ctx: Ctx, brandId: string | null, chatId: string | null, text: string, capy: CapyChoice, files: { id: string; name: string }[], model: string | null, meter: Meter): Promise<{ chatId: string }> {
   const db = adminClient();
   let id = chatId;
   if (!id) {
@@ -113,7 +116,7 @@ async function converse(ctx: Ctx, brandId: string | null, chatId: string | null,
     .map(([, k]) => kitPrompt(k, k.name))
     .filter(Boolean)
     .join("\n");
-  const system = systemPrompt(ai, ctx.timezone, new Date(), capy, kits);
+  const system = systemPrompt(ai, ctx.timezone, new Date(), capy, kits, model);
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     if (turn > 0 && !(await meter.room())) {
       await add({ role: "assistant", content: [{ type: "text", text: OUT_OF_CREDITS }] });
@@ -141,7 +144,7 @@ async function converse(ctx: Ctx, brandId: string | null, chatId: string | null,
     const results: Anthropic.ToolResultBlockParam[] = [];
     for (const c of calls) {
       try {
-        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, brandId, c.name, c.input as Record<string, unknown>) });
+        results.push({ type: "tool_result", tool_use_id: c.id, content: await runTool(ctx, brandId, c.name, c.input as Record<string, unknown>, model) });
       } catch (e) {
         results.push({ type: "tool_result", tool_use_id: c.id, content: e instanceof Error ? e.message : String(e), is_error: true });
       }
