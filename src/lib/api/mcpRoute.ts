@@ -3,7 +3,7 @@ import { authorize, charge, errorResponse, json, readJson } from "./http";
 import { ApiError } from "./input";
 import { handleMcp, parseError, rpcCount } from "./mcp";
 import { appUrl } from "../channels";
-import { DIRECTORY_HIDDEN, challengeHeader } from "../oauth/rules";
+import { challengeHeader, hiddenForApp } from "../oauth/rules";
 
 /** One MCP request over HTTP POST. `pathKey` is the key from a link, for apps that only take a link. */
 export async function mcpPost(req: Request, pathKey?: string) {
@@ -34,7 +34,7 @@ export async function mcpPost(req: Request, pathKey?: string) {
     if (wait) res.headers.set("retry-after", String(wait));
     return res;
   }
-  const out = await handleMcp(body, auth.ops, auth.ctx.timezone, auth.ctx.via === "oauth" ? { hide: DIRECTORY_HIDDEN, oauth: true } : {});
+  const out = await handleMcp(body, auth.ops, auth.ctx.timezone, auth.ctx.via === "oauth" ? { hide: hiddenForApp(auth.ctx.appRedirects ?? []), oauth: true } : {});
   return out === null ? json(null, 202) : json(out);
 }
 

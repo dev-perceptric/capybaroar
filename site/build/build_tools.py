@@ -1,6 +1,7 @@
 """Builds every free tool page under /tools, the Free tools index, the Utilities menu and the sitemap entries.
 Runs the earlier builders first so every page shares the same nav and footer."""
 import os, re, json
+HOME_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'home-base.html')  # the homepage's source; build_home_v2.py writes the live index.html from it
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public') + os.sep  # site/public/
 
@@ -9,11 +10,11 @@ NEW_ICONS = {
     'i-smile': '<symbol id="i-smile" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></g></symbol>',
     'i-search': '<symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>',
 }
-idx = open(P + 'index.html').read()
+idx = open(HOME_BASE).read()
 for sid, sym in NEW_ICONS.items():
     if f'id="{sid}"' not in idx:
         idx = idx.replace('<symbol id="i-send"', sym + '<symbol id="i-send"', 1)
-open(P + 'index.html', 'w').write(idx)
+open(HOME_BASE, 'w').write(idx)
 
 # The Utilities menu itself is defined in build_pages.py (UTILITIES).
 exec(open(os.path.join(HERE, 'build_channels.py')).read())

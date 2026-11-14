@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta name="robots" content="noindex">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capybaroar — the agentic social media platform</title>
@@ -26,7 +25,6 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/home.css?v=8">
-<link rel="stylesheet" href="/home-v2.css?v=1">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Capybaroar","applicationCategory":"BusinessApplication","operatingSystem":"Web","url":"https://capybaroar.com/","description":"The agentic social media platform: an agent plans and writes posts, and you schedule them to 14 networks from one calendar.","publisher":{"@type":"Organization","name":"Perceptric","email":"hello@capybaroar.com"},"offers":[{"@type":"Offer","name":"Free","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Pro","price":"19","priceCurrency":"USD"},{"@type":"Offer","name":"Agency","price":"59","priceCurrency":"USD"}]}</script>
 </head>
 </head>
@@ -288,64 +286,183 @@
 </section>
 
 <!-- Zigzag tour -->
-<section id="who" class="v2-who" aria-labelledby="who-title">
-<div class="wrap">
-<header class="head">
-<p class="tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg>Built for you</p>
-<h2 id="who-title">One tool. <span>However you post.</span></h2>
-</header>
-<div class="v2-tabs" role="tablist" aria-label="Who it's for"><button class="v2-tab" role="tab" id="tab-creators" aria-controls="pane-creators" aria-selected="true" tabindex="0"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg>Creators</button><button class="v2-tab" role="tab" id="tab-agencies" aria-controls="pane-agencies" aria-selected="false" tabindex="-1"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg>Agencies</button><button class="v2-tab" role="tab" id="tab-business" aria-controls="pane-business" aria-selected="false" tabindex="-1"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spark"/></svg>Small business</button><button class="v2-tab" role="tab" id="tab-teams" aria-controls="pane-teams" aria-selected="false" tabindex="-1"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-layers"/></svg>Teams</button></div>
-<div class="v2-pane" role="tabpanel" id="pane-creators" aria-labelledby="tab-creators">
-<div class="v2-pane-copy"><h3>Post every day without living on your phone.</h3><ul class="checks"><li>Best times picked from your own results</li><li>A link-in-bio page in minutes</li><li>AI pictures and short videos, from 6 credits</li></ul><a class="btn" href="https://app.capybaroar.com/signup">Start free</a></div>
-<div class="v2-pane-demo card"><div class="v2-demo-head"><span class="v2-avatar">M</span><span><b>Maya Moves</b><small>Fitness coach</small></span><span class="v2-demo-week">This week</span></div><ul class="v2-posts"><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-instagram"/></svg><span class="v2-post-main"><span class="v2-post-kind">Reel</span><span class="v2-post-text">5-minute morning mobility, no gear needed</span></span><span class="v2-post-when">Mon 7:30 AM</span><span class="v2-state s-ok">Scheduled</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-tiktok"/></svg><span class="v2-post-main"><span class="v2-post-kind">Video</span><span class="v2-post-text">3 stretches for desk workers</span></span><span class="v2-post-when">Tue 6:00 PM</span><span class="v2-state s-ok">Scheduled</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-youtube"/></svg><span class="v2-post-main"><span class="v2-post-kind">Short</span><span class="v2-post-text">Why I stopped skipping leg day</span></span><span class="v2-post-when">Thu 12:00 PM</span><span class="v2-state s-mute">Draft</span></li></ul></div>
-</div><div class="v2-pane" role="tabpanel" id="pane-agencies" aria-labelledby="tab-agencies" hidden>
-<div class="v2-pane-copy"><h3>Every client in one calendar, with their own brand.</h3><ul class="checks"><li>A brand per client, with its own channels and people</li><li>Clients approve posts from a link, no account needed</li><li>Monthly reports with your logo (Agency plan)</li></ul><a class="btn" href="https://app.capybaroar.com/signup">Start free</a></div>
-<div class="v2-pane-demo card"><div class="v2-demo-head"><span class="v2-avatar">N</span><span><b>Northwind Studio</b><small>Agency with 3 clients</small></span><span class="v2-demo-week">This week</span></div><ul class="v2-posts"><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-linkedin"/></svg><span class="v2-post-main"><span class="v2-post-kind">Bright Path Tutoring</span><span class="v2-post-text">Exam season tips for parents</span></span><span class="v2-post-when">Mon 9:00 AM</span><span class="v2-state s-ok">Approved</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-instagram"/></svg><span class="v2-post-main"><span class="v2-post-kind">Lumen Coffee</span><span class="v2-post-text">New oat flat white is here</span></span><span class="v2-post-when">Tue 8:00 AM</span><span class="v2-state s-wait">In review</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-facebook"/></svg><span class="v2-post-main"><span class="v2-post-kind">Oak Dental</span><span class="v2-post-text">Free checkups for kids in June</span></span><span class="v2-post-when">Wed 10:00 AM</span><span class="v2-state s-ok">Scheduled</span></li></ul></div>
-</div><div class="v2-pane" role="tabpanel" id="pane-business" aria-labelledby="tab-business" hidden>
-<div class="v2-pane-copy"><h3>A week of posts from one message.</h3><ul class="checks"><li>Tell the agent what's new, it writes the week</li><li>Each post fits each network on its own</li><li>Every comment and message in one inbox</li></ul><a class="btn" href="https://app.capybaroar.com/signup">Start free</a></div>
-<div class="v2-pane-demo card"><div class="v2-demo-head"><span class="v2-avatar">T</span><span><b>Taco Luna</b><small>Restaurant</small></span><span class="v2-demo-week">This week</span></div><ul class="v2-posts"><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-instagram"/></svg><span class="v2-post-main"><span class="v2-post-kind">Post</span><span class="v2-post-text">Taco Tuesday is back: 2 for $6</span></span><span class="v2-post-when">Tue 11:00 AM</span><span class="v2-state s-ok">Scheduled</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-facebook"/></svg><span class="v2-post-main"><span class="v2-post-kind">Post</span><span class="v2-post-text">Live music this Friday from 7</span></span><span class="v2-post-when">Thu 4:00 PM</span><span class="v2-state s-ok">Scheduled</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-threads"/></svg><span class="v2-post-main"><span class="v2-post-kind">Post</span><span class="v2-post-text">Which salsa wins: verde or roja?</span></span><span class="v2-post-when">Sat 1:00 PM</span><span class="v2-state s-mute">Draft</span></li></ul></div>
-</div><div class="v2-pane" role="tabpanel" id="pane-teams" aria-labelledby="tab-teams" hidden>
-<div class="v2-pane-copy"><h3>Launches your whole team can work on.</h3><ul class="checks"><li>Roles, brand limits and approvals for every post</li><li>Campaigns keep launch posts together</li><li>See which posts brought clicks and signups</li></ul><a class="btn" href="https://app.capybaroar.com/signup">Start free</a></div>
-<div class="v2-pane-demo card"><div class="v2-demo-head"><span class="v2-avatar">L</span><span><b>Ledgerly</b><small>Software company</small></span><span class="v2-demo-week">This week</span></div><ul class="v2-posts"><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-linkedin"/></svg><span class="v2-post-main"><span class="v2-post-kind">Launch</span><span class="v2-post-text">Ledgerly 3.0: invoices in one click</span></span><span class="v2-post-when">Mon 9:00 AM</span><span class="v2-state s-ok">Approved</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-x"/></svg><span class="v2-post-main"><span class="v2-post-kind">Thread</span><span class="v2-post-text">5 things we learned building 3.0</span></span><span class="v2-post-when">Mon 9:30 AM</span><span class="v2-state s-ok">Scheduled</span></li><li class="v2-post"><svg class="v2-net" aria-hidden="true"><use href="#n-youtube"/></svg><span class="v2-post-main"><span class="v2-post-kind">Video</span><span class="v2-post-text">Ledgerly 3.0 in 90 seconds</span></span><span class="v2-post-when">Tue 10:00 AM</span><span class="v2-state s-wait">In review</span></li></ul></div>
+<section id="tour" aria-label="Feature tour">
+<div class="wrap zig">
+
+<article class="z">
+<div class="z-text">
+<p class="tag"><svg class="ico"><use href="#i-calendar"/></svg>Scheduler</p>
+<h2>Write once. <span>Fit every network.</span></h2>
+<p>Each network gets its own text and preview, so every post looks right where it lands.</p>
+<ul class="checks">
+<li>Phone and desktop previews that match the feed</li>
+<li>Crop pictures and trim videos to fit</li>
+<li>Queue times that new posts fill in order</li>
+<li>Bulk upload from a CSV or a stack of photos</li>
+</ul>
+<a class="more" href="/social-media-scheduler">Learn more<svg class="ico"><use href="#i-arrow"/></svg></a>
+</div>
+<div class="z-vis dots" id="z-prev" aria-hidden="true">
+<div class="p-chips">
+<span class="pill" data-n="0"><svg class="nl"><use href="#n-linkedin"/></svg>LinkedIn</span>
+<span class="pill" data-n="1"><svg class="nl"><use href="#n-instagram"/></svg>Instagram</span>
+<span class="pill" data-n="2"><svg class="nl"><use href="#n-x"/></svg>X</span>
+<span class="pill" data-n="3"><svg class="nl"><use href="#n-threads"/></svg>Threads</span>
+</div>
+<div class="p-stack">
+<div class="pv on"><div class="card"><div class="hd"><span class="av y"><img src="/img/faces/owner.webp" alt="" width="28" height="28" loading="lazy" decoding="async"></span><div><b>Crumb &amp; Co.</b><small>1,204 followers</small></div><svg class="nl"><use href="#n-linkedin"/></svg></div><p class="tx">We start our dough at 4 AM so you can have warm bread at 8. This Friday we launch our first sourdough. Pre-orders are open now.</p><img class="art" src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async" style="aspect-ratio:1.91/1"><div class="ft"><span>Like</span><span>Comment</span><span>Repost</span></div></div></div>
+<div class="pv"><div class="card"><div class="hd"><span class="av y"><img src="/img/faces/owner.webp" alt="" width="28" height="28" loading="lazy" decoding="async"></span><div><b>crumbandco</b><small>Austin, Texas</small></div><svg class="nl"><use href="#n-instagram"/></svg></div><img class="art" src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async" style="aspect-ratio:4/3"><p class="tx" style="padding-top:10px"><b>crumbandco</b> Sourdough drops Friday at 8. Link in bio to pre-order. #sourdough #austin</p></div></div>
+<div class="pv"><div class="card"><div class="hd"><span class="av y"><img src="/img/faces/owner.webp" alt="" width="28" height="28" loading="lazy" decoding="async"></span><div><b>Crumb &amp; Co.</b><small>@crumbandco</small></div><svg class="nl"><use href="#n-x"/></svg></div><p class="tx">Sourdough drops Friday, 8 AM. Pre-order now so we save you a loaf.</p><div style="padding:0 14px 12px"><img class="art" src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async" style="aspect-ratio:16/9;border-radius:12px"></div></div></div>
+<div class="pv"><div class="card"><div class="hd"><span class="av y"><img src="/img/faces/owner.webp" alt="" width="28" height="28" loading="lazy" decoding="async"></span><div><b>crumbandco</b><small>2h</small></div><svg class="nl"><use href="#n-threads"/></svg></div><p class="tx">Real talk: we tested this sourdough 41 times. Friday at 8 it's finally yours. Who's coming?</p><div class="ft"><span>12 replies</span><span>86 likes</span></div></div></div>
+</div>
+<div class="p-count"><span id="p-cnt">212 / 3,000</span><i><b id="p-bar" style="width:7%"></b></i></div>
+</div>
+</article>
+
+<article class="z flip">
+<div class="z-text">
+<p class="tag"><svg class="ico"><use href="#i-inbox"/></svg>Inbox</p>
+<h2>Every comment. <span>One list.</span></h2>
+<p>Filter by network and answer people without opening five apps.</p>
+<ul class="checks">
+<li>Suggested replies you can edit before sending</li>
+<li>Like or hide comments where the network allows it</li>
+<li>Mark threads done to keep the list short</li>
+<li>A count in the sidebar for anything new</li>
+</ul>
+<a class="more" href="/social-media-inbox">Learn more<svg class="ico"><use href="#i-arrow"/></svg></a>
+</div>
+<div class="z-vis dots" id="z-inbox" aria-hidden="true">
+<div class="win f-win">
+<div class="f-chips">
+<span class="pill" data-f="all">All</span>
+<span class="pill" data-f="instagram"><svg class="nl"><use href="#n-instagram"/></svg>Instagram</span>
+<span class="pill" data-f="linkedin"><svg class="nl"><use href="#n-linkedin"/></svg>LinkedIn</span>
+<span class="pill" data-f="tiktok"><svg class="nl"><use href="#n-tiktok"/></svg>TikTok</span>
+<span class="pill" data-f="bluesky"><svg class="nl"><use href="#n-bluesky"/></svg>Bluesky</span>
+</div>
+<div class="i-msg f-msg" data-n="instagram"><span class="who av"><img src="/img/faces/maya.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-instagram"/></svg></span><div class="bd"><div class="nm">Maya Ruiz<time>2m</time></div><div class="sn">Do you ship the starter kit to Dallas?</div><div class="acts"><span><svg class="ico"><use href="#i-heart"/></svg>Like</span><span><svg class="ico"><use href="#i-reply"/></svg>Reply</span></div></div></div>
+<div class="i-msg f-msg" data-n="tiktok"><span class="who av"><img src="/img/faces/dough.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-tiktok"/></svg></span><div class="bd"><div class="nm">dough.vibes<time>5m</time></div><div class="sn">How long do you proof it for?</div><div class="acts"><span><svg class="ico"><use href="#i-heart"/></svg>Like</span><span><svg class="ico"><use href="#i-reply"/></svg>Reply</span></div></div></div>
+<div class="i-msg f-msg" data-n="linkedin"><span class="who av"><img src="/img/faces/jon.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-linkedin"/></svg></span><div class="bd"><div class="nm">Jon Park<time>8m</time></div><div class="sn">Loved the post on your night shift team.</div><div class="acts"><span><svg class="ico"><use href="#i-reply"/></svg>Reply</span></div></div></div>
+<div class="i-msg f-msg" data-n="instagram"><span class="who av"><img src="/img/faces/sam.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-instagram"/></svg></span><div class="bd"><div class="nm">Sam Ortiz<time>12m</time></div><div class="sn">Saving this for my weekend bake.</div><div class="acts"><span><svg class="ico"><use href="#i-heart"/></svg>Like</span><span><svg class="ico"><use href="#i-eyeoff"/></svg>Hide</span></div></div></div>
+<div class="i-msg f-msg" data-n="bluesky"><span class="who av"><img src="/img/faces/leaf.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-bluesky"/></svg></span><div class="bd"><div class="nm">leafandloaf<time>14m</time></div><div class="sn">Is Friday's drop still on?</div><div class="acts"><span><svg class="ico"><use href="#i-heart"/></svg>Like</span><span><svg class="ico"><use href="#i-reply"/></svg>Reply</span></div></div></div>
+<div class="i-msg f-msg" data-n="tiktok"><span class="who av"><img src="/img/faces/rae.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><svg><use href="#n-tiktok"/></svg></span><div class="bd"><div class="nm">rae.bakes<time>30m</time></div><div class="sn">The crumb shot at 0:12 is unreal.</div><div class="acts"><span><svg class="ico"><use href="#i-heart"/></svg>Like</span><span><svg class="ico"><use href="#i-reply"/></svg>Reply</span></div></div></div>
 </div>
 </div>
-</section>
-<section id="everything" class="v2-features" aria-labelledby="feat-title">
-<div class="wrap">
-<header class="head">
-<p class="tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-grid"/></svg>Everything in one place</p>
-<h2 id="feat-title">Plan, post, reply. <span>Then see what worked.</span></h2>
-</header>
-<div class="v2-bento">
-<a class="v2-tile v2-t-cal card" href="/social-media-scheduler">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calendar"/></svg>Scheduler</span><b>Write once, post to 14 networks</b><small>Each network gets the right size, length and settings.</small></span>
-<span class="v2-cal"><span class="v2-cal-days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></span><span class="v2-cal-grid"><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-linkedin"/></svg>Meet the team</span><span class="v2-cal-empty"></span><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-instagram"/></svg>New menu</span><span class="v2-cal-empty"></span><span class="v2-cal-empty"></span><span class="v2-cal-empty"></span><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-tiktok"/></svg>Behind the scenes</span><span class="v2-cal-empty"></span><span class="v2-cal-empty"></span><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-pinterest"/></svg>Spring ideas</span><span class="v2-cal-empty"></span><span class="v2-cal-empty"></span><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-bluesky"/></svg>Hiring</span><span class="v2-cal-ev"><svg class="v2-net" aria-hidden="true"><use href="#n-youtube"/></svg>Q&A live</span><span class="v2-cal-empty"></span></span></span>
-</a>
-<a class="v2-tile v2-t-agent card" href="/ai-social-media-agent">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bot"/></svg>Agents</span><b>Ask for a week of posts</b></span>
-<span class="v2-chat"><span class="v2-bubble v2-me">Plan next week for our 3 clients</span><span class="v2-bubble v2-ai"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spark"/></svg>Done: 15 drafts on the calendar, 5 waiting for client approval.</span></span>
-</a>
-<a class="v2-tile v2-t-inbox card" href="/social-media-inbox">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-inbox"/></svg>Inbox</span><b>Every comment in one list</b></span>
-<span class="v2-inbox"><span class="v2-msg"><svg class="v2-net" aria-hidden="true"><use href="#n-instagram"/></svg><span><b>Priya</b> Do you deliver on Sundays?</span></span><span class="v2-msg"><svg class="v2-net" aria-hidden="true"><use href="#n-facebook"/></svg><span><b>Tom</b> Booked for Friday, thanks!</span></span><span class="v2-msg"><svg class="v2-net" aria-hidden="true"><use href="#n-youtube"/></svg><span><b>Ana</b> Great video, part 2?</span></span></span>
-</a>
-<a class="v2-tile v2-t-ana card" href="/social-media-analytics">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chart"/></svg>Analytics</span><b>Know your best times</b></span>
-<span class="v2-heat"><span class="v2-heat-c" style="opacity:0.15"></span><span class="v2-heat-c" style="opacity:0.25"></span><span class="v2-heat-c" style="opacity:0.5"></span><span class="v2-heat-c" style="opacity:0.9"></span><span class="v2-heat-c" style="opacity:0.6"></span><span class="v2-heat-c" style="opacity:0.3"></span><span class="v2-heat-c" style="opacity:0.2"></span><span class="v2-heat-c" style="opacity:0.15"></span><span class="v2-heat-c" style="opacity:0.35"></span><span class="v2-heat-c" style="opacity:0.7"></span><span class="v2-heat-c" style="opacity:1"></span><span class="v2-heat-c" style="opacity:0.55"></span><span class="v2-heat-c" style="opacity:0.3"></span><span class="v2-heat-c" style="opacity:0.2"></span><span class="v2-heat-c" style="opacity:0.1"></span><span class="v2-heat-c" style="opacity:0.3"></span><span class="v2-heat-c" style="opacity:0.6"></span><span class="v2-heat-c" style="opacity:0.8"></span><span class="v2-heat-c" style="opacity:0.5"></span><span class="v2-heat-c" style="opacity:0.25"></span><span class="v2-heat-c" style="opacity:0.15"></span><span class="v2-heat-c" style="opacity:0.2"></span><span class="v2-heat-c" style="opacity:0.4"></span><span class="v2-heat-c" style="opacity:0.65"></span><span class="v2-heat-c" style="opacity:0.45"></span><span class="v2-heat-c" style="opacity:0.2"></span><span class="v2-heat-c" style="opacity:0.1"></span><span class="v2-heat-c" style="opacity:0.15"></span></span>
-</a>
-<a class="v2-tile v2-t-ai card" href="/ai-studio">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-image"/></svg>AI Studio</span><b>Pictures and videos for every post</b><small>Nano Banana, Ideogram, Kling and more.</small></span>
-<span class="v2-ai-grid"><span class="v2-ai a1"></span><span class="v2-ai a2"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-play"/></svg></span><span class="v2-ai a3"></span></span>
-</a>
-<a class="v2-tile v2-t-bio card" href="/link-in-bio">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg>Link in bio</span><b>One page for every link</b></span>
-<span class="v2-bio"><span class="v2-bio-av">M</span><span class="v2-bio-l">Book a class</span><span class="v2-bio-l">Free guide</span><span class="v2-bio-l">Shop</span></span>
-</a>
-<a class="v2-tile v2-t-appr card" href="/post-approval">
-<span class="v2-tile-copy"><span class="v2-tile-tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check-circle"/></svg>Approvals</span><b>Clients approve from a link</b></span>
-<span class="v2-appr"><span class="v2-state s-wait">In review</span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow"/></svg><span class="v2-state s-ok">Approved</span></span>
-</a>
+</article>
+
+<article class="z" id="agents">
+<div class="z-text">
+<p class="tag"><svg class="ico"><use href="#i-bot"/></svg>Agents</p>
+<h2>Every AI tool. <span>One place.</span></h2>
+<p>Describe the picture, video or voiceover you need. It lands in your media library, ready for a post.</p>
+<ul class="checks">
+<li>Pictures with Nano Banana Pro or FLUX.2 Pro</li>
+<li>Videos with sound from Veo 3.1 or Kling 3 Pro</li>
+<li>Voiceovers and music with CapyAudio</li>
+<li>Rewrite any post in one click</li>
+</ul>
 </div>
+<div class="z-vis dots" id="z-ai" aria-hidden="true">
+<div class="win m-win">
+<div class="m-list">
+<h5>CapyImage</h5>
+<div class="m-it" data-m="0">Nano Banana Pro</div>
+<div class="m-it">FLUX.2 Pro</div>
+<div class="m-it">Ideogram V3</div>
+<h5>CapyVideo</h5>
+<div class="m-it" data-m="1">Veo 3.1</div>
+<div class="m-it">Kling 3 Pro</div>
+<div class="m-it">Seedance 2.0 Fast</div>
+<h5>CapyAudio</h5>
+<div class="m-it" data-m="2">ElevenLabs v3</div>
+<div class="m-it">Lyria 2</div>
+</div>
+<div class="m-out">
+<div class="m-meta" id="m-meta"><svg class="ico"><use href="#i-image"/></svg><span id="m-kind">Picture</span><span class="pill dark" id="m-go"><svg class="ico" style="width:12px;height:12px"><use href="#i-spark"/></svg>Make</span></div>
+<div class="m-prompt" id="m-prompt"></div>
+<div class="m-res" id="m-res">
+<img class="pic" src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async">
+<div class="m-play"><img class="pic" src="/img/food/shape.webp" alt="" loading="lazy" decoding="async" style="position:absolute;inset:0"><span style="position:relative"><svg class="ico"><use href="#i-play"/></svg></span><span class="badge m-dur" style="width:auto;height:20px;border-radius:6px;background:var(--panel)">0:08</span></div>
+<div class="m-wave"></div>
+<div class="m-prog" id="m-prog"><i></i></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+
+<article class="z flip">
+<div class="z-text">
+<p class="tag"><svg class="ico"><use href="#i-chart"/></svg>Analytics</p>
+<h2>Know what works. <span>Post when it counts.</span></h2>
+<p>Capybaroar finds your best hours from your own results, so posts go out when your people are online.</p>
+<ul class="checks">
+<li>Top posts and the formats that do best</li>
+<li>Reach and engagement by day</li>
+<li>Share reports as a link or a PDF</li>
+<li>Report emails every week or month</li>
+</ul>
+<a class="more" href="/social-media-analytics">Learn more<svg class="ico"><use href="#i-arrow"/></svg></a>
+</div>
+<div class="z-vis dots" id="z-heat" aria-hidden="true">
+<div class="win h-win">
+<div class="win-h">Best times to post<span class="sub">Last 90 days</span></div>
+<div class="h-grid" id="h-grid"></div>
+<div class="h-leg">Less<i style="opacity:.15"></i><i style="opacity:.4"></i><i style="opacity:.7"></i><i></i>More</div>
+<div class="h-top">
+<div class="n-stat"><small>Best day</small><b>Tuesday</b></div>
+<div class="n-stat"><small>Best format</small><b>Short video</b></div>
+</div>
+</div>
+</div>
+</article>
+
+<article class="z">
+<div class="z-text">
+<p class="tag"><svg class="ico"><use href="#i-link"/></svg>Link in bio</p>
+<h2>One link. <span>Everything you share.</span></h2>
+<p>Build a page from blocks and see which links people tap.</p>
+<ul class="checks">
+<li>Links, social icons, videos and your latest posts</li>
+<li>Links that go live and end on a schedule</li>
+<li>Themes and templates to start from</li>
+<li>Views and clicks for every block</li>
+</ul>
+<a class="more" href="/link-in-bio">Learn more<svg class="ico"><use href="#i-arrow"/></svg></a>
+</div>
+<div class="z-vis dots" id="z-bio" aria-hidden="true">
+<div class="win e-win">
+<div class="win-h">Blocks<span class="sub">crumbandco</span></div>
+<div class="e-list" id="e-list">
+<div class="e-blk"><span class="gr"><svg class="ico"><use href="#i-grip"/></svg></span><span class="ic2"><svg class="ico"><use href="#i-link"/></svg></span>Pre-order this week's loaves<span class="badge green">Live</span></div>
+<div class="e-blk"><span class="gr"><svg class="ico"><use href="#i-grip"/></svg></span><span class="ic2"><svg class="ico"><use href="#i-users"/></svg></span>Social icons</div>
+<div class="e-blk hide" id="e-new"><span class="gr"><svg class="ico"><use href="#i-grip"/></svg></span><span class="ic2"><svg class="ico"><use href="#i-video"/></svg></span>How we shape a loaf<span class="badge green">Live</span></div>
+<div class="e-blk"><span class="gr"><svg class="ico"><use href="#i-grip"/></svg></span><span class="ic2"><svg class="ico"><use href="#i-grid"/></svg></span>Latest posts</div>
+<div class="e-blk"><span class="gr"><svg class="ico"><use href="#i-grip"/></svg></span><span class="ic2"><svg class="ico"><use href="#i-mail"/></svg></span>Join the bread club</div>
+</div>
+<div class="e-add"><span class="pill" id="e-addb"><svg class="ico" style="width:13px;height:13px"><use href="#i-plus"/></svg>Add block</span>
+<div class="e-menu" id="e-menu">
+<div><svg class="ico"><use href="#i-link"/></svg>Link</div>
+<div><svg class="ico"><use href="#i-text"/></svg>Text</div>
+<div><svg class="ico"><use href="#i-users"/></svg>Social icons</div>
+<div><svg class="ico"><use href="#i-grid"/></svg>Latest posts</div>
+<div id="e-vid"><svg class="ico"><use href="#i-video"/></svg>Video</div>
+<div><svg class="ico"><use href="#i-mail"/></svg>Email</div>
+</div></div>
+</div>
+<div class="phone sm"><div class="ph-in">
+<span class="av y"><img src="/img/faces/owner.webp" alt="" width="28" height="28" loading="lazy" decoding="async"></span>
+<h4>Crumb &amp; Co.</h4>
+<div class="ph-soc"><svg><use href="#n-instagram"/></svg><svg><use href="#n-tiktok"/></svg><svg><use href="#n-youtube"/></svg></div>
+<div class="lk y">Pre-order this week's loaves</div>
+<div class="vid" id="e-pv" style="background:url(/img/food/shape.webp) center/cover"><span><svg class="ico"><use href="#i-play"/></svg></span></div>
+<div class="ph-posts"><img src="/img/food/loaf.webp" alt="" loading="lazy" decoding="async"><img src="/img/food/croissant.webp" alt="" loading="lazy" decoding="async"><img src="/img/food/coffee.webp" alt="" loading="lazy" decoding="async"></div>
+<div class="lk"><svg class="ico"><use href="#i-mail"/></svg>Join the bread club</div>
+</div></div>
+</div>
+</article>
+
 </div>
 </section>
 
@@ -442,8 +559,99 @@
 <p class="tag"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tag"/></svg>Pricing</p>
 <h2 id="pricing-title">Start free. <span>Upgrade when you&rsquo;re ready.</span></h2>
 </header>
-<div class="v2-plans"><article class="v2-plan card"><h3>Free</h3><p class="v2-plan-line">Plan and publish in one place</p><p class="v2-price">$0<small>/ month</small></p><ul class="checks"><li>3 channels</li><li>30 scheduled posts a month</li><li>Inbox, analytics and link in bio</li></ul><a class="btn ghost" href="https://app.capybaroar.com/signup">Get started free</a></article><article class="v2-plan card"><h3>Creator</h3><p class="v2-plan-line">Your AI social media manager</p><p class="v2-price">$29<small>/ month</small></p><ul class="checks"><li>8 channels, unlimited posts</li><li>1,000 AI credits a month</li><li>Agents, AI Studio and best times</li></ul><a class="btn ghost" href="https://app.capybaroar.com/signup">Get started</a></article><article class="v2-plan card v2-hot"><span class=v2-pop>Most popular</span><h3>Pro</h3><p class="v2-plan-line">For teams and growing brands</p><p class="v2-price">$49<small>/ month</small></p><ul class="checks"><li>30 channels and 5 seats</li><li>2,500 AI credits a month</li><li>Approvals and client reports</li></ul><a class="btn" href="https://app.capybaroar.com/signup">Start 14-day free trial</a></article><article class="v2-plan card"><h3>Agency</h3><p class="v2-plan-line">Every client, your brand</p><p class="v2-price">$149<small>/ month</small></p><ul class="checks"><li>100 channels, unlimited brands</li><li>8,000 AI credits a month</li><li>White-label reports and limits per brand</li></ul><a class="btn ghost" href="https://app.capybaroar.com/signup">Get started</a></article></div>
-<p class="v2-compare"><a href="/pricing">Compare every feature <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
+<div class="plans">
+<article class="plan">
+<h3>Free</h3>
+<p class="plan-line">Plan and publish in one place</p>
+<p class="price">$0<small>/ month</small></p>
+<p class="yearly">Free forever. No card needed.</p>
+<a class="btn ghost" href="https://app.capybaroar.com/signup">Get started free</a>
+<p class="plus">What's included</p>
+<ul class="checks pfeats">
+<li><span class="fx"><b>Unlimited</b> <span class="nw"><b>drafts</b><button class="tip" type="button" aria-label="About Unlimited drafts" aria-describedby="t-free-unlimited-drafts"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-unlimited-drafts">Save every idea. Only scheduled posts count toward your 30.</span></span></li>
+<li><span class="fx"><b>Unlimited trackable</b> <span class="nw"><b>links</b><button class="tip" type="button" aria-label="About Unlimited trackable links" aria-describedby="t-free-unlimited-trackable-links"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-unlimited-trackable-links">Every link you share counts its clicks, so you know what people tapped.</span></span></li>
+<li><span class="fx">30 scheduled posts a <span class="nw">month<button class="tip" type="button" aria-label="About 30 scheduled posts a month" aria-describedby="t-free-30-scheduled-posts-a-month"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-30-scheduled-posts-a-month">Enough for a post a day. Your count starts over on the 1st.</span></span></li>
+<li><span class="fx">3 social <span class="nw">channels<button class="tip" type="button" aria-label="About 3 social channels" aria-describedby="t-free-3-social-channels"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-3-social-channels">Connect any 3 accounts, like your Instagram, LinkedIn and TikTok.</span></span></li>
+<li><span class="fx">1 seat and 1 brand</span></li>
+<li><span class="fx">Drag-and-drop <span class="nw">calendar<button class="tip" type="button" aria-label="About Drag-and-drop calendar" aria-describedby="t-free-drag-and-drop-calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-drag-and-drop-calendar">See your whole month at a glance and drag posts to a new day.</span></span></li>
+<li><span class="fx">Write once, post <span class="nw">everywhere<button class="tip" type="button" aria-label="About Write once, post everywhere" aria-describedby="t-free-write-once-post-everywhere"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-write-once-post-everywhere">One draft for every network, with a live preview of how it will look on each one.</span></span></li>
+<li><span class="fx">Set-and-forget posting <span class="nw">queue<button class="tip" type="button" aria-label="About Set-and-forget posting queue" aria-describedby="t-free-set-and-forget-posting-queue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-set-and-forget-posting-queue">Pick your posting times once. New posts slot in on their own.</span></span></li>
+<li><span class="fx">Schedule hundreds at <span class="nw">once<button class="tip" type="button" aria-label="About Schedule hundreds at once" aria-describedby="t-free-schedule-hundreds-at-once"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-schedule-hundreds-at-once">Upload a spreadsheet or a folder of photos and videos and plan weeks in minutes.</span></span></li>
+<li><span class="fx">Auto-post from your <span class="nw">blog<button class="tip" type="button" aria-label="About Auto-post from your blog" aria-describedby="t-free-auto-post-from-your-blog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-auto-post-from-your-blog">New articles turn into posts on their own.</span></span></li>
+<li><span class="fx">Recycle your best <span class="nw">posts<button class="tip" type="button" aria-label="About Recycle your best posts" aria-describedby="t-free-recycle-your-best-posts"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-recycle-your-best-posts">Top posts go out again every few weeks, so they keep working.</span></span></li>
+<li><span class="fx">Every comment in one <span class="nw">inbox<button class="tip" type="button" aria-label="About Every comment in one inbox" aria-describedby="t-free-every-comment-in-one-inbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-every-comment-in-one-inbox">Reply to comments and mentions from your channels without switching apps.</span></span></li>
+<li><span class="fx">Analytics and best times to <span class="nw">post<button class="tip" type="button" aria-label="About Analytics and best times to post" aria-describedby="t-free-analytics-and-best-times-to-post"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-analytics-and-best-times-to-post">See what works and when your audience is most active.</span></span></li>
+<li><span class="fx">Link-in-bio <span class="nw">page<button class="tip" type="button" aria-label="About Link-in-bio page" aria-describedby="t-free-link-in-bio-page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-link-in-bio-page">One link for your profile, with 17 themes and click counts.</span></span></li>
+<li><span class="fx">Unpost from every network at <span class="nw">once<button class="tip" type="button" aria-label="About Unpost from every network at once" aria-describedby="t-free-unpost-from-every-network-at-once"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-unpost-from-every-network-at-once">Made a mistake? Take a post down everywhere in one step.</span></span></li>
+<li><span class="fx">Alerts if a post doesn&#x27;t go <span class="nw">out<button class="tip" type="button" aria-label="About Alerts if a post doesn&#x27;t go out" aria-describedby="t-free-alerts-if-a-post-doesn-t-go-out"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-alerts-if-a-post-doesn-t-go-out">We email you right away so nothing slips.</span></span></li>
+<li><span class="fx">Works with Claude, ChatGPT and <span class="nw">Cursor<button class="tip" type="button" aria-label="About Works with Claude, ChatGPT and Cursor" aria-describedby="t-free-works-with-claude-chatgpt-and-cursor"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-free-works-with-claude-chatgpt-and-cursor">Plan and schedule posts from the AI tools you already use.</span></span><ul class="sub"><li>MCP server</li><li>REST API and webhooks</li></ul></li>
+</ul>
+</article>
+<article class="plan">
+<h3>Creator</h3>
+<p class="plan-line">Your AI social media manager</p>
+<p class="price">$29<small>/ month</small></p>
+<p class="yearly">$290 billed yearly (save 2 months)</p>
+<a class="btn ghost" href="https://app.capybaroar.com/signup">Get started</a>
+<p class="plus">Everything in Free, plus</p>
+<ul class="checks pfeats">
+<li><span class="fx"><b>Unlimited scheduled posts</b></span></li>
+<li><span class="fx"><b>Unlimited blog feeds</b></span></li>
+<li><span class="fx">8 social channels</span></li>
+<li><span class="fx">1,000 AI credits a <span class="nw">month<button class="tip" type="button" aria-label="About 1,000 AI credits a month" aria-describedby="t-creator-1-000-ai-credits-a-month"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-1-000-ai-credits-a-month">About 125 images, or 6 weeks of posts planned by the agent. Credits refill every month.</span></span></li>
+<li><span class="fx">An AI agent that plans your <span class="nw">week<button class="tip" type="button" aria-label="About An AI agent that plans your week" aria-describedby="t-creator-an-ai-agent-that-plans-your-week"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-an-ai-agent-that-plans-your-week">Tell it what&#x27;s coming up. It writes the posts and fills your calendar with drafts for you to approve.</span></span></li>
+<li><span class="fx">One-click <span class="nw">rewrites<button class="tip" type="button" aria-label="About One-click rewrites" aria-describedby="t-creator-one-click-rewrites"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-one-click-rewrites">Make any post shorter, punchier, more casual or more professional, add hashtags or fix the spelling.</span></span></li>
+<li><span class="fx">Instant captions for your <span class="nw">photos<button class="tip" type="button" aria-label="About Instant captions for your photos" aria-describedby="t-creator-instant-captions-for-your-photos"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-instant-captions-for-your-photos">Drop in a batch of photos and get a caption for each one.</span></span></li>
+<li><span class="fx">Reply <span class="nw">suggestions<button class="tip" type="button" aria-label="About Reply suggestions" aria-describedby="t-creator-reply-suggestions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-reply-suggestions">A ready-to-send reply for every comment. Edit a word or two and send.</span></span></li>
+<li><span class="fx">Scroll-stopping AI <span class="nw">images<button class="tip" type="button" aria-label="About Scroll-stopping AI images" aria-describedby="t-creator-scroll-stopping-ai-images"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-scroll-stopping-ai-images">Our AI picks the best model for each idea.</span></span><ul class="sub"><li>Nano Banana Pro and Nano Banana 2</li><li>FLUX.2 Pro and Ideogram V3</li></ul></li>
+<li><span class="fx">AI videos with <span class="nw">sound<button class="tip" type="button" aria-label="About AI videos with sound" aria-describedby="t-creator-ai-videos-with-sound"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-ai-videos-with-sound">Turn an idea or a photo into a short clip, ready for Reels, TikTok and Shorts.</span></span><ul class="sub"><li>Veo 3.1</li><li>Kling 3 Pro</li><li>Seedance 2.0</li></ul></li>
+<li><span class="fx">AI voiceovers and <span class="nw">music<button class="tip" type="button" aria-label="About AI voiceovers and music" aria-describedby="t-creator-ai-voiceovers-and-music"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-ai-voiceovers-and-music">Add a voiceover, a jingle or sound effects in seconds.</span></span></li>
+<li><span class="fx">Link-in-bio page built by <span class="nw">AI<button class="tip" type="button" aria-label="About Link-in-bio page built by AI" aria-describedby="t-creator-link-in-bio-page-built-by-ai"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-link-in-bio-page-built-by-ai">Paste your website and get a ready-to-edit page in seconds.</span></span></li>
+<li><span class="fx">Your brand only, no Capybaroar <span class="nw">badge<button class="tip" type="button" aria-label="About Your brand only, no Capybaroar badge" aria-describedby="t-creator-your-brand-only-no-capybaroar-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-your-brand-only-no-capybaroar-badge">Remove “Made with Capybaroar” from your link-in-bio page.</span></span></li>
+<li><span class="fx">Top up credits <span class="nw">anytime<button class="tip" type="button" aria-label="About Top up credits anytime" aria-describedby="t-creator-top-up-credits-anytime"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-top-up-credits-anytime">Buy more when you need them, or turn on auto top-up. Bought credits last 12 months.</span></span></li>
+<li><span class="fx">See where every credit <span class="nw">goes<button class="tip" type="button" aria-label="About See where every credit goes" aria-describedby="t-creator-see-where-every-credit-goes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-creator-see-where-every-credit-goes">A full history of your AI use, ready to download.</span></span></li>
+</ul>
+</article>
+<article class="plan on">
+<div class="plan-top"><h3>Pro</h3><span class="tag solid">14 days free</span></div>
+<p class="plan-line">For teams that publish together</p>
+<p class="price">$49<small>/ month</small></p>
+<p class="yearly">$490 billed yearly (save 2 months)</p>
+<a class="btn" href="https://app.capybaroar.com/signup">Start 14-day free trial</a>
+<p class="plus">Everything in Creator, plus</p>
+<ul class="checks pfeats">
+<li><span class="fx"><b>Unlimited reports</b></span></li>
+<li><span class="fx"><b>Unlimited client</b> <span class="nw"><b>approvers</b><button class="tip" type="button" aria-label="About Unlimited client approvers" aria-describedby="t-pro-unlimited-client-approvers"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-unlimited-client-approvers">Invite every client who needs to sign off. They never take a paid seat.</span></span></li>
+<li><span class="fx">30 social channels</span></li>
+<li><span class="fx">2,500 AI credits a <span class="nw">month<button class="tip" type="button" aria-label="About 2,500 AI credits a month" aria-describedby="t-pro-2-500-ai-credits-a-month"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-2-500-ai-credits-a-month">About 300 images, or 16 weeks of posts planned by the agent.</span></span></li>
+<li><span class="fx">5 team <span class="nw">seats<button class="tip" type="button" aria-label="About 5 team seats" aria-describedby="t-pro-5-team-seats"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-5-team-seats">Bring your writers and editors into one shared calendar.</span></span></li>
+<li><span class="fx">5 <span class="nw">brands<button class="tip" type="button" aria-label="About 5 brands" aria-describedby="t-pro-5-brands"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-5-brands">Keep each brand&#x27;s channels, calendar, inbox and results apart.</span></span></li>
+<li><span class="fx">Approval before anything goes <span class="nw">live<button class="tip" type="button" aria-label="About Approval before anything goes live" aria-describedby="t-pro-approval-before-anything-goes-live"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-approval-before-anything-goes-live">Posts wait for a yes from you or your client before they publish.</span></span></li>
+<li><span class="fx">One-click client <span class="nw">sign-off<button class="tip" type="button" aria-label="About One-click client sign-off" aria-describedby="t-pro-one-click-client-sign-off"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-one-click-client-sign-off">Send a link. Clients approve or reject without making an account.</span></span></li>
+<li><span class="fx">Roles and <span class="nw">permissions<button class="tip" type="button" aria-label="About Roles and permissions" aria-describedby="t-pro-roles-and-permissions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-roles-and-permissions">Choose who can write, who can approve and which brands each person sees.</span></span></li>
+<li><span class="fx">Shareable <span class="nw">reports<button class="tip" type="button" aria-label="About Shareable reports" aria-describedby="t-pro-shareable-reports"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-pro-shareable-reports">Send results as a link or a PDF.</span></span><ul class="sub"><li>Automatic weekly or monthly emails</li></ul></li>
+</ul>
+</article>
+<article class="plan">
+<h3>Agency</h3>
+<p class="plan-line">Every client in one workspace</p>
+<p class="price">$149<small>/ month</small></p>
+<p class="yearly">$1,490 billed yearly (save 2 months)</p>
+<a class="btn ghost" href="https://app.capybaroar.com/signup">Get started</a>
+<p class="plus">Everything in Pro, plus</p>
+<ul class="checks pfeats">
+<li><span class="fx"><b>Unlimited client</b> <span class="nw"><b>brands</b><button class="tip" type="button" aria-label="About Unlimited client brands" aria-describedby="t-agency-unlimited-client-brands"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-agency-unlimited-client-brands">Add every client. Each gets its own channels, calendar, inbox, review link and link-in-bio page.</span></span></li>
+<li><span class="fx">100 social channels</span></li>
+<li><span class="fx">8,000 AI credits a <span class="nw">month<button class="tip" type="button" aria-label="About 8,000 AI credits a month" aria-describedby="t-agency-8-000-ai-credits-a-month"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-agency-8-000-ai-credits-a-month">About 1,000 images, or 50 weeks of posts planned by the agent.</span></span></li>
+<li><span class="fx">15 team seats</span></li>
+<li><span class="fx">An AI budget for each <span class="nw">client<button class="tip" type="button" aria-label="About An AI budget for each client" aria-describedby="t-agency-an-ai-budget-for-each-client"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-agency-an-ai-budget-for-each-client">Cap how many credits each client brand can use a month, so no one client eats the pool.</span></span></li>
+<li><span class="fx">AI use by <span class="nw">client<button class="tip" type="button" aria-label="About AI use by client" aria-describedby="t-agency-ai-use-by-client"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-agency-ai-use-by-client">See what each client used this month, ready for your invoices.</span></span></li>
+<li><span class="fx">Reports with your agency&#x27;s <span class="nw">brand<button class="tip" type="button" aria-label="About Reports with your agency&#x27;s brand" aria-describedby="t-agency-reports-with-your-agency-s-brand"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 11v5.5M12 7.6v.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></span><span class="tip-box" role="tooltip" id="t-agency-reports-with-your-agency-s-brand">Your logo and color on every report, and report emails under your agency&#x27;s name.</span></span></li>
+</ul>
+</article>
+</div>
+<p class="more-plans"><a class="btn ghost" href="/pricing">Compare every plan and credit price</a></p>
+<p class="fine">Prices in US dollars. Pay yearly and get 2 months free. Taxes may apply. Clients who only approve posts don&rsquo;t count as members. More credits: 1,000 for $12, 5,000 for $50 or 20,000 for $160, on paid plans.</p>
 </div>
 </section>
 
@@ -459,7 +667,10 @@
 <details><summary>Will the agent post without asking me?</summary><p>It saves drafts unless you ask it to schedule. If a brand needs approval, posts wait for a yes from an owner, an admin or the client.</p></details>
 <details><summary>Which networks can I post to?</summary><p>LinkedIn profiles and Pages, Facebook Pages, Instagram, Threads, TikTok, YouTube, X, Pinterest, Bluesky, Mastodon and Discord.</p></details>
 <details><summary>Can I use Claude, ChatGPT or Cursor?</summary><p>Yes. Every plan has an MCP server and a REST API, so Claude, ChatGPT, Cursor or your own code can plan and schedule posts. See the <a href="/api">API docs</a>.</p></details>
+<details><summary>Which AI models can I use?</summary><p>Pictures with Nano Banana Pro, Nano Banana 2, FLUX.2 Pro and Ideogram V3. Videos with Veo 3.1, Kling 3 Pro and Seedance 2.0 Fast. Voiceovers, music and sound with ElevenLabs, Lyria 2, Stable Audio 2.5 and MiniMax Music.</p></details>
+<details><summary>Do I need a card for the trial?</summary><p>No. Every new workspace gets 14 days of Pro. After that it moves to Free unless you upgrade.</p></details>
 <details><summary>Does it work for agencies?</summary><p>Yes. Give each client a brand with its own channels, invite them as a client to approve posts, and send them reports. Agency adds your logo and color to reports.</p></details>
+<details><summary>Can I cancel anytime?</summary><p>Yes, from Settings, Billing. Your plan stays active to the end of the paid month.</p></details>
 </div>
 </div>
 </section>
@@ -493,10 +704,6 @@
 (function(){var open=null;function close(){if(open){open.classList.remove('tip-on');open=null}}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tip');if(!b){close();return}var li=b.closest('li');if(open===li){close();return}close();li.classList.add('tip-on');open=li});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})})();
-</script>
-<script>
-(function(){var tabs=[].slice.call(document.querySelectorAll('.v2-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}
-tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();
 </script>
 <script src="/consent.js?v=1" defer></script>
 </body>

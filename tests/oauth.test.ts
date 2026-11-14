@@ -6,6 +6,8 @@ import { createHash } from "node:crypto";
 import {
   CLAUDE_CALLBACK,
   DIRECTORY_HIDDEN,
+  hiddenForApp,
+  isClaudeApp,
   authorizationServer,
   backTo,
   challengeHeader,
@@ -114,6 +116,16 @@ test("the directory connection doesn't list or run the AI media tools", async ()
   assert.ok(full.result.tools.some((t) => t.name === "generate_media"), "keys keep every tool");
   const call = (await handleMcp({ jsonrpc: "2.0", id: 2, method: "tools/call", params: { name: "generate_media", arguments: {} } }, ops, "UTC", { hide: DIRECTORY_HIDDEN })) as { error: { code: number } };
   assert.equal(call.error.code, -32602);
+});
+
+test("Claude keeps the directory's rules; ChatGPT and other apps get the AI media tools", () => {
+  assert.ok(isClaudeApp(["https://claude.ai/api/mcp/auth_callback"]));
+  assert.ok(isClaudeApp(["https://claude.com/api/mcp/auth_callback"]));
+  assert.ok(isClaudeApp(["http://localhost:6274/cb", "https://claude.ai/api/mcp/auth_callback"]));
+  assert.ok(!isClaudeApp(["https://chatgpt.com/connector_platform_oauth_redirect"]));
+  assert.ok(!isClaudeApp(["https://notclaude.ai/cb", "https://claude.ai.evil.com/cb", "not a url"]));
+  assert.equal(hiddenForApp(["https://claude.ai/api/mcp/auth_callback"]), DIRECTORY_HIDDEN);
+  assert.equal(hiddenForApp(["https://chatgpt.com/connector_platform_oauth_redirect"]).size, 0);
 });
 
 test("every tool has a title and a read-only or destructive hint (directory rule)", async () => {

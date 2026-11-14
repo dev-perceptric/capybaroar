@@ -365,7 +365,7 @@
   "formFields": [],
   "hasFollowers": true,
   "hasStats": true,
-  "hasRevoke": false
+  "hasRevoke": true
  },
  {
   "id": "x",
@@ -434,7 +434,7 @@
   "formFields": [],
   "hasFollowers": true,
   "hasStats": true,
-  "hasRevoke": false
+  "hasRevoke": true
  },
  {
   "id": "pinterest",
@@ -499,7 +499,7 @@
   "formFields": [],
   "hasFollowers": true,
   "hasStats": true,
-  "hasRevoke": false
+  "hasRevoke": true
  },
  {
   "id": "bluesky",
@@ -604,7 +604,7 @@
   "formFields": [],
   "hasFollowers": false,
   "hasStats": false,
-  "hasRevoke": false
+  "hasRevoke": true
  },
  {
   "id": "wordpress",

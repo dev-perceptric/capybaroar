@@ -25,6 +25,9 @@ server {
   proxy_set_header X-Capy-Bio 1;
   proxy_read_timeout 30s;
 
+  # The homepage preview became the homepage.
+  location = /home-v2 { return 301 /; }
+
   location / {
     try_files $uri $uri.html $uri/ @bio;
   }

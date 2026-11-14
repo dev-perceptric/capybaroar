@@ -1,9 +1,10 @@
 """Builds the five feature landing pages for capybaroar.com from the homepage's parts, and updates the shared nav and
 footer on every page. Run from anywhere; writes into site/public."""
 import os, re, json, html as H
+HOME_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'home-base.html')  # the homepage's source; build_home_v2.py writes the live index.html from it
 
 P = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'public') + os.sep  # site/public/
-home = open(P + 'index.html').read()
+home = open(HOME_BASE).read()
 
 # ---------- shared nav and footer ----------
 PAGES = [
@@ -98,7 +99,7 @@ def nav_sprite(src):
     return '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false" class="nav-sprite"><defs>' + ''.join(syms) + '</defs></svg>\n'
 
 
-NAV_SPRITE = nav_sprite(open(P + 'index.html').read())
+NAV_SPRITE = nav_sprite(open(HOME_BASE).read())
 
 
 # Floating Capybaroar card on the free tools and the blog: one line that fits what the visitor just did.
@@ -170,7 +171,7 @@ if 'href="/mcp">See the full guide' not in home:
     assert a in home
     home = home.replace(a, '<p class="g-dev"><a href="/mcp">See the full guide and prompt library</a>. Building your own app? Read the <a href="/api">API docs</a>.</p>')
 home = home.replace('/site.js?v=1', '/site.js?v=2')
-open(P + 'index.html', 'w').write(home)
+open(HOME_BASE, 'w').write(home)
 
 for f in ['api.html', 'terms.html', 'privacy.html', 'data-deletion.html', 'security.html', 'subprocessors.html', 'dpa.html', '404.html']:
     if not os.path.exists(P + f):  # /dpa is held back until the legal pages are published

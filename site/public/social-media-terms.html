@@ -108,11 +108,11 @@
 
 <script src="/site.js?v=2" defer></script>
 <script src="/nav.js?v=1" defer></script>
+<script src="/consent.js?v=1" defer></script>
 <script src="/promo.js?v=1" defer></script>
 <script>(function(){var i=document.querySelector('[data-gl-search]'),n=document.querySelector('[data-gl-none]');if(!i)return;
 i.addEventListener('input',function(){var q=i.value.trim().toLowerCase(),any=false;
 document.querySelectorAll('.gl-group').forEach(function(g){var shown=0;g.querySelectorAll('li').forEach(function(li){var ok=!q||li.getAttribute('data-q').indexOf(q)>-1;li.hidden=!ok;if(ok)shown++});g.hidden=!shown;if(shown)any=true});
 n.hidden=any})})();</script>
-<script src="/consent.js?v=1" defer></script>
 </body>
 </html>

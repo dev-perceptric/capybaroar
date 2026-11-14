@@ -143,3 +143,17 @@ export const challengeHeader = (base: string, error?: string) =>
 
 /** MCP tools the directory listing leaves out: making AI pictures and videos (the directory's rules). */
 export const DIRECTORY_HIDDEN = new Set(["generate_media", "get_generation"]);
+
+/** Claude signs in through claude.ai or claude.com, so its connections follow the directory's rules. ChatGPT and
+ * other apps that connect with OAuth keep every tool, AI pictures and videos included. */
+export const isClaudeApp = (redirectUris: string[]) =>
+  redirectUris.some((u) => {
+    try {
+      return /(^|\.)claude\.(ai|com)$/.test(new URL(u).hostname);
+    } catch {
+      return false;
+    }
+  });
+
+/** The tools an OAuth app doesn't get, from the redirect addresses it registered. */
+export const hiddenForApp = (redirectUris: string[]) => (isClaudeApp(redirectUris) ? DIRECTORY_HIDDEN : new Set<string>());

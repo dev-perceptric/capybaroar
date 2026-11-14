@@ -2,6 +2,7 @@
 shared parts and helpers are current, then writes the channel pages, links them from the site and updates the sitemap.
 Every fact here comes from the app: src/lib/networks.ts and the post checks in src/lib/providers/*."""
 import os, re
+HOME_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'home-base.html')  # the homepage's source; build_home_v2.py writes the live index.html from it
 HERE = os.path.dirname(os.path.abspath(__file__))
 exec(open(os.path.join(HERE, 'build_pages.py')).read())
 
@@ -373,12 +374,12 @@ for f in sorted(os.listdir(P)):
     open(P + f, 'w').write(s)
 
 # Homepage network tiles link to their pages
-h = open(P + 'index.html').read()
+h = open(HOME_BASE).read()
 TILE = {'instagram': 'instagram', 'tiktok': 'tiktok', 'youtube': 'youtube', 'facebook': 'facebook', 'linkedin': 'linkedin', 'linkedin-page': 'linkedin', 'x': 'x', 'threads': 'threads', 'bluesky': 'bluesky', 'pinterest': 'pinterest', 'mastodon': 'mastodon', 'discord': 'discord'}
 for nid, cid in TILE.items():
     pat = re.compile(r'(<li class="nt" style="--i:\d+"><svg aria-hidden="true"><use href="#n-' + re.escape(nid) + r'"/></svg>)([^<]+)(</li>)')
     h = pat.sub(lambda m: m.group(1) + f'<a class="nt-a" href="{C[cid]["slug"]}">{m.group(2)}</a>' + m.group(3), h)
-open(P + 'index.html', 'w').write(h)
+open(HOME_BASE, 'w').write(h)
 
 # Scheduler page table: network names link to their pages
 s = open(P + 'social-media-scheduler.html').read()

@@ -18,6 +18,6 @@ That runs `build_tools.py`, which runs the others in order. The output goes stra
 | `tools_text.py`, `tools_plan.py`, `tools_media.py`, `tools_more.py` | The content of each tool page: the tool, the guide and the FAQ |
 | `emoji/` | Emoji data from emojibase-data 18.0.0 (MIT, see `emoji/LICENSE`) |
 
-`site/public/index.html` is the source for the homepage and for the parts other pages copy (the sprite of icons and logos, the header, the footer and the live scenes), so edit the homepage there directly. The tools' behavior lives in `site/public/tools/tools.js` and the site's shared behavior in `site/public/site.js` and `site/public/nav.js`.
+`site/build/home-base.html` is the source for the parts other pages copy (the sprite of icons and logos, the header, the footer and the live scenes). `build_home_v2.py` turns it into the live homepage, `site/public/index.html`, so run it last and edit the homepage's sections there. The tools' behavior lives in `site/public/tools/tools.js` and the site's shared behavior in `site/public/site.js` and `site/public/nav.js`.
 
 Facts on the network pages come from the app (`src/lib/networks.ts` and `src/lib/providers/*`). When a network changes there, update `build_channels.py` and the network tables in `build_pages.py` to match.

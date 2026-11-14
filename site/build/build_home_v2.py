@@ -1,9 +1,10 @@
-"""Builds site/public/home-v2.html: a preview of the homepage with a "Built for you" section, a bento grid in place
-of the feature tour, and compact pricing and FAQ. Not linked anywhere and marked noindex."""
+"""Builds the live homepage, site/public/index.html, from site/build/home-base.html: the base page with a "Built for
+you" section, a bento grid in place of the feature tour, and compact pricing and FAQ. The other builders read and
+refresh home-base.html (the icons, header, footer and scenes they copy), so run this one last."""
 import re
 
 P = "/home/user/capybaroar/site/public/"
-src = open(P + "index.html").read()
+src = open("/home/user/capybaroar/site/build/home-base.html").read()
 lines = src.split("\n")
 
 
@@ -173,7 +174,6 @@ if len(keep) == 5 and "\n".join(details) not in faq:
 
 out = lines[:t0] + [who, bento] + lines[t1 + 1:p0] + [pricing] + lines[p1 + 1:f0] + [faq] + lines[f1 + 1:]
 html = "\n".join(out)
-html = html.replace("<head>", '<head>\n<meta name="robots" content="noindex">', 1)
 html = html.replace('<link rel="stylesheet" href="/home.css?v=8">', '<link rel="stylesheet" href="/home.css?v=8">\n<link rel="stylesheet" href="/home-v2.css?v=1">', 1)
 html = html.replace('<a class="btn ghost" href="#tour">', '<a class="btn ghost" href="#features">')
 tabjs = """<script>
@@ -181,5 +181,5 @@ tabjs = """<script>
 tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();
 </script>"""
 html = html.replace("</body>", tabjs + "\n</body>", 1)
-open(P + "home-v2.html", "w").write(html)
+open(P + "index.html", "w").write(html)
 print("built", len(html), "bytes; faq kept", len(keep))

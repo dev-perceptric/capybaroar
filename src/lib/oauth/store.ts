@@ -152,9 +152,9 @@ const unauthorized = (message: string) => new ApiError(401, "unauthorized", mess
 export async function oauthCtx(token: string): Promise<ApiCtx> {
   if (!isAccessToken(token)) throw unauthorized("Connect again");
   const db = adminClient();
-  const { data: t, error } = await db.from("oauth_tokens").select("grant_id, access_expires_at, oauth_grants(workspace_id, user_id, revoked_at, last_used_at)").eq("access_hash", hashToken(token)).maybeSingle();
+  const { data: t, error } = await db.from("oauth_tokens").select("grant_id, access_expires_at, oauth_grants(workspace_id, user_id, revoked_at, last_used_at, oauth_clients(redirect_uris))").eq("access_hash", hashToken(token)).maybeSingle();
   if (error) throw new ApiError(503, "unavailable", "Couldn't check the sign-in just now. Try again in a moment.");
-  const g = t?.oauth_grants as unknown as { workspace_id: string; user_id: string; revoked_at: string | null; last_used_at: string | null } | null;
+  const g = t?.oauth_grants as unknown as { workspace_id: string; user_id: string; revoked_at: string | null; last_used_at: string | null; oauth_clients: { redirect_uris: string[] | null } | null } | null;
   if (!t || !g || g.revoked_at) throw unauthorized("This connection was removed. Connect again.");
   if (new Date(t.access_expires_at as string).getTime() < Date.now()) throw unauthorized("The access token expired");
   const { data: m, error: e2 } = await db.from("members").select("role, brand_ids, workspaces(name, timezone)").eq("workspace_id", g.workspace_id).eq("user_id", g.user_id).maybeSingle();
@@ -175,6 +175,8 @@ export async function oauthCtx(token: string): Promise<ApiCtx> {
     role,
     brandIds: role === "owner" || role === "admin" ? null : ((m.brand_ids as string[] | null) ?? null),
     via: "oauth",
+    // Unknown app: treat it like Claude, so the directory's rules hold when in doubt.
+    appRedirects: g.oauth_clients?.redirect_uris ?? ["https://claude.ai"],
   };
 }
 
