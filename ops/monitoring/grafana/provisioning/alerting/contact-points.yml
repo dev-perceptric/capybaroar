@@ -1,0 +1,12 @@
+# Where alerts go: one email contact point. ALERT_EMAIL and the SMTP settings come from .env (docker-compose.yml).
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: Operations email
+    receivers:
+      - uid: capy-ops-email
+        type: email
+        settings:
+          addresses: ${ALERT_EMAIL}
+          singleEmail: true
+        disableResolveMessage: false

@@ -1,0 +1,246 @@
+// Grafana Alloy on the app VPS: reads the logs below, takes secrets out, and pushes them to Loki on the compliance
+// server over HTTPS with a password (ops/monitoring). Steps: ops/vps/CHECKLIST.md, step 12.
+//
+//   Docker containers  the app, the homepage (nginx) and Supabase's auth (GoTrue), kong, storage and db,
+//                      through a read-only Docker API proxy (docker-compose.yml here)
+//   Caddy              its JSON access log, /var/log/caddy/access.log (ops/vps/Caddyfile.example, "Access log")
+//   System             sshd and sudo, from the systemd journal
+//
+// Every line gets host (LOG_HOST) and role (app, site, supabase, caddy or system). Docker lines also get container,
+// service, project and stream. The app's JSON lines (src/lib/logLines.ts) also get type: audit, error, start or beat.
+//
+// Settings come from /etc/capybaroar/alloy.env (alloy.env.example). The container names to match:
+//   CAPY_APP_CONTAINERS    regex for the app containers'      default capybaroar-web.*|capybaroar-app.*|capybaroar
+//   CAPY_SITE_CONTAINERS   regex for the homepage container's default capybaroar-site.*|capybaroar-homepage.*
+//   SUPABASE_PROJECT       Supabase's compose project         default sb-capybaroar
+//   SUPABASE_SERVICES      which of its services to ship      default auth|kong|storage|db
+
+// ---------------------------------------------------------------------------------------------------------------
+// Docker containers
+// ---------------------------------------------------------------------------------------------------------------
+
+discovery.docker "containers" {
+	host             = "tcp://docker-proxy:2375"
+	refresh_interval = "30s"
+}
+
+discovery.relabel "containers" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+		target_label  = "project"
+	}
+
+	rule {
+		source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+		target_label  = "service"
+	}
+
+	rule {
+		source_labels = ["container"]
+		regex         = coalesce(sys.env("CAPY_APP_CONTAINERS"), "capybaroar-web.*|capybaroar-app.*|capybaroar")
+		target_label  = "role"
+		replacement   = "app"
+	}
+
+	rule {
+		source_labels = ["container"]
+		regex         = coalesce(sys.env("CAPY_SITE_CONTAINERS"), "capybaroar-site.*|capybaroar-homepage.*")
+		target_label  = "role"
+		replacement   = "site"
+	}
+
+	rule {
+		source_labels = ["project", "service"]
+		separator     = ";"
+		regex         = coalesce(sys.env("SUPABASE_PROJECT"), "sb-capybaroar") + ";(?:" + coalesce(sys.env("SUPABASE_SERVICES"), "auth|kong|storage|db") + ")"
+		target_label  = "role"
+		replacement   = "supabase"
+	}
+
+	// Ship only the containers named above. Studio, analytics, vector, Alloy itself and the rest stay local.
+	rule {
+		source_labels = ["role"]
+		regex         = "app|site|supabase"
+		action        = "keep"
+	}
+}
+
+loki.relabel "docker_stream" {
+	forward_to = []
+
+	rule {
+		source_labels = ["__meta_docker_container_log_stream"]
+		target_label  = "stream"
+	}
+}
+
+loki.source.docker "containers" {
+	host             = "tcp://docker-proxy:2375"
+	targets          = discovery.relabel.containers.output
+	relabel_rules    = loki.relabel.docker_stream.rules
+	refresh_interval = "30s"
+	forward_to       = [loki.process.app_lines.receiver]
+}
+
+// The app's JSON lines get a type label, so alerts can count them cheaply. Only these four values become a label.
+loki.process "app_lines" {
+	forward_to = [loki.process.scrub.receiver]
+
+	stage.match {
+		selector = "{role=\"app\"} |= \"{\\\"type\\\":\\\"\""
+
+		stage.json {
+			expressions = {type = ""}
+		}
+
+		stage.labels {
+			values = {type = ""}
+		}
+
+		stage.match {
+			selector = "{type!~\"audit|error|start|beat\"}"
+
+			stage.label_drop {
+				values = ["type"]
+			}
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Caddy's access log (a file on the host, mounted read-only)
+// ---------------------------------------------------------------------------------------------------------------
+
+local.file_match "caddy" {
+	path_targets = [{
+		__path__ = "/var/log/caddy/access*.log",
+		job      = "caddy",
+		role     = "caddy",
+	}]
+}
+
+loki.source.file "caddy" {
+	targets    = local.file_match.caddy.targets
+	forward_to = [loki.process.scrub.receiver]
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// sshd and sudo, from the systemd journal
+// ---------------------------------------------------------------------------------------------------------------
+
+loki.relabel "journal" {
+	forward_to = []
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+
+	rule {
+		source_labels = ["__journal_syslog_identifier"]
+		target_label  = "ident"
+	}
+
+	rule {
+		source_labels = ["unit", "ident"]
+		separator     = ";"
+		regex         = "(?:ssh|sshd)\\.service;.*|.*;(?:sshd|sshd-session|sudo)"
+		action        = "keep"
+	}
+}
+
+loki.source.journal "system" {
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {job = "system", role = "system"}
+	forward_to    = [loki.process.scrub.receiver]
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Secrets out, before anything leaves the server. Each pattern replaces only the secret part with [redacted].
+// The app scrubs its own errors too (scrub() in src/lib/ops.ts); this also covers Supabase, nginx and stack traces.
+// ---------------------------------------------------------------------------------------------------------------
+
+loki.process "scrub" {
+	forward_to = [loki.write.compliance.receiver]
+
+	// Authorization and Proxy-Authorization headers, in any log format: "Authorization: Bearer x",
+	// "authorization":"Basic x", "Authorization":["Bearer x"].
+	stage.replace {
+		expression = "(?i)(?:proxy-)?authorization[\"']?\\s*[:=]\\s*\\[?\\s*[\"']?(?:bearer\\s+|basic\\s+|token\\s+)?([^\\s\"',;\\]}]+)"
+		replace    = "[redacted]"
+	}
+
+	// Bearer and Basic credentials anywhere else.
+	stage.replace {
+		expression = "(?i)\\b(?:bearer|basic)\\s+([A-Za-z0-9._~+/=-]{8,})"
+		replace    = "[redacted]"
+	}
+
+	// Cookie and Set-Cookie headers: the whole value.
+	stage.replace {
+		expression = "(?i)(?:set-)?cookie[\"']?\\s*[:=]\\s*\\[?\\s*[\"']?([^\"\\]\\n]+)"
+		replace    = "[redacted]"
+	}
+
+	// Query parameters and key=value pairs that carry secrets (Supabase sends apikey in the realtime URL).
+	stage.replace {
+		expression = "(?i)(?:^|[?&;,\\s\"'])(?:apikey|api_key|x-api-key|access_token|refresh_token|id_token|token|code|secret|client_secret|password|passwd|signature|sig|x-amz-signature|x-amz-credential|key)=([^&\\s\"';,]+)"
+		replace    = "[redacted]"
+	}
+
+	// The same names as JSON fields: "apikey":"x", "password":"x".
+	stage.replace {
+		expression = "(?i)\"(?:apikey|api_key|x-api-key|access_token|refresh_token|id_token|token|secret|client_secret|password|service_role_key)\"\\s*:\\s*\"([^\"]*)\""
+		replace    = "[redacted]"
+	}
+
+	// JWTs (Supabase anon and service keys, session tokens).
+	stage.replace {
+		expression = "(eyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]*)"
+		replace    = "[jwt]"
+	}
+
+	// Well-known key shapes: Stripe, webhook secrets, Supabase and GitHub tokens, Slack, AWS.
+	stage.replace {
+		expression = "\\b((?:sk|pk|rk)_(?:live|test)_[A-Za-z0-9]{8,}|(?:whsec|sbp|sb_secret|ghp|gho|github_pat|xox[abpr])_[A-Za-z0-9_-]{8,}|AKIA[A-Z0-9]{16})"
+		replace    = "[key]"
+	}
+
+	// Passwords in database URLs: postgres://user:secret@host.
+	stage.replace {
+		expression = "(?i)postgres(?:ql)?://[^:\\s/]+:([^@\\s]+)@"
+		replace    = "[redacted]"
+	}
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Push to the compliance server
+// ---------------------------------------------------------------------------------------------------------------
+
+loki.write "compliance" {
+	endpoint {
+		url = sys.env("LOKI_PUSH_URL")
+
+		basic_auth {
+			username = sys.env("LOKI_PUSH_USER")
+			password = sys.env("LOKI_PUSH_PASSWORD")
+		}
+
+		// Keep trying for about an hour when the compliance server is away. Files and the journal resume from their
+		// saved place after that.
+		min_backoff_period  = "1s"
+		max_backoff_period  = "5m"
+		max_backoff_retries = 20
+	}
+
+	external_labels = {host = coalesce(sys.env("LOG_HOST"), "app-vps")}
+}

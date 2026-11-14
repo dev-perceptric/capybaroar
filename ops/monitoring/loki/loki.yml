@@ -1,0 +1,62 @@
+# Loki in one process (single binary) with its data on this server's disk (the loki-data volume).
+# Logs are kept 365 days: the compactor deletes older chunks (retention_period below).
+# Nothing here is open to the internet. Caddy (caddy/Caddyfile) lets only the app VPS push, with a password.
+
+auth_enabled: false   # one tenant; Caddy checks who may push
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+  log_level: warn
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+
+schema_config:
+  configs:
+    - from: 2026-11-01
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+limits_config:
+  retention_period: 8760h            # 365 days
+  max_query_lookback: 8760h
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h   # lines up to a week late are taken (after an outage)
+  ingestion_rate_mb: 4
+  ingestion_burst_size_mb: 8
+  per_stream_rate_limit: 3MB
+  max_label_names_per_series: 15
+  allow_structured_metadata: true
+  volume_enabled: true
+
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 50
+  delete_request_store: filesystem
+
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
+analytics:
+  reporting_enabled: false

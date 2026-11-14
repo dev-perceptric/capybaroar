@@ -5,6 +5,7 @@ import { appUrl } from "./channels";
 import { mailReady, sendEmail } from "./alerts";
 import { reportError, type AppError, type OpsStore } from "./ops";
 import { pruneLimits } from "./limits";
+import { errorLine, logLine } from "./logLines";
 
 // The Supabase side of ops.ts: turns, kept locks, the heartbeat and error tracking.
 export const MACHINE = process.env.FLY_MACHINE_ID || hostname();
@@ -53,8 +54,10 @@ const mailError = (e: AppError) =>
     href: appUrl(),
   });
 
-/** Records a server error in app_errors, and emails ALERT_EMAIL at most once an hour per error. Never throws. */
+/** Records a server error in app_errors, and emails ALERT_EMAIL at most once an hour per error. Never throws.
+ * Also writes one JSON line to stdout for the central log store (src/lib/logLines.ts). */
 export function trackError(e: unknown, route: string | null) {
+  logLine(errorLine(e, route));
   return reportError(opsStore, mailReady() && alertTo().length ? mailError : null, e, route, MACHINE);
 }
 

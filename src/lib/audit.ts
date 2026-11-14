@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac } from "node:crypto";
 import { adminClient } from "./supabase/server";
 import { safeMeta, type AuditEvent } from "./auditRules";
+import { auditLine, logLine } from "./logLines";
 
 export type { AuditAction, AuditEvent } from "./auditRules";
 
@@ -13,6 +14,8 @@ const ipHash = (ip?: string | null) => (ip ? createHmac("sha256", ipSalt()).upda
 
 /** Writes one event, tried 3 times. Never throws: a failed write is logged, and the change it describes stands. */
 export async function audit(ev: AuditEvent): Promise<boolean> {
+  // One short JSON line for the central log store and its alerts (src/lib/logLines.ts), even if the write fails.
+  logLine(auditLine(ev));
   const row = {
     workspace_id: ev.workspaceId,
     actor_id: ev.actorId ?? null,

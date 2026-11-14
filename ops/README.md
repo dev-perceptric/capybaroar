@@ -36,6 +36,14 @@ http://localhost:3000, SQL editor):
 select last_seen, count, route, message from app_errors order by last_seen desc limit 50;
 ```
 
+## Central logs and alerts
+
+The app, the homepage, Supabase's auth, kong, storage and db, Caddy's access log and sshd ship to Grafana Loki on a
+separate compliance server and are kept 365 days. Grafana there emails on error spikes, failed sign-in spikes,
+deletions, SSH root sign-ins, Caddy 5xx spikes, restart loops and an app gone silent. Each audit event and tracked error
+also prints one JSON line with no personal data (`src/lib/logLines.ts`). Setup and costs: `ops/monitoring/README.md`;
+the VPS side is step 12 of `ops/vps/CHECKLIST.md`.
+
 ## Encryption keys
 
 Channel tokens, link tokens and webhook secrets are sealed with AES-256-GCM (`src/lib/sealing.ts`). Values carry the

@@ -1,0 +1,64 @@
+# The compliance server's front door (docker-compose.yml runs it on the host network, ports 80 and 443).
+#
+# - POST /loki/api/v1/push: only from APP_VPS_IPS, and only with the user and password in loki-push.users (made with
+#   `caddy hash-password`, README.md step 4). The app VPS can add logs. It can't read, change or delete them.
+# - Everything else goes to Grafana, from GRAFANA_ALLOW_IPS only. Anyone else gets a 404.
+# - Loki's other endpoints (query, delete, config, metrics) are never reachable from outside.
+#
+# Running Probo on this server too? Add its site as another block at the end (example there), so one Caddy holds
+# ports 80 and 443.
+
+{
+	email {$ACME_EMAIL}
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+{$LOGS_DOMAIN} {
+	request_header -X-Forwarded-For
+	request_header -X-Real-IP
+	request_header -Forwarded
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+		-Via
+	}
+
+	@push {
+		method POST
+		path /loki/api/v1/push
+		remote_ip {$APP_VPS_IPS}
+	}
+	handle @push {
+		basic_auth {
+			import /etc/caddy/loki-push.users
+		}
+		request_body {
+			max_size 16MB
+		}
+		reverse_proxy 127.0.0.1:3100
+	}
+
+	@loki path /loki/* /ready /metrics /config /distributor/* /ingester/* /compactor/* /flush /services
+	handle @loki {
+		respond 404
+	}
+
+	@staff remote_ip {$GRAFANA_ALLOW_IPS}
+	handle @staff {
+		reverse_proxy 127.0.0.1:3300
+	}
+
+	handle {
+		respond 404
+	}
+}
+
+# Probo, if it runs on this server behind the same Caddy (set PROBO_DOMAIN and its address, then uncomment):
+# {$PROBO_DOMAIN} {
+# 	reverse_proxy 127.0.0.1:8080
+# }

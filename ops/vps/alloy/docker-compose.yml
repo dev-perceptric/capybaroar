@@ -1,0 +1,64 @@
+# Log shipping on the app VPS: Grafana Alloy (config.alloy) and a read-only Docker API proxy for it.
+# Copy this folder to /opt/capybaroar/alloy and run `docker compose up -d` there (ops/vps/CHECKLIST.md, step 12).
+# Images are pinned to a release and its digest. To update, change both.
+#
+# Alloy never gets the Docker socket: a socket with :ro can still start containers. The proxy answers only the
+# read calls Alloy needs (list containers and networks, read logs) and refuses everything else, and it sits on a
+# network with no way out.
+
+name: capy-logs
+
+services:
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.5.0@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459
+    restart: unless-stopped
+    environment:
+      CONTAINERS: "1"
+      NETWORKS: "1"
+      POST: "0"
+      DISABLE_IPV6: "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [docker-api]
+    security_opt: ["no-new-privileges:true"]
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  alloy:
+    image: grafana/alloy:v1.22.0@sha256:9acc2529bc1edb7f5b2bd801dd8334ebc80c158e3a9e5526ecd7c9a273d43189
+    restart: unless-stopped
+    depends_on: [docker-proxy]
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - --disable-reporting
+      - /etc/alloy/config.alloy
+    # LOKI_PUSH_URL, LOKI_PUSH_USER, LOKI_PUSH_PASSWORD, LOG_HOST and the container names (alloy.env.example).
+    env_file: /etc/capybaroar/alloy.env
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - alloy-data:/var/lib/alloy/data          # where each file and the journal were read up to
+      - /var/log/caddy:/var/log/caddy:ro
+      - /var/log/journal:/var/log/journal:ro
+      - /run/log/journal:/run/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    ports:
+      - "127.0.0.1:12345:12345"                 # Alloy's status page: ssh -L 12345:127.0.0.1:12345, then http://localhost:12345
+    networks: [docker-api, default]
+    security_opt: ["no-new-privileges:true"]
+    # Root in the container with one power only: opening files it doesn't own (Caddy's log, the journal, its own
+    # data folder). Every host folder above is mounted read-only.
+    cap_drop: [ALL]
+    cap_add: [DAC_OVERRIDE]
+    logging: *logging
+
+networks:
+  docker-api:
+    internal: true
+
+volumes:
+  alloy-data:

@@ -15,6 +15,7 @@ import { deliverDue, emit, pruneDeliveries } from "./webhooks";
 import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
+import { BEAT_LINE_MS, logLine, runnerLine } from "./logLines";
 import { aiReady, runGenerations } from "./generations";
 import { runAutoTopUps, sweepHolds } from "./credits";
 import { runWorkspaceDelete } from "./workspaceDelete";
@@ -430,6 +431,9 @@ export function startRunner() {
   setInterval(content, 1800000);
   setTimeout(content, 60000);
   console.log(`runner started on ${WORKER}`);
+  // For the central log store: a start line (restart alerts) and a beat line (an app gone silent means shipping broke).
+  logLine(runnerLine("start"));
+  setInterval(() => logLine(runnerLine("beat")), BEAT_LINE_MS);
 }
 
 /**

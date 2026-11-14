@@ -1,0 +1,380 @@
+# Capybaroar alert rules, read by Grafana at start (provisioning). Every alert emails Operations (policies.yml).
+#
+# How each rule works: query A counts log lines in Loki and compares the count with a threshold inside the query
+# (for example `> ${ALERT_ERRORS_10M}`). Loki returns a value only when the count is over it, so C (> 0) fires then.
+# Below the threshold the query returns nothing, which counts as normal (noDataState: OK). A failing query (Loki
+# down) shows as an error and emails too (execErrState: Error).
+#
+# Thresholds are the ${ALERT_...} names below. Set them in .env (defaults are in ../../../docker-compose.yml).
+# Grafana leaves ${...} in queries as written, so grafana/start.sh fills the numbers in before Grafana starts:
+#   ALERT_ERRORS_10M          app errors in 10 minutes                      default 20
+#   ALERT_FAILED_SIGNINS_10M  failed sign-ins in 10 minutes                 default 30
+#   ALERT_SSH_FAILED_10M      failed SSH sign-ins in 10 minutes             default 60
+#   ALERT_HTTP_5XX_10M        Caddy 5xx answers in 10 minutes               default 25
+#   ALERT_APP_STARTS_15M      app runner starts in 15 minutes               default 3
+#
+# Logged with no alert: a role changed to owner or admin, a new API key, a connected app (at any hour). They show on
+# the dashboard, in the panels Sensitive changes and Sensitive changes outside working hours.
+#
+# Labels the queries use come from the shipper on the app VPS (ops/vps/alloy/config.alloy):
+#   role="app"     the app containers. Their JSON lines carry type="audit", "error", "start" or "beat"
+#                  (src/lib/logLines.ts).
+#   job="caddy"    Caddy's JSON access log.
+#   job="system"   sshd and sudo from the journal.
+
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: app
+    folder: Capybaroar alerts
+    interval: 1m
+    rules:
+      - uid: capy-app-errors
+        title: 'App error spike'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({role="app", type="error"}[10m])) > ${ALERT_ERRORS_10M}'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: 'More than ${ALERT_ERRORS_10M} app errors in 10 minutes'
+          description: 'Open the Capybaroar dashboard, panel Errors by place. The full errors are in app_errors (ops/README.md, Errors).'
+      - uid: capy-failed-signins
+        title: 'Failed sign-in spike'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({role="app", type="audit"} |= "auth.sign_in_failed" | json | action="auth.sign_in_failed" [10m])) > ${ALERT_FAILED_SIGNINS_10M}'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: 'More than ${ALERT_FAILED_SIGNINS_10M} failed sign-ins in 10 minutes'
+          description: 'Someone may be guessing passwords. Sign-in rate limits still apply (src/lib/limits.ts). Read the audit_events rows for auth.sign_in_failed in Studio to see which accounts.'
+      - uid: capy-deletions
+        title: 'Workspace or account deletion'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum by (action) (count_over_time({role="app", type="audit"} |~ "workspace.deletion_requested|account.deleted" | json | action=~"workspace.deletion_requested|account.deleted" [5m])) > 0'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: info
+        annotations:
+          summary: 'A customer asked to delete a workspace or an account'
+          description: 'Check it in the audit log (Settings, Audit log, or audit_events in Studio) and follow the deletion steps.'
+      - uid: capy-app-restarts
+        title: 'App restarting repeatedly'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({role="app", type="start"}[15m])) > ${ALERT_APP_STARTS_15M}'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: 'The app started more than ${ALERT_APP_STARTS_15M} times in 15 minutes'
+          description: 'The container may be crashing and restarting. On the app VPS: docker ps, then docker logs --tail 200 on the app container.'
+      - uid: capy-app-silent
+        title: 'No logs from the app'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'absent_over_time({role="app"}[15m])'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: 'No log lines from the app for 15 minutes'
+          description: 'The app writes a beat line every 5 minutes. Either the app is down or log shipping broke. Check https://app.capybaroar.com/api/health, then on the app VPS: docker compose ps and docker logs --tail 50 on the alloy container (ops/vps/alloy).'
+  - orgId: 1
+    name: servers
+    folder: Capybaroar alerts
+    interval: 1m
+    rules:
+      - uid: capy-ssh-root
+        title: 'SSH sign-in as root'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({job="system"} |= "Accepted " |= " for root from " [5m])) > 0'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Someone signed in to the app VPS as root over SSH'
+          description: 'Root sign-in should be off (ops/vps/CHECKLIST.md, step 11). If this was not you, follow the incident response plan now.'
+      - uid: capy-ssh-failed
+        title: 'Many failed SSH sign-ins'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({job="system"} |~ "Failed password|Failed publickey|Invalid user |Connection closed by authenticating user" [10m])) > ${ALERT_SSH_FAILED_10M}'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: 'More than ${ALERT_SSH_FAILED_10M} failed SSH sign-ins on the app VPS in 10 minutes'
+          description: 'With password sign-in off this is noise from bots unless a known user name shows up. Raise ALERT_SSH_FAILED_10M if it fires every day.'
+      - uid: capy-http-5xx
+        title: 'Caddy 5xx spike'
+        condition: C
+        data:
+          - refId: A
+            queryType: instant
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: loki
+            model:
+              refId: A
+              editorMode: code
+              queryType: instant
+              expr: 'sum(count_over_time({job="caddy"} | json | status >= 500 [10m])) > ${ALERT_HTTP_5XX_10M}'
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: 'More than ${ALERT_HTTP_5XX_10M} server errors (5xx) from Caddy in 10 minutes'
+          description: 'A container behind Caddy is failing or down. The dashboard panel Caddy 5xx shows which host.'

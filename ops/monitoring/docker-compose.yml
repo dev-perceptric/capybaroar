@@ -1,0 +1,113 @@
+# Central logs and alerts for Capybaroar, on the compliance server (README.md in this folder).
+#   loki     stores the logs 365 days (loki/loki.yml). Listens on 127.0.0.1 only.
+#   grafana  dashboards and alerts by email (grafana/). Listens on 127.0.0.1 only.
+#   caddy    the one way in, on 80 and 443 (caddy/Caddyfile): Loki's push endpoint for the app VPS's address with a
+#            password, and Grafana for your own addresses.
+# Images are pinned to a release and its digest. To update, change both (README.md, "Updates").
+#
+# Settings come from .env next to this file (copy .env.example). Compose stops with an error if a required one is
+# missing.
+
+name: capy-monitoring
+
+services:
+  loki:
+    image: grafana/loki:3.7.10@sha256:b43c257ccfc925d4a50b8717cac61a3b51df8c48d01847936057e5c4075a24a7
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/loki.yml"]
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    ports:
+      - "127.0.0.1:3100:3100"
+    networks: [monitoring]
+    security_opt: ["no-new-privileges:true"]
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  grafana:
+    image: grafana/grafana:13.3.1@sha256:0615ec4fbd4072004b7d86b46ded63013a74b7d6eb1119273dd89e8fa25c13cf
+    restart: unless-stopped
+    depends_on: [loki]
+    # Fills the ALERT_* thresholds into the alert rules, then starts Grafana (grafana/start.sh).
+    entrypoint: ["/bin/sh", "/usr/local/bin/capy-start.sh"]
+    volumes:
+      - ./grafana/start.sh:/usr/local/bin/capy-start.sh:ro
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:3300:3000"     # for an SSH tunnel: ssh -L 3300:127.0.0.1:3300 <you>@<this server>
+    networks: [monitoring]
+    security_opt: ["no-new-privileges:true"]
+    logging: *logging
+    environment:
+      GF_SERVER_DOMAIN: ${LOGS_DOMAIN:?set LOGS_DOMAIN in .env}
+      GF_SERVER_ROOT_URL: https://${LOGS_DOMAIN}/
+      # Sign-in: one admin from .env, nobody signs up, no anonymous access, lockout after repeated wrong passwords.
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-capy-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_ALLOW_ORG_CREATE: "false"
+      GF_SECURITY_DISABLE_BRUTE_FORCE_LOGIN_PROTECTION: "false"
+      GF_SECURITY_BRUTE_FORCE_LOGIN_PROTECTION_MAX_ATTEMPTS: "5"
+      GF_AUTH_LOGIN_MAXIMUM_INACTIVE_LIFETIME_DURATION: 7d
+      GF_AUTH_LOGIN_MAXIMUM_LIFETIME_DURATION: 30d
+      GF_SECURITY_COOKIE_SECURE: "true"
+      GF_SECURITY_COOKIE_SAMESITE: strict
+      GF_SECURITY_STRICT_TRANSPORT_SECURITY: "true"
+      GF_SECURITY_CONTENT_TYPE_PROTECTION: "true"
+      GF_SECURITY_DISABLE_GRAVATAR: "true"
+      GF_SNAPSHOTS_EXTERNAL_ENABLED: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
+      # Alert emails, through the same SMTP account the app uses.
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_HOST: ${SMTP_HOST:?set SMTP_HOST in .env}:${SMTP_PORT:-465}
+      GF_SMTP_USER: ${SMTP_USER:?set SMTP_USER in .env}
+      GF_SMTP_PASSWORD: ${SMTP_PASSWORD:?set SMTP_PASSWORD in .env}
+      GF_SMTP_FROM_ADDRESS: ${SMTP_FROM:?set SMTP_FROM in .env}
+      GF_SMTP_FROM_NAME: Capybaroar alerts
+      # ALERT_EMAIL is read by grafana/provisioning/alerting/contact-points.yml. The thresholds are filled into
+      # alerting/rules.yml by grafana/start.sh. Defaults are here, so a missing line in .env never breaks a rule.
+      ALERT_EMAIL: ${ALERT_EMAIL:?set ALERT_EMAIL in .env}
+      ALERT_ERRORS_10M: ${ALERT_ERRORS_10M:-20}
+      ALERT_FAILED_SIGNINS_10M: ${ALERT_FAILED_SIGNINS_10M:-30}
+      ALERT_SSH_FAILED_10M: ${ALERT_SSH_FAILED_10M:-60}
+      ALERT_HTTP_5XX_10M: ${ALERT_HTTP_5XX_10M:-25}
+      ALERT_APP_STARTS_15M: ${ALERT_APP_STARTS_15M:-3}
+
+  caddy:
+    image: caddy:2.11.9-alpine@sha256:003a97808e781aa9f7e75cc2f43d34d461099031faf5e20faefb9f61126836f0
+    restart: unless-stopped
+    depends_on: [loki, grafana]
+    # On the host's network, so Caddy sees each visitor's real address (IPv4 and IPv6) for the allowlists.
+    network_mode: host
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/loki-push.users:/etc/caddy/loki-push.users:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      LOGS_DOMAIN: ${LOGS_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
+      APP_VPS_IPS: ${APP_VPS_IPS:-45.90.109.7/32}
+      GRAFANA_ALLOW_IPS: ${GRAFANA_ALLOW_IPS:?set GRAFANA_ALLOW_IPS in .env}
+    security_opt: ["no-new-privileges:true"]
+    logging: *logging
+
+networks:
+  monitoring:
+    name: capy-monitoring
+
+volumes:
+  loki-data:
+  grafana-data:
+  caddy-data:
+  caddy-config:

@@ -51,8 +51,33 @@
 	header_down -X-Powered-By
 }
 
+# --- Access log (central logs, ops/vps/CHECKLIST.md step 12) -----------------------------------------------------
+# One JSON line per request in /var/log/caddy/access.log, rotated by Caddy (50 MiB a file, 5 files, 7 days). Grafana
+# Alloy (ops/vps/alloy) ships it to the compliance server. Left out of each line: the query string (it can hold
+# tokens, codes and keys) and every request and response header (cookies, Authorization, apikey, Referer). The
+# visitor's IP stays, for security alerts. Logs are kept 365 days on the compliance server.
+(access_log) {
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 168h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>uri regexp ^([^?]*)\?.*$ $1
+				request>headers delete
+				resp_headers delete
+			}
+		}
+	}
+}
+# --- End of access log -------------------------------------------------------------------------------------------
+
 db.capybaroar.com {
 	import edge
+	import access_log   # access log (step 12)
 	header X-Frame-Options "DENY"
 
 	# Files people upload are served from here: never run them as a page on this origin.
@@ -94,6 +119,7 @@ db.capybaroar.com {
 
 app.capybaroar.com {
 	import edge
+	import access_log   # access log (step 12)
 	header ?X-Frame-Options "SAMEORIGIN"
 	reverse_proxy {$CAPY_WEB:127.0.0.1:3001} {
 		import upstream
@@ -103,6 +129,7 @@ app.capybaroar.com {
 # The homepage and link-in-bio pages. Its nginx passes X-Real-IP on to the app.
 capybaroar.com, www.capybaroar.com {
 	import edge
+	import access_log   # access log (step 12)
 	@www host www.capybaroar.com
 	redir @www https://capybaroar.com{uri} permanent
 	reverse_proxy {$CAPY_SITE:127.0.0.1:8081} {

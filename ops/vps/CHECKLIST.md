@@ -145,3 +145,79 @@ until step 8 is done, so a firewall mistake can't lock you out.
    ```
    Check from a new terminal that `ssh root@45.90.109.7` is refused and `ssh deploy@45.90.109.7` still works. Turn on
    two-step sign-in for hPanel too, since its browser terminal is another way in.
+
+12. Central logs: rotate Docker's local logs, turn on Caddy's access log, and ship the logs to the compliance server
+   with Grafana Alloy. Set up the compliance server first (`ops/monitoring/README.md`), and have the push password
+   from its step 4 at hand.
+
+   a. Docker log rotation, so local container logs stop growing forever. Look first: if the file already exists, add
+   the two `log-` lines from `ops/vps/alloy/daemon.json` to it by hand instead.
+
+   ```sh
+   cat /etc/docker/daemon.json 2>/dev/null || cat > /etc/docker/daemon.json <<'EOF2'
+   {
+     "log-driver": "json-file",
+     "log-opts": { "max-size": "20m", "max-file": "5" }
+   }
+   EOF2
+   ```
+
+   Restarting Docker restarts every container, so do it at a quiet hour. The setting applies to containers when they
+   are created, so recreate them after:
+
+   ```sh
+   systemctl restart docker
+   cd /docker/sb-capybaroar && docker compose up -d --force-recreate
+   # and the app and homepage containers the same way, from wherever they are started
+   docker inspect --format '{{.Name}} {{.HostConfig.LogConfig.Config}}' $(docker ps -q)   # each shows max-size:20m
+   ```
+
+   b. Caddy's access log. Merge the "Access log" section and the three `import access_log` lines from
+   `ops/vps/Caddyfile.example` into `/etc/caddy/Caddyfile`, then:
+
+   ```sh
+   mkdir -p /var/log/caddy && chown caddy:caddy /var/log/caddy
+   caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && systemctl reload caddy
+   curl -s -o /dev/null 'https://app.capybaroar.com/api/health?check=1'
+   tail -n 1 /var/log/caddy/access.log     # JSON, "uri":"/api/health" with no ?check=1, and no "headers"
+   ```
+
+   c. Keep the journal on disk, so sshd and sudo lines survive a reboot until Alloy has read them:
+
+   ```sh
+   ls -d /var/log/journal || { mkdir -p /var/log/journal && systemd-tmpfiles --create --prefix /var/log/journal && systemctl restart systemd-journald; }
+   journalctl -u ssh -n 3 --no-pager       # recent sshd lines (the unit is "sshd" on some systems)
+   ```
+
+   d. Alloy. From your computer, in the repo:
+
+   ```sh
+   ssh root@45.90.109.7 mkdir -p /opt/capybaroar/alloy
+   scp ops/vps/alloy/docker-compose.yml ops/vps/alloy/config.alloy ops/vps/alloy/alloy.env.example root@45.90.109.7:/opt/capybaroar/alloy/
+   ```
+
+   Then on the server. Check the container names match the patterns in `alloy.env.example` (`CAPY_APP_CONTAINERS`,
+   `CAPY_SITE_CONTAINERS`, `SUPABASE_PROJECT`), and change them in the env file if they don't:
+
+   ```sh
+   docker ps --format '{{.Names}}\t{{.Label "com.docker.compose.project"}}\t{{.Label "com.docker.compose.service"}}'
+   mkdir -p /etc/capybaroar
+   cp /opt/capybaroar/alloy/alloy.env.example /etc/capybaroar/alloy.env
+   chmod 600 /etc/capybaroar/alloy.env
+   nano /etc/capybaroar/alloy.env           # LOKI_PUSH_PASSWORD, and the names if needed
+   cd /opt/capybaroar/alloy && docker compose up -d
+   docker compose logs alloy 2>&1 | grep -iE 'level=(error|warn)' | tail -n 20    # nothing, or only journal notes
+   ```
+
+   e. Check it arrived. In Grafana (Explore, Loki): `sum by (role) (count_over_time({host="app-vps"}[5m]))` shows
+   `app`, `site`, `supabase`, `caddy` and `system`. A secret must never show up:
+
+   ```sh
+   curl -s -o /dev/null -H 'Authorization: Bearer check-secret-7731' 'https://app.capybaroar.com/api/health?token=check-secret-7731'
+   ```
+
+   Searching Explore for `{host="app-vps"} |= "check-secret-7731"` over the last 15 minutes finds nothing.
+
+   f. Test one alert end to end: `docker stop capy-logs-alloy-1`, wait 16 minutes for the "No logs from the app"
+   email, then `cd /opt/capybaroar/alloy && docker compose up -d`. Alloy saves its place in each source, so it sends
+   the lines it missed. Lines from a container removed in the meantime are lost.

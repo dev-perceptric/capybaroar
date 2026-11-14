@@ -1,0 +1,11 @@
+# The Capybaroar dashboard (grafana/dashboards/capybaroar.json). Changes made in Grafana's screen are not kept:
+# edit the JSON file and restart Grafana.
+apiVersion: 1
+providers:
+  - name: capybaroar
+    folder: Capybaroar
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
