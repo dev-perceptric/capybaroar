@@ -131,3 +131,17 @@ until step 8 is done, so a firewall mistake can't lock you out.
    root@45.90.109.7` and http://localhost:3000).
 
 10. Backups: follow "Install on the VPS" in `ops/README.md`, then run one test restore.
+
+11. SSH: a named user with keys, and no root or password logins. Do this in a second terminal while the first stays
+   connected, so a mistake can't lock you out.
+   ```bash
+   adduser deploy && usermod -aG sudo,docker deploy
+   mkdir -p /home/deploy/.ssh && cp /root/.ssh/authorized_keys /home/deploy/.ssh/ && chown -R deploy:deploy /home/deploy/.ssh && chmod 700 /home/deploy/.ssh && chmod 600 /home/deploy/.ssh/authorized_keys
+   ```
+   From your computer, check `ssh deploy@45.90.109.7` works and `sudo -v` asks for the password you set. Then:
+   ```bash
+   printf 'PermitRootLogin no\nPasswordAuthentication no\nKbdInteractiveAuthentication no\n' > /etc/ssh/sshd_config.d/99-hardening.conf
+   sshd -t && systemctl reload ssh
+   ```
+   Check from a new terminal that `ssh root@45.90.109.7` is refused and `ssh deploy@45.90.109.7` still works. Turn on
+   two-step sign-in for hPanel too, since its browser terminal is another way in.
