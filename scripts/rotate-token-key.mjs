@@ -14,14 +14,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { envKeyring, resealWith, sealedKid } from "../src/lib/sealing.ts";
 
-// Every sealed column. `aad` must match what the app passes to seal()/open() for that column (none today). If a
-// caller starts passing one (say the channel id for channels), add it here in the same change.
+// Every sealed column. `aad` must match what the app passes to seal()/open() for that column, and `extra` names any
+// other columns it needs. tests/rotate.test.ts checks this list against every seal() call in src/lib, so a new sealed
+// column can't be missed. Not here on purpose: oauth_states.input (sealed with "oauth:<state>"), which is deleted
+// within an hour; keep the old key for at least an hour after switching TOKEN_KEY_CURRENT.
 const COLUMNS = [
-  { table: "channels", id: "id", cols: ["access_token", "refresh_token"] },
+  { table: "channel_secrets", id: "channel_id", cols: ["access_token", "refresh_token"] },
   { table: "webhooks", id: "id", cols: ["secret"] },
   { table: "invites", id: "id", cols: ["token"] },
   { table: "review_links", id: "brand_id", cols: ["token"] },
   { table: "reports", id: "id", cols: ["token"] },
+  { table: "subprocessor_subscribers", id: "id", cols: ["unsub_sealed"], extra: ["email"], aad: (row) => `unsub:${row.email}` },
 ];
 const PAGE = 500;
 
@@ -53,11 +56,11 @@ async function retry(what, fn) {
 
 console.log(`rotate: current key ${ring.current}; keys ${[...ring.keys.keys()].join(", ")}; ${apply ? "APPLY" : "dry run"}`);
 let failed = 0;
-for (const { table, id, cols, aad } of COLUMNS) {
+for (const { table, id, cols, aad, extra = [] } of COLUMNS) {
   const tally = { rows: 0, current: 0, resealed: 0, changed: 0, broken: 0, byKid: {} };
   for (let from = 0; ; from += PAGE) {
     const { data } = await retry(`${table} read`, () =>
-      db.from(table).select([id, ...cols].join(", ")).order(id).range(from, from + PAGE - 1),
+      db.from(table).select([id, ...cols, ...extra].join(", ")).order(id).range(from, from + PAGE - 1),
     );
     for (const row of data ?? []) {
       tally.rows++;
