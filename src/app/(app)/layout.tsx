@@ -1,10 +1,12 @@
 import { RailScript, Sidebar } from "@/components/Sidebar";
 import { getBrandCtx } from "@/lib/brands";
 import { openCount } from "@/lib/inbox";
+import { pendingFor } from "@/lib/policies";
+import { PolicyNotice } from "@/components/PolicyNotice";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getBrandCtx();
-  const inbox = ctx.role === "client" ? 0 : await openCount(ctx.workspaceId, ctx.scope);
+  const [inbox, policy] = await Promise.all([ctx.role === "client" ? 0 : openCount(ctx.workspaceId, ctx.scope), pendingFor(ctx.userId)]);
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-shell md:flex-row">
       <RailScript />
@@ -17,6 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       />
       {/* The page: one white panel on the gray shell, 8px from its edges. Keyed by brand and workspace, so a switch
           starts every page fresh instead of keeping the last brand's lists. */}
+      {policy.pending.length ? <PolicyNotice pending={policy.pending} first={policy.first} /> : null}
       <main key={`${ctx.workspaceId}:${ctx.brand?.id ?? "all"}`} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-paper md:my-2 md:mr-2 md:rounded-lg md:shadow-card">{children}</main>
     </div>
   );

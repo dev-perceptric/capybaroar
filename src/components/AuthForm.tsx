@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { Button, Field, Input } from "./ui";
+import { useActionState, useState } from "react";
+import { Button, Checkbox, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { requestReset, setPassword, signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
@@ -15,6 +15,7 @@ const SUBMIT = { login: "Sign in", signup: "Create account", forgot: "Send reset
 export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; email?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(ACTIONS[mode], {});
+  const [agree, setAgree] = useState(false);
   const google = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" && (mode === "login" || mode === "signup");
   return (
     <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
@@ -79,12 +80,32 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
                   <Input name="password" type="password" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
                 </Field>
               ) : null}
+              {mode === "signup" ? (
+                <label className="flex items-start gap-2 text-[12px] leading-relaxed text-muted">
+                  <Checkbox checked={agree} onChange={setAgree} label="I agree to the Terms, Privacy Policy and Data Processing Agreement" className="mt-0.5" />
+                  <input type="hidden" name="agree" value={agree ? "yes" : ""} />
+                  <span>
+                    I agree to the{" "}
+                    <a href="https://capybaroar.com/terms" target="_blank" rel="noreferrer" className="text-ink underline underline-offset-2">
+                      Terms
+                    </a>
+                    ,{" "}
+                    <a href="https://capybaroar.com/privacy" target="_blank" rel="noreferrer" className="text-ink underline underline-offset-2">
+                      Privacy Policy
+                    </a>{" "}
+                    and{" "}
+                    <a href="https://capybaroar.com/dpa" target="_blank" rel="noreferrer" className="text-ink underline underline-offset-2">
+                      Data Processing Agreement
+                    </a>
+                  </span>
+                </label>
+              ) : null}
               {state.error ? (
                 <p role="alert" className="text-[12px] text-danger">
                   {state.error}
                 </p>
               ) : null}
-              <Button type="submit" disabled={busy} className="mt-1 w-full justify-center">
+              <Button type="submit" disabled={busy || (mode === "signup" && !agree)} className="mt-1 w-full justify-center">
                 {busy ? <Loader /> : null}
                 {SUBMIT[mode]}
               </Button>

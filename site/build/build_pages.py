@@ -170,7 +170,7 @@ if 'href="/mcp">See the full guide' not in home:
 home = home.replace('/site.js?v=1', '/site.js?v=2')
 open(P + 'index.html', 'w').write(home)
 
-for f in ['api.html', 'terms.html', 'privacy.html', 'data-deletion.html', 'security.html', 'subprocessors.html', '404.html']:
+for f in ['api.html', 'terms.html', 'privacy.html', 'data-deletion.html', 'security.html', 'subprocessors.html', 'dpa.html', '404.html']:
     s = open(P + f).read()
     open(P + f, 'w').write(renav(s))
 
@@ -970,7 +970,7 @@ feature('/ai-social-media-agent', 'agent', 'Agents', 'An AI agent that plans', '
 
 
 # ---------- sitemap and robots ----------
-urls = ['/'] + [u for u, _ in PAGES] + ['/api', '/terms', '/privacy', '/data-deletion', '/security', '/subprocessors']
+urls = ['/'] + [u for u, _ in PAGES] + ['/api', '/terms', '/privacy', '/data-deletion', '/security', '/subprocessors', '/dpa']
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>https://capybaroar.com{u}</loc></url>\n' for u in urls) + '</urlset>\n'
 open(P + 'sitemap.xml', 'w').write(sm)
 open(P + 'robots.txt', 'w').write('User-agent: *\nAllow: /\n\nSitemap: https://capybaroar.com/sitemap.xml\n')
