@@ -1,0 +1,56 @@
+# Weekly security scan: CodeQL reads the code for known kinds of bugs (results under Security, Code scanning), and
+# npm audit checks the packages the app ships with. A high or critical finding opens an issue.
+# Actions are pinned to full commit SHAs (the tag each one was at is in the comment).
+name: Security scan
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: npm audit (shipped packages)
+        id: audit
+        run: |
+          set +e
+          npm audit --omit=dev --audit-level=high > audit.txt
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+          cat audit.txt
+      - name: Open an issue for high or critical findings
+        if: steps.audit.outputs.code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Security scan: npm audit found high or critical issues ($(date -u +%Y-%m-%d))"
+          { echo "The weekly scan found these in packages the app ships with:"; echo; echo '```'; tail -n 80 audit.txt; echo '```'; echo; echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"; } > body.md
+          gh issue create --repo "${{ github.repository }}" --title "$title" --body-file body.md

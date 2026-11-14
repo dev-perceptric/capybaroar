@@ -1,0 +1,19 @@
+# Weekly update pull requests. Each one runs the checks and waits for an approval on the protected deploy branch.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories: ["/", "/packages/sdk", "/packages/cli", "/packages/mcp"]
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: docker
+    directories: ["/", "/site"]
+    schedule: { interval: weekly, day: monday }

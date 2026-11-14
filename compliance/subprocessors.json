@@ -1,0 +1,65 @@
+{
+  "updated": "2026-11-14",
+  "notice_days": 30,
+  "subprocessors": [
+    {
+      "id": "hostinger",
+      "name": "Hostinger International Ltd.",
+      "purpose": "Servers for the app, the database and stored files; sending Capybaroar's emails",
+      "data": "All customer data: accounts, workspaces, posts, files, connected channel tokens (encrypted), inbox messages, analytics",
+      "location": "United States (Phoenix, Arizona)",
+      "transfer": "EU Standard Contractual Clauses",
+      "dpa": "https://www.hostinger.com/legal/dpa",
+      "since": "",
+      "active": true
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic, PBC",
+      "purpose": "AI writing, the posting agent and reply drafts in the inbox",
+      "data": "The text you ask the AI to work on: post drafts, prompts, inbox messages you ask it to answer, brand kit details",
+      "location": "United States",
+      "transfer": "EU Standard Contractual Clauses",
+      "dpa": "https://www.anthropic.com/legal/data-processing-addendum",
+      "since": "",
+      "active": true
+    },
+    {
+      "id": "fal",
+      "name": "Features & Labels, Inc. (fal.ai)",
+      "purpose": "AI pictures, videos and audio",
+      "data": "Prompts, and pictures or videos you ask the AI to change",
+      "location": "United States",
+      "transfer": "EU Standard Contractual Clauses",
+      "dpa": "https://fal.ai/terms",
+      "since": "",
+      "active": true
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe, Inc.",
+      "purpose": "Billing and payments",
+      "data": "Billing name, email and address; card details go straight to Stripe and never reach Capybaroar",
+      "location": "United States",
+      "transfer": "EU Standard Contractual Clauses",
+      "dpa": "https://stripe.com/legal/dpa",
+      "since": "",
+      "active": true
+    },
+    {
+      "id": "backblaze",
+      "name": "Backblaze, Inc.",
+      "purpose": "Encrypted off-server backups",
+      "data": "Encrypted copies of the database and stored files (Backblaze can't read them)",
+      "location": "To be confirmed",
+      "transfer": "EU Standard Contractual Clauses",
+      "dpa": "",
+      "since": "",
+      "active": false
+    }
+  ],
+  "chosen_by_you": [
+    { "name": "Social networks you connect", "detail": "Instagram, Facebook, Threads, TikTok, LinkedIn, YouTube, X, Pinterest, Bluesky, Mastodon, Reddit, Discord, Telegram, Google Business Profile and WordPress get the posts you send them and answer with results and comments. You choose these, and each works under its own terms." },
+    { "name": "Sign in with Google", "detail": "If you sign in with Google, Google tells us your name and email. Google acts under its own privacy policy." }
+  ]
+}

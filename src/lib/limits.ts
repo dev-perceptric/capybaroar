@@ -20,6 +20,9 @@ export const LIMITS = {
   // Claude and ChatGPT register from their own servers, so many people share one IP: generous, but bounded.
   oauthRegisterIp: { windowS: 3600, max: 60 },
   apiKeyMinute: { windowS: 60, max: PER_MINUTE },
+  // Subprocessor change notices: the sign-up form on capybaroar.com sends a confirm email.
+  subscribeIp: { windowS: 3600, max: 5 },
+  subscribeEmail: { windowS: 86400, max: 3 },
 } as const;
 
 /** A bucket name that never holds an address or IP as it is. */
