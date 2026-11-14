@@ -113,7 +113,7 @@ Rules for every item:
 | Carousel slide images (fal, 8 images per carousel, 5 carousels a team a month, check) | $10 | $100 |
 | **Total** | **$275** | **$2,750** |
 
-Customers pay for all of it with credits, priced so our cost stays at 40% of the price or less (`creditRules.ts`). Net cost to us: $0.
+Customers pay for all of it with credits, priced so our cost stays at half the price or less (`creditRules.ts`). Net cost to us: $0.
 
 ## Phase 4: Reach (4.5 weeks)
 
