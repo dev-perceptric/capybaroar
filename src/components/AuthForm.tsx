@@ -5,17 +5,20 @@ import { useActionState, useState } from "react";
 import { Button, Checkbox, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
-import { requestReset, setPassword, signIn, signInWithGoogle, signUp, type AuthState } from "@/app/login/actions";
+import { requestReset, setPassword, signIn, signInWithGoogle, signOut, signUp, type AuthState } from "@/app/login/actions";
+import { verifyMfa } from "@/app/mfa/actions";
 
-// login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link.
-type Mode = "login" | "signup" | "forgot" | "reset";
-const ACTIONS = { login: signIn, signup: signUp, forgot: requestReset, reset: setPassword };
-const SUBMIT = { login: "Sign in", signup: "Create account", forgot: "Send reset link", reset: "Save password" };
+// login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link; mfa
+// asks for the code from the authenticator app (or a backup code) after a password or Google (/mfa).
+type Mode = "login" | "signup" | "forgot" | "reset" | "mfa";
+const ACTIONS = { login: signIn, signup: signUp, forgot: requestReset, reset: setPassword, mfa: verifyMfa };
+const SUBMIT = { login: "Sign in", signup: "Create account", forgot: "Send reset link", reset: "Save password", mfa: "Verify" };
 
 export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; email?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(ACTIONS[mode], {});
   const [agree, setAgree] = useState(false);
+  const [backup, setBackup] = useState(false);
   const google = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" && (mode === "login" || mode === "signup");
   return (
     <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
@@ -23,7 +26,15 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
         <div className="flex flex-col items-center text-center">
           <Logo className="h-9 w-auto" />
           <h1 className="mt-6 text-[22px] leading-[1.15] font-medium tracking-[-0.025em] text-balance">
-            Every post, every channel. <span className="text-faint">One calendar.</span>
+            {mode === "mfa" ? (
+              <>
+                Two-factor sign-in. <span className="text-faint">{backup ? "Enter a backup code." : "Enter the code from your app."}</span>
+              </>
+            ) : (
+              <>
+                Every post, every channel. <span className="text-faint">One calendar.</span>
+              </>
+            )}
           </h1>
         </div>
         {state.sent ? (
@@ -61,12 +72,34 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
                   </Field>
                 </>
               ) : null}
-              {mode !== "reset" ? (
+              {mode === "mfa" ? (
+                <Field
+                  label={backup ? "Backup code" : "Code"}
+                  aside={
+                    <button type="button" onClick={() => setBackup(!backup)} className="text-[12px] text-muted underline-offset-2 hover:text-ink hover:underline">
+                      {backup ? "Use your app" : "Use a backup code"}
+                    </button>
+                  }
+                >
+                  <Input
+                    key={backup ? "backup" : "app"}
+                    name="code"
+                    autoFocus
+                    required
+                    autoComplete="one-time-code"
+                    inputMode={backup ? "text" : "numeric"}
+                    pattern={backup ? undefined : "[0-9 ]{6,7}"}
+                    maxLength={backup ? 14 : 7}
+                    placeholder={backup ? "xxxxx-xxxxx" : "123456"}
+                    className="font-mono tracking-[0.12em]"
+                  />
+                </Field>
+              ) : mode !== "reset" ? (
                 <Field label="Email">
                   <Input name="email" type="email" autoComplete="email" defaultValue={email} required />
                 </Field>
               ) : null}
-              {mode !== "forgot" ? (
+              {mode !== "forgot" && mode !== "mfa" ? (
                 <Field
                   label={mode === "reset" ? "New password" : "Password"}
                   aside={
@@ -113,7 +146,11 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
           </>
         )}
         <p className="mt-4 text-center text-[12px] text-muted">
-          {mode === "reset" ? null : mode === "login" ? (
+          {mode === "mfa" ? (
+            <button type="submit" form="mfa-sign-out" className="font-medium text-ink underline underline-offset-2">
+              Sign out
+            </button>
+          ) : mode === "reset" ? null : mode === "login" ? (
             <>
               New here?{" "}
               <Link href={`/signup${keep}`} className="font-medium text-ink underline underline-offset-2">
@@ -129,6 +166,7 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
             </>
           )}
         </p>
+        {mode === "mfa" ? <form id="mfa-sign-out" action={signOut} /> : null}
       </div>
     </div>
   );

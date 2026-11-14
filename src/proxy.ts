@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
-// link-in-bio pages open signed out.
+// link-in-bio pages open signed out. /mfa and /mfa/setup need a session at any level; getCtx (src/lib/session.ts)
+// decides who has to go there.
 const OPEN = ["/login", "/signup", "/reset", "/auth/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/.well-known/"];
 
 const HOME = "/calendar";
@@ -25,7 +26,12 @@ export function safeNext(v: string | null | undefined): string {
   }
 }
 
+/** Set on every request the proxy sees (PATH_HEADER in src/lib/session.ts), replacing any a visitor sent: the path
+ *  being opened, so the two-factor step in getCtx can bring people back to it. */
+const PATH_HEADER = "x-cb-path";
+
 export async function proxy(request: NextRequest) {
+  request.headers.set(PATH_HEADER, request.nextUrl.pathname + request.nextUrl.search);
   let response = NextResponse.next({ request });
   const sb = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {

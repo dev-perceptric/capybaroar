@@ -1,8 +1,11 @@
 import "server-only";
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { adminClient, userClient } from "./supabase/server";
+import { verifiedFactors } from "./mfa";
+import { mfaGate, mfaNext } from "./mfaRules";
+import { safeNext } from "../proxy";
 
 /** owner and admin run the workspace; editors write posts; clients see their brands' calendar and approve. */
 export type Role = "owner" | "admin" | "editor" | "client";
@@ -27,9 +30,19 @@ export const WORKSPACE_COOKIE = "cb_ws";
 export const canManage = (role: Role) => role === "owner" || role === "admin";
 export const canApprove = (role: Role) => role !== "editor";
 
-type MemberRow = { workspace_id: string; role: Role; brand_ids: string[] | null; workspaces: { name: string; timezone: string } };
+type MemberRow = { workspace_id: string; role: Role; brand_ids: string[] | null; workspaces: { name: string; timezone: string; require_mfa: boolean | null } };
 
-/** The signed-in user and their workspace. The first visit makes the workspace. */
+/** The header src/proxy.ts sets on every page request (and the server actions posted to it): the path being opened,
+ *  so /mfa can bring the person back. Only ever used as a `next`, through safeNext. */
+export const PATH_HEADER = "x-cb-path";
+
+/**
+ * The signed-in user and their workspace. The first visit makes the workspace.
+ *
+ * Two-factor sign-in is enforced here, for every app page, server action and cookie API route: a person with a
+ * verified authenticator app whose session is still aal1 (password or Google only) goes to /mfa, and a member of a
+ * workspace that requires 2FA without one goes to /mfa/setup. The API and MCP (keys, OAuth tokens) never come here.
+ */
 export const getCtx = cache(async (): Promise<Ctx> => {
   const sb = await userClient();
   // Checks the sign-in token's signature here (cached public key), with no round trip to Supabase Auth.
@@ -37,13 +50,26 @@ export const getCtx = cache(async (): Promise<Ctx> => {
   const c = data?.claims;
   if (!c?.sub) redirect("/login");
   const user = { id: c.sub, email: (c.email as string) ?? "", user_metadata: (c.user_metadata ?? {}) as Record<string, unknown> };
+  const aal = (c.aal as string | undefined) ?? null;
   const db = adminClient();
-  const { data: rows } = await db.from("members").select("workspace_id, role, brand_ids, workspaces(name, timezone)").eq("user_id", user.id).order("created_at");
+  // An aal2 session has passed a code; anything less needs to know whether there's an app to ask for (Supabase Auth).
+  const [{ data: rows, error: readError }, early] = await Promise.all([
+    db.from("members").select("workspace_id, role, brand_ids, workspaces(name, timezone, require_mfa)").eq("user_id", user.id).order("created_at"),
+    aal === "aal2" ? null : verifiedFactors(user.id),
+  ]);
+  // A failed read must never look like "no workspace yet", which would make a new one.
+  if (readError) throw new Error(readError.message);
   const name = (user.user_metadata?.name as string | undefined) || user.email!.split("@")[0];
   const all = (rows ?? []) as unknown as MemberRow[];
+  const want = all.length ? (await cookies()).get(WORKSPACE_COOKIE)?.value : undefined;
+  const picked = all.find((r) => r.workspace_id === want) ?? all[0];
+  const required = Boolean(picked?.workspaces.require_mfa);
+  // aal2 with the workspace's rule: the app could have been removed since the code, so look.
+  const verified = early ? early.length > 0 : required ? (await verifiedFactors(user.id)).length > 0 : true;
+  const gate = mfaGate({ aal, verified, required, next: mfaNext((await headers()).get(PATH_HEADER), safeNext) });
+  if (gate) redirect(gate);
   if (all.length) {
-    const want = (await cookies()).get(WORKSPACE_COOKIE)?.value;
-    const m = all.find((r) => r.workspace_id === want) ?? all[0];
+    const m = picked!;
     return {
       userId: user.id,
       email: user.email!,
