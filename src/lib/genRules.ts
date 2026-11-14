@@ -6,7 +6,7 @@
 // Inputs follow each model's schema on fal (fal.ai/models/<endpoint>/api); prices are from the same pages and fal's
 // pricing API, 2026-11-05.
 
-import { MAX_ACTION } from "./creditRules";
+import { MAX_ACTION, priceOf } from "./creditRules";
 
 export type GenKind = "image" | "video" | "audio";
 export const KINDS: GenKind[] = ["image", "video", "audio"];
@@ -49,52 +49,54 @@ export const splitLyrics = (prompt: string) => {
 };
 
 /** The first model of each kind is its fallback. */
-export const MODELS: GenModel[] = [
+const LISTED: (Omit<GenModel, "credits"> & { credits?: GenModel["credits"] })[] = [
   // Pictures
-  { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", cost: () => 3, credits: () => 8, // $0.03 per megapixel
+  { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", cost: () => 3, // $0.03 per megapixel
     build: (a) => ({ endpoint: "fal-ai/flux-2-pro", input: { prompt: a.prompt, image_size: SIZE[a.aspect], output_format: "jpeg", enable_safety_checker: true } }) },
-  { id: "ideogram-v3", kind: "image", name: "Ideogram V3", cost: () => 3, credits: () => 8, // $0.03 with TURBO
+  { id: "ideogram-v3", kind: "image", name: "Ideogram V3", cost: () => 3, // $0.03 with TURBO
     build: (a) => ({ endpoint: "fal-ai/ideogram/v3", input: { prompt: a.prompt, image_size: SIZE[a.aspect], rendering_speed: "TURBO", num_images: 1 } }) },
-  { id: "nano-banana-2", kind: "image", name: "Nano Banana 2", cost: () => 8, credits: () => 20, // $0.08 at 1K
+  { id: "nano-banana-2", kind: "image", name: "Nano Banana 2", cost: () => 8, // $0.08 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-2", input: { prompt: a.prompt, aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
-  { id: "nano-banana-pro", kind: "image", name: "Nano Banana Pro", cost: () => 15, credits: () => 40, // $0.15 at 1K
+  { id: "nano-banana-pro", kind: "image", name: "Nano Banana Pro", cost: () => 15, // $0.15 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-pro", input: { prompt: a.prompt, aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
-  { id: "nano-banana-2-edit", kind: "image", name: "Nano Banana 2 Edit", picture: "needs", cost: () => 8, credits: () => 20, // $0.08 at 1K
+  { id: "nano-banana-2-edit", kind: "image", name: "Nano Banana 2 Edit", picture: "needs", cost: () => 8, // $0.08 at 1K
     build: (a) => ({ endpoint: "fal-ai/nano-banana-2/edit", input: { prompt: a.prompt, image_urls: [a.imageUrl], aspect_ratio: a.aspect, resolution: "1K", num_images: 1, output_format: "jpeg" } }) },
   // Videos
-  { id: "kling-3-pro", kind: "video", name: "Kling 3 Pro", picture: "takes", cost: (c) => 16.8 * c.seconds, credits: (c) => 42 * c.seconds, // $0.168 a second with sound
+  { id: "kling-3-pro", kind: "video", name: "Kling 3 Pro", picture: "takes", cost: (c) => 16.8 * c.seconds, // $0.168 a second with sound
     build: (a) =>
       a.imageUrl
         ? { endpoint: "fal-ai/kling-video/v3/pro/image-to-video", input: { prompt: a.prompt, start_image_url: a.imageUrl, duration: String(a.seconds), generate_audio: true } }
         : { endpoint: "fal-ai/kling-video/v3/pro/text-to-video", input: { prompt: a.prompt, aspect_ratio: a.aspect, duration: String(a.seconds), generate_audio: true } } },
-  { id: "seedance-2-fast", kind: "video", name: "Seedance 2.0 Fast", picture: "takes", cost: (c) => ((1280 * 720 * c.seconds * 24) / 1024) * 0.00112, credits: (c) => 61 * c.seconds, // $0.0112 per 1,000 tokens at 720p
+  { id: "seedance-2-fast", kind: "video", name: "Seedance 2.0 Fast", picture: "takes", cost: (c) => ((1280 * 720 * c.seconds * 24) / 1024) * 0.00112, // $0.0112 per 1,000 tokens at 720p
     build: (a) =>
       a.imageUrl
         ? { endpoint: "bytedance/seedance-2.0/fast/image-to-video", input: { prompt: a.prompt, image_url: a.imageUrl, duration: String(a.seconds), resolution: "720p", generate_audio: true } }
         : { endpoint: "bytedance/seedance-2.0/fast/text-to-video", input: { prompt: a.prompt, aspect_ratio: a.aspect, duration: String(a.seconds), resolution: "720p", generate_audio: true } } },
-  { id: "veo-3.1", kind: "video", name: "Veo 3.1", picture: "takes", cost: (c) => 40 * veoLength(c.seconds), credits: (c) => 100 * veoLength(c.seconds), // $0.40 a second with sound; 6 or 8 seconds
+  { id: "veo-3.1", kind: "video", name: "Veo 3.1", picture: "takes", cost: (c) => 40 * veoLength(c.seconds), // $0.40 a second with sound; 6 or 8 seconds
     build: (a) =>
       a.imageUrl
         ? { endpoint: "fal-ai/veo3.1/image-to-video", input: { prompt: a.prompt, image_url: a.imageUrl, duration: `${veoLength(a.seconds)}s`, resolution: "720p", generate_audio: true } }
         : { endpoint: "fal-ai/veo3.1", input: { prompt: a.prompt, aspect_ratio: a.aspect === "9:16" ? "9:16" : "16:9", duration: `${veoLength(a.seconds)}s`, resolution: "720p", generate_audio: true } } },
   // Audio
-  { id: "elevenlabs-turbo", kind: "audio", name: "ElevenLabs Turbo v2.5", cost: (c) => (c.prompt.length / 1000) * 5, credits: (c) => Math.max(2, Math.ceil((c.prompt.length * 13) / 1000)), // $0.05 per 1,000 characters
+  { id: "elevenlabs-turbo", kind: "audio", name: "ElevenLabs Turbo v2.5", cost: (c) => (c.prompt.length / 1000) * 5, // $0.05 per 1,000 characters
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/tts/turbo-v2.5", input: { text: a.prompt } }) },
-  { id: "elevenlabs-v3", kind: "audio", name: "ElevenLabs v3", cost: (c) => (c.prompt.length / 1000) * 10, credits: (c) => Math.max(2, Math.ceil((c.prompt.length * 25) / 1000)), // $0.10 per 1,000 characters
+  { id: "elevenlabs-v3", kind: "audio", name: "ElevenLabs v3", cost: (c) => (c.prompt.length / 1000) * 10, // $0.10 per 1,000 characters
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/tts/eleven-v3", input: { text: a.prompt } }) },
-  { id: "lyria-2", kind: "audio", name: "Lyria 2", cost: () => 10, credits: () => 25, // $0.10 per 30 seconds
+  { id: "lyria-2", kind: "audio", name: "Lyria 2", cost: () => 10, // $0.10 per 30 seconds
     build: (a) => ({ endpoint: "fal-ai/lyria2", input: { prompt: a.prompt } }) },
-  { id: "stable-audio-2.5", kind: "audio", name: "Stable Audio 2.5", cost: () => 20, credits: () => 50, // $0.20 an audio
+  { id: "stable-audio-2.5", kind: "audio", name: "Stable Audio 2.5", cost: () => 20, // $0.20 an audio
     build: (a) => ({ endpoint: "fal-ai/stable-audio-25/text-to-audio", input: { prompt: a.prompt, seconds_total: 30 } }) },
-  { id: "minimax-music-v2", kind: "audio", name: "MiniMax Music v2", cost: () => 3, credits: () => 8, // $0.03 a song
+  { id: "minimax-music-v2", kind: "audio", name: "MiniMax Music v2", cost: () => 3, // $0.03 a song
     build: (a) => {
       const parts = splitLyrics(a.prompt);
       if (!parts || parts.style.length < 10 || parts.lyrics.length < 10) throw new Error('For a song, describe the style, then write the words after "Lyrics:" (10 characters or more each)');
       return { endpoint: "fal-ai/minimax-music/v2", input: { prompt: parts.style.slice(0, 2000), lyrics_prompt: parts.lyrics.slice(0, 3000) } };
     } },
-  { id: "elevenlabs-sfx", kind: "audio", name: "ElevenLabs Sound Effects", cost: (c) => 0.2 * c.seconds, credits: (c) => Math.max(1, Math.ceil(c.seconds / 2)), // $0.002 a second
+  { id: "elevenlabs-sfx", kind: "audio", name: "ElevenLabs Sound Effects", cost: (c) => 0.2 * c.seconds, // $0.002 a second
     build: (a) => ({ endpoint: "fal-ai/elevenlabs/sound-effects/v2", input: { text: a.prompt, duration_seconds: a.seconds } }) },
 ];
+/** Every model, priced at MARKUP times its cost (rounded up, at least 1 credit), so prices follow creditRules.ts. */
+export const MODELS: GenModel[] = LISTED.map((m) => ({ ...m, credits: (c: Cost) => Math.max(1, priceOf(m.cost(c))) }));
 
 export const modelOf = (id: string) => MODELS.find((m) => m.id === id) ?? null;
 export const defaultModel = (kind: GenKind) => MODELS.find((m) => m.kind === kind)!;

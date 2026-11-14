@@ -223,9 +223,9 @@ test("a saved request id is never sent again: later steps only look at its statu
 
 test("requests are checked before anything is sent, and Capy picks the model unless one is named", () => {
   const img = genRequest({ kind: "image", prompt: "  A capybara at sunset  " });
-  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null, credits: 8, why: "it's fast and sharp for everyday posts" });
+  assert.deepEqual(img, { kind: "image", model: "flux-2-pro", prompt: "A capybara at sunset", aspect: "1:1", seconds: 5, sourceMediaId: null, credits: 6, why: "it's fast and sharp for everyday posts" });
   const vid = genRequest({ kind: "video", prompt: "Waves", model: "seedance-2-fast", aspect: "9:16", seconds: 10, source_media_id: PIC });
-  assert.deepEqual({ ...vid, why: undefined }, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC, credits: 610, why: undefined });
+  assert.deepEqual({ ...vid, why: undefined }, { kind: "video", model: "seedance-2-fast", prompt: "Waves", aspect: "9:16", seconds: 10, sourceMediaId: PIC, credits: 484, why: undefined });
   assert.equal(genRequest({ kind: "video", prompt: "x", model: "auto" }).model, "kling-3-pro");
   assert.equal(genRequest({ kind: "image", prompt: "make the sky pink", source_media_id: PIC }).model, "nano-banana-2-edit");
   for (const [body, msg] of [
@@ -270,25 +270,25 @@ test("Capy picks the model from what was asked", () => {
   for (const k of ["image", "video", "audio"] as const) assert.equal(RULES.filter((r) => r.kind === k).at(-1)!.test("", false), true);
 });
 
-test("credits are the price list: 2.5 times fal's price, rounded up", () => {
+test("credits are the price list: 2 times fal's price, rounded up", () => {
   const c = (kind: GenKind, model: string, extra: object = {}) => genRequest({ kind, prompt: "x".repeat(20), model, ...extra }).credits;
-  assert.equal(c("image", "flux-2-pro"), 8);
-  assert.equal(c("image", "ideogram-v3"), 8);
-  assert.equal(c("image", "nano-banana-2"), 20);
-  assert.equal(c("image", "nano-banana-pro"), 40);
-  assert.equal(c("video", "kling-3-pro"), 210);
-  assert.equal(c("video", "kling-3-pro", { seconds: 10 }), 420);
-  assert.equal(c("video", "seedance-2-fast"), 305);
-  assert.equal(c("video", "seedance-2-fast", { seconds: 10 }), 610);
-  assert.equal(c("video", "veo-3.1"), 600);
-  assert.equal(c("video", "veo-3.1", { seconds: 10 }), 800);
-  assert.equal(c("audio", "lyria-2"), 25);
-  assert.equal(c("audio", "stable-audio-2.5"), 50);
-  assert.equal(c("audio", "elevenlabs-sfx"), 3);
-  assert.equal(c("audio", "elevenlabs-sfx", { seconds: 10 }), 5);
-  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-turbo" }).credits, 39);
-  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-v3" }).credits, 75);
-  assert.equal(genRequest({ kind: "audio", prompt: "Hi there", model: "elevenlabs-v3" }).credits, 2);
+  assert.equal(c("image", "flux-2-pro"), 6);
+  assert.equal(c("image", "ideogram-v3"), 6);
+  assert.equal(c("image", "nano-banana-2"), 16);
+  assert.equal(c("image", "nano-banana-pro"), 30);
+  assert.equal(c("video", "kling-3-pro"), 168);
+  assert.equal(c("video", "kling-3-pro", { seconds: 10 }), 336);
+  assert.equal(c("video", "seedance-2-fast"), 242);
+  assert.equal(c("video", "seedance-2-fast", { seconds: 10 }), 484);
+  assert.equal(c("video", "veo-3.1"), 480);
+  assert.equal(c("video", "veo-3.1", { seconds: 10 }), 640);
+  assert.equal(c("audio", "lyria-2"), 20);
+  assert.equal(c("audio", "stable-audio-2.5"), 40);
+  assert.equal(c("audio", "elevenlabs-sfx"), 2);
+  assert.equal(c("audio", "elevenlabs-sfx", { seconds: 10 }), 4);
+  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-turbo" }).credits, 30);
+  assert.equal(genRequest({ kind: "audio", prompt: "x".repeat(3000), model: "elevenlabs-v3" }).credits, 60);
+  assert.equal(genRequest({ kind: "audio", prompt: "Hi there", model: "elevenlabs-v3" }).credits, 1);
 });
 
 test("each model gets the input its fal schema takes", () => {

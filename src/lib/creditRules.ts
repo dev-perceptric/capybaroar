@@ -3,10 +3,10 @@
 // is. The ledger itself is SQL (025_credits.sql) and its server side is credits.ts.
 //
 // - 1 credit is 1 cent of price to the customer (packs sell at about $1 for 100).
-// - Every action is priced at MARKUP times what it costs us, so our cost stays at 40% of the price or less whatever
+// - Every action is priced at MARKUP times what it costs us, so our cost stays at half the price or less whatever
 //   people make. tests/credits.test.ts fails if a price drops under that.
 
-export const MARKUP = 2.5;
+export const MARKUP = 2;
 
 /** Credit packs people can buy on a paid plan. They last LOT_MONTHS. */
 export const PACKS = [
@@ -18,7 +18,7 @@ export type PackSize = (typeof PACKS)[number]["credits"];
 export const packOf = (credits: unknown) => PACKS.find((p) => p.credits === credits) ?? null;
 export const LOT_MONTHS = 12;
 
-/** A trial is 14 days of Pro with this many credits (at most $0.80 of cost). */
+/** A trial is 14 days of Pro with this many credits (at most $1 of cost). */
 export const TRIAL_CREDITS = 200;
 /** No one action may cost more (an 8-second Veo video is 800). */
 export const MAX_ACTION = 1000;
@@ -26,9 +26,9 @@ export const MAX_ACTION = 1000;
 /** Rewrite, fit to a network, suggested reply, caption. */
 export const WRITE_CREDITS = 4;
 /** An AI thread, poll, carousel or slideshow: a longer answer from Claude (about 5 cents of tokens). */
-export const FORMAT_CREDITS = 15;
+export const FORMAT_CREDITS = 10;
 /** Build a link-in-bio page with AI. */
-export const BIO_CREDITS = 50;
+export const BIO_CREDITS = 40;
 /** What an agent message holds when it starts, and holds again each time it uses that much. */
 export const AGENT_HOLD = 200;
 /** The least an agent message costs. */

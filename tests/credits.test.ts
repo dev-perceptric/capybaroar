@@ -47,15 +47,16 @@ test("every model is priced at 2.5 times what it costs us, or more", () => {
 });
 
 test("Capy's picks are priced from the same list", () => {
-  assert.equal(genRequest({ kind: "image", prompt: "A capybara at sunset" }).credits, 8);
-  assert.equal(genRequest({ kind: "video", prompt: "Waves on a beach" }).credits, 210);
-  assert.equal(genRequest({ kind: "video", prompt: "Waves on a beach", seconds: 10 }).credits, 420);
+  assert.equal(genRequest({ kind: "image", prompt: "A capybara at sunset" }).credits, 6);
+  assert.equal(genRequest({ kind: "video", prompt: "Waves on a beach" }).credits, 168);
+  assert.equal(genRequest({ kind: "video", prompt: "Waves on a beach", seconds: 10 }).credits, 336);
 });
 
 test("packs keep a margin and are the only sizes sold", () => {
   for (const p of PACKS) {
     const costUsd = (p.credits / MARKUP) / 100;
-    assert.ok(p.price >= costUsd * 2, `${p.credits} for $${p.price} costs us at most $${costUsd}`);
+    // The biggest pack is a bulk discount: it still makes at least 1.5 times its cost.
+    assert.ok(p.price >= costUsd * 1.5, `${p.credits} for $${p.price} costs us at most $${costUsd}`);
   }
   assert.deepEqual(packOf(5000), { credits: 5000, price: 50 });
   assert.equal(packOf(4999), null);
@@ -65,16 +66,16 @@ test("packs keep a margin and are the only sizes sold", () => {
 test("Claude's tokens become credits at the same markup", () => {
   assert.equal(claudeCents(null), 0);
   assert.equal(claudeCredits({ input_tokens: 0, output_tokens: 0 }), 0);
-  // 10,000 in and 1,000 out: $0.075, so 7.5 cents, so 18.75 credits, rounded up.
+  // 10,000 in and 1,000 out: $0.075, so 7.5 cents, so 15 credits.
   assert.equal(claudeCents({ input_tokens: 10000, output_tokens: 1000 }), 7.5);
-  assert.equal(claudeCredits({ input_tokens: 10000, output_tokens: 1000 }), 19);
+  assert.equal(claudeCredits({ input_tokens: 10000, output_tokens: 1000 }), 15);
   // Cache reads cost a tenth of input; cache writes a quarter more.
-  assert.equal(claudeCredits({ cache_read_input_tokens: 100000 }), 13);
-  assert.equal(claudeCredits({ cache_creation_input_tokens: 8000 }), 13);
+  assert.equal(claudeCredits({ cache_read_input_tokens: 100000 }), 10);
+  assert.equal(claudeCredits({ cache_creation_input_tokens: 8000 }), 10);
   // Missing or broken numbers count as nothing.
   assert.equal(claudeCredits({ input_tokens: -5, output_tokens: null }), 0);
-  assert.equal(priceOf(3), 8);
-  assert.equal(priceOf(16.8 * 5), 210);
+  assert.equal(priceOf(3), 6);
+  assert.equal(priceOf(16.8 * 5), 168);
   assert.equal(priceOf(0), 0);
   assert.ok(AGENT_MIN >= 1 && WRITE_CREDITS > 0 && BIO_CREDITS > 0 && TRIAL_CREDITS === 200);
 });

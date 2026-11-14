@@ -945,7 +945,7 @@ feature('/ai-studio', 'ai', 'AI Studio', 'Write, rewrite and make media', 'right
     ('Which models make pictures and videos?', f'Pictures: {", ".join(MODELS_IMG)}. Videos: {", ".join(MODELS_VID)}.'),
     ('How much does AI cost?', 'AI uses credits. Creator has 1,000 a month, Pro 2,500 and Agency 8,000, and you can buy more. Free has no AI.'),
     ('Are failed generations charged?', 'No. Credits are only used for what you get.'),
-    ('Can AI make a LinkedIn carousel or a TikTok slideshow?', 'Yes. Write what it\'s about, pick the format in the AI menu, and Capybaroar writes the slides and draws them: a PDF for LinkedIn, or pictures for a TikTok photo post. Each uses 15 credits.'),
+    ('Can AI make a LinkedIn carousel or a TikTok slideshow?', 'Yes. Write what it\'s about, pick the format in the AI menu, and Capybaroar writes the slides and draws them: a PDF for LinkedIn, or pictures for a TikTok photo post. Each uses 10 credits.'),
     ('What is a brand kit?', 'How a brand writes: a short description of its voice, words it never uses and hashtags it always adds. Set it in Settings, Brands. Every AI that writes for the brand follows it.'),
 ], 'AI Studio: AI captions, pictures and videos for social posts | Capybaroar',
    'Rewrite posts in one click with Claude, and make pictures and videos with FLUX.2, Nano Banana, Kling and Veo, right in the composer.')
