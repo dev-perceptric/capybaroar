@@ -90,7 +90,7 @@ age-keygen -o capybaroar-backup.key                # ON YOUR COMPUTER, not the s
                                                    # It prints the public key (age1...).
 rclone config                                      # ON THE SERVER: new remote "b2", type b2, the key from step 2
 mkdir -p /etc/capybaroar /opt/capybaroar
-install -m 700 ops/backup.sh ops/restore.sh /opt/capybaroar/     # copied up with scp
+install -m 700 ops/backup.sh ops/restore.sh ops/restore-test-cron.sh /opt/capybaroar/   # copied up with scp
 cat > /etc/capybaroar/backup.env <<'EOF'
 RCLONE_REMOTE=b2:capybaroar-backups
 AGE_RECIPIENTS=age1...your-public-key...
@@ -111,21 +111,81 @@ so the backup env holds no database password. To encrypt media at rest too, make
 
 ### Test a restore (monthly, and after any Supabase upgrade)
 
-On your computer (or the VPS with the key copied in for the test and deleted after), with Docker, rclone set up for
-the bucket and the same `backup.env` settings:
+`ops/restore.sh test` downloads the backup, checks its checksum against the manifest, decrypts it, starts a throwaway
+container from the same Supabase Postgres image with no network, loads the dump and compares every table's row count
+with the manifest. "Already exists" errors are expected (the image creates Supabase's own roles and schemas first) and
+are summed up; the test fails if any `public` table, `auth.users`, `auth.identities`, `storage.objects` or
+`storage.buckets` differs.
+
+By hand, on your computer (or the VPS with the key copied in for the test and deleted after), with Docker, rclone set
+up for the bucket and the same `backup.env` settings:
 
 ```sh
 export AGE_IDENTITY=~/capybaroar-backup.key
 ops/restore.sh list
 ops/restore.sh test latest            # or a name like capybaroar-2026-11-13T0317Z; FROM=monthly for monthly ones
 rm -rf ./restore                      # it holds decrypted data and secrets
+rclone cat --head 65536 b2:capybaroar-backups/media/current/<path> | file -    # one media file opens
 ```
 
-`test` downloads the backup, checks its checksum against the manifest, decrypts it, starts a throwaway container from
-the same Supabase Postgres image with no network, loads the dump and compares every table's row count with the
-manifest. "Already exists" errors are expected (the image creates Supabase's own roles and schemas first) and are
-summed up; the test fails if any `public` table, `auth.users`, `auth.identities`, `storage.objects` or
-`storage.buckets` differs. Also open one media file: `rclone cat b2:capybaroar-backups/media/current/<path> | file -`.
+#### Every month from cron
+
+`ops/restore-test-cron.sh` runs `ops/restore.sh test latest`, checks the dump's checksum against the manifest again,
+reads one random media file back from the bucket, and writes the result to
+`/var/lib/capybaroar/restore-tests/restore-test-YYYY-MM-DD.md`: the date, the backup tested, the checksum, the row
+counts, how long it took, and pass or fail. It deletes the decrypted files when it ends, whatever the result. It also
+fails when the newest daily backup is more than 48 hours old (`MAX_AGE_HOURS`), since that means backups stopped.
+
+- Pass: it calls its own `PING_URL`.
+- Fail: it calls `PING_URL/fail` (Healthchecks.io and Better Stack heartbeats read this as a failure; check for other
+  monitors), emails `ALERT_EMAIL`, prints a line starting `restore-test: FAILED` and exits 1.
+
+Where it runs. The test needs the age private key, and the backup policy keeps that key off the server. Pick one:
+
+- **A second machine (keeps the policy as written).** Any small Linux box with Docker, age and rclone, a B2 key for the
+  bucket with only `listBuckets, listFiles, readFiles`, the same `backup.env` and the age key.
+- **The VPS.** The key then lives on the server, so a break-in there could also read the last 30 days of backups and
+  the saved secrets. Change rule 3 of the backup policy in the private repo and note the risk before doing this. The
+  test also runs a second Postgres next to production for a few minutes: it needs free disk for about twice the
+  dump's unpacked size (`MIN_FREE_GB`, default 10) and spare memory.
+
+Install (as root, on the machine that runs it):
+
+```sh
+install -m 700 ops/restore.sh ops/restore-test-cron.sh /opt/capybaroar/          # copied up with scp
+install -m 400 capybaroar-backup.key /etc/capybaroar/restore-test.key            # copied up for this; see above
+cat > /etc/capybaroar/restore-test.env <<'END'
+AGE_IDENTITY=/etc/capybaroar/restore-test.key
+PING_URL=https://hc-ping.com/a-second-check-id   # its own check, not the backup's: period 1 month, grace 3 days
+ALERT_EMAIL=you@example.com
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_USER=alerts@capybaroar.com
+SMTP_PASS=the-mailbox-password
+END
+chmod 600 /etc/capybaroar/restore-test.env
+echo '43 5 2 * * root /opt/capybaroar/restore-test-cron.sh >> /var/log/capybaroar-restore-test.log 2>&1' > /etc/cron.d/capybaroar-restore-test
+/opt/capybaroar/restore-test-cron.sh                 # run it once now and read the result
+```
+
+It runs at 05:43 on the 2nd of each month, well after the 03:17 backup, and waits if a backup on the same machine is
+still running. With the output sent to the log file, cron mails nothing: the email, the failed heartbeat and the
+`restore-test: FAILED` line in the log are the alarms. Without `SMTP_HOST` it uses a local `sendmail` if there is one.
+Run it by hand after any Supabase upgrade too.
+
+File each result in the private compliance repo, then tick "Result read by" in a pull request:
+
+```sh
+scp deploy@45.90.109.7:/var/lib/capybaroar/restore-tests/restore-test-2026-12-02.md ../capybaroar-compliance/records/
+```
+
+The results folder can be read by the `sudo` group (`RESULTS_GROUP`), so the named user from `ops/vps/CHECKLIST.md`
+step 11 can copy it (use `root@` until that step is done). A result holds table names and row counts, with no customer
+data.
+
+Cost: one dump download a month (about 0.3 GB at Beta, 3 GB at Growth) is well inside B2's free downloads (3x what is
+stored), and a second heartbeat check fits a monitor's free tier (check). On the VPS that is $0 a month at Beta and at
+Growth. A second machine adds its own price: [small VPS price, check] a month at both stages.
 
 ### Restore for real
 

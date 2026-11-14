@@ -10,6 +10,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
+    "access-review": "node scripts/access-review.mjs",
     "brand": "python3 brand/src/build.py && node brand/src/render.mjs",
     "site:build": "python3 site/build/build_tools.py",
     "site:covers": "node site/build/covers.mjs",

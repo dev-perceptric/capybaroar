@@ -50,7 +50,7 @@
       "id": "backblaze",
       "name": "Backblaze, Inc.",
       "purpose": "Encrypted off-server backups",
-      "data": "Encrypted copies of the database and stored files (Backblaze can't read them)",
+      "data": "Copies of the database (encrypted before upload, so Backblaze can't read them) and of stored files",
       "location": "To be confirmed",
       "transfer": "EU Standard Contractual Clauses",
       "dpa": "",

@@ -94,7 +94,7 @@ page('security', 'Security', 'How Capybaroar protects your data and how to repor
 <li>When the app fetches a web address for you (a feed, a webhook, a link), it can only reach the public internet.</li>
 <li>Webhooks we send are signed, so you can check they came from us.</li></ul>
 <h2>AI</h2>
-<p>When you use AI features, the text or files you ask it to work on go to <a href="/subprocessors">our AI providers</a>. Under their commercial terms they don't train their models on it.</p>
+<p>When you use AI features, the text or files you ask it to work on go to <a href="/subprocessors">our AI providers</a>. Anthropic&rsquo;s commercial terms say it doesn&rsquo;t train its models on what we send, and fal.ai handles it under its data processing addendum.</p>
 <h2>Keeping and deleting data</h2>
 <ul><li>Closed inbox items are deleted after 180 days, agent chats 365 days after the last message, and unfinished sign-ins after an hour.</li>
 <li>Disconnecting a channel deletes its token and asks the network to end our access where it offers a way to.</li>
@@ -186,7 +186,7 @@ page('privacy', 'Privacy Policy', 'How Capybaroar collects, uses and protects pe
 <tr><td>Billing records and invoices</td><td>Legal obligation</td></tr>
 <tr><td>Subprocessor change emails you sign up for</td><td>Consent (you can stop them any time)</td></tr>
 </tbody></table></div>
-<p>We don&rsquo;t sell your data, use it for advertising, or let our AI providers train on it.</p>
+<p>We don&rsquo;t sell your data or use it for advertising. See AI features below for what our AI providers may do with it.</p>
 <h2>Data from social networks</h2>
 <p>We use the data a network gives us only to publish and manage posts and show analytics for you. Capybaroar&rsquo;s use of information received from Google APIs follows the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
 <h2>YouTube</h2>
@@ -194,7 +194,7 @@ page('privacy', 'Privacy Policy', 'How Capybaroar collects, uses and protects pe
 <p>With your permission we use your YouTube data to: upload the videos you schedule with the title, description, visibility and thumbnail you choose (youtube.upload); show your channel&rsquo;s name, picture and subscriber count, and the views, likes and comments of videos you posted through Capybaroar (youtube.readonly); and, when you ask, reply to and hide comments on your videos, change a video you posted through Capybaroar, and delete it (youtube.force-ssl). We never sell YouTube data, use it for advertising, or share it with anyone except the service providers that run Capybaroar for you.</p>
 <p>We keep your YouTube access token encrypted and your videos&rsquo; results for as long as the channel stays connected. When you disconnect the channel in Capybaroar, we delete its access token and ask Google to end our access, and you can ask us to delete its stored data at any time at {MAIL}. You can also remove Capybaroar&rsquo;s access at any time in your Google Account&rsquo;s security settings: <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</p>
 <h2>AI features</h2>
-<p>When you use AI writing, the agent or AI pictures and video, the text or files you ask it to work on go to our AI providers to produce the result. Under their commercial terms they don&rsquo;t train their models on it. AI results are suggestions: nothing is posted unless you or a teammate schedules it.</p>
+<p>When you use AI writing, the agent or AI pictures and video, the text or files you ask it to work on go to our AI providers to produce the result. Anthropic&rsquo;s commercial terms say it doesn&rsquo;t train its models on what we send, and fal.ai handles it under its data processing addendum. AI results are suggestions: nothing is posted unless you or a teammate schedules it.</p>
 <h2>Who we share it with</h2>
 <p>Only the companies we need to run Capybaroar: {shared}. Each is bound by data protection terms. The full list, with what each one handles and where, is on the <a href="/subprocessors">subprocessors</a> page. We also send your posts to the social networks you connect, which use them under their own terms.</p>
 <h2>Where your data is stored</h2>
