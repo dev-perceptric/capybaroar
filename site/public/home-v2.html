@@ -498,5 +498,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})})(
 (function(){var tabs=[].slice.call(document.querySelectorAll('.v2-tab'));function pick(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}
 tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.addEventListener('keydown',function(e){var n=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(n){var x=tabs[(i+n+tabs.length)%tabs.length];pick(x);x.focus();e.preventDefault();}});});})();
 </script>
+<script src="/consent.js?v=1" defer></script>
 </body>
 </html>

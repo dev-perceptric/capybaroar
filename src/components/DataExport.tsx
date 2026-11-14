@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { openCookieSettings } from "./CookieConsent";
 import { Badge, Button, CardHead, LinkButton, Panel, type Tone } from "./ui";
 import { Loader } from "./Loader";
 import { fmtDateTime } from "@/lib/format";
@@ -47,6 +48,16 @@ export function DataExport({ account, workspace, owner, only }: DataExportProps)
   return (
     <>
       {only !== "workspace" ? <Part title="Your data" button="Download my data" kind="account" last={now.account} onChange={setNow} /> : null}
+      {only !== "workspace" ? (
+        <Panel className="overflow-hidden">
+          <CardHead label="Cookies" />
+          <div className="px-4 py-3">
+            <Button variant="ghost" onClick={openCookieSettings}>
+              Cookie settings
+            </Button>
+          </div>
+        </Panel>
+      ) : null}
       {owner && only !== "account" ? <Part title="Workspace data" button="Export workspace" kind="workspace" last={now.workspace} onChange={setNow} /> : null}
     </>
   );

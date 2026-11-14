@@ -159,5 +159,6 @@ links.forEach(function(a){var t=document.getElementById(a.getAttribute('href').s
 function show(e){var m=e.target.closest('[data-tip]');if(!m){t.hidden=true;return}t.textContent=m.getAttribute('data-tip');t.hidden=false;
 var r=m.getBoundingClientRect();t.style.left=Math.min(innerWidth-t.offsetWidth-8,Math.max(8,r.left+r.width/2-t.offsetWidth/2))+'px';t.style.top=(r.top+scrollY-t.offsetHeight-8)+'px'}
 document.addEventListener('mouseover',show);document.addEventListener('focusin',show);document.addEventListener('scroll',function(){t.hidden=true},{passive:true})})();</script>
+<script src="/consent.js?v=1" defer></script>
 </body>
 </html>

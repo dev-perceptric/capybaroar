@@ -146,5 +146,6 @@ function load(){return idx?Promise.resolve(idx):fetch('/docs/search.json').then(
 i.addEventListener('input',function(){var q=i.value.trim().toLowerCase();if(!q){box.hidden=true;box.innerHTML='';return}
 load().then(function(d){var hits=d.filter(function(p){return (p.title+' '+p.text).toLowerCase().indexOf(q)>-1}).slice(0,8);
 box.innerHTML=hits.length?hits.map(function(p){return '<a href="/docs/'+p.slug+'"><b>'+p.title.replace(/</g,'&lt;')+'</b><span>'+p.section+'</span></a>'}).join(''):'<p>No pages match.</p>';box.hidden=false})})})();</script>
+<script src="/consent.js?v=1" defer></script>
 </body>
 </html>

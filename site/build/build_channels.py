@@ -433,6 +433,7 @@ def simple(slug, title, desc, tag_icon, tag, h1a, h1b, lead, empty_t, empty_l):
 {footer}
 
 <script src="/nav.js?v=1" defer></script>
+<script src="/consent.js?v=1" defer></script>
 </body>
 </html>
 '''

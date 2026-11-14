@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import { bioFontVars } from "@/components/bioFonts";
+import { CookieConsent } from "@/components/CookieConsent";
 import { DialogHost } from "@/components/Dialogs";
 import { StaleTab } from "@/components/StaleTab";
 import "./globals.css";
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <DialogHost />
         <StaleTab />
+        <CookieConsent />
       </body>
     </html>
   );
