@@ -4,6 +4,7 @@ import { adminClient } from "../supabase/server";
 import { hashToken } from "../crypto";
 import { ApiError } from "./input";
 import type { ApiCtx } from "./types";
+import { record } from "../auditActor";
 
 // API keys: "cbr_" and 32 random bytes. Only the hash is stored, so a key is shown once, when it's made.
 export const KEY_PREFIX = "cbr_";
@@ -30,12 +31,14 @@ export async function createApiKey(workspaceId: string, userId: string, name: st
   const key = newKey();
   const { data, error } = await db.from("api_keys").insert({ workspace_id: workspaceId, user_id: userId, name: clean, prefix: key.slice(0, 12), hash: hashToken(key) }).select("id").single();
   if (error) throw new Error(error.message);
+  await record({ workspaceId, action: "api_key.created", target: { type: "api_key", id: data.id as string, label: clean }, meta: { prefix: key.slice(0, 12) } });
   return { id: data.id as string, key };
 }
 
 export async function deleteApiKey(workspaceId: string, id: string) {
-  const { error } = await adminClient().from("api_keys").delete().eq("id", id).eq("workspace_id", workspaceId);
+  const { data, error } = await adminClient().from("api_keys").delete().eq("id", id).eq("workspace_id", workspaceId).select("name, prefix");
   if (error) throw new Error(error.message);
+  for (const k of data ?? []) await record({ workspaceId, action: "api_key.deleted", target: { type: "api_key", id, label: k.name as string }, meta: { prefix: k.prefix as string } });
 }
 
 const unauthorized = (message: string) => new ApiError(401, "unauthorized", message);

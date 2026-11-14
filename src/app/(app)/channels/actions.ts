@@ -10,6 +10,7 @@ import { revokeChannel } from "@/lib/workspaceDelete";
 import { getBrandCtx, homeBrand, mayUseBrand, moveChannel } from "@/lib/brands";
 import { providerOf } from "@/lib/providers";
 import type { NetworkId } from "@/lib/networks";
+import { record } from "@/lib/auditActor";
 
 /** Connect a network that uses a form (Bluesky, Telegram, Discord). */
 export async function connectWithForm(network: string, values: Record<string, string>): Promise<{ error?: string }> {
@@ -33,7 +34,7 @@ export async function removeChannel(id: string): Promise<{ error?: string }> {
   try {
     const ctx = await writerCtx();
     const db = adminClient();
-    const { data: ch } = await db.from("channels").select("brand_id, network, account_id").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
+    const { data: ch } = await db.from("channels").select("brand_id, network, account_id, name").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
     if (!ch || !mayUseBrand(ctx, ch.brand_id as string | null)) return { error: "Channel not found" };
     // End the app's access on the network too (TikTok asks for this), unless a channel that stays still uses the same
     // sign-in (another workspace, or another Google location). Best effort: a failed revoke never blocks disconnecting.
@@ -41,6 +42,7 @@ export async function removeChannel(id: string): Promise<{ error?: string }> {
     await revokeChannel(id);
     const { error } = await db.from("channels").delete().eq("id", id).eq("workspace_id", ctx.workspaceId);
     if (error) return { error: error.message };
+    await record({ workspaceId: ctx.workspaceId, action: "channel.removed", target: { type: "channel", id, label: ch.name as string }, meta: { network: ch.network as string } }, ctx);
   } catch (e) {
     unstable_rethrow(e);
     return { error: e instanceof Error ? e.message : String(e) };

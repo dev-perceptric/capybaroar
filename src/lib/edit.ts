@@ -4,6 +4,7 @@ import { providerOf } from "./providers";
 import { supabaseStore } from "./runner";
 import { editTargets, type EditChange, type EditResult, type EditStore, type EditTarget } from "./editor";
 import type { Asker } from "./unpublisher";
+import { record, snippet } from "./auditActor";
 
 // Edit a published post, on the real workspace: the rules are in editor.ts.
 
@@ -68,5 +69,11 @@ const store: EditStore = {
 /** Change a published post's text and allowed settings on each channel given. One result per change. */
 export async function editPost(workspaceId: string, postId: string, changes: EditChange[], by: Asker): Promise<EditResult[]> {
   const targets = await load(workspaceId, postId, by);
-  return editTargets(store, providerOf, targets, changes);
+  const out = await editTargets(store, providerOf, targets, changes);
+  const edited = out.filter((r) => r.result === "edited");
+  if (edited.length) {
+    const first = changes.find((c) => c.channelId === edited[0].channelId);
+    await record({ workspaceId, action: "post.edited_live", target: { type: "post", id: postId, label: snippet(first?.text ?? targets[0]?.text ?? "") }, meta: { channels: edited.map((r) => r.channelName) } });
+  }
+  return out;
 }

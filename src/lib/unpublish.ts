@@ -4,6 +4,7 @@ import { readSecret } from "./channels";
 import { providerOf } from "./providers";
 import { supabaseStore } from "./runner";
 import type { Secret } from "./providers/types";
+import { record, snippet } from "./auditActor";
 import { checkUnpublish, planOf, unpublishTargets, type Asker, type ChannelResult, type PlanItem, type UnpublishStore, type UnpublishTarget } from "./unpublisher";
 
 // Delete everywhere, on the real workspace: the rules are in unpublisher.ts.
@@ -89,5 +90,16 @@ export async function unpublishPlan(workspaceId: string, postId: string, by: Ask
  */
 export async function unpublishPost(workspaceId: string, postId: string, channelIds: string[] | "all", by: Asker): Promise<{ results: ChannelResult[]; postDeleted: boolean }> {
   const targets = await load(workspaceId, postId, by);
-  return unpublishTargets(store, providerOf, targets, channelIds);
+  const out = await unpublishTargets(store, providerOf, targets, channelIds);
+  // Only channels deleted by this request: ones deleted before keep their deleted_at.
+  const before = new Set(targets.filter((t) => t.deletedAt).map((t) => t.channelId));
+  const now = out.results.filter((r) => r.result === "deleted" && !before.has(r.channelId));
+  if (now.length)
+    await record({
+      workspaceId,
+      action: "post.deleted_everywhere",
+      target: { type: "post", id: postId, label: snippet(targets[0]?.text ?? "") },
+      meta: { channels: now.map((r) => r.channelName), ...(out.results.some((r) => r.result === "failed") ? { failed: out.results.filter((r) => r.result === "failed").map((r) => r.channelName) } : {}) },
+    });
+  return out;
 }

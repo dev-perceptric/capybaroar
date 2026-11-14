@@ -3,6 +3,36 @@ import type Stripe from "stripe";
 import { applySubscription, stripe } from "@/lib/billing";
 import { grantBought } from "@/lib/credits";
 import { packOf } from "@/lib/creditRules";
+import { adminClient } from "@/lib/supabase/server";
+import { SYSTEM, record } from "@/lib/auditActor";
+
+/** The workspace a subscription belongs to, the way applySubscription finds it. */
+async function workspaceOf(sub: Stripe.Subscription, hint?: string | null): Promise<string | null> {
+  const id = hint || (sub.metadata?.workspace_id as string | undefined) || null;
+  if (id) return id;
+  const customer = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+  const { data } = await adminClient().from("workspaces").select("id").eq("stripe_customer_id", customer).maybeSingle();
+  return (data?.id as string | undefined) ?? null;
+}
+
+const planOf = async (workspaceId: string) => {
+  const { data } = await adminClient().from("workspaces").select("plan, plan_status, billing_interval").eq("id", workspaceId).maybeSingle();
+  return data as { plan: string; plan_status: string | null; billing_interval: string | null } | null;
+};
+
+/** applySubscription, then the audit log's billing.plan_changed when the plan, its status or its interval moved. */
+async function apply(sub: Stripe.Subscription, hint?: string | null) {
+  const ws = await workspaceOf(sub, hint).catch(() => null);
+  const before = ws ? await planOf(ws).catch(() => null) : null;
+  await applySubscription(sub, hint);
+  if (!ws || !before) return;
+  const after = await planOf(ws).catch(() => null);
+  if (!after || (after.plan === before.plan && after.plan_status === before.plan_status && after.billing_interval === before.billing_interval)) return;
+  await record(
+    { workspaceId: ws, action: "billing.plan_changed", target: { type: "plan", label: after.plan }, meta: { from: before.plan, to: after.plan, status: after.plan_status, interval: after.billing_interval } },
+    SYSTEM,
+  );
+}
 
 // Stripe events. After a valid signature this answers 200 even when a plan change fails (it's logged), so billing
 // state is never left half-applied by retries piling up. Bought credits are the exception: if adding them fails, it
@@ -30,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (event.type === "checkout.session.completed") {
       const cs = event.data.object;
       const subId = typeof cs.subscription === "string" ? cs.subscription : cs.subscription?.id;
-      if (cs.mode === "subscription" && subId) await applySubscription(await s.subscriptions.retrieve(subId), cs.client_reference_id);
+      if (cs.mode === "subscription" && subId) await apply(await s.subscriptions.retrieve(subId), cs.client_reference_id);
       const pack = packOf(Number(cs.metadata?.credits));
       if (cs.mode === "payment" && cs.metadata?.kind === "credits" && cs.payment_status === "paid" && pack && cs.metadata.workspace_id) {
         await grant(cs.metadata.workspace_id, `topup:${cs.id}`, pack.credits, `${pack.credits.toLocaleString("en-US")} credits`);
@@ -44,7 +74,7 @@ export async function POST(request: NextRequest) {
       const sub = event.data.object;
       // Deleted subscriptions can't always be fetched fresh; the event's copy is final.
       const fresh = event.type === "customer.subscription.deleted" ? sub : await s.subscriptions.retrieve(sub.id).catch(() => sub);
-      await applySubscription(fresh);
+      await apply(fresh);
     }
   } catch (e) {
     console.error("stripe webhook", event.type, event.id, e);

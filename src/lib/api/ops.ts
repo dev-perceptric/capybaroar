@@ -20,6 +20,7 @@ import type { PostFields } from "./input";
 import type { ApiChannel, ApiChannelGroup, ApiCredits, ApiCtx, ApiGeneration, ApiMedia, ApiPost, Ops } from "./types";
 import { listGroups } from "../channelGroups";
 import { groupChannels } from "../groupRules";
+import { postTarget, record, runAs, type Actor } from "../auditActor";
 
 // The API's actions on the real workspace. Every write goes through savePost, the same checks the calendar runs:
 // character limits, required settings, media, plan limits, brands and approvals.
@@ -80,7 +81,20 @@ function checkSettings(channels: Map<string, Channel>, settings: Record<string, 
   }
 }
 
+/** Who the audit log credits an API request to: the key's person through a key ("api") or a connected app ("app").
+ *  The agent (keyId "agent") is the signed-in person themselves. */
+export function apiActor(ctx: Pick<ApiCtx, "keyId" | "userId" | "via">): Actor {
+  return { id: ctx.userId, kind: ctx.keyId === "agent" ? "user" : ctx.via === "oauth" ? "app" : "api", label: null };
+}
+
+/** Every action runs as the request's actor, so the lib functions it reaches record it as the API or an app. */
 export function realOps(ctx: ApiCtx): Ops {
+  const ops = opsFor(ctx);
+  const who = apiActor(ctx);
+  return Object.fromEntries(Object.entries(ops).map(([k, f]) => [k, (...a: unknown[]) => runAs(who, () => (f as (...x: unknown[]) => Promise<unknown>)(...a))])) as unknown as Ops;
+}
+
+function opsFor(ctx: ApiCtx): Ops {
   // Webhooks see every brand's posts, so only owners and admins manage them.
   const manager = () => {
     if (ctx.role !== "owner" && ctx.role !== "admin") throw new ApiError(403, "forbidden", "Only owners and admins can manage webhooks");
@@ -195,7 +209,9 @@ export function realOps(ctx: ApiCtx): Ops {
       const cur = await load(id);
       if (cur.status === "publishing") throw new ApiError(409, "conflict", "This post is going out right now. Try again in a minute.");
       await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
+      const target = await postTarget(ctx.workspaceId, id);
       await deletePost(ctx.workspaceId, id);
+      await record({ workspaceId: ctx.workspaceId, action: "post.deleted", target });
     },
     async uploadFromLink(url, alt) {
       return (await oneMedia(await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt)))!;

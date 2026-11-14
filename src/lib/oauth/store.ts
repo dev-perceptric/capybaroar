@@ -4,6 +4,7 @@ import { adminClient } from "../supabase/server";
 import { hashToken } from "../crypto";
 import { ApiError } from "../api/input";
 import type { ApiCtx } from "../api/types";
+import { record } from "../auditActor";
 import { ACCESS_SECONDS, CODE_MINUTES, REFRESH_DAYS, isAccessToken, newAccessToken, newClientId, newCode, newRefreshToken, pkceOk, redirectMatches } from "./rules";
 
 // OAuth for the MCP server, the stored half (026_oauth.sql). Every code and token is kept only as a hash.
@@ -86,7 +87,13 @@ export async function exchangeCode(f: Record<string, string>): Promise<Pair> {
   // A second use of the code got here first and wrote the grant as revoked.
   if (e2?.code === "23505") throw new OAuthError("invalid_grant", "The code is wrong, used or expired");
   if (e2) throw busy();
-  return issue(grantId);
+  const pair = await issue(grantId);
+  // The token request comes from the app's server, so there's no browser IP to keep.
+  await record(
+    { workspaceId: c.workspace_id as string, action: "app.connected", target: { type: "app", id: grantId, label: (await getClient(c.client_id as string).catch(() => null))?.name ?? null } },
+    { id: c.user_id as string, kind: "user", label: null, ip: null },
+  );
+  return pair;
 }
 
 /** A used code tried again means it leaked (RFC 6749 4.1.2): revoke the grant its first use made. When the first use
@@ -129,7 +136,14 @@ export async function revokeToken(token: string) {
   const db = adminClient();
   const h = hashToken(token);
   const { data } = await db.from("oauth_tokens").select("grant_id").or(`access_hash.eq.${h},refresh_hash.eq.${h}`).maybeSingle();
-  if (data) await db.from("oauth_grants").update({ revoked_at: new Date().toISOString() }).eq("id", data.grant_id).is("revoked_at", null);
+  if (!data) return;
+  const { data: g } = await db.from("oauth_grants").update({ revoked_at: new Date().toISOString() }).eq("id", data.grant_id).is("revoked_at", null).select("workspace_id, user_id, oauth_clients(name)");
+  // The app asked to be disconnected itself.
+  for (const r of g ?? [])
+    await record(
+      { workspaceId: r.workspace_id as string, action: "app.disconnected", target: { type: "app", id: data.grant_id as string, label: (r.oauth_clients as unknown as { name: string } | null)?.name ?? null } },
+      { id: r.user_id as string, kind: "app", label: null, ip: null },
+    );
 }
 
 const unauthorized = (message: string) => new ApiError(401, "unauthorized", message);
@@ -174,6 +188,7 @@ export async function listConnectedApps(workspaceId: string): Promise<ConnectedA
 }
 
 export async function revokeConnectedApp(workspaceId: string, id: string) {
-  const { error } = await adminClient().from("oauth_grants").update({ revoked_at: new Date().toISOString() }).eq("id", id).eq("workspace_id", workspaceId);
+  const { data, error } = await adminClient().from("oauth_grants").update({ revoked_at: new Date().toISOString() }).eq("id", id).eq("workspace_id", workspaceId).is("revoked_at", null).select("oauth_clients(name)");
   if (error) throw new Error(error.message);
+  for (const r of data ?? []) await record({ workspaceId, action: "app.disconnected", target: { type: "app", id, label: (r.oauth_clients as unknown as { name: string } | null)?.name ?? null } });
 }

@@ -5,6 +5,8 @@ import { unstable_rethrow } from "next/navigation";
 import { getCtx, writerCtx } from "@/lib/session";
 import { deleteMedia, finishUpload, prepareUpload } from "@/lib/media";
 import { isUuid } from "@/lib/uploadRules";
+import { adminClient } from "@/lib/supabase/server";
+import { record } from "@/lib/auditActor";
 
 type FileInfo = { name: string; type: string; size: number };
 
@@ -61,7 +63,9 @@ export async function mediaUsage(id: string): Promise<number> {
 export async function removeMedia(id: string) {
   const ctx = await writerCtx();
   if (!isUuid(id)) return;
+  const { data: m } = await adminClient().from("media").select("name, mime").eq("id", id).eq("workspace_id", ctx.workspaceId).maybeSingle();
   await deleteMedia(ctx.workspaceId, id, { brandIds: ctx.brandIds, userId: ctx.userId });
+  if (m) await record({ workspaceId: ctx.workspaceId, action: "media.deleted", target: { type: "media", id, label: m.name as string }, meta: { type: m.mime as string } }, ctx);
   revalidatePath("/media");
 }
 

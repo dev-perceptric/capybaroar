@@ -4,6 +4,7 @@ import { adminClient } from "./supabase/server";
 import { assertCanAddChannel, newChannelCount } from "./billing";
 import type { NetworkId } from "./networks";
 import { AuthError, type Account, type Secret } from "./providers/types";
+import { record } from "./auditActor";
 
 /** A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. */
 export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null };
@@ -25,6 +26,10 @@ export async function listChannels(workspaceId: string, scope: string[] | null =
 export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[], brandId: string | null = null) {
   await assertCanAddChannel(workspaceId, await newChannelCount(workspaceId, network, accounts.map((a) => a.accountId)));
   const db = adminClient();
+  const { data: had } = accounts.length
+    ? await db.from("channels").select("account_id").eq("workspace_id", workspaceId).eq("network", network).in("account_id", accounts.map((a) => a.accountId))
+    : { data: [] };
+  const known = new Set((had ?? []).map((r) => r.account_id as string));
   for (const a of accounts) {
     const { data: ch, error } = await db
       .from("channels")
@@ -41,6 +46,7 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
       extra: a.extra ?? {},
     });
     if (e2) throw new Error(e2.message);
+    await record({ workspaceId, action: "channel.connected", target: { type: "channel", id: ch.id as string, label: a.name }, meta: { network, ...(known.has(a.accountId) ? { reconnected: true } : {}) } });
   }
 }
 

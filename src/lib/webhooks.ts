@@ -6,6 +6,7 @@ import { open as unseal, seal } from "./crypto";
 import { HOOK_TIMEOUT_MS, HOOK_TRIES, MAX_HOOKS, afterDelivery, afterTry, sign, type HookEvent } from "./api/hookRules";
 import { BlockedAddress, safeRequest } from "./api/fetchSafe";
 import { fillPool, newPool } from "./api/hookPool";
+import { record } from "./auditActor";
 
 // Webhooks: tell a workspace's own URLs what happened. emit() only writes deliveries and never throws, so nothing
 // that emits can fail because of a webhook. deliverDue() runs on its own loop, ten at a time side by side, each
@@ -14,6 +15,17 @@ const WORKER = `${hostname()}:${process.pid}`;
 
 export type WebhookRow = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
 const COLS = "id, url, events, enabled, failures, last_status, last_error, last_delivered_at, created_at";
+
+/** A webhook in the log by its host only: a URL's path and query can hold a token (Slack, Zapier). */
+const hookTarget = (id: string, url: string) => {
+  let host: string | null = null;
+  try {
+    host = new URL(url).host;
+  } catch {
+    // stored URLs were checked when saved
+  }
+  return { type: "webhook", id, label: host };
+};
 
 export async function listWebhooks(workspaceId: string): Promise<WebhookRow[]> {
   const { data, error } = await adminClient().from("webhooks").select(COLS).eq("workspace_id", workspaceId).order("created_at");
@@ -29,20 +41,23 @@ export async function createWebhook(workspaceId: string, userId: string, url: UR
   const secret = `whsec_${randomBytes(24).toString("base64url")}`;
   const { data, error } = await db.from("webhooks").insert({ workspace_id: workspaceId, created_by: userId, url: url.toString(), events, secret: seal(secret) }).select(COLS).single();
   if (error) throw new Error(error.message);
+  await record({ workspaceId, action: "webhook.created", target: hookTarget(data.id as string, data.url as string), meta: { events } }, { userId });
   return { webhook: data as WebhookRow, secret };
 }
 
 export async function deleteWebhook(workspaceId: string, id: string) {
-  const { data, error } = await adminClient().from("webhooks").delete().eq("id", id).eq("workspace_id", workspaceId).select("id");
+  const { data, error } = await adminClient().from("webhooks").delete().eq("id", id).eq("workspace_id", workspaceId).select("id, url");
   if (error) throw new Error(error.message);
   if (!data?.length) throw new Error("Webhook not found");
+  await record({ workspaceId, action: "webhook.deleted", target: hookTarget(id, data[0].url as string) });
 }
 
 /** Turn a webhook on or off. On again starts its failure count over. */
 export async function setWebhookOn(workspaceId: string, id: string, on: boolean) {
-  const { data, error } = await adminClient().from("webhooks").update({ enabled: on, ...(on ? { failures: 0 } : {}) }).eq("id", id).eq("workspace_id", workspaceId).select("id");
+  const { data, error } = await adminClient().from("webhooks").update({ enabled: on, ...(on ? { failures: 0 } : {}) }).eq("id", id).eq("workspace_id", workspaceId).select("id, url");
   if (error) throw new Error(error.message);
   if (!data?.length) throw new Error("Webhook not found");
+  await record({ workspaceId, action: "webhook.changed", target: hookTarget(id, data[0].url as string), meta: { to: on ? "on" : "off" } });
 }
 
 const body = (type: string, workspaceId: string, data: Record<string, unknown>) => {

@@ -14,6 +14,7 @@ import { assertCanUseApprovals } from "@/lib/billing";
 import { createWebhook, deleteWebhook, setWebhookOn, testWebhook } from "@/lib/webhooks";
 import { webhookInput } from "@/lib/api/input";
 import { EVENTS } from "@/lib/api/hookRules";
+import { record } from "@/lib/auditActor";
 
 export async function saveWorkspace(name: string, timezone: string): Promise<{ error?: string }> {
   const ctx = await getCtx();
@@ -24,8 +25,12 @@ export async function saveWorkspace(name: string, timezone: string): Promise<{ e
     return { error: "Unknown time zone" };
   }
   if (!canManage(ctx.role)) return { error: "Only owners and admins can change this" };
+  const { data: old } = await adminClient().from("workspaces").select("name, timezone").eq("id", ctx.workspaceId).maybeSingle();
   const { error } = await adminClient().from("workspaces").update({ name: name.trim(), timezone }).eq("id", ctx.workspaceId);
   if (error) return { error: error.message };
+  const ws = { type: "workspace", id: ctx.workspaceId, label: name.trim() };
+  if (old && old.name !== name.trim()) await record({ workspaceId: ctx.workspaceId, action: "workspace.renamed", target: ws, meta: { from: old.name as string, to: name.trim() } }, ctx);
+  if (old && old.timezone !== timezone) await record({ workspaceId: ctx.workspaceId, action: "workspace.settings_changed", target: ws, meta: { setting: "Time zone", from: old.timezone as string, to: timezone } }, ctx);
   revalidatePath("/", "layout");
   return {};
 }
@@ -46,6 +51,7 @@ export async function deleteWorkspace(typed: string): Promise<{ error?: string }
     if (ctx.role !== "owner") return { error: "Only owners can delete the workspace" };
     if (typed.trim() !== ctx.workspaceName.trim()) return { error: "The name doesn't match" };
     await requestWorkspaceDelete(ctx.workspaceId);
+    await record({ workspaceId: ctx.workspaceId, action: "workspace.deletion_requested", target: { type: "workspace", id: ctx.workspaceId, label: ctx.workspaceName } }, ctx);
   } catch (e) {
     return fail(e);
   }
@@ -59,6 +65,8 @@ export async function deleteMyAccount(typed: string): Promise<{ error?: string }
     if (typed.trim().toLowerCase() !== ctx.email.trim().toLowerCase()) return { error: "The email doesn't match" };
     const { blockedBy } = await deleteAccount(ctx.userId);
     if (blockedBy.length) return { error: `Make someone else an owner of ${blockedBy.join(", ")} or delete it first` };
+    // In each workspace they were in. The account is gone, so the event keeps only their email.
+    for (const w of ctx.workspaces) await record({ workspaceId: w.id, action: "account.deleted", target: { type: "member", label: ctx.email } }, { id: null, kind: "user", label: ctx.email, ip: undefined });
   } catch (e) {
     return fail(e);
   }
@@ -81,6 +89,7 @@ export async function saveQueue(slots: { day: number; time: string }[]): Promise
   const unique = [...new Map(clean.map((s) => [`${s.day} ${s.time}`, s])).values()].sort((a, b) => a.day - b.day || a.time.localeCompare(b.time));
   const { error } = await adminClient().from("workspaces").update({ queue: unique }).eq("id", ctx.workspaceId);
   if (error) return { error: error.message };
+  await record({ workspaceId: ctx.workspaceId, action: "workspace.settings_changed", target: { type: "workspace", id: ctx.workspaceId, label: ctx.workspaceName }, meta: { setting: "Queue times", slots: unique.length } }, ctx);
   return {};
 }
 
@@ -247,12 +256,20 @@ export async function sendTestWebhook(id: string): Promise<{ error?: string }> {
 
 export async function saveAutoTopUp(pack: number | null, max: number): Promise<{ error?: string }> {
   const { setAutoTopUp } = await import("@/lib/credits");
-  return manage((ctx) => setAutoTopUp(ctx.workspaceId, pack, max));
+  return manage(async (ctx) => {
+    await setAutoTopUp(ctx.workspaceId, pack, max);
+    await record({ workspaceId: ctx.workspaceId, action: "workspace.settings_changed", target: { type: "workspace", id: ctx.workspaceId, label: ctx.workspaceName }, meta: { setting: "Automatic top-up", pack: pack ?? "off", max } }, ctx);
+  });
 }
 
 export async function saveBrandLimit(brandId: string, limit: number | null): Promise<{ error?: string }> {
   const { setBrandLimit } = await import("@/lib/credits");
-  return manage((ctx) => setBrandLimit(ctx.workspaceId, brandId, limit));
+  return manage(async (ctx) => {
+    const { data: b } = await adminClient().from("brands").select("name, credit_limit").eq("id", brandId).eq("workspace_id", ctx.workspaceId).maybeSingle();
+    await setBrandLimit(ctx.workspaceId, brandId, limit);
+    const was = (b?.credit_limit as number | null | undefined) ?? null;
+    if (b && was !== limit) await record({ workspaceId: ctx.workspaceId, action: "billing.limit_changed", target: { type: "brand", id: brandId, label: b.name as string }, meta: { from: was ?? "no limit", to: limit ?? "no limit" } }, ctx);
+  });
 }
 
 /** Remove an app connected with OAuth (Claude, an MCP client). It stops working at once. */

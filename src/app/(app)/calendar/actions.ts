@@ -6,6 +6,7 @@ import { getBrandCtx, homeBrand } from "@/lib/brands";
 import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postResults, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
 import { listMedia, setAlt } from "@/lib/media";
 import type { ChannelResult, PlanItem } from "@/lib/unpublisher";
+import { postTarget, record } from "@/lib/auditActor";
 
 const fail = (e: unknown) => {
   unstable_rethrow(e); // a signed-out visitor still goes to sign in
@@ -58,7 +59,9 @@ export async function remove(id: string): Promise<{ error?: string }> {
   try {
     const ctx = await writerCtx();
     await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
+    const target = await postTarget(ctx.workspaceId, id);
     await deletePost(ctx.workspaceId, id);
+    await record({ workspaceId: ctx.workspaceId, action: "post.deleted", target }, ctx);
     return {};
   } catch (e) {
     return fail(e);

@@ -7,6 +7,7 @@ import { canManage, getCtx, type Ctx } from "./session";
 import { assertCanAddBrand } from "./billing";
 import { hashToken, newToken, open, seal } from "./crypto";
 import { appUrl } from "./channels";
+import { record } from "./auditActor";
 
 // Brands are an agency's clients. Channels and posts belong to one; the switcher at the top of the sidebar picks the
 // brand every screen shows (a cookie). Owners and admins can also pick "All brands".
@@ -63,6 +64,7 @@ export async function createBrand(workspaceId: string, name: string): Promise<Br
   const { count } = await db.from("brands").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
   const { data, error } = await db.from("brands").insert({ workspace_id: workspaceId, name: n, color: COLORS[(count ?? 0) % COLORS.length] }).select("id, name, color, needs_approval").single();
   if (error) throw new Error(error.message);
+  await record({ workspaceId, action: "brand.created", target: { type: "brand", id: data.id as string, label: n } });
   return data as Brand;
 }
 
@@ -70,13 +72,17 @@ export async function renameBrand(workspaceId: string, id: string, name: string)
   const n = name.trim();
   if (!n) throw new Error("Enter a name");
   if (n.length > 60) throw new Error("Names are up to 60 characters");
-  const { error } = await adminClient().from("brands").update({ name: n }).eq("id", id).eq("workspace_id", workspaceId);
+  const db = adminClient();
+  const { data: old } = await db.from("brands").select("name").eq("id", id).eq("workspace_id", workspaceId).maybeSingle();
+  const { data, error } = await db.from("brands").update({ name: n }).eq("id", id).eq("workspace_id", workspaceId).select("id");
   if (error) throw new Error(error.message);
+  if (data?.length && old?.name !== n) await record({ workspaceId, action: "brand.renamed", target: { type: "brand", id, label: n }, meta: { from: (old?.name as string | undefined) ?? null, to: n } });
 }
 
 export async function setApproval(workspaceId: string, id: string, on: boolean) {
-  const { error } = await adminClient().from("brands").update({ needs_approval: on }).eq("id", id).eq("workspace_id", workspaceId);
+  const { data, error } = await adminClient().from("brands").update({ needs_approval: on }).eq("id", id).eq("workspace_id", workspaceId).select("name");
   if (error) throw new Error(error.message);
+  if (data?.length) await record({ workspaceId, action: "brand.approval_changed", target: { type: "brand", id, label: data[0].name as string }, meta: { to: on ? "on" : "off" } });
 }
 
 /** Delete a brand with no channels. The last brand stays. Its posts stay, under "All brands". */
@@ -86,16 +92,20 @@ export async function deleteBrand(workspaceId: string, id: string) {
   if ((count ?? 0) <= 1) throw new Error("A workspace keeps at least one brand");
   const { count: chans } = await db.from("channels").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("brand_id", id);
   if (chans) throw new Error("Move or remove this brand's channels first");
-  const { error } = await db.from("brands").delete().eq("id", id).eq("workspace_id", workspaceId);
+  const { data, error } = await db.from("brands").delete().eq("id", id).eq("workspace_id", workspaceId).select("name");
   if (error) throw new Error(error.message);
+  if (data?.length) await record({ workspaceId, action: "brand.deleted", target: { type: "brand", id, label: data[0].name as string } });
 }
 
 export async function moveChannel(workspaceId: string, channelId: string, brandId: string) {
   const db = adminClient();
-  const { data: b } = await db.from("brands").select("id").eq("id", brandId).eq("workspace_id", workspaceId).maybeSingle();
+  const { data: b } = await db.from("brands").select("id, name").eq("id", brandId).eq("workspace_id", workspaceId).maybeSingle();
   if (!b) throw new Error("Brand not found");
+  const { data: ch } = await db.from("channels").select("name, network, brands(name)").eq("id", channelId).eq("workspace_id", workspaceId).maybeSingle();
   const { error } = await db.from("channels").update({ brand_id: brandId }).eq("id", channelId).eq("workspace_id", workspaceId);
   if (error) throw new Error(error.message);
+  const from = (ch?.brands as unknown as { name: string } | null)?.name ?? null;
+  if (ch && from !== b.name) await record({ workspaceId, action: "channel.moved", target: { type: "channel", id: channelId, label: ch.name as string }, meta: { from, to: b.name as string, network: ch.network as string } });
 }
 
 // Review links: one per brand, opened without signing in.
@@ -110,12 +120,24 @@ export async function createReviewLink(workspaceId: string, brandId: string, use
   const token = newToken();
   const { error } = await db.from("review_links").upsert({ brand_id: brandId, workspace_id: workspaceId, token_hash: hashToken(token), token: seal(token), created_by: userId, created_at: new Date().toISOString() });
   if (error) throw new Error(error.message);
+  await record({ workspaceId, action: "brand.review_link_changed", target: { type: "brand", id: brandId, label: await brandName(workspaceId, brandId) }, meta: { link: "new" } });
   return reviewUrl(token);
 }
 
 export async function revokeReviewLink(workspaceId: string, brandId: string) {
-  const { error } = await adminClient().from("review_links").delete().eq("brand_id", brandId).eq("workspace_id", workspaceId);
+  const { data, error } = await adminClient().from("review_links").delete().eq("brand_id", brandId).eq("workspace_id", workspaceId).select("brand_id");
   if (error) throw new Error(error.message);
+  if (data?.length) await record({ workspaceId, action: "brand.review_link_changed", target: { type: "brand", id: brandId, label: await brandName(workspaceId, brandId) }, meta: { link: "turned off" } });
+}
+
+/** A brand's name for the log, or null. Never throws. */
+async function brandName(workspaceId: string, id: string): Promise<string | null> {
+  try {
+    const { data } = await adminClient().from("brands").select("name").eq("id", id).eq("workspace_id", workspaceId).maybeSingle();
+    return (data?.name as string | undefined) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** Each brand's open review link. */
