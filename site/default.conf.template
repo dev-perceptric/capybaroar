@@ -52,3 +52,35 @@ server {
 
   error_page 404 /404.html;
 }
+
+# docs.capybaroar.com: the help pages in site/public/docs at clean addresses, with the site's own styles, scripts and
+# pictures from the root. Old /docs/... links work here too. Caddy sends this host here (ops/vps/Caddyfile.example).
+server {
+  listen 8080;
+  listen [::]:8080;
+  server_name docs.capybaroar.com;
+  root /usr/share/nginx/html/docs;
+  absolute_redirect off;
+  gzip on;
+  gzip_min_length 1024;
+  gzip_types text/css application/javascript application/json application/xml image/svg+xml text/plain text/markdown;
+
+  location = / { return 302 /welcome; }
+
+  location ~ \.md$ {
+    types { }
+    default_type "text/markdown; charset=utf-8";
+    try_files $uri @site;
+  }
+
+  location / {
+    try_files $uri $uri.html @site;
+  }
+
+  location @site {
+    root /usr/share/nginx/html;
+    try_files $uri $uri.html =404;
+  }
+
+  error_page 404 /404.html;
+}

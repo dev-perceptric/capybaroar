@@ -136,3 +136,12 @@ capybaroar.com, www.capybaroar.com {
 		import upstream
 	}
 }
+
+# The help pages: the homepage container answers this host from site/public/docs (site/default.conf.template).
+docs.capybaroar.com {
+	import edge
+	import access_log   # access log (step 12)
+	reverse_proxy {$CAPY_SITE:127.0.0.1:8081} {
+		import upstream
+	}
+}
