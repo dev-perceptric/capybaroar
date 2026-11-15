@@ -52,7 +52,7 @@ export type ApiChannelGroup = { id: string; name: string; brand_id: string | nul
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
 
 /** An AI picture, video or audio file. status: queued and running are still being made; media is set once it's done. credits: what it costs; reason: why Capy picked the model. */
-export type ApiGeneration = { id: string; kind: "infographic" | "image" | "video" | "audio"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; credits: number; reason: string | null; created_at: string };
+export type ApiGeneration = { id: string; kind: "infographic" | "motion" | "image" | "video" | "audio"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; credits: number; reason: string | null; created_at: string };
 /** A request just started: credits_charged is what it holds now (given back if it fails), credits_left what's left after it. */
 export type ApiStarted = ApiGeneration & { credits_charged: number; credits_left: number };
 /** The workspace's credits: this period's plan credits, bought credits (they last 12 months) and the total left. */

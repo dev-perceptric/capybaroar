@@ -15,7 +15,7 @@ export const attachedNames = (text: string) => (text.startsWith(ATTACHED) ? text
 export type CapyChoice = "auto" | GenKind;
 
 export function capyChoice(v: unknown): CapyChoice {
-  return v === "infographic" || v === "image" || v === "video" || v === "audio" ? v : "auto";
+  return v === "infographic" || v === "motion" || v === "image" || v === "video" || v === "audio" ? v : "auto";
 }
 
 /** The model the user picked in the chat box, when it's a real model of the kind they picked; otherwise Capy picks. */
@@ -36,7 +36,8 @@ export const MEDIA_RULES = `
 Pictures, videos and audio (Capy):
 - CapyInfographic (generate_media kind "infographic") is the default for any picture with words, numbers or a message: stats, tips, steps, comparisons, quotes, charts, offers, events, hiring, announcements, carousel slides. Claude designs it in the brand's own style and it's rendered exactly, so the words are always spelled right. Write the prompt as the content to show: the headline, the points, the numbers and their source, in the user's words. Never invent numbers, quotes or results: ask for them. Shapes: 1:1 or 4:5 for feeds, 9:16 for stories, 16:9 for YouTube and link posts. To put a library photo in it, send source_media_id.
 - Before the first infographic for a brand, check list_brands: when the brand has no style (has_style false), ask the user which website to match and send it as website. It's read once and saved on the brand.
-- Use CapyImage only for photos, art and scenes without words to print.
+- CapyMotion (generate_media kind "motion") makes a short animated video (6 to 30 seconds) from words and numbers: a hook, stats that count up, growing bars, lists, a quote, a before and after, a call to action, in the brand's style. It's the default for Reels, TikTok and Shorts made of text and data. Write the prompt as the content: the points, the numbers and their source, and what to ask people to do. Same website rule as infographics. It takes a few minutes: save its post as a draft and use attach_when_done.
+- Use CapyImage only for photos, art and scenes without words to print, and CapyVideo for filmed-looking scenes.
 - generate_media makes an infographic (CapyInfographic), a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio). Leave model out so Capy picks the best model for the request; send a model only when the user names one. Tell the user which model Capy picked and what it cost in credits.
 - Some networks need a picture or video (needs_media in list_channels). Use one from list_media, or make one when the user asks or the post needs one.
 - Write picture and video prompts as a short scene: the subject, the setting, the light and the style, and for videos what moves and how the camera moves. Put words to print in quotes. No logos inside the picture unless the user asks.
@@ -46,7 +47,7 @@ Pictures, videos and audio (Capy):
 - Each file costs credits (get_credits shows what's left), and so does this chat, so make one per post unless the user asks for options.`;
 
 export function systemPrompt(ai: boolean, timezone: string, now: Date, capy: CapyChoice = "auto", kits = "", model: string | null = null) {
-  const what = { infographic: "an infographic", image: "a picture", video: "a video", audio: "audio" } as const;
+  const what = { infographic: "an infographic", motion: "an animated video", image: "a picture", video: "a video", audio: "audio" } as const;
   const named = model ? modelOf(model) : null;
   const using = named ? ` with ${named.name} (generate_media model "${named.id}"); the user chose it, so don't pick another` : "";
   const picked = ai && capy !== "auto" ? `\n- For this message the user picked ${CAPY[capy].name}: make ${what[capy]} (generate_media kind "${capy}")${using} for what they ask.` : "";

@@ -26,5 +26,5 @@ test("the agent is told which model the user picked, and nothing when Capy picks
 });
 
 test("every model has a kind the chat box can show", () => {
-  for (const m of MODELS) assert.ok(["infographic", "image", "video", "audio"].includes(m.kind), m.id);
+  for (const m of MODELS) assert.ok(["infographic", "motion", "image", "video", "audio"].includes(m.kind), m.id);
 });

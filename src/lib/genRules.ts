@@ -7,12 +7,15 @@
 // pricing API, 2026-11-05.
 
 import { MAX_ACTION, priceOf } from "./creditRules";
-import { INFO_MODELS } from "./capy/infoModels";
+import { INFO_MODELS, MOTION_MODEL } from "./capy/infoModels";
 
-export type GenKind = "infographic" | "image" | "video" | "audio";
-export const KINDS: GenKind[] = ["infographic", "image", "video", "audio"];
+export type GenKind = "infographic" | "motion" | "image" | "video" | "audio";
+export const KINDS: GenKind[] = ["infographic", "motion", "image", "video", "audio"];
+/** Made by Claude and rendered on our servers (src/lib/capy), never sent to fal. */
+export const CAPY_MADE: GenKind[] = ["infographic", "motion"];
 export const CAPY: Record<GenKind, { name: string; line: string }> = {
   infographic: { name: "CapyInfographic", line: "Graphics, charts and banners in your brand" },
+  motion: { name: "CapyMotion", line: "Animated videos with your words and numbers" },
   image: { name: "CapyImage", line: "Pictures and edits" },
   video: { name: "CapyVideo", line: "Short videos with sound" },
   audio: { name: "CapyAudio", line: "Voiceovers, music and sound effects" },
@@ -59,6 +62,7 @@ const LISTED: (Omit<GenModel, "credits"> & { credits?: GenModel["credits"] })[] 
     id, kind: "infographic" as const, name: m.name, picture: "takes" as const, cost: () => m.cents,
     build: () => ({ endpoint: "capy/infographic", input: {} }),
   })),
+  { id: MOTION_MODEL.id, kind: "motion", name: MOTION_MODEL.name, picture: "takes", cost: () => MOTION_MODEL.cents, build: () => ({ endpoint: "capy/motion", input: {} }) },
   // Pictures
   { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", cost: () => 3, // $0.03 per megapixel
     build: (a) => ({ endpoint: "fal-ai/flux-2-pro", input: { prompt: a.prompt, image_size: SIZE[a.aspect], output_format: "jpeg", enable_safety_checker: true } }) },
@@ -120,6 +124,7 @@ export type CapyRule = { kind: GenKind; when: string; test: (prompt: string, pic
 export const RULES: CapyRule[] = [
   { kind: "infographic", when: "Premium, detailed, a lot of data", test: (p) => has(p, ["premium", "detailed", "best", "complex", "data-heavy", "report"]), model: "capy-infographic-best", why: "it's a detailed design, so Opus designs it" },
   { kind: "infographic", when: "Anything else", test: () => true, model: "capy-infographic", why: "it designs in your brand's style, fast" },
+  { kind: "motion", when: "Anything", test: () => true, model: "capy-motion", why: "it animates your words and numbers in your brand's style" },
   { kind: "image", when: "A picture is added", test: (_, pic) => pic, model: "nano-banana-2-edit", why: "you added a picture, so Capy edits it" },
   { kind: "image", when: "Words to print (quotes, headline, sign, logo)", test: (p) => /["\u201c\u201d]/.test(p) || has(p, ["headline", "sign", "signs", "logo", "text", "poster", "caption", "words", "says", "flyer", "banner"]), model: "ideogram-v3", why: "it has words to print, and Ideogram spells them right" },
   { kind: "image", when: "Premium, hero, 4K, detailed", test: (p) => has(p, ["premium", "hero", "4k", "detailed", "magazine", "cover", "luxury"]), model: "nano-banana-pro", why: "you asked for top quality" },
@@ -150,22 +155,22 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function genRequest(body: unknown): GenRequest {
   const b = (typeof body === "object" && body !== null && !Array.isArray(body) ? body : {}) as Record<string, unknown>;
   const kind = b.kind;
-  if (kind !== "infographic" && kind !== "image" && kind !== "video" && kind !== "audio") throw new Error('kind must be "infographic", "image", "video" or "audio"');
+  if (kind !== "infographic" && kind !== "motion" && kind !== "image" && kind !== "video" && kind !== "audio") throw new Error('kind must be "infographic", "motion", "image", "video" or "audio"');
   const prompt = typeof b.prompt === "string" ? b.prompt.trim() : "";
   if (!prompt) throw new Error(kind === "audio" ? "Write the words or describe the sound" : "Describe what to make");
-  const max = kind === "audio" || kind === "infographic" ? MAX_SCRIPT : MAX_PROMPT;
+  const max = kind === "audio" || kind === "infographic" || kind === "motion" ? MAX_SCRIPT : MAX_PROMPT;
   if (prompt.length > max) throw new Error(`Keep it under ${max.toLocaleString("en-US")} characters`);
   const source = b.source_media_id ?? b.sourceMediaId ?? null;
   if (source != null && source !== "" && (typeof source !== "string" || !UUID.test(source))) throw new Error("source_media_id must be a picture's id from list_media");
   if (kind === "audio" && source) throw new Error("source_media_id is for pictures and videos");
   const picture = !!source;
-  const aspect = b.aspect == null || b.aspect === "" ? "1:1" : b.aspect;
-  const shapes = kind === "infographic" ? ALL_ASPECTS : ASPECTS;
+  const aspect = b.aspect == null || b.aspect === "" ? (kind === "motion" ? "9:16" : "1:1") : b.aspect;
+  const shapes = kind === "infographic" || kind === "motion" ? ALL_ASPECTS : ASPECTS;
   if (!shapes.includes(aspect as Aspect)) throw new Error(`aspect must be one of ${shapes.join(", ")}`);
   const site = b.website == null || b.website === "" ? null : typeof b.website === "string" ? b.website.trim() : "";
-  if (site !== null && (kind !== "infographic" || site.length > 300 || !/^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(site))) throw new Error(kind === "infographic" ? "website must be a site address, like example.com" : "website is for infographics");
+  if (site !== null && ((kind !== "infographic" && kind !== "motion") || site.length > 300 || !/^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(site))) throw new Error(kind === "infographic" || kind === "motion" ? "website must be a site address, like example.com" : "website is for CapyInfographic and CapyMotion");
   const seconds = b.seconds == null || b.seconds === "" ? 5 : Number(b.seconds);
-  if (kind !== "image" && kind !== "infographic" && !SECONDS.includes(seconds as Seconds)) throw new Error(`seconds must be ${SECONDS.join(" or ")}`);
+  if (kind !== "image" && kind !== "infographic" && kind !== "motion" && !SECONDS.includes(seconds as Seconds)) throw new Error(`seconds must be ${SECONDS.join(" or ")}`);
   const named = b.model == null || b.model === "" || b.model === "auto" ? null : b.model;
   let chosen: GenModel;
   let why: string;
@@ -177,8 +182,8 @@ export function genRequest(body: unknown): GenRequest {
     chosen = m;
     why = "it was picked";
   } else ({ model: chosen, why } = capyPick(kind, prompt, picture));
-  const secs = (kind === "image" || kind === "infographic" ? 5 : seconds) as Seconds;
-  return { kind, model: chosen.id, prompt, aspect: aspect as Aspect, seconds: secs, sourceMediaId: (source as string | null) || null, credits: chosen.credits({ prompt, seconds: secs }), why, ...(kind === "infographic" ? { website: site } : {}) };
+  const secs = (kind === "image" || kind === "infographic" || kind === "motion" ? 5 : seconds) as Seconds;
+  return { kind, model: chosen.id, prompt, aspect: aspect as Aspect, seconds: secs, sourceMediaId: (source as string | null) || null, credits: chosen.credits({ prompt, seconds: secs }), why, ...(kind === "infographic" || kind === "motion" ? { website: site } : {}) };
 }
 
 /** The fal endpoint and its input for a request. imageUrl: a link fal can fetch for the picture. */

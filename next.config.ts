@@ -26,7 +26,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   // Native modules that draw slides: loaded by Node as they are, not bundled.
-  serverExternalPackages: ["@resvg/resvg-js", "sharp", "playwright-core"],
+  serverExternalPackages: ["@resvg/resvg-js", "sharp", "playwright-core", "@remotion/renderer", "remotion"],
+  // Remotion starts its own encoder binary, which file tracing can't see.
+  outputFileTracingIncludes: { "/**": ["./node_modules/@remotion/compositor-linux-x64-gnu/**"] },
   // Which build this is. Open tabs compare it with /api/version and reload after an update.
   // Tabs you just visited open from the browser's cache; saving anything refreshes them.
   experimental: { staleTimes: { dynamic: 30, static: 300 } },

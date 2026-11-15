@@ -88,7 +88,7 @@ test("infographic requests: shapes, website, photo, credits and Capy's pick", ()
   assert.equal(r.website, "lumen.example");
   assert.equal(genRequest({ kind: "infographic", prompt: "A detailed report of our year" }).model, "capy-infographic-best");
   assert.throws(() => genRequest({ kind: "image", prompt: "x", aspect: "4:5" }), /aspect/);
-  assert.throws(() => genRequest({ kind: "image", prompt: "x", website: "a.com" }), /website is for infographics/);
+  assert.throws(() => genRequest({ kind: "image", prompt: "x", website: "a.com" }), /website is for CapyInfographic and CapyMotion/);
   assert.throws(() => genRequest({ kind: "infographic", prompt: "x", website: "not a site" }), /website/);
   assert.equal(genRequest({ kind: "infographic", prompt: "x", source_media_id: "11111111-1111-4111-8111-111111111111" }).sourceMediaId, "11111111-1111-4111-8111-111111111111");
   assert.equal(infoCredits("capy-infographic-best"), 24);

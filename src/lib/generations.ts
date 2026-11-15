@@ -7,7 +7,7 @@ import { ApiError } from "./api/input";
 import { checkLimits, falCall, fileName, type GenKind, type GenRequest, type GenUse } from "./genRules";
 import { creditsOf, hold, settle, type Spender } from "./credits";
 import { BadFile, advance, runGenerations as run, type FalApi, type FalAnswer, type GenRow, type GenStore } from "./generator";
-import { isInfoModel } from "./capy/infoModels";
+import { MOTION_MODEL, isInfoModel } from "./capy/infoModels";
 import type { InfoAspect } from "./capy/infographicRules";
 
 // AI pictures and videos through fal.ai's queue (fal.ai/docs/documentation/model-apis/inference/queue). A request is
@@ -191,7 +191,7 @@ export type Started = Generation & { creditsLeft: number };
 
 /** Checks the request, holds its credits, saves it and sends it to fal. Returns the request; its file comes later. */
 export async function startGeneration(sp: Spender, r: GenRequest): Promise<Started> {
-  const capy = isInfoModel(r.model);
+  const capy = isInfoModel(r.model) || r.model === MOTION_MODEL.id;
   if (capy ? !process.env.ANTHROPIC_API_KEY : !aiReady()) throw new ApiError(503, "unavailable", "AI media isn't set up on this server");
   const workspaceId = sp.workspaceId;
   checkLimits(r, await usageOf(workspaceId));
@@ -221,7 +221,7 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
       model: r.model,
       prompt: r.prompt,
       aspect: r.aspect,
-      seconds: r.kind === "image" || r.kind === "infographic" ? null : r.seconds,
+      seconds: r.kind === "image" || r.kind === "infographic" || r.kind === "motion" ? null : r.seconds,
       credits: r.credits,
       reason: r.why,
       source_media_id: r.sourceMediaId,
@@ -230,7 +230,7 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
       locked_at: new Date().toISOString(),
       locked_by: `start:${WORKER}`,
       // An infographic runs here, not in the loop: kept out of the loop's way for longer than it can take.
-      ...(capy ? { status: "running", check_after: new Date(Date.now() + 10 * 60000).toISOString(), input: { website: r.website ?? null } } : {}),
+      ...(capy ? { status: "running", check_after: new Date(Date.now() + 20 * 60000).toISOString(), input: { website: r.website ?? null } } : {}),
     })
     .select("*")
     .single();
@@ -238,7 +238,7 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
     await settle(workspaceId, key, 0).catch(() => undefined);
     throw new ApiError(503, "unavailable", "Couldn't save the request. Try again in a moment.");
   }
-  if (capy) void runInfographic(id, sp, r);
+  if (capy) void (r.kind === "motion" ? runMotion(id, sp, r) : runInfographic(id, sp, r));
   else await advance(genStore, falApi, toRow(data as Db));
   const [g, c] = await Promise.all([getGeneration(workspaceId, id), creditsOf(workspaceId).catch(() => null)]);
   return { ...g, creditsLeft: c?.left ?? 0 };
@@ -251,7 +251,7 @@ async function runInfographic(id: string, sp: Spender, r: GenRequest) {
     const { infoFileName } = await import("./capy/infographicRules");
     const out = await makeInfographic({ workspaceId: sp.workspaceId, brandId: sp.brandId, model: r.model as Parameters<typeof makeInfographic>[0]["model"], prompt: r.prompt, aspect: r.aspect as InfoAspect, sourceMediaId: r.sourceMediaId, website: r.website ?? null });
     const name = infoFileName(r.prompt);
-    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.png, `ai-${id}-${name}`, name, out.alt);
+    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.png, `ai-${id}-${name}`, name, out.alt, "image/png");
     await genStore.done(id, mediaId);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -260,15 +260,31 @@ async function runInfographic(id: string, sp: Spender, r: GenRequest) {
   }
 }
 
-/** Saves a made PNG in the media library at a fixed path, so saving it twice keeps one file. */
-async function bufferToMedia(workspaceId: string, userId: string | null, png: Buffer, fixed: string, name: string, alt: string): Promise<string> {
+/** Plans, renders and saves one CapyMotion video, then finishes its request like any other. */
+async function runMotion(id: string, sp: Spender, r: GenRequest) {
+  try {
+    const { makeMotion } = await import("./capy/motion");
+    const { motionFileName } = await import("./capy/motionRules");
+    const out = await makeMotion({ workspaceId: sp.workspaceId, brandId: sp.brandId, prompt: r.prompt, aspect: r.aspect as InfoAspect, sourceMediaId: r.sourceMediaId, website: r.website ?? null });
+    const name = motionFileName(r.prompt);
+    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.mp4, `ai-${id}-${name}`, name, out.alt, "video/mp4");
+    await genStore.done(id, mediaId);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("motion:", msg);
+    await genStore.failed(id, /^[A-Z]/.test(msg) && msg.length < 200 && !/ECONN|ENOENT|spawn|browser|chromium|remotion/i.test(msg) ? msg : "Couldn't make the video. Try again.").catch((x) => console.error("motion fail:", x instanceof Error ? x.message : x));
+  }
+}
+
+/** Saves a made file in the media library at a fixed path, so saving it twice keeps one file. */
+async function bufferToMedia(workspaceId: string, userId: string | null, png: Buffer, fixed: string, name: string, alt: string, mime: string): Promise<string> {
   const db = adminClient();
   const path = `${workspaceId}/${fixed}`;
   const { data: had } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
   if (had) return had.id as string;
-  const up = await db.storage.from("media").upload(path, png, { contentType: "image/png", upsert: true });
+  const up = await db.storage.from("media").upload(path, png, { contentType: mime, upsert: true });
   if (up.error) throw new Error(`Couldn't save the picture: ${up.error.message}`);
-  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime: "image/png", size: png.length, alt, created_by: userId }).select("id").single();
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime, size: png.length, alt, created_by: userId }).select("id").single();
   if (error) {
     const { data: first } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
     if (first) return first.id as string;

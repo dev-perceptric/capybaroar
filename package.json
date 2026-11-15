@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build-motion.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.137.0",
+    "@remotion/renderer": "4.0.539",
     "@resvg/resvg-js": "2.6.2",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.3",
@@ -33,6 +34,7 @@
     "qrcode": "^1.5.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "remotion": "4.0.539",
     "server-only": "^0.0.1",
     "sharp": "0.35.5",
     "simple-icons": "^15.22.0",
@@ -40,6 +42,7 @@
     "yazl": "^3.3.1"
   },
   "devDependencies": {
+    "@remotion/bundler": "4.0.539",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.5",
     "@types/qrcode": "^1.5.6",

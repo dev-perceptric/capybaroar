@@ -21,6 +21,8 @@ ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=:: CHROMIUM
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
+# The CapyMotion scene kit, bundled by scripts/build-motion.mjs during the build.
+COPY --from=build /app/motion-bundle ./motion-bundle
 RUN mkdir -p .next/cache && chown -R node:node .next
 USER node
 EXPOSE 3000

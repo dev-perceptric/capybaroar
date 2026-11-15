@@ -120,17 +120,17 @@ export const TOOLS: Tool[] = [
   },
   {
     name: "generate_media",
-    title: "Make an infographic, picture, video or audio",
+    title: "Make an infographic, animation, picture, video or audio",
     description:
-      "Make an infographic (CapyInfographic: Claude designs a graphic, chart or banner in the brand's own style and it's rendered exactly, so words are spelled right; best for anything with text or numbers; send website the first time for a brand without a style), a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio: a voiceover of your words, music, or a sound effect) with fal.ai models. Leave model out and Capy picks the best one for the request; the answer says which and why, and what it cost in credits. A picture takes seconds, a video a few minutes: call get_generation until status is done, then attach media.id with media_ids (audio can't go on a post on its own). A picture can be edited and a video can start from a picture in the library (source_media_id). Uses credits (plan credits first, then bought ones): the answer has credits_charged (given back if it fails) and credits_left. When there aren't enough the error is out_of_credits.",
+      "Make an animated video from words and numbers (CapyMotion: scenes with stats that count up, bars, lists, quotes and a call to action in the brand's style, 6 to 30 seconds; takes a few minutes), an infographic (CapyInfographic: Claude designs a graphic, chart or banner in the brand's own style and it's rendered exactly, so words are spelled right; best for anything with text or numbers; send website the first time for a brand without a style), a picture (CapyImage), a short video (CapyVideo) or audio (CapyAudio: a voiceover of your words, music, or a sound effect) with fal.ai models. Leave model out and Capy picks the best one for the request; the answer says which and why, and what it cost in credits. A picture takes seconds, a video a few minutes: call get_generation until status is done, then attach media.id with media_ids (audio can't go on a post on its own). A picture can be edited and a video can start from a picture in the library (source_media_id). Uses credits (plan credits first, then bought ones): the answer has credits_charged (given back if it fails) and credits_left. When there aren't enough the error is out_of_credits.",
     inputSchema: {
       type: "object",
       properties: {
         kind: { type: "string", enum: [...KINDS] },
-        prompt: { type: "string", maxLength: MAX_SCRIPT, description: "Infographics: the content to show (headline, points, numbers and their source) in the user's words. Pictures and videos: the scene (subject, setting, light, style; for videos what moves). Audio: the exact words for a voiceover, a description of the music or sound, or a song's style followed by \"Lyrics:\" and the words." },
+        prompt: { type: "string", maxLength: MAX_SCRIPT, description: "Infographics and CapyMotion: the content to show (headline, points, numbers and their source) in the user's words. Pictures and videos: the scene (subject, setting, light, style; for videos what moves). Audio: the exact words for a voiceover, a description of the music or sound, or a song's style followed by \"Lyrics:\" and the words." },
         model: { type: "string", enum: MODELS.map((m) => m.id), description: `Leave out for Capy to pick. ${KINDS.map((k) => `${CAPY[k].name}: ${modelsFor(k).map((m) => m.id).join(", ")}`).join(". ")}.` },
         aspect: { type: "string", enum: ALL_ASPECTS, description: "1:1 (default), 4:5 for feeds (infographics only), 9:16 for stories, reels and TikTok, 16:9 for wide. Not for audio." },
-        website: { type: "string", description: "Infographics only: the brand's website to read its colors, fonts and logo from, when list_brands shows has_style false. Saved on the brand." },
+        website: { type: "string", description: "CapyInfographic and CapyMotion only: the brand's website to read its colors, fonts and logo from, when list_brands shows has_style false. Saved on the brand." },
         seconds: { type: "number", enum: [...SECONDS], description: "Videos and sound effects: 5 (default) or 10" },
         source_media_id: { type: "string", description: "A JPG, PNG or WebP picture id from list_media: a picture to edit, or the first frame of a video" },
       },
