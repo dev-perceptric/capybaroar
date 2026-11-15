@@ -123,6 +123,26 @@ export async function saveBrandKitFor(id: string, kit: { voice: string; avoid: s
   const { saveBrandKit } = await import("@/lib/brands");
   return manage((ctx) => saveBrandKit(ctx.workspaceId, id, kit));
 }
+/** The brand's look for CapyInfographic (041): its website and the style read from it. */
+export async function loadBrandStyle(id: string) {
+  const ctx = await managerCtx();
+  const { brandStyleOf } = await import("@/lib/capy/styleScan");
+  const b = await brandStyleOf(ctx.workspaceId, id);
+  return { website: b.website, style: b.style };
+}
+export async function readBrandStyleFor(id: string, website: string): Promise<{ error?: string; style?: import("@/lib/capy/styleRules").BrandStyle }> {
+  try {
+    const ctx = await managerCtx();
+    const { readBrandStyle } = await import("@/lib/capy/styleScan");
+    return { style: await readBrandStyle(ctx.workspaceId, id, website) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+export async function clearBrandStyle(id: string) {
+  const { saveBrandStyle } = await import("@/lib/capy/styleScan");
+  return manage((ctx) => saveBrandStyle(ctx.workspaceId, id, null));
+}
 export async function saveBrandName(id: string, name: string) {
   return manage((ctx) => renameBrand(ctx.workspaceId, id, name));
 }

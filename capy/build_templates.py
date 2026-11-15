@@ -33,7 +33,9 @@ THEMES = {
 }
 
 FONTS = [('Inter', 'inter', [400, 500, 600, 700, 800]), ('Fraunces', 'fraunces', [400, 600, 700]), ('Space Grotesk', 'space-grotesk', [400, 500, 700]),
-         ('Archivo Black', 'archivo-black', [400]), ('DM Serif Display', 'dm-serif-display', [400]), ('Bricolage Grotesque', 'bricolage-grotesque', [400, 600, 800])]
+         ('Archivo Black', 'archivo-black', [400]), ('DM Serif Display', 'dm-serif-display', [400]), ('Bricolage Grotesque', 'bricolage-grotesque', [400, 600, 800]),
+         ('Poppins', 'poppins', [400, 600, 700, 800]), ('Montserrat', 'montserrat', [400, 600, 700, 800]), ('DM Sans', 'dm-sans', [400, 500, 700]),
+         ('Playfair Display', 'playfair-display', [400, 700]), ('Manrope', 'manrope', [400, 600, 800]), ('Lora', 'lora', [400, 600, 700])]
 
 
 def font_faces():
@@ -51,6 +53,7 @@ body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-
 .canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
 .brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
 .brand svg{width:40px;height:40px;flex-shrink:0}
+.brand .logo{height:44px;width:auto;max-width:280px;object-fit:contain;flex-shrink:0}
 .kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
 .chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
 .h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
@@ -70,7 +73,12 @@ def theme_vars(t, w, h, pad):
             f"--body:{t['body']};--radius:{t['radius']}}}")
 
 
+EXPORT = False  # True while writing the app's examples: logo and photos point at the render host
+
+
 def brand(t):
+    if EXPORT:
+        return '<div class="brand"><img class="logo" src="https://capy.local/logo" alt=""><span>Brand name</span></div>'
     return f'<div class="brand">{LOGOS[t["logo"]]}<span>{t["name"]}</span></div>'
 
 
@@ -191,7 +199,7 @@ def _(t):
 .row{display:grid;grid-template-columns:1.1fr 1fr 1fr;align-items:center;gap:16px;padding:22px 0;border-top:2px solid var(--line);font-size:32px}
 .row.head{border-top:0;padding-top:0;font:600 24px/1 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .rl{color:var(--muted)}
-.old{text-decoration:line-through;text-decoration-color:#d4d4d4;text-decoration-thickness:3px;color:var(--muted)}
+.old{text-decoration:line-through;text-decoration-color:var(--line);text-decoration-thickness:3px;color:var(--muted)}
 .new{font-weight:700;display:inline-flex;align-items:center;gap:12px}
 .new::before{content:"";width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12 4 4 8-8' fill='none' stroke='%23262209' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/22px no-repeat}
 .new-h{color:var(--ink)}
@@ -242,7 +250,7 @@ def _(t):
 
 @tpl('donut', 'Donut chart', 'maya', SQ, {'use': 'Parts of a whole: 2 to 4 shares that add up to 100%.'})
 def _(t):
-    parts = [('Home', 54, 'var(--accent)'), ('Gym', 31, 'var(--accent-2)'), ('Outdoors', 15, '#FFFFFF')]
+    parts = [('Home', 54, 'var(--accent)'), ('Gym', 31, 'var(--accent-2)'), ('Outdoors', 15, 'var(--ink)')]
     r, c = 150, 2 * 3.14159 * 150
     off, arcs, leg = 0, '', ''
     for name, pct, col in parts:
@@ -628,7 +636,31 @@ def build():
         html = page('big-stat', title, th, size, body, css, 80, meta).replace('src="img/', 'src="../img/').replace('url(fonts/', 'url(../fonts/')
         open(os.path.join(OUT, 'themes', f'big-stat--{th}.html'), 'w').write(html)
     json.dump({'templates': index, 'themes': THEMES}, open(os.path.join(OUT, 'index.json'), 'w'), indent=1)
+    export_examples()
     print('templates:', len(index), 'themes:', len(THEMES))
+
+
+def export_examples():
+    """Writes src/lib/capy/examples.ts: each layout's CSS and markup, with the logo and photos pointing at the render
+    host, for Claude to learn from. The base CSS goes in once."""
+    import re
+    global EXPORT
+    EXPORT = True
+    rows = []
+    for slug, (title, theme, size, fn, meta) in T.items():
+        body, css = fn(THEMES[theme])
+        body = re.sub(r'src="img/[^"]+"', 'src="https://capy.local/photo"', body)
+        body = re.sub(r'<svg viewBox="0 0 40 40">.*?</svg>', '<img class="logo" src="https://capy.local/logo" alt="">', body)
+        rows.append({'slug': slug, 'title': title, 'use': meta.get('use', ''), 'size': f'{size[0]}x{size[1]}', 'photo': 'capy.local/photo' in body,
+                     'carousel': bool(meta.get('carousel')), 'css': css.strip(), 'body': body.strip()})
+    EXPORT = False
+    app = os.path.join(os.path.dirname(HERE), 'src', 'lib', 'capy', 'examples.ts')
+    out = ['// Written by capy/build_templates.py from the starter library. Do not edit by hand: change the library and run it.',
+           '// Each layout is its own CSS (on the base CSS and the brand variables) and the markup inside <main class="canvas">.',
+           '', 'export type Example = { slug: string; title: string; use: string; size: string; photo: boolean; carousel: boolean; css: string; body: string };', '',
+           f'export const BASE_CSS = {json.dumps(BASE.strip())};', '', f'export const EXAMPLES: Example[] = {json.dumps(rows, indent=1)};', '']
+    open(app, 'w').write('\n'.join(out))
+    print('examples:', len(rows), '->', os.path.relpath(app, os.path.dirname(HERE)))
 
 
 if __name__ == '__main__':

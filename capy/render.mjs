@@ -30,11 +30,17 @@ for (const f of files) {
   // A design is broken when text spills off the canvas or out of its box.
   const spills = await page.evaluate(([W, H]) => {
     const bad = [];
-    for (const el of document.querySelectorAll("main *")) {
-      if (!el.childNodes.length || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
-      const r = el.getBoundingClientRect();
-      if (r.right > W + 1 || r.bottom > H + 1 || r.left < -1 || r.top < -1) bad.push("off canvas: " + el.textContent.trim().slice(0, 40));
-      else if (el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow !== "visible") bad.push("cut off: " + el.textContent.trim().slice(0, 40));
+    const walk = document.createTreeWalker(document.querySelector("main") ?? document.body, NodeFilter.SHOW_TEXT);
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+      const words = (n.textContent ?? "").trim();
+      if (!words) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      const r = range.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      const el = n.parentElement;
+      if (r.right > W + 2 || r.bottom > H + 2 || r.left < -2 || r.top < -2) bad.push("off canvas: " + words.slice(0, 40));
+      else if (getComputedStyle(el).overflow !== "visible" && (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2)) bad.push("cut off: " + words.slice(0, 40));
     }
     return bad;
   }, [w, h]);

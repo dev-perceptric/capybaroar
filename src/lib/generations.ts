@@ -7,6 +7,8 @@ import { ApiError } from "./api/input";
 import { checkLimits, falCall, fileName, type GenKind, type GenRequest, type GenUse } from "./genRules";
 import { creditsOf, hold, settle, type Spender } from "./credits";
 import { BadFile, advance, runGenerations as run, type FalApi, type FalAnswer, type GenRow, type GenStore } from "./generator";
+import { isInfoModel } from "./capy/infoModels";
+import type { InfoAspect } from "./capy/infographicRules";
 
 // AI pictures and videos through fal.ai's queue (fal.ai/docs/documentation/model-apis/inference/queue). A request is
 // saved, sent to fal, and then looked at every few seconds by the runner's own loop until its file is in the library.
@@ -189,12 +191,13 @@ export type Started = Generation & { creditsLeft: number };
 
 /** Checks the request, holds its credits, saves it and sends it to fal. Returns the request; its file comes later. */
 export async function startGeneration(sp: Spender, r: GenRequest): Promise<Started> {
-  if (!aiReady()) throw new ApiError(503, "unavailable", "AI media isn't set up on this server");
+  const capy = isInfoModel(r.model);
+  if (capy ? !process.env.ANTHROPIC_API_KEY : !aiReady()) throw new ApiError(503, "unavailable", "AI media isn't set up on this server");
   const workspaceId = sp.workspaceId;
   checkLimits(r, await usageOf(workspaceId));
   const db = adminClient();
   let imageUrl: string | null = null;
-  if (r.sourceMediaId) {
+  if (r.sourceMediaId && !capy) {
     const { data: m } = await db.from("media").select("path, mime").eq("id", r.sourceMediaId).eq("workspace_id", workspaceId).maybeSingle();
     if (!m) throw new ApiError(400, "invalid_request", "That picture isn't in this workspace's media library");
     if (!/^image\/(jpeg|png|webp)$/.test(m.mime as string)) throw new ApiError(400, "invalid_request", "Use a JPG, PNG or WebP picture");
@@ -218,7 +221,7 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
       model: r.model,
       prompt: r.prompt,
       aspect: r.aspect,
-      seconds: r.kind === "image" ? null : r.seconds,
+      seconds: r.kind === "image" || r.kind === "infographic" ? null : r.seconds,
       credits: r.credits,
       reason: r.why,
       source_media_id: r.sourceMediaId,
@@ -226,6 +229,8 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
       input: call.input,
       locked_at: new Date().toISOString(),
       locked_by: `start:${WORKER}`,
+      // An infographic runs here, not in the loop: kept out of the loop's way for longer than it can take.
+      ...(capy ? { status: "running", check_after: new Date(Date.now() + 10 * 60000).toISOString(), input: { website: r.website ?? null } } : {}),
     })
     .select("*")
     .single();
@@ -233,9 +238,43 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
     await settle(workspaceId, key, 0).catch(() => undefined);
     throw new ApiError(503, "unavailable", "Couldn't save the request. Try again in a moment.");
   }
-  await advance(genStore, falApi, toRow(data as Db));
+  if (capy) void runInfographic(id, sp, r);
+  else await advance(genStore, falApi, toRow(data as Db));
   const [g, c] = await Promise.all([getGeneration(workspaceId, id), creditsOf(workspaceId).catch(() => null)]);
   return { ...g, creditsLeft: c?.left ?? 0 };
+}
+
+/** Designs, renders and saves one infographic, then finishes its request like any other (credits, attach to post). */
+async function runInfographic(id: string, sp: Spender, r: GenRequest) {
+  try {
+    const { makeInfographic } = await import("./capy/infographic");
+    const { infoFileName } = await import("./capy/infographicRules");
+    const out = await makeInfographic({ workspaceId: sp.workspaceId, brandId: sp.brandId, model: r.model as Parameters<typeof makeInfographic>[0]["model"], prompt: r.prompt, aspect: r.aspect as InfoAspect, sourceMediaId: r.sourceMediaId, website: r.website ?? null });
+    const name = infoFileName(r.prompt);
+    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.png, `ai-${id}-${name}`, name, out.alt);
+    await genStore.done(id, mediaId);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("infographic:", msg);
+    await genStore.failed(id, /^[A-Z]/.test(msg) && msg.length < 200 && !/ECONN|ENOENT|spawn|browser|chromium/i.test(msg) ? msg : "Couldn't make the infographic. Try again.").catch((x) => console.error("infographic fail:", x instanceof Error ? x.message : x));
+  }
+}
+
+/** Saves a made PNG in the media library at a fixed path, so saving it twice keeps one file. */
+async function bufferToMedia(workspaceId: string, userId: string | null, png: Buffer, fixed: string, name: string, alt: string): Promise<string> {
+  const db = adminClient();
+  const path = `${workspaceId}/${fixed}`;
+  const { data: had } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
+  if (had) return had.id as string;
+  const up = await db.storage.from("media").upload(path, png, { contentType: "image/png", upsert: true });
+  if (up.error) throw new Error(`Couldn't save the picture: ${up.error.message}`);
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime: "image/png", size: png.length, alt, created_by: userId }).select("id").single();
+  if (error) {
+    const { data: first } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
+    if (first) return first.id as string;
+    throw new Error(`Couldn't save the picture: ${error.message}`);
+  }
+  return data.id as string;
 }
 
 export async function getGeneration(workspaceId: string, id: string): Promise<Generation> {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUp, AudioLines, Bot, CalendarCheck, CalendarDays, Check, ChevronDown, Copy, History, Image as ImageIcon, Link2, Paperclip, Plus, RotateCcw, Sparkles, TrendingUp, Video, X } from "lucide-react";
+import { ChartColumn, ArrowUp, AudioLines, Bot, CalendarCheck, CalendarDays, Check, ChevronDown, Copy, History, Image as ImageIcon, Link2, Paperclip, Plus, RotateCcw, Sparkles, TrendingUp, Video, X } from "lucide-react";
 import { IconButton, Page } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
@@ -36,11 +36,12 @@ type Make = "auto" | GenKind;
 type File = { id: string; name: string; mime: string; thumb: string | null };
 
 const MAKE_KEY = "cb_agent_make";
-const MAKE_ICON: Record<Make, React.ReactNode> = { auto: <Sparkles />, image: <ImageIcon />, video: <Video />, audio: <AudioLines /> };
+const MAKE_ICON: Record<Make, React.ReactNode> = { infographic: <ChartColumn />, auto: <Sparkles />, image: <ImageIcon />, video: <Video />, audio: <AudioLines /> };
 /** The least a model of this kind costs, in credits, for a short request (5 seconds for video and sound). */
 const fromCredits = (kind: GenKind) => Math.min(...MODELS.filter((m) => m.kind === kind).map((m) => m.credits({ prompt: "x".repeat(40), seconds: 5 })));
 const creditWord = (n: number) => `${n} credit${n === 1 ? "" : "s"}`;
 const MAKES: { value: Make; label: string; line: string }[] = [
+  { value: "infographic", label: CAPY.infographic.name, line: `Graphics, charts and banners in your brand, from ${creditWord(fromCredits("infographic"))}` },
   { value: "auto", label: "Auto", line: "The agent decides what each post needs" },
   { value: "image", label: CAPY.image.name, line: `Pictures and edits, from ${creditWord(fromCredits("image"))}` },
   { value: "video", label: CAPY.video.name, line: `Short videos with sound, from ${creditWord(fromCredits("video"))}` },
@@ -74,7 +75,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
   const [pending, setPending] = useState<{ text: string; files: string[] } | null>(null);
   const [error, setError] = useState("");
   const [busy, start] = useTransition();
-  const [make, setMake] = useState<Make>("auto");
+  const [make, setMake] = useState<Make>("infographic");
   // The model picked for each kind; none means Capy picks.
   const [models, setModels] = useState<Partial<Record<GenKind, string>>>({});
   const [history, setHistory] = useState(false);
@@ -89,7 +90,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
       if (MAKES.some((m) => m.value === saved)) setMake(saved as Make);
       const kept = JSON.parse(localStorage.getItem(MODEL_KEY) ?? "{}") as Record<string, unknown>;
       const ok: Partial<Record<GenKind, string>> = {};
-      for (const k of ["image", "video", "audio"] as GenKind[]) if (typeof kept[k] === "string" && modelOf(kept[k] as string)?.kind === k) ok[k] = kept[k] as string;
+      for (const k of ["infographic", "image", "video", "audio"] as GenKind[]) if (typeof kept[k] === "string" && modelOf(kept[k] as string)?.kind === k) ok[k] = kept[k] as string;
       setModels(ok);
     } catch {
       // no saved choice

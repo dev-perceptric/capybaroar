@@ -45,8 +45,9 @@ async function runTool(ctx: Ctx, brandId: string | null, name: string, input: Re
   }
   const out = (await callTool(ops, name, input)) as { generation?: { id: string; kind: string; status: string } };
   // A picture usually takes seconds: wait for it, so it can be attached right away.
-  if (name === "generate_media" && out.generation && out.generation.kind === "image" && out.generation.status !== "done" && out.generation.status !== "failed") {
-    await waitForGeneration(ctx.workspaceId, out.generation.id, 45000);
+  if (name === "generate_media" && out.generation && (out.generation.kind === "image" || out.generation.kind === "infographic") && out.generation.status !== "done" && out.generation.status !== "failed") {
+    // A picture takes seconds; an infographic is designed, rendered and checked, which can take a couple of minutes.
+    await waitForGeneration(ctx.workspaceId, out.generation.id, out.generation.kind === "infographic" ? 180000 : 45000);
     return JSON.stringify({ generation: await ops.generation(out.generation.id) });
   }
   return JSON.stringify(out);

@@ -185,3 +185,10 @@ export async function saveBrandKit(workspaceId: string, brandId: string, input: 
   if (error) throw new Error(error.message);
   return kit;
 }
+
+/** Each brand's website and whether it has a CapyInfographic style (041), without loading the style itself. */
+export async function brandStyleFlags(workspaceId: string): Promise<Map<string, { website: string | null; hasStyle: boolean }>> {
+  const { data, error } = await adminClient().from("brands").select("id, website, bg:style->>bg").eq("workspace_id", workspaceId);
+  if (error) throw new Error(error.message);
+  return new Map(((data ?? []) as unknown as { id: string; website: string | null; bg: string | null }[]).map((b) => [b.id, { website: b.website, hasStyle: !!b.bg }]));
+}

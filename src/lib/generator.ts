@@ -90,6 +90,12 @@ export async function advance(store: GenStore, fal: FalApi, row: GenRow, now = D
     await store.later(row.id, now + retryWait(row.tries + 1), row.tries + 1);
     return "later" as const;
   };
+  // CapyInfographic runs inside the request that started it (generations.ts). One the loop finds was cut off by a
+  // restart: it fails and its credits come back.
+  if (row.endpoint.startsWith("capy/")) {
+    await store.failed(row.id, "This stopped before it finished. Try again.");
+    return "failed";
+  }
   try {
     if (!row.requestId) {
       if (late) return await giveUp();

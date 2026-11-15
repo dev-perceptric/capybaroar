@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Button, Field, Segmented, TextArea } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
-import { ASPECTS, CAPY, KINDS, MAX_PROMPT, MAX_SCRIPT, SECONDS, capyPick, modelOf, modelsFor, type Aspect, type GenKind, type Seconds } from "@/lib/genRules";
+import { ALL_ASPECTS, ASPECTS, CAPY, KINDS, MAX_PROMPT, MAX_SCRIPT, SECONDS, capyPick, modelOf, modelsFor, type Aspect, type GenKind, type Seconds } from "@/lib/genRules";
 import { aiCredits, generate, generationsStatus } from "@/app/(app)/media/actions";
 import { creditGate } from "./creditGate";
 
@@ -16,6 +16,7 @@ export type Pending = { id: string; kind: GenKind; error?: string };
 
 const KIND_OPTIONS = KINDS.map((k) => ({ value: k, label: CAPY[k].name }));
 const PLACEHOLDER: Record<GenKind, string> = {
+  infographic: "3 tips to sleep better: dark room, no screens after 10, same wake-up time every day",
   image: 'A poster that says "Grand opening Saturday" on a sunny coffee shop window',
   video: "A capybara surfing at sunset, slow push-in",
   audio: "Upbeat background music for a 15-second product reel",
@@ -23,7 +24,7 @@ const PLACEHOLDER: Record<GenKind, string> = {
 
 /** The form. `pictures`: library pictures to edit or to start a video from. `onStarted` gets the new request. */
 export function GenerateForm({ pictures, onStarted, primary = false }: { pictures: Picture[]; onStarted: (p: Pending) => void; primary?: boolean }) {
-  const [kind, setKind] = useState<GenKind>("image");
+  const [kind, setKind] = useState<GenKind>("infographic");
   const [prompt, setPrompt] = useState("");
   const [aspect, setAspect] = useState<Aspect>("1:1");
   const [seconds, setSeconds] = useState<string>("5");
@@ -46,13 +47,14 @@ export function GenerateForm({ pictures, onStarted, primary = false }: { picture
   }, []);
   const pickKind = (k: GenKind) => {
     setKind(k);
+    if (k !== "infographic" && aspect === "4:5") setAspect("1:1");
     setChosen(null);
     setError("");
   };
   const send = () =>
     start(async () => {
       setError("");
-      const r = await generate({ kind, model: model === auto.model && !chosen ? undefined : model.id, prompt, aspect, seconds: kind === "image" ? undefined : secs, source_media_id: picture ? source : undefined });
+      const r = await generate({ kind, model: model === auto.model && !chosen ? undefined : model.id, prompt, aspect, seconds: kind === "image" || kind === "infographic" ? undefined : secs, source_media_id: picture ? source : undefined });
       if (r.error || !r.id) {
         if (!(await creditGate(r.error))) setError(r.error ?? "Couldn't start it. Try again.");
         return;
@@ -67,16 +69,16 @@ export function GenerateForm({ pictures, onStarted, primary = false }: { picture
         <Select value={kind} onChange={pickKind} options={KIND_OPTIONS} ariaLabel="What to make" size="sm" className="w-auto" />
         {left != null ? <span className="ml-auto text-[12px] text-muted tabular-nums">{left.toLocaleString("en-US")} credits left</span> : null}
       </div>
-      <TextArea value={prompt} onChange={(e) => setPrompt(e.target.value)} maxLength={kind === "audio" ? MAX_SCRIPT : MAX_PROMPT} rows={3} placeholder={PLACEHOLDER[kind]} aria-label="Describe it" />
+      <TextArea value={prompt} onChange={(e) => setPrompt(e.target.value)} maxLength={kind === "audio" || kind === "infographic" ? MAX_SCRIPT : MAX_PROMPT} rows={3} placeholder={PLACEHOLDER[kind]} aria-label="Describe it" />
       <div className="flex flex-wrap items-end gap-4">
         {kind !== "audio" && starts.length ? (
-          <Field label={kind === "image" ? "Edit a picture" : "Start from"}>
-            <Select value={source} onChange={setSource} options={[{ value: "", label: "Nothing" }, ...starts.map((p) => ({ value: p.id, label: p.name }))]} ariaLabel={kind === "image" ? "Edit a picture" : "Start from"} size="sm" className="w-auto" />
+          <Field label={kind === "image" ? "Edit a picture" : kind === "infographic" ? "Add a photo" : "Start from"}>
+            <Select value={source} onChange={setSource} options={[{ value: "", label: "Nothing" }, ...starts.map((p) => ({ value: p.id, label: p.name }))]} ariaLabel={kind === "image" ? "Edit a picture" : kind === "infographic" ? "Add a photo" : "Start from"} size="sm" className="w-auto" />
           </Field>
         ) : null}
         {kind !== "audio" && !(kind === "video" && picture) ? (
           <Field label="Shape">
-            <Segmented value={aspect} options={ASPECTS.map((a) => ({ value: a, label: a }))} onChange={setAspect} label="Shape" size="sm" />
+            <Segmented value={aspect} options={(kind === "infographic" ? ALL_ASPECTS : ASPECTS).map((a) => ({ value: a, label: a }))} onChange={setAspect} label="Shape" size="sm" />
           </Field>
         ) : null}
         {timed ? (

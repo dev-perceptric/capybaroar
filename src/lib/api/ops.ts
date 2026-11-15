@@ -1,5 +1,5 @@
 import "server-only";
-import { listBrands, mayUseBrand } from "../brands";
+import { brandStyleFlags, listBrands, mayUseBrand } from "../brands";
 import { listChannels, type Channel } from "../channels";
 import { networkOf } from "../networks";
 import { threadOf } from "../thread";
@@ -171,7 +171,8 @@ function opsFor(ctx: ApiCtx): Ops {
 
   return {
     async brands() {
-      return (await listBrands(ctx.workspaceId)).filter((b) => mayUseBrand(ctx, b.id)).map((b) => ({ id: b.id, name: b.name, needs_approval: b.needs_approval }));
+      const [list, flags] = await Promise.all([listBrands(ctx.workspaceId), brandStyleFlags(ctx.workspaceId).catch(() => new Map<string, { website: string | null; hasStyle: boolean }>())]);
+      return list.filter((b) => mayUseBrand(ctx, b.id)).map((b) => ({ id: b.id, name: b.name, needs_approval: b.needs_approval, website: flags.get(b.id)?.website ?? null, has_style: flags.get(b.id)?.hasStyle ?? false }));
     },
     async channels(brandId) {
       return (await listChannels(ctx.workspaceId, scopeFor(brandId))).map(toChannel);

@@ -10,6 +10,7 @@ import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { askConfirm, askText, tell } from "./Dialogs";
 import type { Brand } from "@/lib/brands";
+import { FONTS, type BrandStyle } from "@/lib/capy/styleRules";
 import type { Invite, Member } from "@/lib/team";
 import type { Role } from "@/lib/session";
 import { fmtDate, fmtNum } from "@/lib/format";
@@ -27,6 +28,9 @@ import {
   saveMemberRole,
   withdrawInvite,
   loadBrandKit,
+  loadBrandStyle,
+  readBrandStyleFor,
+  clearBrandStyle,
   saveBrandKitFor,
 } from "@/app/(app)/settings/actions";
 
@@ -257,12 +261,75 @@ function BrandKitModal({ brand, onClose }: { brand: Brand; onClose: () => void }
           <Field label="Hashtags to add">
             <Input value={kit.hashtags} placeholder="#crumbandco #sourdough" onChange={(e) => setKit({ ...kit, hashtags: e.target.value })} />
           </Field>
+          <BrandLook brand={brand} />
           {error ? <p className="text-[12.5px] text-danger">{error}</p> : null}
         </div>
       ) : (
         <Loader />
       )}
     </Modal>
+  );
+}
+
+/** The brand's look for CapyInfographic: read from its website, shown as colors, fonts and the logo. */
+function BrandLook({ brand }: { brand: Brand }) {
+  const [site, setSite] = useState("");
+  const [style, setStyle] = useState<BrandStyle | null | undefined>(undefined);
+  const [error, setError] = useState("");
+  const [busy, start] = useTransition();
+  useEffect(() => {
+    loadBrandStyle(brand.id).then(
+      (b) => {
+        setSite(b.website ?? "");
+        setStyle(b.style);
+      },
+      () => setStyle(null),
+    );
+  }, [brand.id]);
+  const read = () =>
+    start(async () => {
+      setError("");
+      const r = await readBrandStyleFor(brand.id, site.trim());
+      if (r.error) setError(r.error);
+      else setStyle(r.style ?? null);
+    });
+  const clear = () =>
+    start(async () => {
+      const r = await clearBrandStyle(brand.id);
+      if (r.error) setError(r.error);
+      else setStyle(null);
+    });
+  const swatches = style ? [style.bg, style.surface, style.ink, style.accent, style.accent2] : [];
+  return (
+    <div className="flex flex-col gap-3 border-t border-line pt-4">
+      <Field label="Look from website">
+        <div className="flex flex-wrap items-center gap-2">
+          <Input className="min-w-0 flex-1" value={site} placeholder="yourbrand.com" onChange={(e) => setSite(e.target.value)} />
+          <Button variant="ghost" disabled={busy || !site.trim()} onClick={read}>
+            {busy ? <Loader /> : null}
+            {style ? "Read again" : "Read website"}
+          </Button>
+        </div>
+      </Field>
+      {style ? (
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element -- a small data URL */}
+          {style.logo ? <img src={style.logo} alt="" className="h-8 w-auto max-w-[120px] object-contain" /> : null}
+          <div className="flex gap-1">
+            {swatches.map((c, i) => (
+              <span key={i} title={c} className="size-6 rounded-sm ring-1 ring-line" style={{ background: c }} />
+            ))}
+          </div>
+          <span className="min-w-0 flex-1 text-[12.5px] text-muted">
+            {FONTS[style.headFont].family}, {FONTS[style.bodyFont].family}
+          </span>
+          <Button variant="plain" size="sm" disabled={busy} onClick={clear}>
+            Clear
+          </Button>
+        </div>
+      ) : null}
+      {error ? <p className="text-[12.5px] text-danger">{error}</p> : null}
+    </div>
   );
 }
 

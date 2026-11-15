@@ -7,16 +7,20 @@
 // pricing API, 2026-11-05.
 
 import { MAX_ACTION, priceOf } from "./creditRules";
+import { INFO_MODELS } from "./capy/infoModels";
 
-export type GenKind = "image" | "video" | "audio";
-export const KINDS: GenKind[] = ["image", "video", "audio"];
+export type GenKind = "infographic" | "image" | "video" | "audio";
+export const KINDS: GenKind[] = ["infographic", "image", "video", "audio"];
 export const CAPY: Record<GenKind, { name: string; line: string }> = {
+  infographic: { name: "CapyInfographic", line: "Graphics, charts and banners in your brand" },
   image: { name: "CapyImage", line: "Pictures and edits" },
   video: { name: "CapyVideo", line: "Short videos with sound" },
   audio: { name: "CapyAudio", line: "Voiceovers, music and sound effects" },
 };
-export type Aspect = "1:1" | "9:16" | "16:9";
+export type Aspect = "1:1" | "4:5" | "9:16" | "16:9";
+/** Shapes for AI models; CapyInfographic also takes 4:5 (INFO_ASPECTS). */
 export const ASPECTS: Aspect[] = ["1:1", "9:16", "16:9"];
+export const ALL_ASPECTS: Aspect[] = ["1:1", "4:5", "9:16", "16:9"];
 export const SECONDS = [5, 10] as const;
 export type Seconds = (typeof SECONDS)[number];
 export const MAX_PROMPT = 2000;
@@ -40,7 +44,7 @@ export type GenModel = {
   credits: (c: Cost) => number;
 };
 
-const SIZE: Record<Aspect, string> = { "1:1": "square_hd", "9:16": "portrait_16_9", "16:9": "landscape_16_9" };
+const SIZE: Record<Aspect, string> = { "4:5": "portrait_4_3", "1:1": "square_hd", "9:16": "portrait_16_9", "16:9": "landscape_16_9" };
 const veoLength = (s: Seconds) => (s === 5 ? 6 : 8);
 /** MiniMax Music sings words written after "Lyrics:"; the part before is the style. */
 export const splitLyrics = (prompt: string) => {
@@ -50,6 +54,11 @@ export const splitLyrics = (prompt: string) => {
 
 /** The first model of each kind is its fallback. */
 const LISTED: (Omit<GenModel, "credits"> & { credits?: GenModel["credits"] })[] = [
+  // Infographics: Claude designs HTML, our server renders it (src/lib/capy). No fal endpoint.
+  ...(Object.entries(INFO_MODELS) as [keyof typeof INFO_MODELS, (typeof INFO_MODELS)[keyof typeof INFO_MODELS]][]).map(([id, m]) => ({
+    id, kind: "infographic" as const, name: m.name, picture: "takes" as const, cost: () => m.cents,
+    build: () => ({ endpoint: "capy/infographic", input: {} }),
+  })),
   // Pictures
   { id: "flux-2-pro", kind: "image", name: "FLUX.2 Pro", cost: () => 3, // $0.03 per megapixel
     build: (a) => ({ endpoint: "fal-ai/flux-2-pro", input: { prompt: a.prompt, image_size: SIZE[a.aspect], output_format: "jpeg", enable_safety_checker: true } }) },
@@ -109,6 +118,8 @@ const has = (p: string, words: string[]) => words.some((w) => new RegExp(`\\b${w
 export type CapyRule = { kind: GenKind; when: string; test: (prompt: string, picture: boolean) => boolean; model: string; why: string };
 
 export const RULES: CapyRule[] = [
+  { kind: "infographic", when: "Premium, detailed, a lot of data", test: (p) => has(p, ["premium", "detailed", "best", "complex", "data-heavy", "report"]), model: "capy-infographic-best", why: "it's a detailed design, so Opus designs it" },
+  { kind: "infographic", when: "Anything else", test: () => true, model: "capy-infographic", why: "it designs in your brand's style, fast" },
   { kind: "image", when: "A picture is added", test: (_, pic) => pic, model: "nano-banana-2-edit", why: "you added a picture, so Capy edits it" },
   { kind: "image", when: "Words to print (quotes, headline, sign, logo)", test: (p) => /["\u201c\u201d]/.test(p) || has(p, ["headline", "sign", "signs", "logo", "text", "poster", "caption", "words", "says", "flyer", "banner"]), model: "ideogram-v3", why: "it has words to print, and Ideogram spells them right" },
   { kind: "image", when: "Premium, hero, 4K, detailed", test: (p) => has(p, ["premium", "hero", "4k", "detailed", "magazine", "cover", "luxury"]), model: "nano-banana-pro", why: "you asked for top quality" },
@@ -130,7 +141,8 @@ export function capyPick(kind: GenKind, prompt: string, picture: boolean): { mod
 }
 
 /** A checked request. sourceMediaId: a library picture to edit (pictures) or to start from (videos). */
-export type GenRequest = { kind: GenKind; model: string; prompt: string; aspect: Aspect; seconds: Seconds; sourceMediaId: string | null; credits: number; why: string };
+/** website: CapyInfographic only, the brand site to read the look from (saved on the brand). */
+export type GenRequest = { kind: GenKind; model: string; prompt: string; aspect: Aspect; seconds: Seconds; sourceMediaId: string | null; credits: number; why: string; website?: string | null };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -138,19 +150,22 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function genRequest(body: unknown): GenRequest {
   const b = (typeof body === "object" && body !== null && !Array.isArray(body) ? body : {}) as Record<string, unknown>;
   const kind = b.kind;
-  if (kind !== "image" && kind !== "video" && kind !== "audio") throw new Error('kind must be "image", "video" or "audio"');
+  if (kind !== "infographic" && kind !== "image" && kind !== "video" && kind !== "audio") throw new Error('kind must be "infographic", "image", "video" or "audio"');
   const prompt = typeof b.prompt === "string" ? b.prompt.trim() : "";
   if (!prompt) throw new Error(kind === "audio" ? "Write the words or describe the sound" : "Describe what to make");
-  const max = kind === "audio" ? MAX_SCRIPT : MAX_PROMPT;
+  const max = kind === "audio" || kind === "infographic" ? MAX_SCRIPT : MAX_PROMPT;
   if (prompt.length > max) throw new Error(`Keep it under ${max.toLocaleString("en-US")} characters`);
   const source = b.source_media_id ?? b.sourceMediaId ?? null;
   if (source != null && source !== "" && (typeof source !== "string" || !UUID.test(source))) throw new Error("source_media_id must be a picture's id from list_media");
   if (kind === "audio" && source) throw new Error("source_media_id is for pictures and videos");
   const picture = !!source;
   const aspect = b.aspect == null || b.aspect === "" ? "1:1" : b.aspect;
-  if (!ASPECTS.includes(aspect as Aspect)) throw new Error(`aspect must be one of ${ASPECTS.join(", ")}`);
+  const shapes = kind === "infographic" ? ALL_ASPECTS : ASPECTS;
+  if (!shapes.includes(aspect as Aspect)) throw new Error(`aspect must be one of ${shapes.join(", ")}`);
+  const site = b.website == null || b.website === "" ? null : typeof b.website === "string" ? b.website.trim() : "";
+  if (site !== null && (kind !== "infographic" || site.length > 300 || !/^(https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(site))) throw new Error(kind === "infographic" ? "website must be a site address, like example.com" : "website is for infographics");
   const seconds = b.seconds == null || b.seconds === "" ? 5 : Number(b.seconds);
-  if (kind !== "image" && !SECONDS.includes(seconds as Seconds)) throw new Error(`seconds must be ${SECONDS.join(" or ")}`);
+  if (kind !== "image" && kind !== "infographic" && !SECONDS.includes(seconds as Seconds)) throw new Error(`seconds must be ${SECONDS.join(" or ")}`);
   const named = b.model == null || b.model === "" || b.model === "auto" ? null : b.model;
   let chosen: GenModel;
   let why: string;
@@ -162,8 +177,8 @@ export function genRequest(body: unknown): GenRequest {
     chosen = m;
     why = "it was picked";
   } else ({ model: chosen, why } = capyPick(kind, prompt, picture));
-  const secs = (kind === "image" ? 5 : seconds) as Seconds;
-  return { kind, model: chosen.id, prompt, aspect: aspect as Aspect, seconds: secs, sourceMediaId: (source as string | null) || null, credits: chosen.credits({ prompt, seconds: secs }), why };
+  const secs = (kind === "image" || kind === "infographic" ? 5 : seconds) as Seconds;
+  return { kind, model: chosen.id, prompt, aspect: aspect as Aspect, seconds: secs, sourceMediaId: (source as string | null) || null, credits: chosen.credits({ prompt, seconds: secs }), why, ...(kind === "infographic" ? { website: site } : {}) };
 }
 
 /** The fal endpoint and its input for a request. imageUrl: a link fal can fetch for the picture. */
