@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Link post banner</title>
+<!-- capy-template {"layout": "link-banner", "size": "1200x627", "theme": "ledgerly", "use": "The picture for a LinkedIn, X or blog link: the article title and author."} -->
+<style>
+/* Brand: filled from the brand's style card. Change these and the whole design follows. */
+:root{--w:1200px;--h:627px;--pad:80px;--bg:#0E1A2B;--surface:#16263D;--ink:#F3F6FA;--muted:#9FB0C6;--line:#26384F;--accent:#3DDC97;--accent-ink:#06281A;--accent-2:#6EA8FE;--accent-text:#3DDC97;--mark:transparent;--head:'Space Grotesk';--head-w:700;--head-ls:-0.03em;--body:'Inter';--radius:18px}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:block;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:block;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:block;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:block;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-style:normal;font-display:block;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:700;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Archivo Black';font-weight:400;font-style:normal;font-display:block;src:url(fonts/archivo-black-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:normal;font-display:block;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:400;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:italic;font-display:block;src:url(fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
+.brand svg{width:40px;height:40px;flex-shrink:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
+.h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
+.muted{color:var(--muted)}
+.accent{color:var(--accent-text)}
+/* Accent as text uses --accent-text: the accent where it reads well on the background, the ink where it doesn't. */
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:22px;line-height:1.3;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--radius)}
+.ph{background:var(--line);overflow:hidden}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+
+.canvas{flex-direction:row;gap:48px;padding:64px}
+.l{flex:1.4;display:flex;flex-direction:column}
+.title{font-size:64px;margin:auto 0 32px}
+.by{display:flex;align-items:center;gap:16px;font:600 24px/1 var(--body)}
+.av{width:56px;height:56px;border-radius:50%}
+.r{flex:1;display:flex;align-items:center}
+.mini{width:100%;padding:36px}
+.lb{font-size:22px}
+.n{font-size:96px;color:var(--accent-text);margin:8px 0 24px}
+.bars{display:flex;align-items:flex-end;gap:12px;height:150px}
+.bars span{flex:1;background:var(--line);border-radius:8px 8px 0 0}
+.bars .hi{background:var(--accent)}
+
+</style>
+</head>
+<body>
+<main class="canvas">
+<div class="l"><div class="brand"><svg viewBox="0 0 40 40"><rect x="4" y="22" width="8" height="14" rx="2" fill="var(--accent)"/><rect x="16" y="13" width="8" height="23" rx="2" fill="var(--accent)" opacity=".7"/><rect x="28" y="4" width="8" height="32" rx="2" fill="var(--accent)" opacity=".45"/></svg><span>Ledgerly</span></div><h1 class="h title">How to price your services in 2027</h1>
+<div class="by"><div class="ph av"><img src="img/sam.webp" alt=""></div><p>Sam Okafor <span class="muted">&middot; 6 min read</span></p></div></div>
+<div class="r"><div class="card mini"><p class="muted lb">Average rate rise</p><p class="h n">+18%</p><div class="bars"><span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span><span style="height:72%"></span><span class="hi" style="height:100%"></span></div></div></div>
+</main>
+</body>
+</html>

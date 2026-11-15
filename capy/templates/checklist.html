@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checklist</title>
+<!-- capy-template {"layout": "checklist", "size": "1080x1350", "theme": "lumen", "use": "Tips or a checklist of 4 to 6 short items."} -->
+<style>
+/* Brand: filled from the brand's style card. Change these and the whole design follows. */
+:root{--w:1080px;--h:1350px;--pad:80px;--bg:#F6EFE6;--surface:#FFFFFF;--ink:#2B1D14;--muted:#7A6A5D;--line:#E6D9CB;--accent:#C8553D;--accent-ink:#FFFFFF;--accent-2:#E9B872;--accent-text:#C8553D;--mark:transparent;--head:'Fraunces';--head-w:700;--head-ls:-0.02em;--body:'Inter';--radius:28px}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:block;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:block;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:block;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:block;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-style:normal;font-display:block;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:700;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Archivo Black';font-weight:400;font-style:normal;font-display:block;src:url(fonts/archivo-black-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:normal;font-display:block;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:400;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:italic;font-display:block;src:url(fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
+.brand svg{width:40px;height:40px;flex-shrink:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
+.h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
+.muted{color:var(--muted)}
+.accent{color:var(--accent-text)}
+/* Accent as text uses --accent-text: the accent where it reads well on the background, the ink where it doesn't. */
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:22px;line-height:1.3;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--radius)}
+.ph{background:var(--line);overflow:hidden}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+
+.kicker{margin-top:64px}
+.title{font-size:96px;margin:20px 0 48px}
+.list{list-style:none;padding:20px 44px}
+.list li{display:flex;align-items:center;gap:26px;padding:28px 0;border-bottom:2px solid var(--line);font-size:34px;line-height:1.25}
+.list li:last-child{border-bottom:0}
+.box{flex-shrink:0;width:48px;height:48px;border-radius:14px;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12 4 4 8-8' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/30px no-repeat}
+.foot{margin-top:40px}
+
+</style>
+</head>
+<body>
+<main class="canvas">
+<div class="brand"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="var(--accent)"/><circle cx="26" cy="15" r="13" fill="var(--bg)"/></svg><span>Lumen Coffee</span></div>
+<p class="kicker">Brew guide</p>
+<h1 class="h title">5 steps to better coffee at home</h1>
+<ul class="list card"><li><span class="box"></span><span>Fresh beans, roasted in the last 3 weeks</span></li><li><span class="box"></span><span>Grind right before you brew</span></li><li><span class="box"></span><span>Water just off the boil, 94&deg;C</span></li><li><span class="box"></span><span>One gram of coffee for every 16 of water</span></li><li><span class="box"></span><span>Pour slowly for 3 minutes</span></li></ul>
+<div class="foot"><span>@lumencoffee</span><span>Save it for tomorrow morning</span></div>
+</main>
+</body>
+</html>

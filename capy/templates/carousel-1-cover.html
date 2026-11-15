@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Carousel cover</title>
+<!-- capy-template {"layout": "carousel-1-cover", "size": "1080x1350", "theme": "capy", "use": "A carousel: cover, one idea per slide, a last slide that asks for the follow or save.", "carousel": true} -->
+<style>
+/* Brand: filled from the brand's style card. Change these and the whole design follows. */
+:root{--w:1080px;--h:1350px;--pad:80px;--bg:#FFFFFF;--surface:#FAFAFA;--ink:#171717;--muted:#737373;--line:#EBEBEB;--accent:#FFD202;--accent-ink:#262209;--accent-2:#333333;--accent-text:#171717;--mark:#FFD202;--head:'Inter';--head-w:800;--head-ls:-0.045em;--body:'Inter';--radius:24px}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:block;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:block;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:block;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:block;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-style:normal;font-display:block;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:700;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Archivo Black';font-weight:400;font-style:normal;font-display:block;src:url(fonts/archivo-black-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:normal;font-display:block;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:400;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:italic;font-display:block;src:url(fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
+.brand svg{width:40px;height:40px;flex-shrink:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
+.h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
+.muted{color:var(--muted)}
+.accent{color:var(--accent-text)}
+/* Accent as text uses --accent-text: the accent where it reads well on the background, the ink where it doesn't. */
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:22px;line-height:1.3;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--radius)}
+.ph{background:var(--line);overflow:hidden}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+
+.kicker2{margin-top:auto;align-self:flex-start;padding:10px 18px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:700 24px/1 var(--body)}
+.title{font-size:150px;line-height:.95;margin:32px 0 28px}
+.lead{font-size:40px;margin-bottom:auto}
+.swipe{display:inline-flex;align-items:center;gap:14px;font:600 28px/1 var(--body);color:var(--ink)}
+.arr{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff;font-size:30px}
+.pg{position:absolute;top:84px;right:80px;font:600 24px/1 var(--body);color:var(--muted)}
+
+</style>
+</head>
+<body>
+<main class="canvas">
+<div class="brand"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="11" fill="var(--accent)"/><circle cx="20" cy="21" r="10" fill="none" stroke="var(--accent-ink)" stroke-width="3.5"/><circle cx="20" cy="21" r="3.5" fill="var(--accent-ink)"/></svg><span>Capybaroar</span></div>
+<p class="kicker2">Guide</p>
+<h1 class="h title">7 hooks that stop the scroll</h1>
+<p class="muted lead">Steal these for your next post.</p>
+<div class="foot"><span>capybaroar.com</span><span class="swipe">Swipe <span class="arr">&rarr;</span></span></div>
+<p class="pg">1/9</p>
+</main>
+</body>
+</html>

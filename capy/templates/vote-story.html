@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>This or that story</title>
+<!-- capy-template {"layout": "vote-story", "size": "1080x1920", "theme": "taco", "use": "Ask people to pick between two things."} -->
+<style>
+/* Brand: filled from the brand's style card. Change these and the whole design follows. */
+:root{--w:1080px;--h:1920px;--pad:80px;--bg:#FF5A36;--surface:#FFF3E6;--ink:#1E1B18;--muted:#5A4A40;--line:#F2C9A8;--accent:#FFD23F;--accent-ink:#1E1B18;--accent-2:#1E1B18;--accent-text:#1E1B18;--mark:#FFD23F;--head:'Bricolage Grotesque';--head-w:800;--head-ls:-0.035em;--body:'Inter';--radius:32px}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:block;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:block;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:block;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:block;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-style:normal;font-display:block;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:700;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Archivo Black';font-weight:400;font-style:normal;font-display:block;src:url(fonts/archivo-black-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:normal;font-display:block;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:400;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:italic;font-display:block;src:url(fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
+.brand svg{width:40px;height:40px;flex-shrink:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
+.h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
+.muted{color:var(--muted)}
+.accent{color:var(--accent-text)}
+/* Accent as text uses --accent-text: the accent where it reads well on the background, the ink where it doesn't. */
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:22px;line-height:1.3;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--radius)}
+.ph{background:var(--line);overflow:hidden}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+
+.canvas{padding:110px 72px 130px;align-items:center}
+.hd{align-self:flex-start}
+.title{font-size:128px;margin:48px 0 48px;text-align:center}
+.pick{position:relative;width:100%;flex:1;border-radius:var(--radius);overflow:hidden}
+.pick .img{position:absolute;inset:0}
+.lbl{position:absolute;left:28px;bottom:28px;padding:16px 26px;border-radius:999px;background:var(--surface);font:800 36px/1 var(--head)}
+.or{margin:-36px 0;z-index:1;width:112px;height:112px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--accent);font:800 40px/1 var(--head);border:8px solid var(--bg)}
+.foot2{margin-top:40px;font:600 32px/1 var(--body)}
+
+</style>
+</head>
+<body>
+<main class="canvas">
+<div class="hd"><div class="brand"><svg viewBox="0 0 40 40"><path d="M3 26a17 17 0 0 1 34 0z" fill="var(--accent)"/><circle cx="13" cy="18" r="2.5" fill="var(--ink)"/><circle cx="21" cy="14" r="2.5" fill="var(--ink)"/><circle cx="28" cy="19" r="2.5" fill="var(--ink)"/></svg><span>Taco Luna</span></div></div>
+<h1 class="h title">Which one wins?</h1>
+<div class="pick a"><div class="ph img"><img src="img/croissant.webp" alt=""></div><p class="lbl">Churro croissant</p></div>
+<p class="or">OR</p>
+<div class="pick b"><div class="ph img"><img src="img/loaf.webp" alt=""></div><p class="lbl">Masa banana bread</p></div>
+<p class="foot2">Vote with the poll &uarr;</p>
+</main>
+</body>
+</html>

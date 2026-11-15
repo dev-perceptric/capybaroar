@@ -1,0 +1,284 @@
+{
+ "templates": [
+  {
+   "file": "big-stat.html",
+   "title": "One big number",
+   "size": "1080x1080",
+   "theme": "ledgerly",
+   "use": "A single striking number with what it means and where it came from."
+  },
+  {
+   "file": "stat-grid.html",
+   "title": "Four numbers",
+   "size": "1080x1080",
+   "theme": "northwind",
+   "use": "A year in review, results of a campaign, or any 3 to 4 numbers side by side."
+  },
+  {
+   "file": "steps.html",
+   "title": "Numbered steps",
+   "size": "1080x1080",
+   "theme": "taco",
+   "use": "How to do something in 3 to 5 steps."
+  },
+  {
+   "file": "compare.html",
+   "title": "This vs that",
+   "size": "1080x1080",
+   "theme": "capy",
+   "use": "Two ways of doing something, row by row."
+  },
+  {
+   "file": "quote.html",
+   "title": "Customer quote",
+   "size": "1080x1080",
+   "theme": "lumen",
+   "use": "A review or testimonial in the customer's own words."
+  },
+  {
+   "file": "bar-chart.html",
+   "title": "Bar chart",
+   "size": "1080x1080",
+   "theme": "northwind",
+   "use": "Compare 4 to 8 values, with the top one picked out."
+  },
+  {
+   "file": "donut.html",
+   "title": "Donut chart",
+   "size": "1080x1080",
+   "theme": "maya",
+   "use": "Parts of a whole: 2 to 4 shares that add up to 100%."
+  },
+  {
+   "file": "myth-fact.html",
+   "title": "Myth and fact",
+   "size": "1080x1080",
+   "theme": "maya",
+   "use": "Correct a common belief: the myth, then the fact."
+  },
+  {
+   "file": "sale.html",
+   "title": "Offer banner",
+   "size": "1080x1080",
+   "theme": "lumen",
+   "use": "A sale, discount or limited offer with dates and a code."
+  },
+  {
+   "file": "hiring.html",
+   "title": "We are hiring",
+   "size": "1080x1080",
+   "theme": "northwind",
+   "use": "A job opening with the role, the basics and how to apply."
+  },
+  {
+   "file": "checklist.html",
+   "title": "Checklist",
+   "size": "1080x1350",
+   "theme": "lumen",
+   "use": "Tips or a checklist of 4 to 6 short items."
+  },
+  {
+   "file": "timeline.html",
+   "title": "Timeline",
+   "size": "1080x1350",
+   "theme": "northwind",
+   "use": "A plan, a history or a roadmap: 4 to 6 dated moments."
+  },
+  {
+   "file": "matrix.html",
+   "title": "2 by 2 grid",
+   "size": "1080x1350",
+   "theme": "ledgerly",
+   "use": "Sort ideas on two scales, like effort and impact."
+  },
+  {
+   "file": "line-chart.html",
+   "title": "Line chart",
+   "size": "1080x1350",
+   "theme": "ledgerly",
+   "use": "A trend over time: 6 to 12 points, with the change called out."
+  },
+  {
+   "file": "menu.html",
+   "title": "Menu or price list",
+   "size": "1080x1350",
+   "theme": "taco",
+   "use": "A short menu, price list or list of services with a photo."
+  },
+  {
+   "file": "event-story.html",
+   "title": "Event story",
+   "size": "1080x1920",
+   "theme": "northwind",
+   "use": "A workshop, webinar or event: date, time, speaker and how to join."
+  },
+  {
+   "file": "launch-story.html",
+   "title": "Launch story",
+   "size": "1080x1920",
+   "theme": "maya",
+   "use": "Announce something new: a product, program or drop."
+  },
+  {
+   "file": "vote-story.html",
+   "title": "This or that story",
+   "size": "1080x1920",
+   "theme": "taco",
+   "use": "Ask people to pick between two things."
+  },
+  {
+   "file": "link-banner.html",
+   "title": "Link post banner",
+   "size": "1200x627",
+   "theme": "ledgerly",
+   "use": "The picture for a LinkedIn, X or blog link: the article title and author."
+  },
+  {
+   "file": "thumbnail.html",
+   "title": "Video thumbnail",
+   "size": "1280x720",
+   "theme": "maya",
+   "use": "A YouTube thumbnail: 2 to 4 huge words and a face."
+  },
+  {
+   "file": "carousel-1-cover.html",
+   "title": "Carousel cover",
+   "size": "1080x1350",
+   "theme": "capy",
+   "use": "A carousel: cover, one idea per slide, a last slide that asks for the follow or save.",
+   "carousel": true
+  },
+  {
+   "file": "carousel-2-point.html",
+   "title": "Carousel slide",
+   "size": "1080x1350",
+   "theme": "capy",
+   "use": "A carousel: cover, one idea per slide, a last slide that asks for the follow or save.",
+   "carousel": true
+  },
+  {
+   "file": "carousel-3-cta.html",
+   "title": "Carousel last slide",
+   "size": "1080x1350",
+   "theme": "capy",
+   "use": "A carousel: cover, one idea per slide, a last slide that asks for the follow or save.",
+   "carousel": true
+  }
+ ],
+ "themes": {
+  "lumen": {
+   "name": "Lumen Coffee",
+   "handle": "@lumencoffee",
+   "logo": "lumen",
+   "bg": "#F6EFE6",
+   "surface": "#FFFFFF",
+   "ink": "#2B1D14",
+   "muted": "#7A6A5D",
+   "line": "#E6D9CB",
+   "accent": "#C8553D",
+   "accent_ink": "#FFFFFF",
+   "accent_text": "#C8553D",
+   "accent2": "#E9B872",
+   "head": "'Fraunces'",
+   "head_w": "700",
+   "head_ls": "-0.02em",
+   "body": "'Inter'",
+   "radius": "28px"
+  },
+  "ledgerly": {
+   "name": "Ledgerly",
+   "handle": "ledgerly.com",
+   "logo": "ledgerly",
+   "bg": "#0E1A2B",
+   "surface": "#16263D",
+   "ink": "#F3F6FA",
+   "muted": "#9FB0C6",
+   "line": "#26384F",
+   "accent": "#3DDC97",
+   "accent_ink": "#06281A",
+   "accent_text": "#3DDC97",
+   "accent2": "#6EA8FE",
+   "head": "'Space Grotesk'",
+   "head_w": "700",
+   "head_ls": "-0.03em",
+   "body": "'Inter'",
+   "radius": "18px"
+  },
+  "maya": {
+   "name": "Maya Moves",
+   "handle": "@mayamoves",
+   "logo": "maya",
+   "bg": "#111111",
+   "surface": "#1E1E1E",
+   "ink": "#FFFFFF",
+   "muted": "#A3A3A3",
+   "line": "#2E2E2E",
+   "accent": "#D7FF3A",
+   "accent_ink": "#111111",
+   "accent_text": "#D7FF3A",
+   "accent2": "#FF5C8A",
+   "head": "'Archivo Black'",
+   "head_w": "400",
+   "head_ls": "-0.01em",
+   "body": "'Inter'",
+   "radius": "0px"
+  },
+  "northwind": {
+   "name": "Northwind Studio",
+   "handle": "northwind.studio",
+   "logo": "northwind",
+   "bg": "#FFFFFF",
+   "surface": "#F4F4F2",
+   "ink": "#111111",
+   "muted": "#6B6B6B",
+   "line": "#E4E4E0",
+   "accent": "#2F54EB",
+   "accent_ink": "#FFFFFF",
+   "accent_text": "#2F54EB",
+   "accent2": "#FFB547",
+   "head": "'DM Serif Display'",
+   "head_w": "400",
+   "head_ls": "-0.01em",
+   "body": "'Inter'",
+   "radius": "6px"
+  },
+  "taco": {
+   "name": "Taco Luna",
+   "handle": "@tacoluna",
+   "logo": "taco",
+   "bg": "#FF5A36",
+   "surface": "#FFF3E6",
+   "ink": "#1E1B18",
+   "muted": "#5A4A40",
+   "line": "#F2C9A8",
+   "accent": "#FFD23F",
+   "accent_ink": "#1E1B18",
+   "accent_text": "#1E1B18",
+   "accent2": "#1E1B18",
+   "head": "'Bricolage Grotesque'",
+   "head_w": "800",
+   "head_ls": "-0.035em",
+   "body": "'Inter'",
+   "radius": "32px"
+  },
+  "capy": {
+   "name": "Capybaroar",
+   "handle": "capybaroar.com",
+   "logo": "capy",
+   "bg": "#FFFFFF",
+   "surface": "#FAFAFA",
+   "ink": "#171717",
+   "muted": "#737373",
+   "line": "#EBEBEB",
+   "accent": "#FFD202",
+   "accent_ink": "#262209",
+   "accent_text": "#171717",
+   "accent2": "#333333",
+   "head": "'Inter'",
+   "head_w": "800",
+   "head_ls": "-0.045em",
+   "body": "'Inter'",
+   "radius": "24px"
+  }
+ }
+}

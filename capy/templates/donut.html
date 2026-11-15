@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Donut chart</title>
+<!-- capy-template {"layout": "donut", "size": "1080x1080", "theme": "maya", "use": "Parts of a whole: 2 to 4 shares that add up to 100%."} -->
+<style>
+/* Brand: filled from the brand's style card. Change these and the whole design follows. */
+:root{--w:1080px;--h:1080px;--pad:80px;--bg:#111111;--surface:#1E1E1E;--ink:#FFFFFF;--muted:#A3A3A3;--line:#2E2E2E;--accent:#D7FF3A;--accent-ink:#111111;--accent-2:#FF5C8A;--accent-text:#D7FF3A;--mark:transparent;--head:'Archivo Black';--head-w:400;--head-ls:-0.01em;--body:'Inter';--radius:0px}
+@font-face{font-family:'Inter';font-weight:400;font-style:normal;font-display:block;src:url(fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;font-style:normal;font-display:block;src:url(fonts/inter-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:600;font-style:normal;font-display:block;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;font-style:normal;font-display:block;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;font-style:normal;font-display:block;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:400;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:600;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fraunces';font-weight:700;font-style:normal;font-display:block;src:url(fonts/fraunces-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:400;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:500;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:700;font-style:normal;font-display:block;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Archivo Black';font-weight:400;font-style:normal;font-display:block;src:url(fonts/archivo-black-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:normal;font-display:block;src:url(fonts/dm-serif-display-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:400;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-style:normal;font-display:block;src:url(fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'DM Serif Display';font-weight:400;font-style:italic;font-display:block;src:url(fonts/dm-serif-display-latin-400-italic.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:var(--w);height:var(--h);overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:400 30px/1.4 var(--body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.canvas{position:relative;width:var(--w);height:var(--h);padding:var(--pad);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font:600 26px/1 var(--body);letter-spacing:-.01em}
+.brand svg{width:40px;height:40px;flex-shrink:0}
+.kicker{display:inline-flex;align-self:flex-start;align-items:center;gap:10px;font:600 22px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.chip{display:inline-flex;align-self:flex-start;align-items:center;height:48px;padding:0 22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 22px/1 var(--body)}
+.h{font-family:var(--head);font-weight:var(--head-w);letter-spacing:var(--head-ls);line-height:1.02;text-wrap:balance}
+.muted{color:var(--muted)}
+.accent{color:var(--accent-text)}
+/* Accent as text uses --accent-text: the accent where it reads well on the background, the ink where it doesn't. */
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:22px;line-height:1.3;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--radius)}
+.ph{background:var(--line);overflow:hidden}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+
+.title{font-size:88px;line-height:.95;margin:48px 0 0;max-width:900px}
+.body{flex:1;display:flex;align-items:center;gap:64px}
+.d{width:440px;height:440px;flex-shrink:0}
+.leg{list-style:none;display:flex;flex-direction:column;gap:28px;flex:1}
+.leg li{display:flex;align-items:center;gap:18px;font-size:34px;padding-bottom:24px;border-bottom:2px solid var(--line)}
+.sw{width:28px;height:28px}
+.pc{margin-left:auto;font:400 52px/1 var(--head)}
+
+</style>
+</head>
+<body>
+<main class="canvas">
+<div class="brand"><svg viewBox="0 0 40 40"><path d="M4 30 14 10l6 12 6-12 10 20" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linejoin="miter"/></svg><span>Maya Moves</span></div>
+<h1 class="h title">WHERE OUR MEMBERS TRAIN</h1>
+<div class="body"><svg class="d" viewBox="0 0 400 400"><g transform="rotate(-90 200 200)"><circle r="150" cx="200" cy="200" fill="none" stroke="var(--accent)" stroke-width="64" stroke-dasharray="502.9 942.5" stroke-dashoffset="0.0"/><circle r="150" cx="200" cy="200" fill="none" stroke="var(--accent-2)" stroke-width="64" stroke-dasharray="286.2 942.5" stroke-dashoffset="-508.9"/><circle r="150" cx="200" cy="200" fill="none" stroke="#FFFFFF" stroke-width="64" stroke-dasharray="135.4 942.5" stroke-dashoffset="-801.1"/></g></svg><ul class="leg"><li><span class="sw" style="background:var(--accent)"></span><span class="ln">Home</span><span class="pc">54%</span></li><li><span class="sw" style="background:var(--accent-2)"></span><span class="ln">Gym</span><span class="pc">31%</span></li><li><span class="sw" style="background:#FFFFFF"></span><span class="ln">Outdoors</span><span class="pc">15%</span></li></ul></div>
+<div class="foot"><span>2,400 members asked in October</span><span>@mayamoves</span></div>
+</main>
+</body>
+</html>
