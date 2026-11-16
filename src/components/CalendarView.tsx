@@ -394,7 +394,7 @@ export function CalendarView({ channels, brands = [], timezone = "UTC", initial,
                     size="sm"
                     lead="Zone"
                     ariaLabel="Time zone"
-                    className="max-w-56"
+                    className="max-w-44 sm:max-w-56"
                     value={zone ?? ""}
                     onChange={(v) => setZone(v || null)}
                     options={[
@@ -563,7 +563,7 @@ function PostCard({ post, byId, onOpen, actions: given = {}, compact = false, na
   const hasActions = !!actions.duplicate || !!live || canDelete;
   const act = "flex size-6 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink [&_svg]:size-3.5";
   return (
-    <div className="group/card relative w-full min-w-0" style={style}>
+    <div className="group/card @container relative w-full min-w-0" style={style}>
       <button
         type="button"
         onClick={onOpen}
@@ -587,10 +587,19 @@ function PostCard({ post, byId, onOpen, actions: given = {}, compact = false, na
         ) : (
           <span className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5 pr-2 pl-2.5">
             <span className="flex min-w-0 items-center gap-1.5">
-              {narrow ? null : <Faces post={post} byId={byId} />}
+              {/* In a narrow column the time comes first: the pictures and tag colors give way. */}
+              {narrow ? null : (
+                <span className="flex @max-[120px]:hidden">
+                  <Faces post={post} byId={byId} />
+                </span>
+              )}
               <span className="text-[11px] font-semibold whitespace-nowrap tabular-nums">{narrow ? time.replace(/ ([AP])M/, "$1").toLowerCase() : time}</span>
               {ghost || post.repeat ? <RepeatIcon size={11} className="shrink-0 text-muted" aria-label={ghost ? "Repeat" : "Repeats"} /> : null}
-              {dots.length && !narrow ? <TagDots tags={dots} max={3} /> : null}
+              {dots.length && !narrow ? (
+                <span className="flex @max-[120px]:hidden">
+                  <TagDots tags={dots} max={3} />
+                </span>
+              ) : null}
               <span className="flex-1" />
               {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : post.status === "review" && !narrow ? <Badge tone="violet">In review</Badge> : null}
             </span>
@@ -599,7 +608,8 @@ function PostCard({ post, byId, onOpen, actions: given = {}, compact = false, na
         )}
       </button>
       {hasActions ? (
-        <span className={`absolute right-1 z-10 hidden items-center rounded-full bg-panel p-0.5 shadow-chip group-focus-within/card:flex group-hover/card:flex ${compact ? "top-1/2 -translate-y-1/2" : "top-1"}`}>
+        // On the card's top edge, so the card itself stays clickable however narrow it is.
+        <span className="absolute -top-3 right-1 z-20 hidden items-center rounded-full bg-panel p-0.5 shadow-chip group-focus-within/card:flex group-hover/card:flex">
           {actions.duplicate ? (
             <button type="button" title={post.status === "published" ? "Post again" : "Copy"} aria-label={post.status === "published" ? "Post again" : "Copy"} onClick={() => actions.duplicate!(post)} className={act}>
               <Copy />

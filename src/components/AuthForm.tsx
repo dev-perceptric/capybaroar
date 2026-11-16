@@ -33,7 +33,9 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
               </>
             ) : (
               <>
-                Every post, every channel. <span className="text-faint">One calendar.</span>
+                Every post, every channel.
+                <br />
+                <span className="text-faint">One calendar.</span>
               </>
             )}
           </h1>

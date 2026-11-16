@@ -206,7 +206,7 @@ export function TextTools({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 border-b border-line bg-paper px-1.5 py-1">
+    <div className="@container flex items-center gap-0.5 overflow-x-auto border-b [scrollbar-width:none] border-line bg-paper px-1.5 py-1">
       <IconButton label={`Undo (${k}Z)`} onMouseDown={(e) => e.preventDefault()} onClick={() => exec("undo")}>
         <Undo2 />
       </IconButton>
@@ -237,10 +237,11 @@ export function TextTools({
       </span>
       <span className="flex-1" />
       <span ref={aiBtn} className="inline-flex">
-        <Chip size="sm" on={aiOpen} aria-expanded={aiOpen} disabled={working === "ai"} onMouseDown={(e) => e.preventDefault()} onClick={() => setAiOpen(!aiOpen)} className="font-medium">
+        <Chip size="sm" on={aiOpen} aria-expanded={aiOpen} aria-label="Rewrite" title={`Rewrite (${k}J)`} disabled={working === "ai"} onMouseDown={(e) => e.preventDefault()} onClick={() => setAiOpen(!aiOpen)} className="font-medium">
           {working === "ai" ? <Loader /> : <WandSparkles size={14} />}
-          Rewrite
-          <span className="text-[11px] font-normal text-muted">{k}J</span>
+          {/* A narrow box keeps the toolbar on one line: the shortcut goes first, then the word. */}
+          <span className="@max-[396px]:hidden">Rewrite</span>
+          <span className="text-[11px] font-normal text-muted @max-[430px]:hidden">{k}J</span>
         </Chip>
       </span>
 

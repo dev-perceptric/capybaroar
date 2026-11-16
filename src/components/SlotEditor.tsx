@@ -24,7 +24,8 @@ export function SlotEditor({ slots, onChange, best }: { slots: Slot[]; onChange:
   const remove = (i: number) => onChange(slots.filter((_, j) => j !== i));
   return (
     <>
-      <div className="flex flex-wrap gap-1.5 border-b border-line px-4 py-3">
+      {/* One line of sets that scrolls sideways on a phone, so none ends up alone on a second line. */}
+      <div className="flex gap-1.5 overflow-x-auto border-b border-line px-4 py-3 [scrollbar-width:none]">
         {(Object.keys(QUEUE_PRESETS) as (keyof typeof QUEUE_PRESETS)[]).map((k) => (
           <Chip key={k} size="sm" onClick={() => void preset(k)}>
             {QUEUE_PRESETS[k].label}

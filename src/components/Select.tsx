@@ -10,7 +10,8 @@ export type Option<T extends string | number> = { value: T; label: string; hint?
 
 /**
  * The app's own dropdown, so menus look the same on every computer. The button has the input look (or a pill with
- * `size="sm"`, for filters); `className` sets its width (full by default). The menu opens in a layer above the page,
+ * `size="sm"`, for filters); `className` sets its width (by default a field fills its row and a filter pill fits its
+ * words, so a row of filters never puts one alone on a line). The menu opens in a layer above the page,
  * so tables and scrolling panels never cut it off.
  */
 export function Select<T extends string | number>({
@@ -138,7 +139,7 @@ export function Select<T extends string | number>({
             }
           }
         }}
-        className={`inline-flex min-w-0 items-center justify-between gap-2 bg-panel text-left text-[13px] text-ink outline-none transition-shadow duration-[var(--duration-fast)] focus-visible:shadow-focus disabled:pointer-events-none disabled:bg-paper disabled:text-muted disabled:shadow-none ${size === "sm" ? "h-8 rounded-full px-3 text-[12.5px] shadow-chip hover:shadow-pill" : "h-9 rounded-md px-3 shadow-input hover:shadow-input-hover"} aria-expanded:shadow-focus ${className || "w-full"}`}
+        className={`inline-flex min-w-0 items-center justify-between gap-2 bg-panel text-left text-[13px] text-ink outline-none transition-shadow duration-[var(--duration-fast)] focus-visible:shadow-focus disabled:pointer-events-none disabled:bg-paper disabled:text-muted disabled:shadow-none ${size === "sm" ? "h-8 rounded-full px-3 text-[12.5px] shadow-chip hover:shadow-pill" : "h-9 rounded-md px-3 shadow-input hover:shadow-input-hover"} aria-expanded:shadow-focus ${className || (size === "sm" ? "w-fit max-w-full" : "w-full")}`}
       >
         <span className={`flex min-w-0 items-center gap-1.5 truncate ${current ? "" : "text-faint"}`}>
           {lead ? <span className="font-normal text-muted">{lead}</span> : null}

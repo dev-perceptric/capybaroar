@@ -1062,6 +1062,7 @@ export function Composer({ channels, at, post, preset, zone = null, access = { w
               size="sm"
               lead="Campaign"
               ariaLabel="Campaign"
+              className="w-auto max-w-56"
               value={campaignId ?? ""}
               onChange={(v) => void pickCampaign(v)}
               options={[
@@ -1091,6 +1092,7 @@ export function Composer({ channels, at, post, preset, zone = null, access = { w
               size="sm"
               lead="Repeat"
               ariaLabel="Repeat"
+              className="w-auto max-w-52"
               value={repeat ?? ""}
               onChange={(v) => setRepeat(v || null)}
               options={[{ value: "", label: "Never" }, ...(Object.keys(REPEATS) as Repeat[]).map((r) => ({ value: r, label: REPEATS[r].label }))]}

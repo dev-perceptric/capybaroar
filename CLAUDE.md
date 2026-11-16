@@ -13,6 +13,14 @@ Schedule posts to every social channel from one calendar. Our own code on the Om
 - Picking from a list that can grow (channels, groups, brands, campaigns, models, kinds) is a dropdown: `Select` for one, `MultiSelect` for several. Never a row of chips.
 - Networks show their logo (`NetworkLogo`), with the name as the label.
 
+## Rule: text never wraps unnaturally
+- Headings wrap into even lines and body text never leaves one word alone on its last line. `globals.css` does this for the whole app (`text-wrap: balance` on headings, `pretty` on everything else); don't turn it off.
+- Short text in cards, menus, empty states and dialogs (one to three lines) adds `text-balance`. `Empty`, `PaneHead`, `ToolIntro` and dialogs already do.
+- One unit never breaks across lines: buttons, chips, badges, tabs, times, counts and names in a row. A name that's too long is cut with `truncate` (the full name in `title`).
+- A row of controls never leaves one alone on a line. Filter dropdowns (`Select size="sm"`) fit their words by default; never stretch one to the full row. On phones a page header's buttons show their icon only (`.page-actions`). A toolbar stays on one line: it drops words first (container queries, in px) or scrolls sideways.
+- Where the meaning splits, write the line break (`<br />`, like the sign-in headline's gray part), so the break never depends on the screen width.
+- Check every new or changed screen at 1440, 1024 and 390 wide before calling it done.
+
 ## Copy
 - Working screens: labels, buttons and real errors only. Explain once, on a tool's first screen (`ToolIntro`).
 

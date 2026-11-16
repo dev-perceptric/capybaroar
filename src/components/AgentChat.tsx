@@ -191,7 +191,7 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
                     <span className="flex size-[30px] items-center justify-center rounded-md bg-paper-deep text-ink [&_svg]:size-4">{s.icon}</span>
                     <span>
                       <span className="block text-[13px] font-medium text-ink">{s.title}</span>
-                      <span className="block text-[12px] leading-snug text-muted">{s.line}</span>
+                      <span className="block text-[12px] leading-snug text-balance text-muted">{s.line}</span>
                     </span>
                   </button>
                 ))}
@@ -351,7 +351,7 @@ function Composer({ text, setText, files, setFiles, make, setMake, model, setMod
               <span className={`flex size-[30px] items-center justify-center rounded-md [&_svg]:size-4 ${m.value === make ? "bg-signal text-on-signal" : "bg-paper-deep text-ink"}`}>{MAKE_ICON[m.value]}</span>
               <span>
                 <span className="block text-[13px] font-medium text-ink">{m.label}</span>
-                <span className="block text-[12px] text-muted">{m.line}</span>
+                <span className="block text-[12px] text-balance text-muted">{m.line}</span>
               </span>
               {m.value === make ? <Check size={14} className="text-ink" /> : <span />}
             </button>
@@ -376,7 +376,7 @@ function Composer({ text, setText, files, setFiles, make, setMake, model, setMod
             >
               <span>
                 <span className="block text-[13px] font-medium text-ink">{m.name}</span>
-                <span className="block text-[12px] text-muted">{m.line}</span>
+                <span className="block text-[12px] text-balance text-muted">{m.line}</span>
               </span>
               {m.id === model ? <Check size={14} className="text-ink" /> : <span />}
             </button>

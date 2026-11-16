@@ -125,7 +125,7 @@ export function Page({
           </span>
         </nav>
         {tabs ? <div className="flex max-w-full min-w-0 items-center">{tabs}</div> : null}
-        {actions ? <div className="ml-auto flex max-w-full min-w-0 flex-wrap items-center justify-end gap-2">{actions}</div> : null}
+        {actions ? <div className="page-actions ml-auto flex max-w-full min-w-0 flex-wrap items-center justify-end gap-2">{actions}</div> : null}
       </header>
       {toolbar ? <div className="flex min-h-11 shrink-0 flex-wrap items-center gap-2 border-b border-line bg-panel px-3 py-1.5">{toolbar}</div> : null}
       <div className={`min-h-0 flex-1 overflow-auto ${flush ? "" : "p-4 md:p-6"}`}>{children}</div>
@@ -210,7 +210,7 @@ export function PaneHead({ title, line, children }: { title: string; line?: stri
     <header className="flex flex-wrap items-end gap-3">
       <div className="min-w-0 flex-1">
         <h2 className="text-[20px] leading-tight font-semibold tracking-[-0.02em]">{title}</h2>
-        {line ? <p className="mt-1 text-[13px] text-muted">{line}</p> : null}
+        {line ? <p className="mt-1 text-[13px] text-balance text-muted">{line}</p> : null}
       </div>
       {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}
     </header>
@@ -224,7 +224,7 @@ export function Empty({ title, children, drawing = "search", icon, action, compa
     <section className={`rise flex flex-col items-center justify-center px-6 text-center ${compact ? "py-12" : "min-h-[calc(100dvh-200px)] py-12"}`}>
       <Drawing kind={drawing} icon={icon} size={compact ? 150 : 220} />
       <h2 className="mt-5 text-[16px] font-medium tracking-[-0.01em]">{title}</h2>
-      {children ? <div className="mt-1 max-w-sm text-[13px] text-muted">{children}</div> : null}
+      {children ? <div className="mt-1 max-w-sm text-[13px] text-balance text-muted">{children}</div> : null}
       {action ? <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{action}</div> : null}
     </section>
   );

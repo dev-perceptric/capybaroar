@@ -282,9 +282,21 @@ body {
   font-family: var(--font-sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  /* Text that wraps never leaves one word alone on its last line. */
+  text-wrap: pretty;
 }
 
 @layer base {
+  /* Headings wrap into lines of even length. A class on the heading (truncate, whitespace-nowrap) still wins. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  [role="heading"] {
+    text-wrap: balance;
+  }
   h1,
   h2,
   h3 {
@@ -666,4 +678,14 @@ tr.row-sel > td {
   .report-section + .report-section { break-before: page; }
   .report figure, .report tr, .report .break-inside-avoid { break-inside: avoid; }
   .report .shadow-card { box-shadow: none; border: 1px solid var(--border-medium); }
+}
+
+/* On phones a page header's action buttons show their icon only, so the header stays one row instead of pushing the
+   buttons to a row of their own. The words stay readable to screen readers. Dropdowns keep their words. */
+@media (max-width: 639px) {
+  .page-actions :is(button, a):has(> svg):not([aria-haspopup="listbox"]) {
+    font-size: 0;
+    gap: 0;
+    padding-inline: 10px;
+  }
 }
