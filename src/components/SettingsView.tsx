@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
-import { Check, Plus, X } from "lucide-react";
-import { Button, CardHead, Chip, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
-import { askConfirm, askText, tell } from "./Dialogs";
+import { Button, CardHead, Field, Input, PaneHead, Panel } from "./ui";
+import { askConfirm, askText } from "./Dialogs";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
@@ -16,12 +15,8 @@ import { TwoFactor } from "./TwoFactor";
 import { RequireTwoFactor } from "./RequireTwoFactor";
 import type { ExportView } from "@/lib/exportRules";
 import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
-import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
-import { fmtTime } from "@/lib/format";
+import { SlotEditor } from "./SlotEditor";
 
-const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-/** The queue's days in the order they show: Monday first. Values are `DAYS` indexes, as saved. */
-const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
@@ -209,44 +204,19 @@ function Queue({ initial, timezone }: { initial: { day: number; time: string }[]
   const [slots, setSlots] = useState(initial);
   const [msg, setMsg] = useState("");
   const [busy, start] = useTransition();
-  const preset = async (k: QueuePreset) => {
-    const next = k === "best" ? await bestQueue().catch(() => []) : [...QUEUE_PRESETS[k].slots];
-    if (!next.length) return tell("Not enough results yet", "Your best times show once 10 posts have results. Pick another set for now.");
-    if (slots.length && !(await askConfirm("Replace your times?", { ok: "Replace" }))) return;
-    setSlots(next);
-    setMsg("");
-  };
-  const add = (day: number, time: string) => setSlots((s) => (s.some((x) => x.day === day && x.time === time) ? s : [...s, { day, time }]));
-  const remove = (i: number) => setSlots((s) => s.filter((_, j) => j !== i));
   return (
     <>
       <PaneHead title="Queue" line={`Times that Add to queue fills, in ${timezone.replace(/_/g, " ")}`} />
       <Panel className="overflow-hidden">
         <CardHead label="Times" count={slots.length} />
-        <div className="flex flex-wrap gap-1.5 border-b border-line px-4 py-3">
-          {(Object.keys(QUEUE_PRESETS) as (keyof typeof QUEUE_PRESETS)[]).map((k) => (
-            <Chip key={k} size="sm" onClick={() => void preset(k)}>
-              {QUEUE_PRESETS[k].label}
-            </Chip>
-          ))}
-          <Chip size="sm" onClick={() => void preset("best")}>
-            Your best times
-          </Chip>
-        </div>
-        <div className="divide-y divide-line">
-          {WEEK.map((day) => (
-            <QueueDay
-              key={day}
-              day={day}
-              times={slots
-                .map((s, i) => ({ ...s, i }))
-                .filter((s) => s.day === day)
-                .sort((a, b) => a.time.localeCompare(b.time))}
-              onAdd={(t) => add(day, t)}
-              onRemove={remove}
-            />
-          ))}
-        </div>
+        <SlotEditor
+          slots={slots}
+          onChange={(next) => {
+            setSlots(next);
+            setMsg("");
+          }}
+          best={bestQueue}
+        />
         <div className="flex items-center gap-3 border-t border-line bg-paper px-4 py-3">
           <Button
             disabled={busy}
@@ -266,59 +236,3 @@ function Queue({ initial, timezone }: { initial: { day: number; time: string }[]
     </>
   );
 }
-
-/** One weekday: its times as small removable items, and Add time. */
-function QueueDay({ day, times, onAdd, onRemove }: { day: number; times: { time: string; i: number }[]; onAdd: (time: string) => void; onRemove: (i: number) => void }) {
-  const [adding, setAdding] = useState<string | null>(null);
-  const commit = () => {
-    if (adding && /^\d{2}:\d{2}$/.test(adding)) onAdd(adding);
-    setAdding(null);
-  };
-  return (
-    <div className="flex min-h-12 flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
-      <span className="w-24 shrink-0 text-[13px] font-medium">{DAYS[day]}</span>
-      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
-        {times.map((t) => (
-          <span key={t.i} className="inline-flex h-7 items-center gap-0.5 rounded-full bg-panel pr-1 pl-2.5 text-[12px] text-body tabular-nums shadow-chip">
-            {fmtTime(`2000-01-01T${t.time}:00`)}
-            <button type="button" aria-label={`Remove ${DAYS[day]} ${t.time}`} onClick={() => onRemove(t.i)} className="inline-flex size-5 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink">
-              <X size={12} />
-            </button>
-          </span>
-        ))}
-        {adding != null ? (
-          <span className="inline-flex items-center gap-1">
-            <input
-              type="time"
-              autoFocus
-              aria-label={`New time on ${DAYS[day]}`}
-              value={adding}
-              onChange={(e) => setAdding(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") commit();
-                if (e.key === "Escape") setAdding(null);
-              }}
-              className={`${inputLook} h-7 w-28 px-2 text-[12px]`}
-            />
-            <IconButton label="Add" onClick={commit}>
-              <Check />
-            </IconButton>
-            <IconButton label="Cancel" onClick={() => setAdding(null)}>
-              <X />
-            </IconButton>
-          </span>
-        ) : (
-          <Chip size="sm" dashed onClick={() => setAdding(times.length ? next(times[times.length - 1].time) : "09:00")}>
-            <Plus size={12} /> Add time
-          </Chip>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** An hour after `time`, kept within the day. */
-const next = (time: string) => {
-  const [h, m] = time.split(":").map(Number);
-  return `${String(Math.min(23, h + 1)).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-};

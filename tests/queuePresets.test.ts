@@ -1,8 +1,26 @@
 // Queue presets, best times as queue slots, and publish_at "best" in the API. Run with: npm test
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { QUEUE_PRESETS, nextBestTime, pickBest, slotsFromBest } from "../src/lib/queue";
+import { QUEUE_PRESETS, cleanSlots, isSlot, nextBestTime, pickBest, queuePlan, slotsFromBest } from "../src/lib/queue";
 import { postFields } from "../src/lib/api/input";
+
+test("a post's queue times: each channel's own, or the workspace's for channels without", () => {
+  const ws = [{ day: 1, time: "09:00" }];
+  const own = [{ day: 2, time: "12:00" }, { day: 1, time: "09:00" }];
+  // No channels, or only channels without their own: the workspace's times, shared with every post.
+  assert.deepEqual(queuePlan([], ws), { slots: ws, shared: true });
+  assert.deepEqual(queuePlan([{ queue: null }, { queue: [] }], ws), { slots: ws, shared: true });
+  // All with their own: their times together, and only their own posts take a time.
+  assert.deepEqual(queuePlan([{ queue: own }, { queue: [{ day: 0, time: "18:00" }] }], ws), { slots: [{ day: 0, time: "18:00" }, { day: 1, time: "09:00" }, { day: 2, time: "12:00" }], shared: false });
+  // Mixed: both sets, and every post in the workspace takes a time.
+  assert.deepEqual(queuePlan([{ queue: [{ day: 3, time: "08:00" }] }, { queue: null }], ws), { slots: [{ day: 1, time: "09:00" }, { day: 3, time: "08:00" }], shared: true });
+});
+
+test("queue slots are checked and kept without repeats", () => {
+  assert.ok(isSlot({ day: 0, time: "23:59" }));
+  for (const bad of [{ day: 7, time: "09:00" }, { day: 1, time: "9:00" }, { day: 1, time: "24:00" }, { day: 1.5, time: "09:00" }, null, "09:00"]) assert.equal(isSlot(bad), false, JSON.stringify(bad));
+  assert.deepEqual(cleanSlots([{ day: 2, time: "10:00" }, { day: 1, time: "09:00" }, { day: 2, time: "10:00" }]), [{ day: 1, time: "09:00" }, { day: 2, time: "10:00" }]);
+});
 
 test("presets: weekdays at 9 (5), morning and lunch (10), every day twice (14)", () => {
   assert.equal(QUEUE_PRESETS.weekdays.slots.length, 5);

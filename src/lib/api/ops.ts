@@ -42,6 +42,7 @@ export function toChannel(c: Channel): ApiChannel {
     character_limit: n.limit,
     needs_media: !!n.needsMedia,
     thread: !!n.thread,
+    queue: c.queue ?? null,
     settings: (n.fields ?? []).map((f) => ({
       key: f.key,
       label: f.label,
@@ -271,9 +272,14 @@ function opsFor(ctx: ApiCtx): Ops {
     async media() {
       return (await listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId })).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));
     },
-    async nextSlot() {
+    async nextSlot(channelIds) {
+      if (channelIds.length) {
+        const allowed = new Set((await listChannels(ctx.workspaceId, ctx.brandIds)).map((c) => c.id));
+        const missing = channelIds.find((c) => !allowed.has(c));
+        if (missing) throw notFound("Channel");
+      }
       try {
-        return (await queueTime(ctx.workspaceId)).toISOString();
+        return (await queueTime(ctx.workspaceId, channelIds)).toISOString();
       } catch (e) {
         throw new ApiError(409, "conflict", e instanceof Error ? e.message : String(e));
       }

@@ -6,7 +6,7 @@ import { listChannels } from "./channels";
 import { providerOf } from "./providers";
 import { isPdfMime, networkOf, type NetworkId, type ThreadPart } from "./networks";
 import { cleanThread, partProblem, partSettings, storedThread, threadOf, type StoredPart } from "./thread";
-import { nextQueueSlot, type Slot } from "./queue";
+import { nextQueueSlot, queuePlan, type Slot } from "./queue";
 import { assertCanSchedule } from "./billing";
 import { mayUseBrand } from "./brands";
 import { sendReviewMail } from "./alerts";
@@ -120,14 +120,24 @@ async function validate(workspaceId: string, input: SaveInput, publishAt: Date, 
   }
 }
 
-/** The next free slot of the workspace's queue. Throws when it has no slots or none is free in 8 weeks. */
-export async function queueTime(workspaceId: string): Promise<Date> {
+/**
+ * The next free queue time for a post to these channels (queuePlan): their own times, or the workspace's. Throws when
+ * there are no times or none is free in 8 weeks.
+ */
+export async function queueTime(workspaceId: string, channelIds: string[] = []): Promise<Date> {
   const db = adminClient();
-  const { data: ws } = await db.from("workspaces").select("queue, timezone").eq("id", workspaceId).single();
-  const slots = (ws?.queue ?? []) as Slot[];
-  if (!slots.length) throw new Error("Add time slots to your queue in Settings first");
-  const { data: taken } = await db.from("posts").select("publish_at").eq("workspace_id", workspaceId).in("status", ["scheduled", "publishing"]).gte("publish_at", new Date().toISOString());
-  const at = nextQueueSlot(slots, ws!.timezone as string, new Set((taken ?? []).map((p) => new Date(p.publish_at as string).getTime())));
+  const ids = [...new Set(channelIds)];
+  const [{ data: ws }, { data: chans }] = await Promise.all([
+    db.from("workspaces").select("queue, timezone").eq("id", workspaceId).single(),
+    ids.length ? db.from("channels").select("queue").eq("workspace_id", workspaceId).in("id", ids) : Promise.resolve({ data: [] as { queue: Slot[] | null }[] }),
+  ]);
+  const plan = queuePlan((chans ?? []) as { queue: Slot[] | null }[], (ws?.queue ?? []) as Slot[]);
+  if (!plan.slots.length) throw new Error("Add time slots to your queue in Settings first");
+  const now = new Date().toISOString();
+  const { data: taken } = plan.shared
+    ? await db.from("posts").select("publish_at").eq("workspace_id", workspaceId).in("status", ["scheduled", "publishing"]).gte("publish_at", now)
+    : await db.from("posts").select("publish_at, post_targets!inner(channel_id)").eq("workspace_id", workspaceId).in("status", ["scheduled", "publishing"]).gte("publish_at", now).in("post_targets.channel_id", ids);
+  const at = nextQueueSlot(plan.slots, ws!.timezone as string, new Set((taken ?? []).map((p) => new Date(p.publish_at as string).getTime())));
   if (!at) throw new Error("No free slot in the next 8 weeks");
   return at;
 }
@@ -166,7 +176,7 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   const { data: brand } = brandId ? await db.from("brands").select("name, needs_approval").eq("id", brandId).maybeSingle() : { data: null };
   const review = sending && sendsToReview(actor?.role, !!brand?.needs_approval);
   const status: PostStatus = !sending ? "draft" : review ? "review" : "scheduled";
-  const at = input.mode === "now" ? new Date() : input.mode === "queue" ? await queueTime(workspaceId) : input.publishAt ? new Date(input.publishAt) : null;
+  const at = input.mode === "now" ? new Date() : input.mode === "queue" ? await queueTime(workspaceId, input.targets.map((t) => t.channelId)) : input.publishAt ? new Date(input.publishAt) : null;
   if (sending) {
     if (!at) throw new Error("Pick a time");
     await validate(workspaceId, input, input.mode === "now" ? new Date(Date.now() + 60000) : at, channels);

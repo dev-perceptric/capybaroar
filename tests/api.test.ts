@@ -5,7 +5,7 @@
 // can't go over its rate limit.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ApiError, MAX_BATCH, days, deleteArgs, postFields, range } from "../src/lib/api/input";
+import { ApiError, MAX_BATCH, days, deleteArgs, optionalChannelIds, postFields, range } from "../src/lib/api/input";
 import { RateLimit } from "../src/lib/api/limit";
 import { TOOLS, VERSIONS, handleMcp } from "../src/lib/api/mcp";
 import type { ApiPost, Ops } from "../src/lib/api/types";
@@ -107,7 +107,10 @@ function fakeOps(over: Partial<Ops> = {}): Ops & { created: string[]; calls: str
       return { deleted: !channelIds, channels: [{ channel_id: B, name: "Page", network: "instagram", result: "manual", error: "Delete it in the Instagram app", note: null, url: "https://instagram.com/p/x" }] };
     },
     media: async () => [],
-    nextSlot: async () => AT,
+    nextSlot: async (channelIds) => {
+      calls.push(`nextSlot:${channelIds.join(",")}`);
+      return AT;
+    },
     analytics: async () => {
       throw new Error("no data");
     },
@@ -167,6 +170,18 @@ test("MCP: tool errors come back as results the model can read", async () => {
   const ok = await call(fakeOps(), "next_queue_slot", {});
   assert.equal(ok.result.isError, false);
   assert.deepEqual(JSON.parse(ok.result.content[0].text), { publish_at: AT });
+});
+
+test("next_queue_slot takes channel ids as a list (MCP) or a comma list (REST), and checks them", async () => {
+  const ops = fakeOps();
+  await call(ops, "next_queue_slot", { channel_ids: [A, B, A] });
+  await call(ops, "next_queue_slot", {});
+  assert.deepEqual(ops.calls, [`nextSlot:${A},${B}`, "nextSlot:"]);
+  assert.deepEqual(optionalChannelIds(`${A}, ${B}`), [A, B]);
+  assert.deepEqual(optionalChannelIds(null), []);
+  const bad = await call(ops, "next_queue_slot", { channel_ids: ["nope"] });
+  assert.equal(bad.result.isError, true);
+  assert.match(bad.result.content[0].text, /channel_ids must be an id/);
 });
 
 test("MCP: a batch of posts gets one answer per post, in order, when saving fails at random", async () => {

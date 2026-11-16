@@ -61,7 +61,8 @@ export class Capybaroar {
   async updatePost(id, fields) { return (await this.request("PATCH", `/posts/${encodeURIComponent(id)}`, { body: fields })).post; }
   /** Deletes here, or with everywhere: true on the networks too. */
   async deletePost(id, { everywhere = false, channelIds } = {}) { return this.request("DELETE", `/posts/${encodeURIComponent(id)}`, { query: { everywhere, channel_ids: channelIds } }); }
-  async nextQueueSlot() { return (await this.request("GET", "/queue")).publish_at; }
+  /** The next free queue time; with channelIds, for a post to those channels (each uses its own times or the workspace's). */
+  async nextQueueSlot({ channelIds } = {}) { return (await this.request("GET", "/queue", { query: { channel_ids: channelIds } })).publish_at; }
   async media() { return (await this.request("GET", "/media")).media; }
   async uploadFromUrl(url, alt) { return (await this.request("POST", "/media", { body: { url, ...(alt ? { alt } : {}) } })).media; }
   /** Reach, engagement, top posts and best times for the last 7, 30 or 90 days. */

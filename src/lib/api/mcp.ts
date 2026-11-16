@@ -1,7 +1,7 @@
 // The MCP server: JSON-RPC over plain HTTP POST (MCP's Streamable HTTP, without sessions or streams). Every request is
 // answered on its own, so any server can take it and a restart loses nothing. Pure: it runs the tools through Ops,
 // so tests drive it with fake actions.
-import { ApiError, MAX_BATCH, days, deleteArgs, generationInput, id, mediaLink, optionalId, postFields, range, webhookInput } from "./input";
+import { ApiError, MAX_BATCH, days, deleteArgs, generationInput, id, mediaLink, optionalChannelIds, optionalId, postFields, range, webhookInput } from "./input";
 import { ALL_ASPECTS, CAPY, KINDS, MAX_SCRIPT, MODELS, SECONDS, modelsFor } from "../genRules";
 import { EVENTS } from "./hookRules";
 import { MAX_RPC_BATCH } from "./limit";
@@ -147,7 +147,13 @@ export const TOOLS: Tool[] = [
   },
   { name: "get_generation", title: "Check an AI file", description: "Where a generate_media request is: queued, running, done (with media to attach) or failed (with the error).", inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] }, annotations: read },
   { name: "get_credits", title: "Get AI credits", description: "The workspace's AI credits: this month's plan credits and what's left of them, bought credits left, the total left and when plan credits refill.", inputSchema: { type: "object", properties: {} }, annotations: read },
-  { name: "next_queue_slot", title: "Next queue slot", description: "The next free time slot in the workspace's posting queue.", inputSchema: { type: "object", properties: {} }, annotations: read },
+  {
+    name: "next_queue_slot",
+    title: "Next queue slot",
+    description: "The next free time slot in the posting queue. With channel_ids, for a post to those channels: channels with their own queue (list_channels shows queue) use it, the rest use the workspace's.",
+    inputSchema: { type: "object", properties: { channel_ids: { type: "array", items: { type: "string" }, description: "Channel ids from list_channels. Leave out for the workspace's queue." } } },
+    annotations: read,
+  },
   {
     name: "get_analytics",
     title: "Get analytics",
@@ -266,7 +272,7 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       await ops.deleteWebhook(id(args.id));
       return { deleted: true };
     case "next_queue_slot":
-      return { publish_at: await ops.nextSlot() };
+      return { publish_at: await ops.nextSlot(optionalChannelIds(args.channel_ids)) };
     case "get_analytics":
       return { analytics: await ops.analytics(days(args.days), optionalId(args.channel_id, "channel_id")) };
     default:

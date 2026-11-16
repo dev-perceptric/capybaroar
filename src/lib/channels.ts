@@ -3,11 +3,15 @@ import { open, seal } from "./crypto";
 import { adminClient } from "./supabase/server";
 import { assertCanAddChannel, newChannelCount } from "./billing";
 import type { NetworkId } from "./networks";
+import type { Slot } from "./queue";
 import { AuthError, type Account, type Secret } from "./providers/types";
 import { record } from "./auditActor";
 
-/** A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. */
-export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null };
+/**
+ * A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. `name` is the team's nickname when
+ * it has one, else the network's name (`account_name`). `queue`: its own queue times, or null for the workspace's.
+ */
+export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null; account_name?: string; queue?: Slot[] | null };
 
 export const appUrl = () => (process.env.APP_URL || "http://localhost:3000").replace(/\/$/, "");
 export const redirectFor = (network: string) => `${appUrl()}/integrations/social/${network}`;
@@ -15,11 +19,11 @@ export const redirectFor = (network: string) => `${appUrl()}/integrations/social
 /** The workspace's channels; `scope` keeps only these brands' (null: every channel). */
 export async function listChannels(workspaceId: string, scope: string[] | null = null): Promise<Channel[]> {
   if (scope && !scope.length) return [];
-  let q = adminClient().from("channels").select("id, network, account_id, name, username, avatar, status, brand_id").eq("workspace_id", workspaceId);
+  let q = adminClient().from("channels").select("id, network, account_id, name, nickname, username, avatar, status, brand_id, queue").eq("workspace_id", workspaceId);
   if (scope) q = q.in("brand_id", scope);
   const { data, error } = await q.order("created_at");
   if (error) throw new Error(error.message);
-  return (data ?? []) as Channel[];
+  return ((data ?? []) as (Channel & { nickname: string | null })[]).map(({ nickname, ...c }) => ({ ...c, account_name: c.name, name: nickname || c.name, queue: Array.isArray(c.queue) && c.queue.length ? c.queue : null }));
 }
 
 /** Save connected accounts into a brand. Reconnecting the same account updates it in place and keeps its brand. */

@@ -51,6 +51,24 @@ export function nextQueueSlot(slots: Slot[], timeZone: string, taken: Set<number
   return null;
 }
 
+/** A queue time as written down: a weekday 0 to 6 (Sunday is 0) and a 24-hour "HH:MM". */
+export const isSlot = (s: unknown): s is Slot =>
+  !!s && typeof s === "object" && Number.isInteger((s as Slot).day) && (s as Slot).day >= 0 && (s as Slot).day <= 6 && typeof (s as Slot).time === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test((s as Slot).time);
+
+/** Slots without repeats, by day then time. */
+export const cleanSlots = (slots: Slot[]): Slot[] => [...new Map(slots.map((s) => [`${s.day} ${s.time}`, { day: s.day, time: s.time }])).values()].sort((a, b) => a.day - b.day || a.time.localeCompare(b.time));
+
+/**
+ * The times a post to these channels can take: each channel's own queue, or the workspace's for channels without one.
+ * `shared`: a channel uses the workspace's queue (or there are none), so every post in the workspace takes up a time,
+ * as before channels had their own. Otherwise only posts to these channels do.
+ */
+export function queuePlan(channels: { queue?: Slot[] | null }[], workspace: Slot[]): { slots: Slot[]; shared: boolean } {
+  if (!channels.length) return { slots: cleanSlots(workspace), shared: true };
+  const shared = channels.some((c) => !c.queue?.length);
+  return { slots: cleanSlots(channels.flatMap((c) => (c.queue?.length ? c.queue : workspace))), shared };
+}
+
 /** Weekday and hour cells with their results, as the best times come from Analytics. */
 export type BestCell = { day: number; hour: number; posts: number; engagement: number };
 

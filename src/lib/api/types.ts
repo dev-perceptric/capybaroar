@@ -21,6 +21,8 @@ export type ApiChannel = {
   /** Posts threads: create_posts sends `thread` as replies. */
   thread: boolean;
   settings: ApiSetting[];
+  /** Its own queue times ({day 0-6 from Sunday, time "HH:MM"} in the workspace time zone), or null for the workspace's. */
+  queue: { day: number; time: string }[] | null;
 };
 
 export type ApiPost = {
@@ -85,7 +87,8 @@ export interface Ops {
   /** Delete a published post on its channels (null: every channel it went out on). The record stays. */
   unpublish(id: string, channelIds: string[] | null): Promise<ApiUnpublish>;
   media(): Promise<ApiMedia[]>;
-  nextSlot(): Promise<string>;
+  /** The next free queue time for a post to these channels (none: the workspace's queue). */
+  nextSlot(channelIds: string[]): Promise<string>;
   analytics(days: 7 | 30 | 90, channelId: string | null): Promise<ApiAnalytics>;
   /** Download a picture or video from a public link into the media library. */
   uploadFromLink(url: URL, alt: string | null): Promise<ApiMedia>;

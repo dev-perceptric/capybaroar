@@ -174,6 +174,12 @@ export function days(v: unknown): 7 | 30 | 90 {
 
 export const optionalId = (v: unknown, what: string) => (v == null || v === "" ? null : id(v, what));
 
+/** Channel ids for the next queue time: a list (MCP), a comma-separated string (a REST query) or nothing. */
+export function optionalChannelIds(v: unknown): string[] {
+  if (v == null || v === "") return [];
+  return ids(typeof v === "string" ? v.split(",").map((x) => x.trim()).filter(Boolean) : v, "channel_ids", MAX_CHANNELS);
+}
+
 /** A link to a file to add to the media library. */
 export function mediaLink(body: unknown): { url: URL; alt: string | null } {
   if (!isObject(body)) throw bad("Send a JSON object");

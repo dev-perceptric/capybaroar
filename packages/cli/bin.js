@@ -16,7 +16,7 @@ const HELP = `capybaroar <command> [options]
        [--thread <text>]...     A thread's next posts, in order
        [--campaign <id>] [--media <id>]...
   delete <post id> [--everywhere]
-  queue                         The next free queue time
+  queue [--to <channels>]       The next free queue time (for these channels)
   campaigns                     Campaigns with their counts
   analytics [--days 7|30|90]    Results for a period
 
@@ -77,7 +77,7 @@ async function main() {
     if (!rest[0]) throw new Error("Usage: capybaroar delete <post id> [--everywhere]");
     return out(await capy.deletePost(rest[0], { everywhere: !!o.everywhere }), () => "Deleted");
   }
-  if (cmd === "queue") return out({ publish_at: await capy.nextQueueSlot() }, (x) => x.publish_at);
+  if (cmd === "queue") return out({ publish_at: await capy.nextQueueSlot(o.to ? { channelIds: await channelIds(capy, o.to) } : {}) }, (x) => x.publish_at);
   if (cmd === "campaigns") return out(await capy.campaigns(), (cs) => cs.map((c) => `${c.id}  ${c.name}  ${c.scheduled} scheduled, ${c.published} published, ${c.engagements} engagements`).join("\n") || "No campaigns yet");
   if (cmd === "analytics") return out(await capy.analytics({ days: Number(o.days ?? 30) }), (a) => JSON.stringify(a, null, 2));
   throw new Error(`Unknown command ${cmd}. Run capybaroar --help.`);

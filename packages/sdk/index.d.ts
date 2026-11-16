@@ -42,7 +42,7 @@ export class Capybaroar {
   createPost(fields: PostFields & { channel_ids: string[] }): Promise<Post>;
   updatePost(id: string, fields: PostFields): Promise<Post>;
   deletePost(id: string, opts?: { everywhere?: boolean; channelIds?: string[] }): Promise<unknown>;
-  nextQueueSlot(): Promise<string>;
+  nextQueueSlot(opts?: { channelIds?: string[] }): Promise<string>;
   media(): Promise<{ id: string; name: string; mime: string; size: number }[]>;
   uploadFromUrl(url: string, alt?: string): Promise<{ id: string }>;
   analytics(opts?: { days?: 7 | 30 | 90; channelId?: string }): Promise<unknown>;

@@ -12,6 +12,8 @@ import { Sheet } from "@/components/Overlay";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
+import { ChannelRail } from "@/components/ChannelRail";
+import { nextChannelSlot } from "@/app/(app)/channels/actions";
 import { duplicate, loadCampaigns, loadPost, loadPosts, move, newCampaign, remove, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
 import { askConfirm, askText, tell } from "@/components/Dialogs";
 import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
@@ -56,11 +58,36 @@ type Initial = { from: string; to: string; posts: PostRow[] };
 // A tab reopened from the browser's cache brings the same first load again, which may be out of date: use each once.
 let usedSeed = "";
 
-export function CalendarView({ channels, initial, access }: { channels: Channel[]; initial?: Initial; access: Access }) {
+const RAIL_KEY = "cb_cal_rail";
+
+export function CalendarView({ channels, brands = [], initial, access }: { channels: Channel[]; brands?: { id: string; name: string }[]; initial?: Initial; access: Access }) {
   const startNew = useSearchParams().has("new") && access.write;
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
-  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
+  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow; preset?: string } | null>(() => (startNew ? {} : null));
+  // The channels column folds to pictures; kept per browser.
+  const [folded, setFolded] = useState(false);
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after the first paint, so the server and browser render the same
+      setFolded(localStorage.getItem(RAIL_KEY) === "1");
+    } catch {
+      // no saved choice
+    }
+  }, []);
+  const fold = (v: boolean) => {
+    setFolded(v);
+    try {
+      localStorage.setItem(RAIL_KEY, v ? "1" : "0");
+    } catch {
+      // kept for this visit only
+    }
+  };
+  // A post for one channel, at that channel's next free queue time (or no time when its queue has none).
+  const newFor = async (id: string) => {
+    const at = await nextChannelSlot(id).catch(() => null);
+    setCompose({ at: at ? new Date(at) : undefined, preset: id });
+  };
   const [bulk, setBulk] = useState(false);
   const [channel, setChannel] = useState<string>("all");
   const [campaign, setCampaign] = useState<string>("all");
@@ -221,101 +248,108 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
         ) : null
       }
     >
-      <div className={`flex min-h-full flex-col ${mode === "list" ? "" : "bg-panel"}`} style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
-        <div ref={head} data-cal-sticky className="sticky top-0 left-0 z-30 border-b border-line bg-panel">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 pt-4 pb-3">
-            <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
-              {lead} <span className="text-faint">{tail}</span>
-            </h2>
-            <div className="flex h-[34px] items-stretch overflow-hidden rounded-full bg-panel shadow-outline">
-              <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-9 items-center justify-center pl-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
-                <ChevronLeft size={16} />
-              </button>
-              <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3.5 text-[13px] font-medium transition-colors hover:bg-paper">
-                Today
-              </button>
-              <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-9 items-center justify-center pr-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
-                <ChevronRight size={16} />
-              </button>
+      <div className="flex h-full min-h-0">
+        {channels.length ? <ChannelRail channels={channels} brands={brands} counts={counts} total={inRange.length} picked={channel} onPick={setChannel} write={access.write} folded={folded} onFold={fold} onNewPost={(id) => void newFor(id)} /> : null}
+        <div className="min-w-0 flex-1 overflow-auto">
+          <div className={`flex min-h-full flex-col ${mode === "list" ? "" : "bg-panel"}`} style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
+            <div ref={head} data-cal-sticky className="sticky top-0 left-0 z-30 border-b border-line bg-panel">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 pt-4 pb-3">
+                <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
+                  {lead} <span className="text-faint">{tail}</span>
+                </h2>
+                <div className="flex h-[34px] items-stretch overflow-hidden rounded-full bg-panel shadow-outline">
+                  <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-9 items-center justify-center pl-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3.5 text-[13px] font-medium transition-colors hover:bg-paper">
+                    Today
+                  </button>
+                  <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-9 items-center justify-center pr-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+                <span className="flex-1" />
+                {channels.length > 1 ? (
+                  <div className="md:hidden">
+                    <Select<string>
+                      size="sm"
+                      lead="Channel"
+                      ariaLabel="Channel"
+                      className="max-w-72"
+                      value={channel}
+                      onChange={setChannel}
+                      options={[
+                        { value: "all", label: "All channels", hint: String(inRange.length) },
+                        ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
+                      ]}
+                    />
+                  </div>
+                ) : null}
+                {!channels.length && access.write ? (
+                  <LinkButton href="/channels" variant="ghost" size="sm">
+                    Connect a channel
+                  </LinkButton>
+                ) : null}
+                {mode === "list" ? (
+                  <Select<StatusPick>
+                    size="sm"
+                    lead="Status"
+                    ariaLabel="Status"
+                    value={status}
+                    onChange={setStatus}
+                    options={[
+                      { value: "all", label: "All" },
+                      { value: "scheduled", label: "Scheduled" },
+                      { value: "draft", label: "Drafts" },
+                      { value: "review", label: "In review" },
+                      { value: "published", label: "Published" },
+                      { value: "failed", label: "Failed" },
+                    ]}
+                  />
+                ) : null}
+                {campaigns.length ? (
+                  <Select<string>
+                    size="sm"
+                    lead="Campaign"
+                    ariaLabel="Campaign"
+                    value={campaign}
+                    onChange={setCampaign}
+                    options={[{ value: "all", label: "All" }, ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })), { value: "none", label: "No campaign" }]}
+                  />
+                ) : null}
+                <Segmented<Mode>
+                  label="View"
+                  value={mode}
+                  onChange={setMode}
+                  options={[
+                    { value: "day", label: "Day" },
+                    { value: "week", label: "Week" },
+                    { value: "month", label: "Month" },
+                    { value: "list", label: "List" },
+                  ]}
+                />
+              </div>
             </div>
-            <span className="flex-1" />
-            {channels.length > 1 ? (
-              <Select<string>
-                size="sm"
-                lead="Channel"
-                ariaLabel="Channel"
-                className="max-w-72"
-                value={channel}
-                onChange={setChannel}
-                options={[
-                  { value: "all", label: "All channels", hint: String(inRange.length) },
-                  ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
-                ]}
-              />
-            ) : null}
-            {!channels.length && access.write ? (
-              <LinkButton href="/channels" variant="ghost" size="sm">
-                Connect a channel
-              </LinkButton>
-            ) : null}
-            {mode === "list" ? (
-              <Select<StatusPick>
-                size="sm"
-                lead="Status"
-                ariaLabel="Status"
-                value={status}
-                onChange={setStatus}
-                options={[
-                  { value: "all", label: "All" },
-                  { value: "scheduled", label: "Scheduled" },
-                  { value: "draft", label: "Drafts" },
-                  { value: "review", label: "In review" },
-                  { value: "published", label: "Published" },
-                  { value: "failed", label: "Failed" },
-                ]}
-              />
-            ) : null}
-            {campaigns.length ? (
-              <Select<string>
-                size="sm"
-                lead="Campaign"
-                ariaLabel="Campaign"
-                value={campaign}
-                onChange={setCampaign}
-                options={[{ value: "all", label: "All" }, ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })), { value: "none", label: "No campaign" }]}
-              />
-            ) : null}
-            <Segmented<Mode>
-              label="View"
-              value={mode}
-              onChange={setMode}
-              options={[
-                { value: "day", label: "Day" },
-                { value: "week", label: "Week" },
-                { value: "month", label: "Month" },
-                { value: "list", label: "List" },
-              ]}
-            />
-          </div>
-        </div>
 
-        <div className="min-h-0 flex-1">
-          {!ready ? null : mode === "week" || mode === "day" ? (
-            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} actions={actions} single={mode === "day"} />
-          ) : mode === "month" ? (
-            <Month
-              anchor={anchor}
-              now={now}
-              posts={shown}
-              byId={byId}
-              onOpen={open}
-              onPick={pick}
-              onDrop={(id, at) => drop(id, at, true)}
-              actions={actions}
-            />
-          ) : (
-            <List posts={shown} byId={byId} onOpen={open} filtered={status !== "all"} />
-          )}
+            <div className="min-h-0 flex-1">
+              {!ready ? null : mode === "week" || mode === "day" ? (
+                <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} actions={actions} single={mode === "day"} />
+              ) : mode === "month" ? (
+                <Month
+                  anchor={anchor}
+                  now={now}
+                  posts={shown}
+                  byId={byId}
+                  onOpen={open}
+                  onPick={pick}
+                  onDrop={(id, at) => drop(id, at, true)}
+                  actions={actions}
+                />
+              ) : (
+                <List posts={shown} byId={byId} onOpen={open} filtered={status !== "all"} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
       {bulk ? (
@@ -333,7 +367,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
           channels={channels}
           at={compose.at}
           post={compose.post}
-          preset={channel === "all" ? undefined : channel}
+          preset={compose.preset ?? (channel === "all" ? undefined : channel)}
           access={access}
           onClose={() => setCompose(null)}
           onSaved={() => {

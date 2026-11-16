@@ -23,6 +23,8 @@ export const AUDIT_ACTIONS = {
   "channel.connected": "Connected a channel",
   "channel.removed": "Removed a channel",
   "channel.moved": "Moved a channel to a brand",
+  "channel.renamed": "Renamed a channel",
+  "channel.queue_changed": "Changed a channel's queue times",
   "post.deleted": "Deleted a post",
   "post.deleted_everywhere": "Deleted a post on the networks",
   "post.edited_live": "Edited a published post",
