@@ -4,6 +4,7 @@ import { adminClient } from "./supabase/server";
 import { readSecret, writeSecret } from "./channels";
 import { mediaFiles } from "./media";
 import { settlePost } from "./posts";
+import { repeatAfter } from "./repeats";
 import { providerOf } from "./providers";
 import { AuthError, type Provider, type Published, type Secret } from "./providers/types";
 import { takesThread } from "./networks";
@@ -162,7 +163,15 @@ export const supabaseStore: Store = {
       ...(type === "post.published" ? { url: extra.url ?? null } : { error: extra.error ?? null }),
     });
   },
-  settle: settlePost,
+  async settle(postId) {
+    await settlePost(postId);
+    // A repeating post that's done schedules its next copy. Never holds up publishing.
+    try {
+      await repeatAfter(postId);
+    } catch (e) {
+      console.error("repeat:", postId, e instanceof Error ? e.message : e);
+    }
+  },
   async secret(channelId, p) {
     const s = await readSecret(channelId);
     if (p.refresh && canRefresh(p, s) && s.expiresAt && s.expiresAt.getTime() < Date.now() + 5 * 60000) {

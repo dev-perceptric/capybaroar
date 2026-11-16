@@ -12,6 +12,8 @@ import { mayUseBrand } from "./brands";
 import { sendReviewMail } from "./alerts";
 import { sendsToReview } from "./publisher";
 import { assertCampaign } from "./campaigns";
+import { assertTags } from "./tags";
+import { isRepeat, type Repeat } from "./repeat";
 import { emit } from "./webhooks";
 import type { Role } from "./session";
 
@@ -32,9 +34,9 @@ export type TargetRow = {
   parts: { id: string; url: string | null }[];
 };
 /** `thread`: the parts after the first, as stored. */
-export type PostRow = { id: string; text: string; media_ids: string[]; thread: StoredPart[]; status: PostStatus; publish_at: string | null; brand_id: string | null; campaign_id: string | null; post_targets: TargetRow[] };
+export type PostRow = { id: string; text: string; media_ids: string[]; thread: StoredPart[]; status: PostStatus; publish_at: string | null; brand_id: string | null; campaign_id: string | null; tag_ids?: string[]; repeat?: Repeat | null; post_targets: TargetRow[] };
 
-const COLS = "id, text, media_ids, thread, status, publish_at, brand_id, campaign_id, post_targets(id, channel_id, status, text, settings, url, error, note, deleted_at, parts)";
+const COLS = "id, text, media_ids, thread, status, publish_at, brand_id, campaign_id, tag_ids, repeat, post_targets(id, channel_id, status, text, settings, url, error, note, deleted_at, parts)";
 
 /** Posts in a time range; `scope` keeps only these brands' (null: every post). Posts deleted everywhere are left out. */
 export async function postsBetween(workspaceId: string, from: Date, to: Date, scope: string[] | null = null): Promise<PostRow[]> {
@@ -70,6 +72,10 @@ export type SaveInput = {
   thread?: ThreadPart[];
   /** The campaign it belongs to. Leaving it out keeps the post's campaign; null takes it out. */
   campaignId?: string | null;
+  /** Its tags. Leaving it out keeps the post's tags. */
+  tagIds?: string[];
+  /** How often it goes out again (repeat.ts). Leaving it out keeps the post's; null stops it. */
+  repeat?: Repeat | null;
 };
 
 const EDITABLE: PostStatus[] = ["draft", "review", "scheduled", "failed"];
@@ -151,10 +157,10 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   const sending = input.mode !== "draft";
   input = { ...input, thread: cleanThread(input.thread) };
   const db = adminClient();
-  type Cur = { status: PostStatus; brand_id: string | null; campaign_id: string | null };
+  type Cur = { status: PostStatus; brand_id: string | null; campaign_id: string | null; tag_ids: string[] | null; repeat: Repeat | null };
   let cur: Cur | null = null;
   if (input.id) {
-    const { data } = await db.from("posts").select("status, brand_id, campaign_id").eq("id", input.id).eq("workspace_id", workspaceId).maybeSingle();
+    const { data } = await db.from("posts").select("status, brand_id, campaign_id, tag_ids, repeat").eq("id", input.id).eq("workspace_id", workspaceId).maybeSingle();
     if (!data || (actor && !mayUseBrand(actor, data.brand_id as string | null))) throw new Error("Post not found");
     cur = data as Cur;
     if (!EDITABLE.includes(cur.status)) throw new Error("This post already went out");
@@ -170,6 +176,9 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
   if (actor && !mayUseBrand(actor, brandId)) throw new Error("You can't post to this brand");
   const campaignId = input.campaignId === undefined ? (cur?.campaign_id ?? null) : input.campaignId;
   if (campaignId) await assertCampaign(workspaceId, campaignId, brandId);
+  const tagIds = input.tagIds === undefined ? (cur?.tag_ids ?? []) : await assertTags(workspaceId, input.tagIds);
+  const repeat = input.repeat === undefined ? (cur?.repeat ?? null) : input.repeat;
+  if (repeat !== null && !isRepeat(repeat)) throw new Error("Pick how often it repeats");
   if (sending) await assertCanSchedule(workspaceId, input.id);
   // Sending checks this in validate; a draft checks it here.
   if (!sending && input.mediaIds.length && (await mediaInfo(workspaceId, input.mediaIds)).some((m) => m.mime.startsWith("audio/"))) throw new Error("Audio can't go on a post on its own. Use a picture or a video.");
@@ -181,7 +190,7 @@ export async function savePost(workspaceId: string, userId: string, input: SaveI
     if (!at) throw new Error("Pick a time");
     await validate(workspaceId, input, input.mode === "now" ? new Date(Date.now() + 60000) : at, channels);
   }
-  const row = { workspace_id: workspaceId, brand_id: brandId, text: input.text.trim(), media_ids: input.mediaIds, thread: storedThread(input.thread ?? []), campaign_id: campaignId, status, publish_at: at?.toISOString() ?? null, updated_at: new Date().toISOString(), ...(review ? { submitted_by: userId } : {}) };
+  const row = { workspace_id: workspaceId, brand_id: brandId, text: input.text.trim(), media_ids: input.mediaIds, thread: storedThread(input.thread ?? []), campaign_id: campaignId, tag_ids: tagIds, repeat, status, publish_at: at?.toISOString() ?? null, updated_at: new Date().toISOString(), ...(review ? { submitted_by: userId } : {}) };
   let id = input.id;
   if (id) {
     await cancelPostJobs(id);
@@ -264,19 +273,24 @@ export async function reschedulePost(workspaceId: string, id: string, publishAt:
   }
 }
 
-/** Copy a post as a draft a day later, or (`queue`) into the queue's next free slot. */
-export async function duplicatePost(workspaceId: string, userId: string, id: string, actor?: Actor, mode: "draft" | "queue" = "draft"): Promise<{ id: string; status: PostStatus }> {
+/**
+ * Copy a post as a draft a day later, into the queue's next free slot (`queue`), or (`schedule`) at `opts.at`. The copy
+ * keeps the tags; it repeats only when `opts.repeat` says so (a repeat moves on to its next copy, repeats.ts).
+ */
+export async function duplicatePost(workspaceId: string, userId: string, id: string, actor?: Actor, mode: "draft" | "queue" | "schedule" = "draft", opts: { at?: Date; repeat?: Repeat | null } = {}): Promise<{ id: string; status: PostStatus }> {
   const db = adminClient();
   const { data: p } = await db.from("posts").select(COLS).eq("id", id).eq("workspace_id", workspaceId).single();
   if (!p) throw new Error("Post not found");
   const src = p as PostRow;
   const base = src.publish_at ? new Date(src.publish_at) : new Date();
-  const at = new Date(Math.max(base.getTime(), Date.now()) + 86400000);
+  const at = opts.at ?? new Date(Math.max(base.getTime(), Date.now()) + 86400000);
   return savePost(workspaceId, userId, {
     text: src.text,
     mediaIds: src.media_ids,
     thread: threadOf(src.thread),
     campaignId: src.campaign_id,
+    tagIds: src.tag_ids ?? [],
+    repeat: opts.repeat ?? null,
     targets: src.post_targets.map((t) => ({ channelId: t.channel_id, text: t.text, settings: t.settings ?? {} })),
     publishAt: at.toISOString(),
     mode,

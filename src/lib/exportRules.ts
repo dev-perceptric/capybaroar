@@ -49,7 +49,7 @@ export type TableSpec = {
   scope: Scope;
 };
 
-const POST = ["id", "workspace_id", "brand_id", "campaign_id", "created_by", "submitted_by", "text", "thread", "media_ids", "status", "publish_at", "created_at", "updated_at"];
+const POST = ["id", "workspace_id", "brand_id", "campaign_id", "tag_ids", "repeat", "created_by", "submitted_by", "text", "thread", "media_ids", "status", "publish_at", "created_at", "updated_at"];
 const AUDIT = ["id", "workspace_id", "actor_id", "actor_kind", "actor_label", "action", "target_type", "target_id", "target_label", "meta", "created_at"];
 const COMMENT = ["id", "post_id", "workspace_id", "author", "author_name", "kind", "body", "created_at"];
 const GRANT = ["id", "client_id", "workspace_id", "user_id", "created_at", "last_used_at", "revoked_at"];
@@ -64,9 +64,10 @@ export const WORKSPACE_TABLES: TableSpec[] = [
   { table: "members", columns: ["workspace_id", "user_id", "role", "brand_ids", "created_at"], order: ["user_id"], scope: ws() },
   { table: "invites", columns: ["id", "workspace_id", "email", "role", "brand_ids", "invited_by", "expires_at", "accepted_at", "accepted_by", "created_at"], order: ["id"], scope: ws() },
   { table: "review_links", columns: ["brand_id", "workspace_id", "created_by", "created_at"], order: ["brand_id"], scope: ws() },
-  { table: "channels", columns: ["id", "workspace_id", "brand_id", "network", "account_id", "name", "username", "avatar", "status", "created_at"], order: ["id"], scope: ws() },
+  { table: "channels", columns: ["id", "workspace_id", "brand_id", "network", "account_id", "name", "nickname", "username", "avatar", "status", "queue", "created_at"], order: ["id"], scope: ws() },
   { table: "channel_groups", columns: ["id", "workspace_id", "brand_id", "name", "channel_ids", "created_by", "created_at"], order: ["id"], scope: ws() },
   { table: "campaigns", columns: ["id", "workspace_id", "brand_id", "name", "tone", "created_by", "created_at"], order: ["id"], scope: ws() },
+  { table: "tags", columns: ["id", "workspace_id", "name", "tone", "created_by", "created_at"], order: ["id"], scope: ws() },
   { table: "posts", columns: POST, order: ["id"], scope: ws() },
   { table: "post_targets", columns: ["id", "post_id", "workspace_id", "channel_id", "status", "remote_id", "url", "error", "note", "text", "settings", "parts", "published_at", "deleted_at"], order: ["id"], scope: ws() },
   { table: "post_comments", columns: COMMENT, order: ["id"], scope: ws() },
@@ -319,7 +320,7 @@ export function readme(kind: ExportKind, o: { at: Date; files: { name: string; r
     lines.push(
       "workspace.json      The workspace: name, time zone, posting times, plan.",
       "members.json        People: name, email, role and brands. invites.json holds invites not yet accepted.",
-      "brands.json, channels.json, channel_groups.json, campaigns.json  How the workspace is set up. Channels never",
+      "brands.json, channels.json, channel_groups.json, campaigns.json, tags.json  How the workspace is set up. Channels never",
       "                    include their sign-in tokens.",
       "posts.json          Every post; post_targets.json is each post on each channel, with its link once published.",
       "post_comments.json, evergreen.json  Comments and approvals; evergreen repeats.",

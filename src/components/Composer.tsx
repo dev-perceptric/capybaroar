@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { CalendarClock, Check, ChevronDown, Copy, Crop, Send, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { CalendarClock, Check, ChevronDown, Tag as TagIcon, Copy, Crop, Send, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
@@ -23,8 +23,11 @@ import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow, TargetResult } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, loadResults, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, loadResults, newCampaign, newTag, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
 import type { Campaign } from "@/lib/campaignRules";
+import type { Tag } from "@/lib/tagRules";
+import { REPEATS, type Repeat } from "@/lib/repeat";
+import { fromWall, toWall, zoneName } from "@/lib/viewZone";
 import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
 import { Floating } from "./Floating";
 import { fmtDateTime } from "@/lib/format";
@@ -54,7 +57,7 @@ const nextHour = () => {
 };
 const initialSettings = (c: Channel) => Object.fromEntries((networkOf(c.network).fields ?? []).filter((f) => f.initial).map((f) => [f.key, f.initial!]));
 const count = (s: string) => [...s].length;
-type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string; thread?: ThreadPart[]; campaignId?: string | null };
+type Snapshot = { text: string; targets: Record<string, Target>; mediaIds: string[]; when: string; thread?: ThreadPart[]; campaignId?: string | null; tagIds?: string[]; repeat?: Repeat | null };
 const noSub = () => () => {};
 const readLocal = (key: string) => {
   try {
@@ -76,19 +79,21 @@ const writeLocal = (key: string, v: string | null) => {
     /* private window: no autosave */
   }
 };
-/** The next time this weekday and hour comes around (browser time, which matches the workspace for most people). */
-const nextAt = (day: number, hour: number) => {
-  const d = new Date();
+/** The next time this weekday and hour comes around, on the clock the times show in (`zone`, or the computer's). */
+const nextAt = (day: number, hour: number, zone: string | null = null) => {
+  const d = toWall(new Date(), zone);
+  const now = d.getTime();
   d.setMinutes(0, 0, 0);
   d.setHours(hour);
   let add = (day - d.getDay() + 7) % 7;
-  if (add === 0 && d.getTime() <= Date.now()) add = 7;
+  if (add === 0 && d.getTime() <= now) add = 7;
   d.setDate(d.getDate() + add);
-  return d;
+  return fromWall(d, zone);
 };
 
 /** Write a post once, change it per channel, see it on a phone and a desktop, pick when it goes out. Full screen. */
-export function Composer({ channels, at, post, preset, access = { write: true, approve: false }, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; access?: Access; onClose: () => void; onSaved: () => void }) {
+/** `zone`: the time zone times show and are picked in (the calendar's choice); none is this computer's. */
+export function Composer({ channels, at, post, preset, zone = null, access = { write: true, approve: false }, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; zone?: string | null; access?: Access; onClose: () => void; onSaved: () => void }) {
   const locked = !access.write || (post ? !["draft", "review", "scheduled", "failed"].includes(post.status) : false);
   const inReview = post?.status === "review";
   // A post that went out is deleted on its networks (or only here) from its own dialog.
@@ -114,7 +119,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [thread, setThread] = useState<ThreadPart[]>(() => threadOf(post?.thread));
   const [campaignId, setCampaignId] = useState<string | null>(post?.campaign_id ?? null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [when, setWhen] = useState(() => localValue(post?.publish_at ? new Date(post.publish_at) : (at ?? nextHour())));
+  const [tagIds, setTagIds] = useState<string[]>(post?.tag_ids ?? []);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [repeat, setRepeat] = useState<Repeat | null>(post?.repeat ?? null);
+  // The time box reads the picked zone's clock; `wallValue` and `realOf` turn instants into its value and back.
+  const wallValue = (d: Date) => localValue(toWall(d, zone));
+  const realOf = (v: string) => fromWall(new Date(v), zone);
+  const [when, setWhen] = useState(() => wallValue(post?.publish_at ? new Date(post.publish_at) : (at ?? nextHour())));
   const [tab, setTab] = useState<string>("all");
   const [view, setView] = useState<string>("");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
@@ -136,7 +147,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
 
   // Autosave on this device: every change is kept, and offered back the next time this post opens.
   const draftKey = `capybaroar:compose:${post?.id ?? "new"}`;
-  const snap: Snapshot = { text, targets, mediaIds, when, thread, campaignId };
+  const snap: Snapshot = { text, targets, mediaIds, when, thread, campaignId, tagIds, repeat };
   const snapJson = JSON.stringify(snap);
   const [first] = useState(snapJson);
   const dirty = snapJson !== first;
@@ -165,6 +176,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     setMediaIds(restorable.mediaIds);
     setThread(restorable.thread ?? []);
     if (restorable.campaignId !== undefined) setCampaignId(restorable.campaignId);
+    if (restorable.tagIds) setTagIds(restorable.tagIds);
+    if (restorable.repeat !== undefined) setRepeat(restorable.repeat);
     setWhen(restorable.when);
     setRestoreSeen(true);
   };
@@ -204,6 +217,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         setKits(d.kits ?? {});
         setLibrary((d.media ?? []) as Media[]);
         setCampaigns(d.campaigns ?? []);
+        setTags(d.tags ?? []);
         setAi(!!d.ai);
       },
       () => {
@@ -368,8 +382,10 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         mediaIds,
         thread,
         campaignId,
+        tagIds,
+        repeat,
         targets: picked.map((c) => ({ channelId: c.id, text: targets[c.id].text, settings: targets[c.id].settings })),
-        publishAt: when ? new Date(when).toISOString() : null,
+        publishAt: when ? realOf(when).toISOString() : null,
         mode,
       });
       if (r.error) setError(r.error);
@@ -419,6 +435,14 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     if (r.error || !r.campaign) return setError(r.error ?? "Couldn't make the campaign");
     setCampaigns((all) => [...all, r.campaign!]);
     setCampaignId(r.campaign.id);
+  };
+  const addTag = async () => {
+    const name = await askText("New tag", { placeholder: "Behind the scenes", ok: "Create" });
+    if (!name?.trim()) return;
+    const r = await newTag(name);
+    if (r.error || !r.tag) return setError(r.error ?? "Couldn't make the tag");
+    setTags((all) => [...all, r.tag!]);
+    setTagIds((ids) => [...ids, r.tag!.id]);
   };
   const del = async () => {
     if (!post || !(await askConfirm("Delete this post?", { ok: "Delete", danger: true }))) return;
@@ -1023,11 +1047,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
           <footer className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-t border-line bg-paper px-4 py-3">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               <input type="datetime-local" aria-label="Publish time" value={when} onChange={(e) => setWhen(e.target.value)} className={`${inputLook} w-[210px] max-w-full`} />
+              {zone ? <span className="text-[12px] text-muted">{zoneName(zone)}</span> : null}
               {(best.length ? best : shown ? (popular[shown.network] ?? []) : []).map((b) => {
-                const at = nextAt(b.day, b.hour);
+                const at = nextAt(b.day, b.hour, zone);
+                const w = toWall(at, zone);
                 return (
-                  <Chip key={`${b.day}${b.hour}`} size="sm" title={best.length ? "One of your best times" : `Popular on ${networkOf(shown!.network).name}`} on={when === localValue(at)} onClick={() => setWhen(localValue(at))}>
-                    {at.toLocaleDateString("en-US", { weekday: "short" })} {at.toLocaleTimeString("en-US", { hour: "numeric" })}
+                  <Chip key={`${b.day}${b.hour}`} size="sm" title={best.length ? "One of your best times" : `Popular on ${networkOf(shown!.network).name}`} on={when === wallValue(at)} onClick={() => setWhen(wallValue(at))}>
+                    {w.toLocaleDateString("en-US", { weekday: "short" })} {w.toLocaleTimeString("en-US", { hour: "numeric" })}
                   </Chip>
                 );
               })}
@@ -1043,6 +1069,31 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
                 ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })),
                 { value: NEW_CAMPAIGN, label: "New campaign" },
               ]}
+            />
+            <span className="flex items-center gap-1">
+              {tags.length ? (
+                <MultiSelect<string>
+                  values={tagIds}
+                  onChange={setTagIds}
+                  options={tags.map((t) => ({ value: t.id, label: t.name, dot: `var(--color-tone-${t.tone})` }))}
+                  noun={["tag", "tags"]}
+                  ariaLabel="Tags"
+                  placeholder="Tags"
+                  allowAll={false}
+                  className="w-40"
+                />
+              ) : null}
+              <IconButton label="New tag" onClick={() => void addTag()}>
+                <TagIcon size={14} />
+              </IconButton>
+            </span>
+            <Select<Repeat | "">
+              size="sm"
+              lead="Repeat"
+              ariaLabel="Repeat"
+              value={repeat ?? ""}
+              onChange={(v) => setRepeat(v || null)}
+              options={[{ value: "", label: "Never" }, ...(Object.keys(REPEATS) as Repeat[]).map((r) => ({ value: r, label: REPEATS[r].label }))]}
             />
             <span role={error ? "alert" : undefined} className="min-w-0 flex-1 truncate text-[12px]">
               {making ? <Loader /> : error ? <span className="text-danger">{error}</span> : problems.length ? <span className="text-warning">{problems[0]}</span> : avoided.length ? <span className="text-warning">Words to avoid: {avoided.join(", ")}</span> : null}

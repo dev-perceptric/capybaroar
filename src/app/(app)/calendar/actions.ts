@@ -162,7 +162,8 @@ export async function composerData() {
   const ctx = await getCtx();
   const { suggestedTimes } = await import("@/lib/analytics");
   const { listCampaigns } = await import("@/lib/campaigns");
-  const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
+  const { listTags } = await import("@/lib/tags");
+  const [best, media, campaigns, tags] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }), listCampaigns(ctx.workspaceId, ctx.brandIds), listTags(ctx.workspaceId)]);
   const { aiReady } = await import("@/lib/generations");
   // Without enough results of its own, the workspace sees each network's popular hours across Capybaroar.
   const own = best.status === "fulfilled" ? best.value : [];
@@ -171,7 +172,7 @@ export async function composerData() {
   const kits = await brandKits(ctx.workspaceId)
     .then((all) => Object.fromEntries(Object.entries(all).filter(([id]) => !ctx.brandIds || ctx.brandIds.includes(id))))
     .catch(() => ({}));
-  return { best: best.status === "fulfilled" ? best.value : null, popular, kits, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
+  return { best: best.status === "fulfilled" ? best.value : null, popular, kits, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], tags: tags.status === "fulfilled" ? tags.value : [], ai: aiReady() };
 }
 
 /** The workspace's 3 best slots, from its own results (empty until there's enough data). */
@@ -272,6 +273,59 @@ export async function removeChannelGroup(id: string): Promise<{ error?: string }
 }
 
 // Campaigns (campaigns.ts): listed with their counts, made from the composer, renamed and deleted from the calendar.
+
+// Tags (tags.ts): the whole workspace's. Anyone who writes posts can make, rename and delete them.
+
+export async function loadTags() {
+  const ctx = await getCtx();
+  const { listTags } = await import("@/lib/tags");
+  return listTags(ctx.workspaceId);
+}
+
+export async function newTag(name: string): Promise<{ error?: string; tag?: import("@/lib/tagRules").Tag }> {
+  try {
+    const ctx = await writerCtx();
+    const { createTag } = await import("@/lib/tags");
+    return { tag: await createTag(ctx.workspaceId, ctx.userId, { name }) };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function editTag(id: string, change: { name?: string; tone?: string }): Promise<{ error?: string }> {
+  try {
+    const ctx = await writerCtx();
+    const { updateTag } = await import("@/lib/tags");
+    await updateTag(ctx.workspaceId, id, change);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+export async function removeTag(id: string): Promise<{ error?: string }> {
+  try {
+    const ctx = await writerCtx();
+    const { deleteTag } = await import("@/lib/tags");
+    await deleteTag(ctx.workspaceId, id);
+    return {};
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** A published post dragged to a new time: a copy goes out then. */
+export async function postAgainAt(id: string, publishAt: string): Promise<{ error?: string; id?: string }> {
+  try {
+    const { ctx, actor: a } = await actor();
+    await assertPostAccess(ctx.workspaceId, id, ctx.brandIds);
+    const at = new Date(publishAt);
+    if (!Number.isFinite(at.getTime()) || at.getTime() < Date.now()) throw new Error("Pick a time that hasn't passed");
+    return await duplicatePost(ctx.workspaceId, ctx.userId, id, a, "schedule", { at });
+  } catch (e) {
+    return fail(e);
+  }
+}
 
 export async function loadCampaigns() {
   const b = await getBrandCtx();

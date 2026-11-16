@@ -47,6 +47,16 @@ export function Select<T extends string | number>({
   const button = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLUListElement>(null);
   const current = options.find((o) => o.value === value);
+  // Type to jump: letters typed within a moment of each other find the first option that starts with them.
+  const typed = useRef({ text: "", at: 0 });
+  const jump = (key: string) => {
+    const now = Date.now();
+    const text = (now - typed.current.at < 700 ? typed.current.text : "") + key.toLowerCase();
+    typed.current = { text, at: now };
+    const i = options.findIndex((o) => o.label.toLowerCase().startsWith(text));
+    const j = i >= 0 ? i : options.findIndex((o) => o.label.toLowerCase().includes(text));
+    if (j >= 0) setActive(j);
+  };
 
   const close = (focus = true) => {
     setOpen(false);
@@ -119,9 +129,12 @@ export function Select<T extends string | number>({
             } else if (e.key === "ArrowUp") {
               e.preventDefault();
               setActive((a) => Math.max(0, a - 1));
-            } else if (e.key === "Enter" || e.key === " ") {
+            } else if (e.key === "Enter" || (e.key === " " && Date.now() - typed.current.at > 700)) {
               e.preventDefault();
               pickAt(active);
+            } else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+              e.preventDefault();
+              jump(e.key);
             }
           }
         }}

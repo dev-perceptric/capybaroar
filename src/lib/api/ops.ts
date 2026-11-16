@@ -4,6 +4,7 @@ import { listChannels, type Channel } from "../channels";
 import { networkOf } from "../networks";
 import { threadOf } from "../thread";
 import { campaignCounts, listCampaigns } from "../campaigns";
+import { listTags } from "../tags";
 import { nextBestTime } from "../queue";
 import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePost, type PostRow, type SaveInput } from "../posts";
 import { listMedia, mediaThumbs } from "../media";
@@ -64,6 +65,8 @@ export function toPost(p: PostRow): ApiPost {
     media_ids: p.media_ids ?? [],
     thread: (p.thread ?? []).map((t) => ({ text: t.text, media_ids: t.media_ids ?? [], delay_minutes: t.delay ?? 0 })),
     campaign_id: p.campaign_id ?? null,
+    tag_ids: p.tag_ids ?? [],
+    repeat: p.repeat ?? null,
     channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error, deleted_at: t.deleted_at ?? null, thread_urls: (t.parts ?? []).map((x) => x.url) })),
   };
 }
@@ -187,6 +190,9 @@ function opsFor(ctx: ApiCtx): Ops {
       const counts = await campaignCounts(ctx.workspaceId, all.map((c) => c.id));
       return all.map((c) => ({ id: c.id, name: c.name, color: c.tone, brand_id: c.brand_id, ...(counts[c.id] ?? { scheduled: 0, published: 0, failed: 0, drafts: 0, engagements: 0 }) }));
     },
+    async tags() {
+      return (await listTags(ctx.workspaceId)).map((t) => ({ id: t.id, name: t.name, color: t.tone }));
+    },
     async posts(from, to, brandId) {
       return (await postsBetween(ctx.workspaceId, from, to, scopeFor(brandId))).map(toPost);
     },
@@ -195,7 +201,7 @@ function opsFor(ctx: ApiCtx): Ops {
     },
     async create(f) {
       f = await resolveBest(f);
-      return save({ text: f.text ?? "", mediaIds: f.mediaIds ?? [], thread: f.thread ?? [], campaignId: f.campaignId ?? null, targets: targetsOf(f.channelIds, f), publishAt: f.publishAt ?? null, mode: f.mode });
+      return save({ text: f.text ?? "", mediaIds: f.mediaIds ?? [], thread: f.thread ?? [], campaignId: f.campaignId ?? null, tagIds: f.tagIds ?? [], repeat: f.repeat ?? null, targets: targetsOf(f.channelIds, f), publishAt: f.publishAt ?? null, mode: f.mode });
     },
     async update(id, f) {
       f = await resolveBest(f);
@@ -205,7 +211,7 @@ function opsFor(ctx: ApiCtx): Ops {
       const publishAt = f.publishAt !== undefined ? f.publishAt : cur.publish_at;
       if ((mode === "draft" || mode === "schedule") && !publishAt) throw new ApiError(400, "invalid_request", `publish_at is required when mode is ${mode}`);
       const channelIds = f.channelIds ?? cur.post_targets.map((t) => t.channel_id);
-      return save({ id, text: f.text ?? cur.text, mediaIds: f.mediaIds ?? cur.media_ids ?? [], thread: f.thread ?? threadOf(cur.thread), campaignId: f.campaignId, targets: targetsOf(channelIds, f, cur), publishAt, mode });
+      return save({ id, text: f.text ?? cur.text, mediaIds: f.mediaIds ?? cur.media_ids ?? [], thread: f.thread ?? threadOf(cur.thread), campaignId: f.campaignId, tagIds: f.tagIds, repeat: f.repeat, targets: targetsOf(channelIds, f, cur), publishAt, mode });
     },
     async remove(id) {
       const cur = await load(id);

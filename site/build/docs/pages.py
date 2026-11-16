@@ -88,6 +88,7 @@ PAGES = [
 <li><b>Check the preview.</b> The right side shows how the post will look on each network. Click a video to play it.</li>
 <li><b>Choose when it goes out.</b>
 <ul><li><b>Schedule:</b> pick a date and time. On a post that's already scheduled the button says <b>Update</b>.</li><li><b>Add to queue:</b> in the menu next to Schedule. It puts the post in the next open queue time of its channels. A channel can have its own queue times: on the calendar, open the channel's menu in the Channels column and pick <b>Queue times</b>. Channels without their own use the times in Settings.</li><li><b>Post now:</b> also in that menu. It publishes right away.</li><li><b>Save draft:</b> keep it for later.</li></ul></li>
+<li><b>Tag it and repeat it (optional).</b> Add tags to group posts by topic: they show as colored dots on the calendar and you can filter by them. Pick <b>Repeat</b> to post it again at the same time every day, every few days, every week, every 2 weeks or every month. The repeats show faded on the calendar ahead of time.</li>
 </ol>
 <h2 id="after">After it posts</h2>
 <p>Open the post again from the calendar to see each channel's result. When a network gives Capybaroar the post's address, an <b>Open post</b> link shows next to that channel. If a network turns a post down, its reason shows in the same place.</p>

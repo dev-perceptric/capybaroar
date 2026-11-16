@@ -4,6 +4,8 @@ import { isIP } from "node:net";
 import { isPublicAddress } from "./net";
 import { genRequest, type GenRequest } from "../genRules";
 import { THREAD_DELAY_MAX } from "../networks";
+import { MAX_POST_TAGS } from "../tagRules";
+import { REPEATS, isRepeat, type Repeat } from "../repeat";
 
 export class ApiError extends Error {
   constructor(
@@ -35,6 +37,10 @@ export type PostFields = {
   thread?: { text: string; mediaIds: string[]; delay?: number }[];
   /** The campaign, or null to take the post out of its campaign. */
   campaignId?: string | null;
+  /** Its tags (all of them; an empty list takes them off). */
+  tagIds?: string[];
+  /** How often it goes out again, or null to stop. */
+  repeat?: Repeat | null;
 };
 
 export const MAX_TEXT = 70000;
@@ -121,7 +127,7 @@ function settingsMap(v: unknown): Record<string, Record<string, string>> {
 /** A post to create (`partial` false) or the fields to change on one (`partial` true). */
 export function postFields(body: unknown, partial: boolean): PostFields {
   if (!isObject(body)) throw bad("Send a JSON object");
-  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings", "thread", "campaign_id"]);
+  const known = new Set(["text", "channel_ids", "media_ids", "publish_at", "mode", "channel_text", "settings", "thread", "campaign_id", "tag_ids", "repeat"]);
   for (const k of Object.keys(body)) if (!known.has(k) && !(partial && k === "id")) throw bad(`Unknown field "${k}"`);
   const out: PostFields = {};
   if (body.text !== undefined) {
@@ -143,6 +149,11 @@ export function postFields(body: unknown, partial: boolean): PostFields {
   if (body.settings !== undefined) out.settings = settingsMap(body.settings);
   if (body.thread !== undefined) out.thread = threadParts(body.thread);
   if (body.campaign_id !== undefined) out.campaignId = body.campaign_id === null ? null : id(body.campaign_id, "campaign_id");
+  if (body.tag_ids !== undefined) out.tagIds = ids(body.tag_ids, "tag_ids", MAX_POST_TAGS);
+  if (body.repeat !== undefined) {
+    if (body.repeat !== null && !isRepeat(body.repeat)) throw bad(`repeat must be one of ${Object.keys(REPEATS).join(", ")}, or null`);
+    out.repeat = body.repeat as Repeat | null;
+  }
   if (!partial) {
     if (!out.channelIds) throw bad("channel_ids is required");
     out.mode ??= "draft";

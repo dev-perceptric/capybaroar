@@ -10,5 +10,5 @@ export default async function CalendarPage() {
   // The week opens with its posts, instead of asking for them after the page shows.
   const [channels, initial] = await Promise.all([listChannels(b.workspaceId, b.scope), postsAroundNow(b.workspaceId, b.scope)]);
   if (!channels.length && b.role !== "client") redirect("/welcome");
-  return <CalendarView key={b.brand?.id ?? "all"} channels={channels} brands={b.brands.map((x) => ({ id: x.id, name: x.name }))} initial={initial} access={{ write: b.role !== "client", approve: canApprove(b.role) }} />;
+  return <CalendarView key={b.brand?.id ?? "all"} channels={channels} brands={b.brands.map((x) => ({ id: x.id, name: x.name }))} timezone={b.timezone} initial={initial} access={{ write: b.role !== "client", approve: canApprove(b.role) }} />;
 }

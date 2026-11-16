@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 const noop = () => () => {};
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, Flag, Layers, Pencil, Plus, Repeat as RepeatIcon, Trash2 } from "lucide-react";
 import { Badge, Button, Empty, IconButton, LinkButton, Page, Segmented } from "@/components/ui";
 import { Select } from "@/components/Select";
 import { Sheet } from "@/components/Overlay";
@@ -14,7 +14,10 @@ import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
 import { ChannelRail } from "@/components/ChannelRail";
 import { nextChannelSlot } from "@/app/(app)/channels/actions";
-import { duplicate, loadCampaigns, loadPost, loadPosts, move, newCampaign, remove, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
+import { duplicate, editTag, loadCampaigns, loadPost, loadPosts, loadTags, move, newCampaign, newTag, postAgainAt, remove, removeCampaign, removeTag, renameCampaign } from "@/app/(app)/calendar/actions";
+import { TAG_TONES, type Tag } from "@/lib/tagRules";
+import { REPEATS, repeatsBetween } from "@/lib/repeat";
+import { allZones, fromWall, toWall, zoneName } from "@/lib/viewZone";
 import { askConfirm, askText, tell } from "@/components/Dialogs";
 import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
 import { fmtNum } from "@/lib/format";
@@ -41,10 +44,16 @@ const hourLabel = (h: number) => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h ===
 const clock = (d: Date) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6;
 const MOVABLE: PostRow["status"][] = ["draft", "review", "scheduled", "failed"];
+/** Published posts can be dragged too: a copy goes out at the new time. */
+const AGAIN: PostRow["status"][] = ["published", "partial"];
+/** A post as the calendar draws it. `ghostOf`: a repeat still to come, drawn ahead of time from this post. */
+type CalPost = PostRow & { ghostOf?: string };
+/** The workspace's tags by id, for the cards' colors. */
+const TagsCtx = createContext<Map<string, Tag>>(new Map());
 /** Posts a card can delete at once: nothing went out yet. Published posts are deleted from the composer, per network. */
 const DELETABLE: PostRow["status"][] = ["draft", "review", "scheduled", "failed"];
 /** What a card offers on hover. */
-type CardActions = { duplicate?: (p: PostRow) => void; remove?: (p: PostRow) => void };
+type CardActions = { duplicate?: (p: CalPost) => void; remove?: (p: CalPost) => void };
 /** The List view's status filter. */
 type StatusPick = "all" | "scheduled" | "draft" | "review" | "published" | "failed";
 const STATUS_OF: Record<Exclude<StatusPick, "all">, PostRow["status"][]> = { scheduled: ["scheduled", "publishing"], draft: ["draft"], review: ["review"], published: ["published", "partial"], failed: ["failed"] };
@@ -59,22 +68,45 @@ type Initial = { from: string; to: string; posts: PostRow[] };
 let usedSeed = "";
 
 const RAIL_KEY = "cb_cal_rail";
+const ZONE_KEY = "cb_cal_zone";
 
-export function CalendarView({ channels, brands = [], initial, access }: { channels: Channel[]; brands?: { id: string; name: string }[]; initial?: Initial; access: Access }) {
+/** `timezone`: the workspace's, which repeats keep their time in. */
+export function CalendarView({ channels, brands = [], timezone = "UTC", initial, access }: { channels: Channel[]; brands?: { id: string; name: string }[]; timezone?: string; initial?: Initial; access: Access }) {
   const startNew = useSearchParams().has("new") && access.write;
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [compose, setCompose] = useState<{ at?: Date; post?: PostRow; preset?: string } | null>(() => (startNew ? {} : null));
   // The channels column folds to pictures; kept per browser.
   const [folded, setFolded] = useState(false);
+  // The time zone times show in: null is this computer's. Kept per browser.
+  const [zone, setZoneState] = useState<string | null>(null);
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- read once after the first paint, so the server and browser render the same
       setFolded(localStorage.getItem(RAIL_KEY) === "1");
+      const z = localStorage.getItem(ZONE_KEY);
+      if (z && allZones().includes(z)) setZoneState(z);
     } catch {
       // no saved choice
     }
   }, []);
+  const setZone = (z: string | null) => {
+    setZoneState(z);
+    setAnchor(toWall(new Date(), z));
+    try {
+      if (z) localStorage.setItem(ZONE_KEY, z);
+      else localStorage.removeItem(ZONE_KEY);
+    } catch {
+      // kept for this visit only
+    }
+  };
+  const [tags, setTags] = useState<Tag[]>([]);
+  const reloadTags = useCallback(() => {
+    loadTags().then(setTags, () => setTags([]));
+  }, []);
+  useEffect(() => reloadTags(), [reloadTags]);
+  const tagMap = useMemo(() => new Map(tags.map((t) => [t.id, t])), [tags]);
+  const [tag, setTag] = useState<string>("all");
   const fold = (v: boolean) => {
     setFolded(v);
     try {
@@ -94,6 +126,7 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
   const [status, setStatus] = useState<StatusPick>("all");
   const [campaigns, setCampaigns] = useState<(Campaign & { counts: CampaignCounts })[]>([]);
   const [campaignSheet, setCampaignSheet] = useState(false);
+  const [sheetTab, setSheetTab] = useState<"campaigns" | "tags">("campaigns");
   const reloadCampaigns = useCallback(() => {
     loadCampaigns().then(setCampaigns, () => setCampaigns([]));
   }, []);
@@ -111,9 +144,11 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
     const from = mode === "week" ? startOfWeek(anchor) : startOfWeek(new Date(anchor.getFullYear(), anchor.getMonth(), 1));
     return { from, to: new Date(from.getTime() + (mode === "week" ? 7 : 42) * DAY) };
   }, [mode, anchor]);
+  // The range on screen is on the picked zone's clock: load a day more on each side to cover any zone.
+  const loadRange = useMemo(() => ({ from: new Date(range.from.getTime() - DAY), to: new Date(range.to.getTime() + DAY) }), [range]);
   const reload = useCallback(() => {
-    loadPosts(range.from.toISOString(), range.to.toISOString()).then(setPosts, () => setPosts([]));
-  }, [range]);
+    loadPosts(loadRange.from.toISOString(), loadRange.to.toISOString()).then(setPosts, () => setPosts([]));
+  }, [loadRange]);
   // The first range comes with the page when the server's covers it; after that, load on every change.
   const seeded = useRef(initial ? { key: initial.from, from: Date.parse(initial.from), to: Date.parse(initial.to) } : null);
   useEffect(() => {
@@ -143,51 +178,78 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
     return () => clearInterval(t);
   }, []);
 
+  // Repeats still to come, drawn ahead from the newest copy (which holds the repeat), at its time in the workspace's zone.
+  const ghosts = useMemo((): CalPost[] => {
+    if (!ready) return [];
+    return posts.flatMap((p) =>
+      p.repeat && p.publish_at && (p.status === "scheduled" || p.status === "review")
+        ? repeatsBetween(new Date(p.publish_at), p.repeat, timezone, loadRange.from, loadRange.to).map((at, i) => ({ ...p, id: `${p.id}~${i}`, ghostOf: p.id, publish_at: at.toISOString() }))
+        : [],
+    );
+  }, [posts, loadRange, timezone, ready]);
+  // Every post with its time on the picked zone's clock.
+  const wallPosts = useMemo((): CalPost[] => {
+    const all: CalPost[] = [...posts, ...ghosts];
+    return zone ? all.map((p) => (p.publish_at ? { ...p, publish_at: toWall(new Date(p.publish_at), zone).toISOString() } : p)) : all;
+  }, [posts, ghosts, zone]);
+  const nowWall = toWall(now, zone);
   // Only the range on screen (the server's first load is wider). Counted in the browser, where the range is known.
   const inRange = useMemo(() => {
     if (!ready) return [];
     const from = range.from.getTime();
     const to = range.to.getTime();
-    return posts.filter((p) => {
+    return wallPosts.filter((p) => {
       const t = p.publish_at ? Date.parse(p.publish_at) : NaN;
       return t >= from && t < to;
     });
-  }, [posts, range, ready]);
-  const byCampaign = campaign === "all" ? inRange : inRange.filter((p) => (campaign === "none" ? !p.campaign_id : p.campaign_id === campaign));
+  }, [wallPosts, range, ready]);
+  const byTag = tag === "all" ? inRange : inRange.filter((p) => (p.tag_ids ?? []).includes(tag));
+  const byCampaign = campaign === "all" ? byTag : byTag.filter((p) => (campaign === "none" ? !p.campaign_id : p.campaign_id === campaign));
   const byChannel = channel === "all" ? byCampaign : byCampaign.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
   const shown = mode !== "list" || status === "all" ? byChannel : byChannel.filter((p) => STATUS_OF[status].includes(p.status));
   const byId = useMemo(() => new Map(channels.map((c) => [c.id, c])), [channels]);
   const counts = useMemo(() => {
     const m = new Map<string, number>();
-    for (const p of inRange) for (const t of p.post_targets) m.set(t.channel_id, (m.get(t.channel_id) ?? 0) + 1);
+    for (const p of inRange) if (!p.ghostOf) for (const t of p.post_targets) m.set(t.channel_id, (m.get(t.channel_id) ?? 0) + 1);
     return m;
   }, [inRange]);
 
-  // Drag a draft or scheduled post to another slot. Month keeps its time of day.
+  // Drag a draft or scheduled post to another slot. Month keeps its time of day. A published post goes out again then.
   const drop = async (postId: string, at: Date, keepTime: boolean) => {
     const p = posts.find((x) => x.id === postId);
-    if (!p) return;
+    const w = wallPosts.find((x) => x.id === postId);
+    if (!p || !w) return;
     const to = new Date(at);
-    if (keepTime && p.publish_at) {
-      const old = new Date(p.publish_at);
+    if (keepTime && w.publish_at) {
+      const old = new Date(w.publish_at);
       to.setHours(old.getHours(), old.getMinutes(), 0, 0);
     }
-    setPosts((all) => all.map((x) => (x.id === postId ? { ...x, publish_at: to.toISOString() } : x)));
-    const r = await move(postId, to.toISOString());
+    const real = fromWall(to, zone);
+    if (AGAIN.includes(p.status)) {
+      if (real.getTime() < Date.now()) return tell("Pick a time that hasn't passed");
+      const when = `${to.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} at ${clock(to)}`;
+      if (!(await askConfirm("Post this again?", { ok: "Post again", body: `A copy goes out ${when}. The post that went out stays as it is.` }))) return;
+      const r = await postAgainAt(postId, real.toISOString());
+      if (r.error) await tell("Couldn't post it again", r.error);
+      return reload();
+    }
+    setPosts((all) => all.map((x) => (x.id === postId ? { ...x, publish_at: real.toISOString() } : x)));
+    const r = await move(postId, real.toISOString());
     if (r.error) await tell("Couldn't move the post", r.error);
     reload();
   };
-  const open = (p: PostRow) => setCompose({ post: p });
-  const pick = access.write ? (at: Date) => setCompose({ at }) : null;
+  // A repeat still to come opens the post it repeats.
+  const open = (p: CalPost) => setCompose({ post: posts.find((x) => x.id === (p.ghostOf ?? p.id)) ?? p });
+  const pick = access.write ? (at: Date) => setCompose({ at: fromWall(at, zone) }) : null;
   // A copy is a draft a day later, opened at once to change.
-  const copy = async (p: PostRow) => {
+  const copy = async (p: CalPost) => {
     const r = await duplicate(p.id);
     if (r.error || !r.id) return tell("Couldn't copy the post", r.error ?? "Try again");
     reload();
     const fresh = await loadPost(r.id).catch(() => null);
     if (fresh) setCompose({ post: fresh });
   };
-  const del = async (p: PostRow) => {
+  const del = async (p: CalPost) => {
     if (!(await askConfirm("Delete this post?", { ok: "Delete", danger: true, body: p.status === "draft" ? undefined : "It won't go out." }))) return;
     setPosts((all) => all.filter((x) => x.id !== p.id));
     const r = await remove(p.id);
@@ -236,7 +298,7 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
         access.write ? (
           <>
             <Button variant="ghost" onClick={() => setCampaignSheet(true)}>
-              <Flag /> Campaigns
+              <Flag /> Campaigns and tags
             </Button>
             <Button variant="ghost" onClick={() => setBulk(true)}>
               <Layers /> Bulk
@@ -250,107 +312,134 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
     >
       <div className="flex h-full min-h-0">
         {channels.length ? <ChannelRail channels={channels} brands={brands} counts={counts} total={inRange.length} picked={channel} onPick={setChannel} write={access.write} folded={folded} onFold={fold} onNewPost={(id) => void newFor(id)} /> : null}
-        <div className="min-w-0 flex-1 overflow-auto">
-          <div className={`flex min-h-full flex-col ${mode === "list" ? "" : "bg-panel"}`} style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
-            <div ref={head} data-cal-sticky className="sticky top-0 left-0 z-30 border-b border-line bg-panel">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 pt-4 pb-3">
-                <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
-                  {lead} <span className="text-faint">{tail}</span>
-                </h2>
-                <div className="flex h-[34px] items-stretch overflow-hidden rounded-full bg-panel shadow-outline">
-                  <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-9 items-center justify-center pl-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button type="button" onClick={() => setAnchor(new Date())} className="border-x border-line px-3.5 text-[13px] font-medium transition-colors hover:bg-paper">
-                    Today
-                  </button>
-                  <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-9 items-center justify-center pr-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-                <span className="flex-1" />
-                {channels.length > 1 ? (
-                  <div className="md:hidden">
-                    <Select<string>
+        <TagsCtx.Provider value={tagMap}>
+          <div className="min-w-0 flex-1 overflow-auto">
+            <div className={`flex min-h-full flex-col ${mode === "list" ? "" : "bg-panel"}`} style={{ "--cal-head": `${headH}px` } as React.CSSProperties}>
+              <div ref={head} data-cal-sticky className="sticky top-0 left-0 z-30 border-b border-line bg-panel">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 pt-4 pb-3">
+                  <h2 className="min-w-0 text-[22px] leading-none font-semibold tracking-[-0.03em] whitespace-nowrap">
+                    {lead} <span className="text-faint">{tail}</span>
+                  </h2>
+                  <div className="flex h-[34px] items-stretch overflow-hidden rounded-full bg-panel shadow-outline">
+                    <button type="button" onClick={() => step(-1)} aria-label="Previous" className="flex w-9 items-center justify-center pl-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button type="button" onClick={() => setAnchor(toWall(new Date(), zone))} className="border-x border-line px-3.5 text-[13px] font-medium transition-colors hover:bg-paper">
+                      Today
+                    </button>
+                    <button type="button" onClick={() => step(1)} aria-label="Next" className="flex w-9 items-center justify-center pr-0.5 text-muted transition-colors hover:bg-paper hover:text-ink">
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                  <span className="flex-1" />
+                  {channels.length > 1 ? (
+                    <div className="md:hidden">
+                      <Select<string>
+                        size="sm"
+                        lead="Channel"
+                        ariaLabel="Channel"
+                        className="max-w-72"
+                        value={channel}
+                        onChange={setChannel}
+                        options={[
+                          { value: "all", label: "All channels", hint: String(inRange.length) },
+                          ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
+                        ]}
+                      />
+                    </div>
+                  ) : null}
+                  {!channels.length && access.write ? (
+                    <LinkButton href="/channels" variant="ghost" size="sm">
+                      Connect a channel
+                    </LinkButton>
+                  ) : null}
+                  {mode === "list" ? (
+                    <Select<StatusPick>
                       size="sm"
-                      lead="Channel"
-                      ariaLabel="Channel"
-                      className="max-w-72"
-                      value={channel}
-                      onChange={setChannel}
+                      lead="Status"
+                      ariaLabel="Status"
+                      value={status}
+                      onChange={setStatus}
                       options={[
-                        { value: "all", label: "All channels", hint: String(inRange.length) },
-                        ...channels.map((c) => ({ value: c.id, label: c.name, icon: <NetworkLogo id={c.network} size={14} />, hint: c.status === "reconnect" ? "Reconnect" : String(counts.get(c.id) ?? 0) })),
+                        { value: "all", label: "All" },
+                        { value: "scheduled", label: "Scheduled" },
+                        { value: "draft", label: "Drafts" },
+                        { value: "review", label: "In review" },
+                        { value: "published", label: "Published" },
+                        { value: "failed", label: "Failed" },
                       ]}
                     />
-                  </div>
-                ) : null}
-                {!channels.length && access.write ? (
-                  <LinkButton href="/channels" variant="ghost" size="sm">
-                    Connect a channel
-                  </LinkButton>
-                ) : null}
-                {mode === "list" ? (
-                  <Select<StatusPick>
-                    size="sm"
-                    lead="Status"
-                    ariaLabel="Status"
-                    value={status}
-                    onChange={setStatus}
-                    options={[
-                      { value: "all", label: "All" },
-                      { value: "scheduled", label: "Scheduled" },
-                      { value: "draft", label: "Drafts" },
-                      { value: "review", label: "In review" },
-                      { value: "published", label: "Published" },
-                      { value: "failed", label: "Failed" },
-                    ]}
-                  />
-                ) : null}
-                {campaigns.length ? (
+                  ) : null}
+                  {tags.length ? (
+                    <Select<string>
+                      size="sm"
+                      lead="Tag"
+                      ariaLabel="Tag"
+                      value={tag}
+                      onChange={setTag}
+                      options={[{ value: "all", label: "All" }, ...tags.map((t) => ({ value: t.id, label: t.name, dot: `var(--color-tone-${t.tone})` }))]}
+                    />
+                  ) : null}
+                  {campaigns.length ? (
+                    <Select<string>
+                      size="sm"
+                      lead="Campaign"
+                      ariaLabel="Campaign"
+                      value={campaign}
+                      onChange={setCampaign}
+                      options={[{ value: "all", label: "All" }, ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })), { value: "none", label: "No campaign" }]}
+                    />
+                  ) : null}
                   <Select<string>
                     size="sm"
-                    lead="Campaign"
-                    ariaLabel="Campaign"
-                    value={campaign}
-                    onChange={setCampaign}
-                    options={[{ value: "all", label: "All" }, ...campaigns.map((c) => ({ value: c.id, label: c.name, dot: `var(--color-tone-${c.tone})` })), { value: "none", label: "No campaign" }]}
+                    lead="Zone"
+                    ariaLabel="Time zone"
+                    className="max-w-56"
+                    value={zone ?? ""}
+                    onChange={(v) => setZone(v || null)}
+                    options={[
+                      { value: "", label: "This computer" },
+                      ...(timezone !== "UTC" ? [{ value: timezone, label: `${zoneName(timezone)}, the workspace's` }] : []),
+                      ...allZones()
+                        .filter((z) => z !== timezone)
+                        .map((z) => ({ value: z, label: z.replace(/_/g, " ") })),
+                    ]}
                   />
-                ) : null}
-                <Segmented<Mode>
-                  label="View"
-                  value={mode}
-                  onChange={setMode}
-                  options={[
-                    { value: "day", label: "Day" },
-                    { value: "week", label: "Week" },
-                    { value: "month", label: "Month" },
-                    { value: "list", label: "List" },
-                  ]}
-                />
+                  <Segmented<Mode>
+                    label="View"
+                    value={mode}
+                    onChange={setMode}
+                    options={[
+                      { value: "day", label: "Day" },
+                      { value: "week", label: "Week" },
+                      { value: "month", label: "Month" },
+                      { value: "list", label: "List" },
+                    ]}
+                  />
+                </div>
+              </div>
+
+              <div className="min-h-0 flex-1">
+                {!ready ? null : mode === "week" || mode === "day" ? (
+                  <Week anchor={anchor} now={nowWall} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} actions={actions} single={mode === "day"} />
+                ) : mode === "month" ? (
+                  <Month
+                    anchor={anchor}
+                    now={nowWall}
+                    posts={shown}
+                    byId={byId}
+                    onOpen={open}
+                    onPick={pick}
+                    onDrop={(id, at) => drop(id, at, true)}
+                    actions={actions}
+                  />
+                ) : (
+                  <List posts={shown} byId={byId} onOpen={open} filtered={status !== "all"} />
+                )}
               </div>
             </div>
-
-            <div className="min-h-0 flex-1">
-              {!ready ? null : mode === "week" || mode === "day" ? (
-                <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} actions={actions} single={mode === "day"} />
-              ) : mode === "month" ? (
-                <Month
-                  anchor={anchor}
-                  now={now}
-                  posts={shown}
-                  byId={byId}
-                  onOpen={open}
-                  onPick={pick}
-                  onDrop={(id, at) => drop(id, at, true)}
-                  actions={actions}
-                />
-              ) : (
-                <List posts={shown} byId={byId} onOpen={open} filtered={status !== "all"} />
-              )}
-            </div>
           </div>
-        </div>
+        </TagsCtx.Provider>
       </div>
       {bulk ? (
         <BulkSheet
@@ -368,25 +457,53 @@ export function CalendarView({ channels, brands = [], initial, access }: { chann
           at={compose.at}
           post={compose.post}
           preset={compose.preset ?? (channel === "all" ? undefined : channel)}
+          zone={zone}
           access={access}
           onClose={() => setCompose(null)}
           onSaved={() => {
             setCompose(null);
             reload();
             reloadCampaigns();
+            reloadTags();
           }}
         />
       ) : null}
-      <Sheet open={campaignSheet} onClose={() => setCampaignSheet(false)} label="Campaigns" title="Campaigns" wide>
-        <CampaignList
-          campaigns={campaigns}
-          onChange={reloadCampaigns}
-          onShow={(id) => {
-            setCampaign(id);
-            setMode("list");
-            setCampaignSheet(false);
-          }}
-        />
+      <Sheet open={campaignSheet} onClose={() => setCampaignSheet(false)} label="Campaigns and tags" title="Campaigns and tags" wide>
+        <div className="px-4 pt-4">
+          <Segmented<"campaigns" | "tags">
+            label="Show"
+            value={sheetTab}
+            onChange={setSheetTab}
+            options={[
+              { value: "campaigns", label: "Campaigns", count: campaigns.length },
+              { value: "tags", label: "Tags", count: tags.length },
+            ]}
+          />
+        </div>
+        {sheetTab === "tags" ? (
+          <TagList
+            tags={tags}
+            onChange={() => {
+              reloadTags();
+              reload();
+            }}
+            onShow={(id) => {
+              setTag(id);
+              setMode("list");
+              setCampaignSheet(false);
+            }}
+          />
+        ) : (
+          <CampaignList
+            campaigns={campaigns}
+            onChange={reloadCampaigns}
+            onShow={(id) => {
+              setCampaign(id);
+              setMode("list");
+              setCampaignSheet(false);
+            }}
+          />
+        )}
       </Sheet>
     </Page>
   );
@@ -434,8 +551,12 @@ const BAR: Record<PostRow["status"], string> = {
   deleted: "bg-line-strong",
 };
 
-function PostCard({ post, byId, onOpen, actions = {}, compact = false, narrow = false, movable: canMove, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; actions?: CardActions; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
-  const movable = canMove && MOVABLE.includes(post.status);
+function PostCard({ post, byId, onOpen, actions: given = {}, compact = false, narrow = false, movable: canMove, style }: { post: CalPost; byId: Map<string, Channel>; onOpen: () => void; actions?: CardActions; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
+  const ghost = !!post.ghostOf;
+  const actions = ghost ? {} : given;
+  const movable = canMove && !ghost && (MOVABLE.includes(post.status) || AGAIN.includes(post.status));
+  const tagMap = useContext(TagsCtx);
+  const dots = (post.tag_ids ?? []).map((id) => tagMap.get(id)).filter((t): t is Tag => !!t);
   const time = post.publish_at ? clock(new Date(post.publish_at)) : "";
   const live = post.post_targets.find((t) => t.url && !t.deleted_at)?.url ?? null;
   const canDelete = !!actions.remove && DELETABLE.includes(post.status);
@@ -446,19 +567,21 @@ function PostCard({ post, byId, onOpen, actions = {}, compact = false, narrow = 
       <button
         type="button"
         onClick={onOpen}
-        title={postText(post)}
+        title={ghost && post.repeat ? `${REPEATS[post.repeat].label}: ${postText(post)}` : dots.length ? `${dots.map((t) => t.name).join(", ")}: ${postText(post)}` : postText(post)}
         draggable={movable}
         onDragStart={(e) => {
           e.dataTransfer.setData("text/x-post", post.id);
           e.dataTransfer.effectAllowed = "move";
         }}
-        className={`relative flex size-full min-w-0 overflow-hidden rounded-md border text-left transition-[background-color,box-shadow] ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-transparent bg-violet-soft" : "border-transparent bg-panel shadow-chip"} hover:bg-canvas ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
+        className={`relative flex size-full min-w-0 overflow-hidden rounded-md border text-left transition-[background-color,box-shadow] ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-transparent bg-violet-soft" : "border-transparent bg-panel shadow-chip"} hover:bg-canvas ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${ghost ? "opacity-60" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
       >
         <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[post.status]}`} />
         {compact ? (
           <span className="flex min-w-0 flex-1 items-center gap-1.5 pr-1.5 pl-2.5">
             <Faces post={post} byId={byId} size={14} />
             <span className="shrink-0 text-[11px] font-medium tabular-nums">{time}</span>
+            {ghost ? <RepeatIcon size={11} className="shrink-0 text-muted" aria-label="Repeat" /> : null}
+            {dots.length ? <TagDots tags={dots} max={2} /> : null}
             <span className={`min-w-0 truncate text-[11px] ${post.status === "draft" ? "text-muted" : ""}`}>{postText(post)}</span>
           </span>
         ) : (
@@ -466,6 +589,8 @@ function PostCard({ post, byId, onOpen, actions = {}, compact = false, narrow = 
             <span className="flex min-w-0 items-center gap-1.5">
               {narrow ? null : <Faces post={post} byId={byId} />}
               <span className="text-[11px] font-semibold whitespace-nowrap tabular-nums">{narrow ? time.replace(/ ([AP])M/, "$1").toLowerCase() : time}</span>
+              {ghost || post.repeat ? <RepeatIcon size={11} className="shrink-0 text-muted" aria-label={ghost ? "Repeat" : "Repeats"} /> : null}
+              {dots.length && !narrow ? <TagDots tags={dots} max={3} /> : null}
               <span className="flex-1" />
               {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : post.status === "review" && !narrow ? <Badge tone="violet">In review</Badge> : null}
             </span>
@@ -496,11 +621,22 @@ function PostCard({ post, byId, onOpen, actions = {}, compact = false, narrow = 
   );
 }
 
+/** A post's tags as small dots in their colors. */
+function TagDots({ tags, max }: { tags: Tag[]; max: number }) {
+  return (
+    <span className="flex shrink-0 items-center gap-0.5">
+      {tags.slice(0, max).map((t) => (
+        <span key={t.id} className="size-2 rounded-full" style={{ background: `var(--color-tone-${t.tone})` }} />
+      ))}
+    </span>
+  );
+}
+
 /** Side-by-side lanes for posts that overlap in time, like any calendar app. */
-function lanes(posts: PostRow[]) {
+function lanes(posts: CalPost[]) {
   const sorted = [...posts].sort((a, b) => new Date(a.publish_at!).getTime() - new Date(b.publish_at!).getTime());
-  const out: { post: PostRow; lane: number; of: number }[] = [];
-  let group: { post: PostRow; lane: number }[] = [];
+  const out: { post: CalPost; lane: number; of: number }[] = [];
+  let group: { post: CalPost; lane: number }[] = [];
   let groupEnd = 0;
   const flush = () => {
     const of = Math.max(1, ...group.map((g) => g.lane + 1));
@@ -521,7 +657,7 @@ function lanes(posts: PostRow[]) {
   return out;
 }
 
-type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void; actions: CardActions };
+type ViewProps = { anchor: Date; now: Date; posts: CalPost[]; byId: Map<string, Channel>; onOpen: (p: CalPost) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void; actions: CardActions };
 
 /** The week, or with `single` one day, hour by hour. */
 function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, actions, single = false }: ViewProps & { single?: boolean }) {
@@ -700,9 +836,10 @@ function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: 
 const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In review", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed", deleted: "Deleted" };
 const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red", deleted: "gray" };
 
-function List({ posts, byId, onOpen, filtered }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; filtered: boolean }) {
+function List({ posts, byId, onOpen, filtered }: { posts: CalPost[]; byId: Map<string, Channel>; onOpen: (p: CalPost) => void; filtered: boolean }) {
+  const tagMap = useContext(TagsCtx);
   if (!posts.length) return <Empty compact drawing="timeline" title={filtered ? "No posts with this status in these 4 weeks" : "No posts in these 4 weeks"} />;
-  const days = new Map<string, PostRow[]>();
+  const days = new Map<string, CalPost[]>();
   for (const p of [...posts].sort((a, b) => a.publish_at!.localeCompare(b.publish_at!))) {
     const k = new Date(p.publish_at!).toDateString();
     days.set(k, [...(days.get(k) ?? []), p]);
@@ -723,7 +860,13 @@ function List({ posts, byId, onOpen, filtered }: { posts: PostRow[]; byId: Map<s
                   <span className="w-16 shrink-0 text-[13px] font-semibold tabular-nums">{clock(new Date(p.publish_at!))}</span>
                   <Faces post={p} byId={byId} size={20} />
                   <span className={`min-w-0 flex-1 truncate text-[13px] ${p.status === "draft" ? "text-muted" : ""}`}>{postText(p)}</span>
-                  <Badge tone={TONE[p.status]}>{LABEL[p.status]}</Badge>
+                  {(p.tag_ids ?? []).map((id) => tagMap.get(id)).filter((t): t is Tag => !!t).slice(0, 3).map((t) => (
+                    <Badge key={t.id} tone={t.tone}>
+                      {t.name}
+                    </Badge>
+                  ))}
+                  {p.ghostOf || p.repeat ? <RepeatIcon size={13} className="shrink-0 text-muted" aria-label={p.ghostOf ? "Repeat" : "Repeats"} /> : null}
+                  {p.ghostOf ? <Badge tone="gray">Repeat</Badge> : <Badge tone={TONE[p.status]}>{LABEL[p.status]}</Badge>}
                 </button>
               ))}
             </div>
@@ -811,6 +954,67 @@ function CampaignList({ campaigns, onChange, onShow }: { campaigns: (Campaign & 
               ))}
             </tbody>
           </table>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Every tag: show its posts, change its color, rename it or delete it. */
+function TagList({ tags, onChange, onShow }: { tags: Tag[]; onChange: () => void; onShow: (id: string) => void }) {
+  const add = async () => {
+    const name = await askText("New tag", { placeholder: "Behind the scenes", ok: "Create" });
+    if (!name?.trim()) return;
+    const r = await newTag(name);
+    if (r.error) return tell("Couldn't make the tag", r.error);
+    onChange();
+  };
+  const change = async (t: Tag, c: { name?: string; tone?: string }) => {
+    const r = await editTag(t.id, c);
+    if (r.error) return tell("Couldn't change the tag", r.error);
+    onChange();
+  };
+  const rename = async (t: Tag) => {
+    const name = await askText("Rename tag", { initial: t.name, ok: "Save" });
+    if (!name?.trim() || name.trim() === t.name) return;
+    await change(t, { name });
+  };
+  const del = async (t: Tag) => {
+    if (!(await askConfirm(`Delete the tag "${t.name}"?`, { ok: "Delete", danger: true, body: "It comes off its posts. The posts stay." }))) return;
+    const r = await removeTag(t.id);
+    if (r.error) return tell("Couldn't delete the tag", r.error);
+    onChange();
+  };
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <div>
+        <Button size="sm" onClick={add}>
+          <Plus /> New tag
+        </Button>
+      </div>
+      {tags.length ? (
+        <div className="divide-y divide-line overflow-hidden rounded-lg bg-panel shadow-card">
+          {tags.map((t) => (
+            <div key={t.id} className="flex items-center gap-2 px-3 py-2 hover:bg-hover">
+              <Select<string>
+                size="sm"
+                ariaLabel={`${t.name} color`}
+                className="w-32"
+                value={t.tone}
+                onChange={(tone) => void change(t, { tone })}
+                options={TAG_TONES.map((tone) => ({ value: tone, label: tone[0].toUpperCase() + tone.slice(1), icon: <span className="size-2 rounded-full" style={{ background: `var(--color-tone-${tone})` }} /> }))}
+              />
+              <button type="button" onClick={() => onShow(t.id)} className="min-w-0 flex-1 truncate text-left text-[13px] font-medium hover:underline">
+                {t.name}
+              </button>
+              <IconButton label="Rename" onClick={() => void rename(t)}>
+                <Pencil size={14} />
+              </IconButton>
+              <IconButton label="Delete" align="end" onClick={() => void del(t)}>
+                <Trash2 size={14} />
+              </IconButton>
+            </div>
+          ))}
         </div>
       ) : null}
     </div>

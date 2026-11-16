@@ -36,6 +36,9 @@ export type ApiPost = {
   /** A thread's posts after the first. Channels on networks without threads post the first only. */
   thread: { text: string; media_ids: string[] }[];
   campaign_id: string | null;
+  tag_ids: string[];
+  /** How often it goes out again (1d to 6d, 1w, 2w, 1m), or null. */
+  repeat: string | null;
   /** thread_urls: links to the thread's later posts that went out on this channel, in order. */
   channels: { channel_id: string; status: string; text: string | null; settings: Record<string, string>; url: string | null; error: string | null; deleted_at: string | null; thread_urls: (string | null)[] }[];
 };
@@ -49,6 +52,8 @@ export type ApiUnpublish = {
 export type ApiWebhook = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
 
 /** A saved set of channels from one brand. channel_ids: the ones still connected, ready for create_posts. */
+export type ApiTag = { id: string; name: string; color: string };
+
 export type ApiChannelGroup = { id: string; name: string; brand_id: string | null; channel_ids: string[] };
 
 export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
@@ -79,6 +84,7 @@ export interface Ops {
   channelGroups(): Promise<ApiChannelGroup[]>;
   /** Campaigns, with their posts by status and engagements. */
   campaigns(): Promise<ApiCampaign[]>;
+  tags(): Promise<ApiTag[]>;
   posts(from: Date, to: Date, brandId: string | null): Promise<ApiPost[]>;
   post(id: string): Promise<ApiPost>;
   create(fields: PostFields & { channelIds: string[]; mode: Mode }): Promise<ApiPost>;

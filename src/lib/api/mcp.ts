@@ -39,6 +39,8 @@ const POST_PROPS: Json = {
   },
   channel_text: { type: "object", additionalProperties: { type: "string" }, description: "Own text for some channels, by channel id. Other channels use text." },
   campaign_id: { type: ["string", "null"], description: "A campaign id from list_campaigns, or null for none." },
+  tag_ids: { type: "array", maxItems: 10, items: { type: "string" }, description: "Tag ids from list_tags: all the post's tags (an empty list takes them off)." },
+  repeat: { type: ["string", "null"], enum: ["1d", "2d", "3d", "4d", "5d", "6d", "1w", "2w", "1m", null], description: "Goes out again at the same time every 1 to 6 days (1d to 6d), week (1w), 2 weeks (2w) or month (1m). null stops it." },
   settings: {
     type: "object",
     additionalProperties: { type: "object", additionalProperties: { type: "string" } },
@@ -69,6 +71,13 @@ export const TOOLS: Tool[] = [
     name: "list_campaigns",
     title: "List campaigns",
     description: "Campaigns that group posts (a launch, a sale), with their posts by status and engagements. Send a campaign's id as campaign_id to create_posts or update_post.",
+    inputSchema: { type: "object", properties: {} },
+    annotations: read,
+  },
+  {
+    name: "list_tags",
+    title: "List tags",
+    description: "The workspace's tags, colored labels a post can carry several of. Send their ids as tag_ids to create_posts or update_post.",
     inputSchema: { type: "object", properties: {} },
     annotations: read,
   },
@@ -212,6 +221,8 @@ export async function callTool(ops: Ops, name: string, args: Json): Promise<unkn
       return { groups: await ops.channelGroups() };
     case "list_campaigns":
       return { campaigns: await ops.campaigns() };
+    case "list_tags":
+      return { tags: await ops.tags() };
     case "list_posts": {
       const r = range(args.from, args.to);
       return { posts: await ops.posts(r.from, r.to, optionalId(args.brand_id, "brand_id")) };
