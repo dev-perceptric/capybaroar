@@ -3,7 +3,7 @@
 import { unstable_rethrow } from "next/navigation";
 import { canApprove, getCtx, writerCtx } from "@/lib/session";
 import { getBrandCtx, homeBrand } from "@/lib/brands";
-import { approvePost, assertPostAccess, deletePost, duplicatePost, listComments, postResults, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
+import { approvePost, assertPostAccess, deletePost, duplicatePost, getPost, listComments, postResults, postsBetween, rejectPost, reschedulePost, savePost, type PostStatus, type SaveInput } from "@/lib/posts";
 import { listMedia, setAlt } from "@/lib/media";
 import type { ChannelResult, PlanItem } from "@/lib/unpublisher";
 import { postTarget, record } from "@/lib/auditActor";
@@ -23,6 +23,13 @@ const actor = async () => {
 export async function loadPosts(from: string, to: string) {
   const b = await getBrandCtx();
   return postsBetween(b.workspaceId, new Date(from), new Date(to), b.scope);
+}
+
+/** One post, to open in the composer (a copy just made from a calendar card). */
+export async function loadPost(id: string) {
+  const b = await getBrandCtx();
+  await assertPostAccess(b.workspaceId, id, b.brandIds);
+  return getPost(b.workspaceId, id);
 }
 
 export async function save(input: SaveInput): Promise<{ error?: string; id?: string; publishAt?: string | null; status?: PostStatus }> {

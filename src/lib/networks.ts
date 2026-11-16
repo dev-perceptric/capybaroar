@@ -54,10 +54,12 @@ export type Network = {
 
 export const isPdfMime = (mime: string) => mime === "application/pdf";
 
-/** A thread's parts after the first: each its own text and files. */
-export type ThreadPart = { text: string; mediaIds: string[] };
+/** A thread's parts after the first: each its own text and files. `delay`: minutes to wait after the part before. */
+export type ThreadPart = { text: string; mediaIds: string[]; delay?: number };
 /** Parts after the first that one post may have (25 in all). */
 export const THREAD_MAX = 24;
+/** The longest wait between two parts of a thread, in minutes (one day). */
+export const THREAD_DELAY_MAX = 1440;
 
 const FIRST_COMMENT: NetworkField = { key: "first_comment", label: "First comment", kind: "textarea", placeholder: "Posted as a comment right after" };
 const RESHARE: NetworkField = { key: "reshare", label: "Resharing", kind: "select", initial: "on", options: [{ value: "on", label: "On" }, { value: "off", label: "Off" }] };

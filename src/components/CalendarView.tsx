@@ -5,14 +5,14 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 const noop = () => () => {};
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, CalendarDays, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, Flag, Layers, Pencil, Plus, Trash2 } from "lucide-react";
 import { Badge, Button, Empty, IconButton, LinkButton, Page, Segmented } from "@/components/ui";
 import { Select } from "@/components/Select";
 import { Sheet } from "@/components/Overlay";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { loadCampaigns, loadPosts, move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
+import { duplicate, loadCampaigns, loadPost, loadPosts, move, newCampaign, remove, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
 import { askConfirm, askText, tell } from "@/components/Dialogs";
 import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
 import { fmtNum } from "@/lib/format";
@@ -39,6 +39,13 @@ const hourLabel = (h: number) => (h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h ===
 const clock = (d: Date) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 const isWeekend = (d: Date) => d.getDay() === 0 || d.getDay() === 6;
 const MOVABLE: PostRow["status"][] = ["draft", "review", "scheduled", "failed"];
+/** Posts a card can delete at once: nothing went out yet. Published posts are deleted from the composer, per network. */
+const DELETABLE: PostRow["status"][] = ["draft", "review", "scheduled", "failed"];
+/** What a card offers on hover. */
+type CardActions = { duplicate?: (p: PostRow) => void; remove?: (p: PostRow) => void };
+/** The List view's status filter. */
+type StatusPick = "all" | "scheduled" | "draft" | "review" | "published" | "failed";
+const STATUS_OF: Record<Exclude<StatusPick, "all">, PostRow["status"][]> = { scheduled: ["scheduled", "publishing"], draft: ["draft"], review: ["review"], published: ["published", "partial"], failed: ["failed"] };
 
 /** What this person may do: write posts (team) and approve them (owners, admins, clients). */
 export type Access = { write: boolean; approve: boolean };
@@ -57,6 +64,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   const [bulk, setBulk] = useState(false);
   const [channel, setChannel] = useState<string>("all");
   const [campaign, setCampaign] = useState<string>("all");
+  const [status, setStatus] = useState<StatusPick>("all");
   const [campaigns, setCampaigns] = useState<(Campaign & { counts: CampaignCounts })[]>([]);
   const [campaignSheet, setCampaignSheet] = useState(false);
   const reloadCampaigns = useCallback(() => {
@@ -119,7 +127,8 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
     });
   }, [posts, range, ready]);
   const byCampaign = campaign === "all" ? inRange : inRange.filter((p) => (campaign === "none" ? !p.campaign_id : p.campaign_id === campaign));
-  const shown = channel === "all" ? byCampaign : byCampaign.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
+  const byChannel = channel === "all" ? byCampaign : byCampaign.filter((p) => p.post_targets.some((t) => t.channel_id === channel));
+  const shown = mode !== "list" || status === "all" ? byChannel : byChannel.filter((p) => STATUS_OF[status].includes(p.status));
   const byId = useMemo(() => new Map(channels.map((c) => [c.id, c])), [channels]);
   const counts = useMemo(() => {
     const m = new Map<string, number>();
@@ -143,6 +152,22 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   };
   const open = (p: PostRow) => setCompose({ post: p });
   const pick = access.write ? (at: Date) => setCompose({ at }) : null;
+  // A copy is a draft a day later, opened at once to change.
+  const copy = async (p: PostRow) => {
+    const r = await duplicate(p.id);
+    if (r.error || !r.id) return tell("Couldn't copy the post", r.error ?? "Try again");
+    reload();
+    const fresh = await loadPost(r.id).catch(() => null);
+    if (fresh) setCompose({ post: fresh });
+  };
+  const del = async (p: PostRow) => {
+    if (!(await askConfirm("Delete this post?", { ok: "Delete", danger: true, body: p.status === "draft" ? undefined : "It won't go out." }))) return;
+    setPosts((all) => all.filter((x) => x.id !== p.id));
+    const r = await remove(p.id);
+    if (r.error) await tell("Couldn't delete the post", r.error);
+    reload();
+  };
+  const actions: CardActions = access.write ? { duplicate: (p) => void copy(p), remove: (p) => void del(p) } : {};
   // Month and List open at the top (Week scrolls to the working hours itself).
   useEffect(() => {
     if (mode === "week") return;
@@ -233,6 +258,23 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
                 Connect a channel
               </LinkButton>
             ) : null}
+            {mode === "list" ? (
+              <Select<StatusPick>
+                size="sm"
+                lead="Status"
+                ariaLabel="Status"
+                value={status}
+                onChange={setStatus}
+                options={[
+                  { value: "all", label: "All" },
+                  { value: "scheduled", label: "Scheduled" },
+                  { value: "draft", label: "Drafts" },
+                  { value: "review", label: "In review" },
+                  { value: "published", label: "Published" },
+                  { value: "failed", label: "Failed" },
+                ]}
+              />
+            ) : null}
             {campaigns.length ? (
               <Select<string>
                 size="sm"
@@ -259,7 +301,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
 
         <div className="min-h-0 flex-1">
           {!ready ? null : mode === "week" || mode === "day" ? (
-            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} single={mode === "day"} />
+            <Week anchor={anchor} now={now} posts={shown} byId={byId} onOpen={open} onPick={pick} onDrop={(id, at) => drop(id, at, false)} actions={actions} single={mode === "day"} />
           ) : mode === "month" ? (
             <Month
               anchor={anchor}
@@ -269,13 +311,10 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
               onOpen={open}
               onPick={pick}
               onDrop={(id, at) => drop(id, at, true)}
-              onDay={(d) => {
-                setAnchor(d);
-                setMode("week");
-              }}
+              actions={actions}
             />
           ) : (
-            <List posts={shown} byId={byId} onOpen={open} />
+            <List posts={shown} byId={byId} onOpen={open} filtered={status !== "all"} />
           )}
         </div>
       </div>
@@ -361,41 +400,65 @@ const BAR: Record<PostRow["status"], string> = {
   deleted: "bg-line-strong",
 };
 
-function PostCard({ post, byId, onOpen, compact = false, narrow = false, movable: canMove, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
+function PostCard({ post, byId, onOpen, actions = {}, compact = false, narrow = false, movable: canMove, style }: { post: PostRow; byId: Map<string, Channel>; onOpen: () => void; actions?: CardActions; compact?: boolean; narrow?: boolean; movable: boolean; style?: React.CSSProperties }) {
   const movable = canMove && MOVABLE.includes(post.status);
   const time = post.publish_at ? clock(new Date(post.publish_at)) : "";
+  const live = post.post_targets.find((t) => t.url && !t.deleted_at)?.url ?? null;
+  const canDelete = !!actions.remove && DELETABLE.includes(post.status);
+  const hasActions = !!actions.duplicate || !!live || canDelete;
+  const act = "flex size-6 items-center justify-center rounded-full text-muted transition-colors hover:bg-hover hover:text-ink [&_svg]:size-3.5";
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      title={postText(post)}
-      draggable={movable}
-      onDragStart={(e) => {
-        e.dataTransfer.setData("text/x-post", post.id);
-        e.dataTransfer.effectAllowed = "move";
-      }}
-      style={style}
-      className={`group/card relative flex w-full min-w-0 overflow-hidden rounded-md border text-left transition-[background-color,box-shadow] ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-transparent bg-violet-soft" : "border-transparent bg-panel shadow-chip"} hover:bg-canvas ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
-    >
-      <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[post.status]}`} />
-      {compact ? (
-        <span className="flex min-w-0 flex-1 items-center gap-1.5 pr-1.5 pl-2.5">
-          <Faces post={post} byId={byId} size={14} />
-          <span className="shrink-0 text-[11px] font-medium tabular-nums">{time}</span>
-          <span className={`min-w-0 truncate text-[11px] ${post.status === "draft" ? "text-muted" : ""}`}>{postText(post)}</span>
-        </span>
-      ) : (
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5 pr-2 pl-2.5">
-          <span className="flex min-w-0 items-center gap-1.5">
-            {narrow ? null : <Faces post={post} byId={byId} />}
-            <span className="text-[11px] font-semibold whitespace-nowrap tabular-nums">{narrow ? time.replace(/ ([AP])M/, "$1").toLowerCase() : time}</span>
-            <span className="flex-1" />
-            {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : post.status === "review" && !narrow ? <Badge tone="violet">In review</Badge> : null}
+    <div className="group/card relative w-full min-w-0" style={style}>
+      <button
+        type="button"
+        onClick={onOpen}
+        title={postText(post)}
+        draggable={movable}
+        onDragStart={(e) => {
+          e.dataTransfer.setData("text/x-post", post.id);
+          e.dataTransfer.effectAllowed = "move";
+        }}
+        className={`relative flex size-full min-w-0 overflow-hidden rounded-md border text-left transition-[background-color,box-shadow] ${post.status === "draft" ? "border-dashed border-line-strong bg-panel" : post.status === "review" ? "border-transparent bg-violet-soft" : "border-transparent bg-panel shadow-chip"} hover:bg-canvas ${movable ? "cursor-grab active:cursor-grabbing" : ""} ${compact ? "h-7 items-center" : "flex-col"}`}
+      >
+        <span className={`absolute inset-y-0 left-0 w-[3px] ${BAR[post.status]}`} />
+        {compact ? (
+          <span className="flex min-w-0 flex-1 items-center gap-1.5 pr-1.5 pl-2.5">
+            <Faces post={post} byId={byId} size={14} />
+            <span className="shrink-0 text-[11px] font-medium tabular-nums">{time}</span>
+            <span className={`min-w-0 truncate text-[11px] ${post.status === "draft" ? "text-muted" : ""}`}>{postText(post)}</span>
           </span>
-          <span className={`line-clamp-1 text-[12px] leading-snug ${post.status === "draft" ? "text-muted" : "text-ink"}`}>{postText(post)}</span>
+        ) : (
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5 pr-2 pl-2.5">
+            <span className="flex min-w-0 items-center gap-1.5">
+              {narrow ? null : <Faces post={post} byId={byId} />}
+              <span className="text-[11px] font-semibold whitespace-nowrap tabular-nums">{narrow ? time.replace(/ ([AP])M/, "$1").toLowerCase() : time}</span>
+              <span className="flex-1" />
+              {post.status === "published" ? <Check size={12} className="shrink-0" aria-label="Published" /> : post.status === "failed" ? <AlertTriangle size={12} className="shrink-0 text-danger" aria-label="Failed" /> : post.status === "draft" && !narrow ? <span className="text-[10px] text-muted">Draft</span> : post.status === "review" && !narrow ? <Badge tone="violet">In review</Badge> : null}
+            </span>
+            <span className={`line-clamp-1 text-[12px] leading-snug ${post.status === "draft" ? "text-muted" : "text-ink"}`}>{postText(post)}</span>
+          </span>
+        )}
+      </button>
+      {hasActions ? (
+        <span className={`absolute right-1 z-10 hidden items-center rounded-full bg-panel p-0.5 shadow-chip group-focus-within/card:flex group-hover/card:flex ${compact ? "top-1/2 -translate-y-1/2" : "top-1"}`}>
+          {actions.duplicate ? (
+            <button type="button" title={post.status === "published" ? "Post again" : "Copy"} aria-label={post.status === "published" ? "Post again" : "Copy"} onClick={() => actions.duplicate!(post)} className={act}>
+              <Copy />
+            </button>
+          ) : null}
+          {live ? (
+            <a href={live} target="_blank" rel="noreferrer" title="Open on the network" aria-label="Open on the network" className={act}>
+              <ExternalLink />
+            </a>
+          ) : null}
+          {canDelete ? (
+            <button type="button" title="Delete" aria-label="Delete" onClick={() => actions.remove!(post)} className={`${act} hover:text-danger`}>
+              <Trash2 />
+            </button>
+          ) : null}
         </span>
-      )}
-    </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -424,10 +487,10 @@ function lanes(posts: PostRow[]) {
   return out;
 }
 
-type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void };
+type ViewProps = { anchor: Date; now: Date; posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; onPick: ((at: Date) => void) | null; onDrop: (postId: string, at: Date) => void; actions: CardActions };
 
 /** The week, or with `single` one day, hour by hour. */
-function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, single = false }: ViewProps & { single?: boolean }) {
+function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, actions, single = false }: ViewProps & { single?: boolean }) {
   const days = single ? [startOfDay(anchor)] : Array.from({ length: 7 }, (_, i) => new Date(startOfWeek(anchor).getTime() + i * DAY));
   const cols = { gridTemplateColumns: `64px repeat(${days.length}, minmax(0, 1fr))` };
   const seven = useRef<HTMLDivElement>(null);
@@ -502,7 +565,7 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, single = false
                 const top = ((t.getHours() * 60 + t.getMinutes()) / 60) * HOUR_PX + 1;
                 return (
                   <div key={post.id} className="absolute z-[5] px-1" style={{ top, height: CARD_PX, left: `${(lane / of) * 100}%`, width: `${100 / of}%` }}>
-                    <PostCard post={post} byId={byId} onOpen={() => onOpen(post)} narrow={of > 1} movable={!!onPick} style={{ height: CARD_PX - 2 }} />
+                    <PostCard post={post} byId={byId} onOpen={() => onOpen(post)} actions={actions} narrow={of > 1} movable={!!onPick} style={{ height: CARD_PX - 2 }} />
                   </div>
                 );
               })}
@@ -519,7 +582,16 @@ function Week({ anchor, now, posts, byId, onOpen, onPick, onDrop, single = false
   );
 }
 
-function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: ViewProps & { onDay: (d: Date) => void }) {
+function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, actions }: ViewProps) {
+  // Days opened with "N more": they grow to show every post.
+  const [open, setOpen] = useState<Set<string>>(() => new Set());
+  const toggle = (k: string) =>
+    setOpen((s) => {
+      const n = new Set(s);
+      if (n.has(k)) n.delete(k);
+      else n.add(k);
+      return n;
+    });
   const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
   const start = startOfWeek(first);
   const days = Array.from({ length: 42 }, (_, i) => new Date(start.getTime() + i * DAY));
@@ -538,10 +610,12 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
           const today = sameDay(d, now);
           const past = startOfDay(d).getTime() < startOfDay(now).getTime();
           const here = posts.filter((p) => p.publish_at && sameDay(new Date(p.publish_at), d)).sort((a, b) => a.publish_at!.localeCompare(b.publish_at!));
+          const key = d.toDateString();
+          const all = open.has(key);
           return (
             <div
               key={d.toISOString()}
-              className={`group relative flex h-36 flex-col gap-1 border-b border-line-light p-1.5 ${i % 7 ? "border-l" : ""} ${!inMonth ? "bg-hover/60" : isWeekend(d) ? "bg-hover/30" : ""}`}
+              className={`group relative flex ${all ? "min-h-36" : "h-36"} flex-col gap-1 border-b border-line-light p-1.5 ${i % 7 ? "border-l" : ""} ${!inMonth ? "bg-hover/60" : isWeekend(d) ? "bg-hover/30" : ""}`}
               {...dropTarget(past || !onPick, () => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9), onDrop)}
             >
               {!past && onPick ? <button type="button" aria-label={`New post ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`} onClick={() => onPick(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9))} className="absolute inset-0 hover:bg-hover/60" /> : null}
@@ -552,12 +626,12 @@ function Month({ anchor, now, posts, byId, onOpen, onPick, onDrop, onDay }: View
                 {!past && onPick ? <Plus size={13} className="hidden text-muted group-hover:block" /> : null}
               </div>
               <div className="relative flex w-full flex-col gap-1">
-                {here.slice(0, 3).map((p) => (
-                  <PostCard key={p.id} post={p} byId={byId} onOpen={() => onOpen(p)} movable={!!onPick} compact />
+                {(all ? here : here.slice(0, 3)).map((p) => (
+                  <PostCard key={p.id} post={p} byId={byId} onOpen={() => onOpen(p)} actions={actions} movable={!!onPick} compact />
                 ))}
                 {here.length > 3 ? (
-                  <button type="button" onClick={() => onDay(d)} className="w-fit px-1 text-[11px] font-medium text-muted hover:text-ink">
-                    {here.length - 3} more
+                  <button type="button" aria-expanded={all} onClick={() => toggle(key)} className="w-fit px-1 text-[11px] font-medium text-muted hover:text-ink">
+                    {all ? "Show less" : `${here.length - 3} more`}
                   </button>
                 ) : null}
               </div>
@@ -592,8 +666,8 @@ function dropTarget(past: boolean, at: () => Date, onDrop: (postId: string, at: 
 const LABEL: Record<PostRow["status"], string> = { draft: "Draft", review: "In review", scheduled: "Scheduled", publishing: "Posting", published: "Published", partial: "Partly published", failed: "Failed", deleted: "Deleted" };
 const TONE: Record<PostRow["status"], "gray" | "violet" | "yellow" | "green" | "amber" | "red"> = { draft: "gray", review: "violet", scheduled: "yellow", publishing: "yellow", published: "green", partial: "amber", failed: "red", deleted: "gray" };
 
-function List({ posts, byId, onOpen }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void }) {
-  if (!posts.length) return <Empty compact drawing="timeline" title="No posts in these 4 weeks" />;
+function List({ posts, byId, onOpen, filtered }: { posts: PostRow[]; byId: Map<string, Channel>; onOpen: (p: PostRow) => void; filtered: boolean }) {
+  if (!posts.length) return <Empty compact drawing="timeline" title={filtered ? "No posts with this status in these 4 weeks" : "No posts in these 4 weeks"} />;
   const days = new Map<string, PostRow[]>();
   for (const p of [...posts].sort((a, b) => a.publish_at!.localeCompare(b.publish_at!))) {
     const k = new Date(p.publish_at!).toDateString();

@@ -3,7 +3,7 @@
 // in publisher.test.ts. Run with: npm test
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cleanThread, partProblem, partSettings, splitThread, storedThread, threadOf } from "../src/lib/thread";
+import { cleanDelay, cleanThread, partDue, partProblem, partSettings, splitThread, storedThread, threadOf } from "../src/lib/thread";
 import { NETWORKS, THREAD_MAX, takesThread } from "../src/lib/networks";
 import { ApiError, postFields } from "../src/lib/api/input";
 import { PROVIDERS } from "../src/lib/providers";
@@ -47,6 +47,20 @@ test("later parts keep visibility but not the first comment or cover", () => {
   assert.deepEqual(partSettings({ visibility: "unlisted", first_comment: "hi", cover: "m1" }), { visibility: "unlisted" });
 });
 
+test("a part's delay is kept in whole minutes up to a day, and says when the part is due", () => {
+  const parts = [{ text: "two", mediaIds: [], delay: 15 }, { text: "three", mediaIds: [] }];
+  assert.deepEqual(storedThread(parts), [{ text: "two", media_ids: [], delay: 15 }, { text: "three", media_ids: [] }]);
+  assert.deepEqual(threadOf(storedThread(parts)), parts);
+  assert.deepEqual(cleanThread([{ text: " a ", mediaIds: [], delay: 2.6 }]), [{ text: "a", mediaIds: [], delay: 3 }]);
+  assert.deepEqual(threadOf([{ text: "x", media_ids: [], delay: "soon" }]), [{ text: "x", mediaIds: [] }]);
+  assert.equal(cleanDelay(5000), 1440);
+  assert.equal(cleanDelay(-4), 0);
+  assert.equal(partDue("2026-11-16T10:00:00Z", 30)?.toISOString(), "2026-11-16T10:30:00.000Z");
+  assert.equal(partDue("2026-11-16T10:00:00Z", 0), null);
+  // A part saved before delays existed has no time: it goes out at once.
+  assert.equal(partDue(undefined, 30), null);
+});
+
 test("the API takes a thread as objects or strings, and checks it", () => {
   const A = "11111111-1111-4111-8111-111111111111";
   const f = postFields({ channel_ids: [A], mode: "now", text: "one", thread: ["two", { text: "three", media_ids: [A] }] }, false);
@@ -55,6 +69,9 @@ test("the API takes a thread as objects or strings, and checks it", () => {
   bad({ channel_ids: [A], mode: "now", thread: "nope" }, /thread must be a list/);
   bad({ channel_ids: [A], mode: "now", thread: [{ txt: "x" }] }, /unknown field "txt"/);
   bad({ channel_ids: [A], mode: "now", thread: Array.from({ length: 25 }, () => "x") }, /up to 24 posts after the first/);
+  assert.deepEqual(postFields({ channel_ids: [A], mode: "now", text: "one", thread: [{ text: "two", delay_minutes: 60 }] }, false).thread, [{ text: "two", mediaIds: [], delay: 60 }]);
+  bad({ channel_ids: [A], mode: "now", thread: [{ text: "x", delay_minutes: 1441 }] }, /delay_minutes must be a whole number from 0 to 1440/);
+  bad({ channel_ids: [A], mode: "now", thread: [{ text: "x", delay_minutes: 1.5 }] }, /delay_minutes/);
 });
 
 // Each network's reply, read from the request it sends.

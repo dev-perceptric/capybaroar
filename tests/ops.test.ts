@@ -180,6 +180,9 @@ class Jobs extends Db implements Store {
     for (const h of this.held.values()) h.release(id);
     Object.assign(this.jobs.find((j) => j.id === id)!, { runAfter: runAfter.getTime(), lockedAt: null });
   }
+  async jobLater(job: Job, runAfter: Date) {
+    await this.jobRetry(job.id, runAfter);
+  }
   async target(id: string) {
     await yieldNow();
     const t = this.targets.get(id);

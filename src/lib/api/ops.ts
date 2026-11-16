@@ -61,7 +61,7 @@ export function toPost(p: PostRow): ApiPost {
     publish_at: p.publish_at,
     brand_id: p.brand_id,
     media_ids: p.media_ids ?? [],
-    thread: (p.thread ?? []).map((t) => ({ text: t.text, media_ids: t.media_ids ?? [] })),
+    thread: (p.thread ?? []).map((t) => ({ text: t.text, media_ids: t.media_ids ?? [], delay_minutes: t.delay ?? 0 })),
     campaign_id: p.campaign_id ?? null,
     channels: p.post_targets.map((t) => ({ channel_id: t.channel_id, status: t.status, text: t.text, settings: t.settings ?? {}, url: t.url, error: t.error, deleted_at: t.deleted_at ?? null, thread_urls: (t.parts ?? []).map((x) => x.url) })),
   };

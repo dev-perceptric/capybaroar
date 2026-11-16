@@ -9,12 +9,21 @@
 // - A thread's parts after the first go out one by one, each answering the part before. Each part's id is saved before
 //   the next goes out, and a retry starts at the first part with no saved id, so no part goes out twice. Once the
 //   first post is live the target counts as published; parts that still fail for good leave a note and an alert.
+// - A part with a delay waits that long after the part before went out: the job is put off until then (Wait), which
+//   doesn't use up a try, and picks up at that part.
 // - Inbox reads (kind "inbox", one channel each) run on their own claim so they never hold up publishing. They don't
 //   retry: the next round reads again. Items are saved before the cursor moves, and an item already saved is never
 //   saved twice (unique per channel and network id), so a failed or repeated read loses and doubles nothing.
 import { AuthError, PostError, type InboxItem, type MediaFile, type PostStats, type Provider, type Published, type Secret } from "./providers/types";
 import type { ThreadPart } from "./networks";
-import { partSettings } from "./thread";
+import { partDue, partSettings } from "./thread";
+
+/** A thread part isn't due yet: run the job again at `at`. Not an error, so it costs no try. */
+export class Wait extends Error {
+  constructor(public at: Date) {
+    super(`Waiting until ${at.toISOString()}`);
+  }
+}
 
 export type Job = { id: number; kind: string; payload: Record<string, string>; attempts: number; max_attempts: number };
 
@@ -38,7 +47,10 @@ export type TargetCtx = {
   deletedAt?: string | null;
   /** A thread's parts after the first (empty on networks without threads), and those already out, in order. */
   thread?: ThreadPart[];
-  parts?: Published[];
+  /** `at`: when the part went out (parts saved before delays existed have none). */
+  parts?: (Published & { at?: string })[];
+  /** When the first post went out. */
+  publishedAt?: string | null;
 };
 
 /** A channel as the Inbox reads it: where the last read stopped and when it ran. */
@@ -53,6 +65,8 @@ export interface Store {
   claimInbox(worker: string, n: number): Promise<Job[]>;
   jobDone(id: number, error: string | null): Promise<void>;
   jobRetry(id: number, runAfter: Date, error: string): Promise<void>;
+  /** Puts a job off until `runAfter` and gives back the try its claim used (a thread part's wait). */
+  jobLater(job: Job, runAfter: Date): Promise<void>;
   target(id: string): Promise<TargetCtx | null>;
   publishing(t: TargetCtx): Promise<void>;
   published(t: TargetCtx, out: Published): Promise<void>;
@@ -137,6 +151,7 @@ export async function runJob(store: Store, providers: (network: string) => Provi
     else if (job.kind === "data_export") await store.dataExport?.(job.payload);
     await store.jobDone(job.id, null);
   } catch (e) {
+    if (e instanceof Wait) return store.jobLater(job, e.at);
     const msg = e instanceof Error ? e.message : String(e);
     const final = e instanceof AuthError || e instanceof PostError || job.kind === "inbox" || job.attempts >= job.max_attempts;
     if (final) {
@@ -179,7 +194,7 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
     }
     await store.settle(t.postId);
     // Deleted on the network meanwhile: the thread has nothing left to answer.
-    if (unfinished(t) && !t.deletedAt) await publishParts(store, providers, t, t.remoteId!);
+    if (unfinished(t) && !t.deletedAt) await publishParts(store, providers, t, t.remoteId!, t.publishedAt ?? null);
     return;
   }
   // Waiting for approval, or back to a draft: not now. The job ends; approving queues a new one.
@@ -207,11 +222,11 @@ async function publishTarget(store: Store, providers: (network: string) => Provi
   } catch {
     // results are a nice-to-have: never fail a published post over them
   }
-  if (unfinished(t)) await publishParts(store, providers, t, out.id);
+  if (unfinished(t)) await publishParts(store, providers, t, out.id, new Date().toISOString());
 }
 
 /** The thread's parts that haven't gone out, in order. Throws like publish does, so the job retries from the same part. */
-async function publishParts(store: Store, providers: (network: string) => Provider | null, t: TargetCtx, rootId: string) {
+async function publishParts(store: Store, providers: (network: string) => Provider | null, t: TargetCtx, rootId: string, rootAt: string | null, now = () => Date.now()) {
   const p = providers(t.network);
   if (!p) throw new PostError(`${t.network} isn't supported yet`);
   const thread = t.thread ?? [];
@@ -219,6 +234,8 @@ async function publishParts(store: Store, providers: (network: string) => Provid
   const settings = partSettings(t.settings);
   for (let i = done.length; i < thread.length; i++) {
     const part = thread[i];
+    const due = partDue(i === 0 ? rootAt : done[i - 1].at, part.delay);
+    if (due && due.getTime() > now()) throw new Wait(due);
     let out: Published;
     try {
       const secret = await store.secret(t.channelId, p);
@@ -230,7 +247,7 @@ async function publishParts(store: Store, providers: (network: string) => Provid
       throw e;
     }
     await saveHard(() => store.savePart(t, i, out));
-    done.push(out);
+    done.push({ ...out, at: new Date(now()).toISOString() });
   }
 }
 

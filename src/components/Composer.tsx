@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { CalendarClock, Check, ChevronDown, Copy, Crop, Send, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
@@ -280,6 +280,8 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [groups, setGroups] = useState<ChannelGroup[]>([]);
   const [groupMenu, setGroupMenu] = useState(false);
   const groupMenuBtn = useRef<HTMLButtonElement>(null);
+  const [sendMenu, setSendMenu] = useState(false);
+  const sendMenuBtn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     channelGroups().then(setGroups, () => setGroups([]));
   }, []);
@@ -1049,16 +1051,45 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
               <Button variant="ghost" disabled={busy} onClick={() => submit("draft")} title={`${mod()}S`}>
                 Save draft
               </Button>
-              <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("queue")}>
-                Add to queue
-              </Button>
-              <Button variant="ghost" disabled={busy || !ready} onClick={() => submit("now")} title={`${mod()}Shift+Enter`}>
-                Post now
-              </Button>
-              <Button disabled={busy || !ready} onClick={() => submit("schedule")} title={`${mod()}Enter`}>
-                {busy ? <Loader /> : null}
-                Schedule
-              </Button>
+              <div className="flex items-center">
+                <Button disabled={busy || !ready} onClick={() => submit("schedule")} title={`${mod()}Enter`} className="!rounded-r-none pr-3.5">
+                  {busy ? <Loader /> : null}
+                  {post && post.status !== "draft" ? "Update" : "Schedule"}
+                </Button>
+                <span aria-hidden className="h-[34px] w-px bg-white/20" />
+                <Button ref={sendMenuBtn} aria-label="More ways to send" aria-haspopup="menu" aria-expanded={sendMenu} disabled={busy || !ready} onClick={() => setSendMenu(!sendMenu)} className="!rounded-l-none pr-3 pl-2.5">
+                  <ChevronDown />
+                </Button>
+              </div>
+              {sendMenu ? (
+                <Floating anchor={sendMenuBtn} placement="top-end" gap={6} onClose={() => setSendMenu(false)} role="menu" className="min-w-52 rounded-lg bg-panel p-1.5 text-[13px] shadow-menu">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setSendMenu(false);
+                      submit("now");
+                    }}
+                    className="flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover"
+                  >
+                    <Send size={13} className="text-muted" />
+                    <span className="flex-1">Post now</span>
+                    <span className="text-[11.5px] text-faint">{mod()}Shift+Enter</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setSendMenu(false);
+                      submit("queue");
+                    }}
+                    className="flex h-8 w-full items-center gap-2 rounded-sm px-2.5 text-left hover:bg-hover"
+                  >
+                    <CalendarClock size={13} className="text-muted" />
+                    <span className="flex-1">Add to queue</span>
+                  </button>
+                </Floating>
+              ) : null}
             </div>
           </footer>
         ) : null}
@@ -1142,6 +1173,11 @@ function SettingField({ f, value, locked, onChange, cover, onPickCover }: { f: N
 }
 
 /** A thread's posts after the first: each with its own text and files, added one by one. */
+/** How long a thread part waits after the one before: right after, or a few set times (an API post can have its own). */
+const WAITS = [0, 1, 5, 15, 30, 60, 120];
+const waitLabel = (m: number) => (m >= 60 && m % 60 === 0 ? `${m / 60} hour${m === 60 ? "" : "s"}` : `${m} min`);
+const waitOptions = (cur?: number) => [...new Set([...WAITS, cur ?? 0])].sort((a, b) => a - b).map((m) => ({ value: m, label: m ? waitLabel(m) : "Right after" }));
+
 function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { parts: ThreadPart[]; onChange: (p: ThreadPart[]) => void; limit: number | null; library: Media[] | null; locked: boolean; onUpload: (files: FileList, index: number) => void }) {
   const [picking, setPicking] = useState<number | null>(null);
   const upInput = useRef<HTMLInputElement>(null);
@@ -1159,7 +1195,14 @@ function ThreadEditor({ parts, onChange, limit, library, locked, onUpload }: { p
           <div key={i} className="flex flex-col gap-1.5">
             <div className={boxClass}>
               <div className="flex items-center justify-between gap-2 px-3 pt-2">
-                <span className="text-[12px] text-muted tabular-nums">{i + 2}</span>
+                <span className="flex items-center gap-2">
+                  <span className="text-[12px] text-muted tabular-nums">{i + 2}</span>
+                  {locked ? (
+                    p.delay ? <span className="text-[12px] text-muted">Waits {waitLabel(p.delay)}</span> : null
+                  ) : (
+                    <Select<number> size="sm" lead="Wait" ariaLabel={`Wait before post ${i + 2}`} className="w-auto" value={p.delay ?? 0} onChange={(v) => set(i, { delay: v || undefined })} options={waitOptions(p.delay)} />
+                  )}
+                </span>
                 {!locked ? (
                   <IconButton label="Remove from thread" onClick={() => onChange(parts.filter((_, j) => j !== i))}>
                     <Trash2 size={14} />

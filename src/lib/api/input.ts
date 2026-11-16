@@ -3,6 +3,7 @@
 import { isIP } from "node:net";
 import { isPublicAddress } from "./net";
 import { genRequest, type GenRequest } from "../genRules";
+import { THREAD_DELAY_MAX } from "../networks";
 
 export class ApiError extends Error {
   constructor(
@@ -31,7 +32,7 @@ export type PostFields = {
   /** Network settings by channel id: { first_comment: "..." }. */
   settings?: Record<string, Record<string, string>>;
   /** A thread's posts after the first, each with its text and files. */
-  thread?: { text: string; mediaIds: string[] }[];
+  thread?: { text: string; mediaIds: string[]; delay?: number }[];
   /** The campaign, or null to take the post out of its campaign. */
   campaignId?: string | null;
 };
@@ -43,7 +44,7 @@ export const MAX_BATCH = 25;
 export const MAX_RANGE_DAYS = 92;
 export const MAX_THREAD = 24;
 
-function threadParts(v: unknown): { text: string; mediaIds: string[] }[] {
+function threadParts(v: unknown): { text: string; mediaIds: string[]; delay?: number }[] {
   if (!Array.isArray(v)) throw bad("thread must be a list of { text, media_ids }");
   if (v.length > MAX_THREAD) throw bad(`thread can have up to ${MAX_THREAD} posts after the first`);
   return v.map((p, i) => {
@@ -53,11 +54,15 @@ function threadParts(v: unknown): { text: string; mediaIds: string[] }[] {
       return { text: p, mediaIds: [] };
     }
     if (!isObject(p)) throw bad(`${what} must be { text, media_ids } or a string`);
-    for (const k of Object.keys(p)) if (k !== "text" && k !== "media_ids") throw bad(`${what}: unknown field "${k}"`);
+    for (const k of Object.keys(p)) if (k !== "text" && k !== "media_ids" && k !== "delay_minutes") throw bad(`${what}: unknown field "${k}"`);
     if (p.text !== undefined && typeof p.text !== "string") throw bad(`${what}.text must be a string`);
     const text = (p.text as string | undefined) ?? "";
     if (text.length > MAX_TEXT) throw bad(`${what}.text is too long`);
-    return { text, mediaIds: p.media_ids === undefined ? [] : ids(p.media_ids, `${what}.media_ids`, MAX_MEDIA) };
+    const mediaIds = p.media_ids === undefined ? [] : ids(p.media_ids, `${what}.media_ids`, MAX_MEDIA);
+    if (p.delay_minutes === undefined || p.delay_minutes === 0) return { text, mediaIds };
+    const d = p.delay_minutes;
+    if (typeof d !== "number" || !Number.isInteger(d) || d < 0 || d > THREAD_DELAY_MAX) throw bad(`${what}.delay_minutes must be a whole number from 0 to ${THREAD_DELAY_MAX}`);
+    return { text, mediaIds, delay: d };
   });
 }
 

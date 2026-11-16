@@ -40,13 +40,14 @@ type Row = {
   id: string;
   status: string;
   remote_id: string | null;
+  published_at: string | null;
   deleted_at: string | null;
   post_id: string;
   workspace_id: string;
   channel_id: string;
   text: string | null;
   settings: Record<string, string> | null;
-  parts: Published[] | null;
+  parts: (Published & { at?: string })[] | null;
   posts: { text: string; media_ids: string[]; status: string; thread: StoredPart[] | null };
   channels: { network: string; account_id: string; name: string; status: string };
 };
@@ -76,10 +77,18 @@ export const supabaseStore: Store = {
     heldInbox.release(id);
     await adminClient().from("jobs").update({ run_after: runAfter.toISOString(), locked_at: null, last_error: error }).eq("id", id);
   },
+  async jobLater(job, runAfter) {
+    held.release(job.id);
+    heldInbox.release(job.id);
+    await adminClient()
+      .from("jobs")
+      .update({ run_after: runAfter.toISOString(), locked_at: null, attempts: Math.max(0, job.attempts - 1), last_error: null })
+      .eq("id", job.id);
+  },
   async target(id) {
     const { data } = await adminClient()
       .from("post_targets")
-      .select("id, status, remote_id, deleted_at, post_id, workspace_id, channel_id, text, settings, parts, posts(text, media_ids, status, thread), channels(network, account_id, name, status)")
+      .select("id, status, remote_id, published_at, deleted_at, post_id, workspace_id, channel_id, text, settings, parts, posts(text, media_ids, status, thread), channels(network, account_id, name, status)")
       .eq("id", id)
       .maybeSingle();
     if (!data) return null;
@@ -100,6 +109,7 @@ export const supabaseStore: Store = {
       settings: r.settings ?? {},
       mediaIds: r.posts.media_ids ?? [],
       deletedAt: r.deleted_at,
+      publishedAt: r.published_at,
       thread: takesThread(r.channels.network) ? threadOf(r.posts.thread) : [],
       parts: r.parts ?? [],
     };
@@ -123,7 +133,7 @@ export const supabaseStore: Store = {
     const parts = ((data?.parts as Published[] | null) ?? []).slice(0, index);
     // Only the part after the last saved one: a repeat of a saved part changes nothing.
     if (parts.length !== index) throw new Error(`Thread part ${index + 2} is out of order`);
-    const { error } = await db.from("post_targets").update({ parts: [...parts, { id: out.id, url: out.url ?? null }] }).eq("id", t.id);
+    const { error } = await db.from("post_targets").update({ parts: [...parts, { id: out.id, url: out.url ?? null, at: new Date().toISOString() }] }).eq("id", t.id);
     if (error) throw new Error(error.message);
   },
   async threadStopped(t, error) {

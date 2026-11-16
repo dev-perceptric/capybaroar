@@ -27,7 +27,14 @@ const POST_PROPS: Json = {
   thread: {
     type: "array",
     maxItems: 24,
-    items: { type: "object", properties: { text: { type: "string" }, media_ids: { type: "array", items: { type: "string" } } } },
+    items: {
+      type: "object",
+      properties: {
+        text: { type: "string" },
+        media_ids: { type: "array", items: { type: "string" } },
+        delay_minutes: { type: "integer", minimum: 0, maximum: 1440, description: "Minutes to wait after the post before goes out. 0 (the default) posts right after." },
+      },
+    },
     description: "A thread's posts after the first (text is the first). Each goes out as a reply to the one before, on channels where list_channels shows thread: true. Other channels post the first only. Keep each within character_limit.",
   },
   channel_text: { type: "object", additionalProperties: { type: "string" }, description: "Own text for some channels, by channel id. Other channels use text." },

@@ -48,6 +48,7 @@ class Memory implements Store {
   async jobRetry(id: number, _: Date, error: string) {
     Object.assign(this.jobs.find((j) => j.id === id)!, { lockedAt: null, lastError: error });
   }
+  async jobLater() {}
   async target() {
     return null;
   }

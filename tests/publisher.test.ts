@@ -62,6 +62,10 @@ class Memory implements Store {
     const j = this.jobs.find((x) => x.id === id)!;
     Object.assign(j, { runAfter: runAfter.getTime(), lockedAt: null, lastError: error });
   }
+  async jobLater(job: Job, runAfter: Date) {
+    const j = this.jobs.find((x) => x.id === job.id)!;
+    Object.assign(j, { runAfter: runAfter.getTime(), lockedAt: null, attempts: Math.max(0, job.attempts - 1), lastError: null });
+  }
   async target(id: string) {
     const t = this.targets.get(id);
     return t ? { ...t, channelStatus: this.channels.get(t.channelId)!, postStatus: this.posts.get(t.postId) } : null;
@@ -75,7 +79,7 @@ class Memory implements Store {
       this.failPublishedSaves--;
       throw new Error("database hiccup");
     }
-    Object.assign(this.targets.get(t.id)!, { status: "published", remoteId: out.id, note: out.note ?? null, error: null });
+    Object.assign(this.targets.get(t.id)!, { status: "published", remoteId: out.id, note: out.note ?? null, error: null, publishedAt: new Date().toISOString() });
   }
   failPartSaves = 0;
   async savePart(t: TargetCtx, index: number, out: Published) {
@@ -86,7 +90,7 @@ class Memory implements Store {
     const row = this.targets.get(t.id)!;
     const parts = (row.parts ?? []).slice(0, index);
     if (parts.length !== index) throw new Error("out of order");
-    row.parts = [...parts, out];
+    row.parts = [...parts, { ...out, at: new Date().toISOString() }];
   }
   async threadStopped(t: TargetCtx, error: string) {
     this.targets.get(t.id)!.note = error;
@@ -412,6 +416,32 @@ test("a thread goes out in order, each part answering the one before", async () 
   const t = m.targets.get("t0")!;
   assert.equal(t.status, "published");
   assert.deepEqual(t.parts?.map((p) => p.id), ["r2", "r3", "r4"]);
+  assert.equal(m.alerts.length, 0);
+});
+
+test("a part with a delay waits after the part before, without using up a try", async () => {
+  const m = new Memory();
+  threaded(m, ["two", "three"]);
+  m.targets.get("t0")!.thread![0].delay = 5;
+  const net = threadNetwork();
+  await runDue(m, () => net.provider, "w0");
+  // The first post is out; "two" waits 5 minutes, and the job gave back its try.
+  assert.deepEqual(net.live.map((x) => x.text), ["post 0"]);
+  const job = m.jobs[0];
+  assert.equal(job.done, false);
+  assert.equal(job.attempts, 0);
+  assert.ok(Math.abs(job.runAfter - (Date.now() + 5 * 60000)) < 5000);
+  assert.equal(m.targets.get("t0")!.status, "published");
+  // Run again before it's due (a clock that's behind): it waits again and nothing goes out.
+  m.now = job.runAfter;
+  await runDue(m, () => net.provider, "w0");
+  assert.deepEqual(net.live.map((x) => x.text), ["post 0"]);
+  // Six minutes later the rest goes out in order.
+  m.targets.get("t0")!.publishedAt = new Date(Date.now() - 6 * 60000).toISOString();
+  m.now = m.jobs[0].runAfter;
+  await drain(m, net.provider);
+  assert.deepEqual(net.live.map((x) => [x.text, x.parent]), [["post 0", null], ["two", "r1"], ["three", "r2"]]);
+  assert.ok(m.jobs.every((j) => j.done));
   assert.equal(m.alerts.length, 0);
 });
 

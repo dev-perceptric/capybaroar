@@ -359,7 +359,7 @@ function buttonLook(variant: ButtonVariant, size: ButtonSize) {
 
 /** Buttons are pills: primary is the one dark gray action on a view, ghost is secondary (a soft ring), plain is
  *  tertiary, danger is a red word on white, destroy the red button that confirms a delete. */
-export function Button({ variant = "primary", size = "md", className = "", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; size?: ButtonSize }) {
+export function Button({ variant = "primary", size = "md", className = "", ...props }: React.ComponentProps<"button"> & { variant?: ButtonVariant; size?: ButtonSize }) {
   return <button type="button" {...props} className={`${buttonLook(variant, size)} ${className}`} />;
 }
 
