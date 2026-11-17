@@ -100,7 +100,7 @@ export type TotpApi = {
   challenge(p: { factorId: string }): Promise<{ data: { id: string } | null; error: AuthErr }>;
   verify(p: { factorId: string; challengeId: string; code: string }): Promise<{ data: unknown; error: AuthErr }>;
 };
-export type TotpResult = { ok: true } | { ok: false; reason: "wrong" | "expired" | "failed"; message?: string };
+export type TotpResult = { ok: true } | { ok: false; reason: "wrong" | "expired" | "failed" | "locked"; message?: string };
 
 /** Checks a code from the authenticator app: a fresh challenge, then the code against it. A challenge that expired
  *  (Supabase gives each 5 minutes) gets a new one; hiccups are tried again; a wrong code is never tried twice. */
@@ -136,6 +136,8 @@ export async function verifyTotp(api: TotpApi, factorId: string, code: string, {
       if (++expired > 1) return { ok: false, reason: "expired" };
       continue;
     }
+    // The lockout hook (043) refused the try: say so, since a right code fails too until the wait is over.
+    if (res.error.code === "mfa_verification_rejected" && /too many/i.test(res.error.message ?? "")) return { ok: false, reason: "locked", message: res.error.message };
     if (res.error.code === "mfa_verification_failed" || res.error.code === "mfa_verification_rejected" || res.error.code === "validation_failed" || res.error.status === 422) return { ok: false, reason: "wrong" };
     if (transient(res.error) && i < tries) {
       await sleep(200 * i);

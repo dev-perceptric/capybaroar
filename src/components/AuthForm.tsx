@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button, Checkbox, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { requestReset, setPassword, signIn, signInWithGoogle, signOut, signUp, type AuthState } from "@/app/login/actions";
 import { verifyMfa } from "@/app/mfa/actions";
 import { policiesPublished } from "@/lib/policyRules";
+import { turnstileKey } from "@/lib/captcha";
+import { Turnstile } from "./Turnstile";
 
 // login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link; mfa
 // asks for the code from the authenticator app (or a backup code) after a password or Google (/mfa).
@@ -21,6 +23,14 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
   const [agree, setAgree] = useState(false);
   const [backup, setBackup] = useState(false);
   const google = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" && (mode === "login" || mode === "signup");
+  // The bot check on the forms that reach Supabase Auth with an email. A token works once, so each answer gets a new one.
+  const siteKey = mode === "login" || mode === "signup" || mode === "forgot" ? turnstileKey({ NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY }) : "";
+  const [round, setRound] = useState(0);
+  useEffect(() => {
+    // A new answer from the server is the moment the old token is spent.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRound((r) => r + 1);
+  }, [state]);
   return (
     <div className="flex min-h-dvh items-center justify-center bg-shell px-4 py-10">
       <div className="w-full max-w-[400px] rounded-2xl bg-panel p-7 shadow-hover">
@@ -134,6 +144,7 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
                   </span>
                 </label>
               ) : null}
+              {siteKey ? <Turnstile siteKey={siteKey} round={round} /> : null}
               {state.error ? (
                 <p role="alert" className="text-[12px] text-danger">
                   {state.error}

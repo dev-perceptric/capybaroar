@@ -165,7 +165,7 @@ test("retry tries again only after hiccups, with growing waits", async () => {
 
 type Call = { kind: "challenge" | "verify"; challengeId?: string };
 /** Supabase Auth's challenge and verify, scripted: each verify answer in turn ("ok", an error code, or a hiccup). */
-function scripted(verifies: ("ok" | "wrong" | "expired" | "down" | "throw")[], challenges: ("ok" | "down")[] = []) {
+function scripted(verifies: ("ok" | "wrong" | "expired" | "locked" | "down" | "throw")[], challenges: ("ok" | "down")[] = []) {
   const calls: Call[] = [];
   let c = 0;
   const api: TotpApi = {
@@ -182,6 +182,7 @@ function scripted(verifies: ("ok" | "wrong" | "expired" | "down" | "throw")[], c
       const what = verifies.shift() ?? "wrong";
       if (what === "ok") return { data: {}, error: null };
       if (what === "wrong") return { data: null, error: { status: 422, code: "mfa_verification_failed", message: "Invalid TOTP code entered" } };
+      if (what === "locked") return { data: null, error: { status: 403, code: "mfa_verification_rejected", message: "Too many wrong codes. Try again in 15 minutes." } };
       if (what === "expired") return { data: null, error: { status: 422, code: "mfa_challenge_expired", message: "Challenge expired" } };
       if (what === "throw") throw new TypeError("fetch failed");
       return { data: null, error: { status: 503, message: "Service unavailable" } };
@@ -226,6 +227,12 @@ test("flaky: Supabase Auth busy or unreachable, then fine: the code still passes
   const r = await verifyTotp(scripted(["down", "down", "down", "down"]).api, "f1", "123456", { sleep: now });
   assert.equal(r.ok, false);
   assert.equal(!r.ok && r.reason, "failed");
+});
+
+test("locked out by the hook (043): the wait is shown, and Supabase isn't asked again", async () => {
+  const s = scripted(["locked", "ok"]);
+  assert.deepEqual(await verifyTotp(s.api, "f1", "123456", { sleep: now }), { ok: false, reason: "locked", message: "Too many wrong codes. Try again in 15 minutes." });
+  assert.equal(s.calls.filter((c) => c.kind === "verify").length, 1);
 });
 
 // ---------- where people go ----------

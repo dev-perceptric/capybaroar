@@ -11,6 +11,7 @@ import { recordAcceptance } from "@/lib/policies";
 import { audit } from "@/lib/audit";
 import { firstWorkspaceId } from "@/lib/mfa";
 import { mfaGate, mfaNext, verifiedTotp } from "@/lib/mfaRules";
+import { captchaError, captchaMissing, captchaToken } from "@/lib/captcha";
 
 export type AuthState = { error?: string; sent?: boolean };
 
@@ -39,11 +40,16 @@ const tooShort = (p: string) => (p.length < MIN_PASSWORD ? `Use at least ${MIN_P
 
 export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
   const email = String(form.get("email") ?? "").trim();
+  const token = captchaToken(form);
+  const missing = captchaMissing(token);
+  if (missing) return { error: missing };
   const stop = await limited("login", email);
   if (stop) return { error: stop };
   const sb = await userClient();
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: String(form.get("password") ?? "") });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: String(form.get("password") ?? ""), options: { captchaToken: token } });
   const addr = await ip();
+  const bot = captchaError(error?.message);
+  if (bot) return { error: bot };
   if (error || !data.user) {
     // Who it was is unknown (a wrong password looks the same as no account), so the event has no workspace.
     await audit({ workspaceId: null, actorKind: "user", actorLabel: email, action: "auth.sign_in_failed", meta: { reason: error?.code ?? "no_user" }, ip: addr });
@@ -63,6 +69,9 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   const short = tooShort(password);
   if (short) return { error: short };
   if (policiesPublished() && form.get("agree") !== "yes") return { error: "Accept the Terms, Privacy Policy and Data Processing Agreement to continue" };
+  const token = captchaToken(form);
+  const missing = captchaMissing(token);
+  if (missing) return { error: missing };
   const stop = await limited("signup", email);
   if (stop) return { error: stop };
   const sb = await userClient();
@@ -73,9 +82,10 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
     options: {
       data: { name: String(form.get("name") ?? "").trim(), company: String(form.get("company") ?? "").trim() },
       emailRedirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}`,
+      captchaToken: token,
     },
   });
-  if (error) return { error: error.message };
+  if (error) return { error: captchaError(error.message) ?? error.message };
   // Proof of consent. An address that already has an account comes back with no identities: nothing to record.
   if (policiesPublished() && data.user?.id && data.user.identities?.length !== 0) await recordAcceptance(data.user.id, currentPolicies(), "signup").catch((e) => console.error("consent:", e instanceof Error ? e.message : e));
   if (!data.session) return { sent: true };
@@ -87,10 +97,16 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
 export async function requestReset(_: AuthState, form: FormData): Promise<AuthState> {
   const email = String(form.get("email") ?? "").trim();
   if (!email) return { error: "Enter your email" };
+  const token = captchaToken(form);
+  const missing = captchaMissing(token);
+  if (missing) return { error: missing };
   const stop = await limited("reset", email);
   if (stop) return { error: stop };
   const sb = await userClient();
-  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent("/reset")}` });
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent("/reset")}`, captchaToken: token });
+  // A refused bot check is the visitor's to fix; any other error stays quiet, so the answer never tells who has an account.
+  const bot = captchaError(error?.message);
+  if (bot) return { error: bot };
   if (error) console.error("reset:", error.message);
   return { sent: true };
 }

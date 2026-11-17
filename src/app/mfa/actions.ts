@@ -37,6 +37,7 @@ import type { AuthState } from "@/app/login/actions";
 
 const WRONG = "That code didn't work";
 const FAILED = "Couldn't check the code. Try again.";
+const LOCKED = "Too many wrong codes. Try again in 15 minutes.";
 const ip = async () => trustedIp(await headers());
 
 /** The workspace an account event shows in: the one open in the switcher, else the first membership. */
@@ -56,6 +57,7 @@ async function secondFactor(m: Me, factorIds: string[], code: string): Promise<s
     for (const id of factorIds) {
       const r = await verifyTotp(totpApi(m.sb), id, code);
       if (r.ok) return null;
+      if (r.reason === "locked") return r.message ?? LOCKED;
       if (r.reason === "failed") return FAILED;
     }
     return WRONG;
@@ -168,7 +170,7 @@ export async function confirmTwoFactor(factorId: string, code: string): Promise<
   const stop = await codeTry(m.userId);
   if (stop) return { error: stop };
   const r = await verifyTotp(totpApi(m.sb), factorId, code);
-  if (!r.ok) return { error: r.reason === "failed" ? FAILED : WRONG };
+  if (!r.ok) return { error: r.reason === "locked" ? (r.message ?? LOCKED) : r.reason === "failed" ? FAILED : WRONG };
   await audit({ workspaceId: await eventWorkspace(m.userId), actorId: m.userId, actorLabel: m.email, action: "auth.mfa_enabled", ip: await ip() });
   try {
     return { codes: await saveBackupCodes(m.userId) };
