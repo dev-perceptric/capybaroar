@@ -10,6 +10,7 @@ export const LIMITS = {
   loginEmail: { windowS: 900, max: 10 },
   loginIp: { windowS: 900, max: 30 },
   signupIp: { windowS: 3600, max: 10 },
+  signupEmail: { windowS: 3600, max: 5 },
   resetEmail: { windowS: 3600, max: 3 },
   resetIp: { windowS: 3600, max: 10 },
   reportSend: { windowS: 3600, max: 5 },

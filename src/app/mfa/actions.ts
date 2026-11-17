@@ -1,5 +1,6 @@
 "use server";
 
+import { noteSignIn } from "@/lib/devices";
 import { randomUUID } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -94,6 +95,7 @@ export async function verifyMfa(_: AuthState, form: FormData): Promise<AuthState
     if (err === WRONG) await failed("wrong_code");
     if (err) return { error: err };
     await audit({ ...who, action: "auth.sign_in", meta: { second_factor: "totp" } });
+    await noteSignIn({ userId: m.userId, email: m.email, ip: addr });
     redirect(next);
   }
 
@@ -120,6 +122,7 @@ export async function verifyMfa(_: AuthState, form: FormData): Promise<AuthState
   }
   await audit({ ...who, action: "auth.mfa_disabled", meta: { via: "backup_code" } });
   await audit({ ...who, action: "auth.sign_in", meta: { second_factor: "backup_code" } });
+  await noteSignIn({ userId: m.userId, email: m.email, ip: addr });
   if (done === "signed_out") redirect("/login");
   redirect(`/mfa/setup${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}`);
 }

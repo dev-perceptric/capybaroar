@@ -3,6 +3,7 @@ import { userClient } from "@/lib/supabase/server";
 import { safeNext } from "@/proxy";
 import { audit } from "@/lib/audit";
 import { trustedIp } from "@/lib/clientIp";
+import { noteSignIn } from "@/lib/devices";
 import { firstWorkspaceId } from "@/lib/mfa";
 import { mfaGate, mfaNext, verifiedTotp } from "@/lib/mfaRules";
 
@@ -27,6 +28,8 @@ export async function GET(request: NextRequest) {
       const amr = Array.isArray(c?.amr) ? (c.amr as ({ method?: string } | string)[]) : [];
       const method = amr.map((a) => (typeof a === "string" ? a : a.method)).find(Boolean) ?? "link";
       await audit({ workspaceId: await firstWorkspaceId(data.user.id), actorId: data.user.id, actorLabel: data.user.email ?? null, action: "auth.sign_in", meta: { method: method === "oauth" ? "google" : method }, ip: trustedIp(request.headers) });
+      // A password reset link isn't a new sign-in to warn about: the reset itself sends its own email.
+      if (!next.startsWith("/reset")) await noteSignIn({ userId: data.user.id, email: data.user.email ?? null, ip: trustedIp(request.headers) });
     }
   }
   return NextResponse.redirect(to);

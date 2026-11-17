@@ -5,6 +5,8 @@ export const AUDIT_ACTIONS = {
   "auth.sign_in": "Signed in",
   "auth.sign_in_failed": "Sign-in failed",
   "auth.password_reset": "Reset their password",
+  "auth.new_device": "Signed in on a new device",
+  "auth.password_leaked": "Signed in with a leaked password",
   "auth.mfa_enabled": "Turned on 2FA",
   "auth.mfa_disabled": "Turned off 2FA",
   "auth.mfa_required": "Changed the 2FA rule",

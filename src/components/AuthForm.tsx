@@ -186,7 +186,7 @@ function CheckInbox({ email, next, siteKey }: { email: string; next?: string; si
   );
 }
 
-export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; email?: string }) {
+export function AuthForm({ mode, next, email, notice }: { mode: Mode; next?: string; email?: string; notice?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(ACTIONS[mode], {});
   const [agree, setAgree] = useState(false);
@@ -259,6 +259,11 @@ export function AuthForm({ mode, next, email }: { mode: Mode; next?: string; ema
             ) : (
               <div className="mt-6" />
             )}
+            {notice ? (
+              <p role="alert" className="mb-4 rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
+                {notice}
+              </p>
+            ) : null}
             <form action={action} onSubmit={() => mode === "login" && saveLast("email")} className="flex flex-col gap-4">
               {next ? <input type="hidden" name="next" value={next} /> : null}
               {mode === "signup" ? (

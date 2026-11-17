@@ -13,7 +13,8 @@ import { firstWorkspaceId } from "@/lib/mfa";
 import { mfaGate, mfaNext, verifiedTotp } from "@/lib/mfaRules";
 import { captchaError, captchaMissing, captchaToken } from "@/lib/captcha";
 import { isDisposable } from "@/lib/disposable";
-import { passwordProblem } from "@/lib/passwordCheck";
+import { leakedCount, passwordProblem } from "@/lib/passwordCheck";
+import { notePasswordChanged, noteSignIn } from "@/lib/devices";
 
 export type AuthState = { error?: string; sent?: boolean };
 
@@ -32,6 +33,7 @@ async function limited(kind: "login" | "reset" | "signup" | "resend", email: str
   const list = [];
   if (kind === "login" && email) list.push({ bucket: hashed("login:email", email), l: LIMITS.loginEmail });
   if (kind === "reset" && email) list.push({ bucket: hashed("reset:email", email), l: LIMITS.resetEmail });
+  if (kind === "signup" && email) list.push({ bucket: hashed("signup:email", email.toLowerCase()), l: LIMITS.signupEmail });
   if (kind === "resend" && email) list.push({ bucket: hashed("resend:email", email), l: LIMITS.resetEmail });
   // No IP (a proxy that didn't send one): only the address counts, so everyone isn't sharing one bucket.
   if (addr) list.push({ bucket: hashed(`${kind}:ip`, addr), l: kind === "login" ? LIMITS.loginIp : kind === "reset" || kind === "resend" ? LIMITS.resetIp : LIMITS.signupIp });
@@ -60,11 +62,18 @@ export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
     await audit({ workspaceId: null, actorKind: "user", actorLabel: email, action: "auth.sign_in_failed", meta: { reason: error?.code ?? "no_user" }, ip: addr });
     return { error: error?.message ?? "Couldn't sign in" };
   }
-  const next = safeNext(String(form.get("next") ?? ""));
+  let next = safeNext(String(form.get("next") ?? ""));
+  // A password found in data leaks: signed in, then asked for a new one before anything else (the check sends only 5
+  // characters of a hash; when it can't run, sign-in goes on).
+  if ((await leakedCount(String(form.get("password") ?? ""))) > 0) {
+    await audit({ workspaceId: await firstWorkspaceId(data.user.id), actorId: data.user.id, actorLabel: email, action: "auth.password_leaked", ip: addr });
+    next = "/reset?leaked=1";
+  }
   // An authenticator app on file: the password alone is aal1, so the code comes next. Signed in is recorded there.
   const gate = mfaGate({ aal: "aal1", verified: verifiedTotp(data.user.factors).length > 0, required: false, next: mfaNext(next, safeNext) });
   if (gate) redirect(gate);
   await audit({ workspaceId: await firstWorkspaceId(data.user.id), actorId: data.user.id, actorLabel: email, action: "auth.sign_in", meta: { method: "password" }, ip: addr });
+  await noteSignIn({ userId: data.user.id, email: data.user.email ?? email, ip: addr });
   redirect(next);
 }
 
@@ -150,6 +159,10 @@ export async function setPassword(_: AuthState, form: FormData): Promise<AuthSta
   if (gate) redirect(gate);
   const { error } = await sb.auth.updateUser({ password });
   if (error) return { error: error.message };
+  // Anyone else signed in with the old password is signed out; this device stays in.
+  const { error: outErr } = await sb.auth.signOut({ scope: "others" });
+  if (outErr) console.error("reset: sign out others:", outErr.message);
+  await notePasswordChanged(data.user.email ?? null);
   await audit({ workspaceId: await firstWorkspaceId(data.user.id), actorId: data.user.id, actorLabel: data.user.email ?? null, action: "auth.password_reset", ip: await ip() });
   redirect("/calendar");
 }
