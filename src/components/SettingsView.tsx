@@ -13,6 +13,7 @@ import { ApiSection, type ApiInfo } from "./ApiSettings";
 import { AuditLog } from "./AuditLog";
 import { DataExport } from "./DataExport";
 import { TwoFactor } from "./TwoFactor";
+import { Devices } from "./Devices";
 import { RequireTwoFactor } from "./RequireTwoFactor";
 import type { ExportView } from "@/lib/exportRules";
 import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
@@ -164,6 +165,7 @@ function Account({ email, exports }: { email: string; exports: Exports }) {
     <>
       <PaneHead title="Your account" line={email} />
       <TwoFactor />
+      <Devices />
       <DataExport account={exports.account} workspace={null} owner={false} only="account" />
       <Danger
         title="Delete my account"

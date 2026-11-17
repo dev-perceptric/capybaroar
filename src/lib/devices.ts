@@ -7,14 +7,17 @@ import { appUrl } from "@/lib/channels";
 import { sendEmail } from "@/lib/alerts";
 import { audit } from "@/lib/audit";
 import { firstWorkspaceId } from "@/lib/mfa";
-import { alertFor, cleanDevice, deviceLabel, newDeviceMail, passwordChangedMail } from "@/lib/deviceRules";
+import { alertFor, cleanDevice, deviceLabel, newDeviceMail, passwordChangedMail, secureToken } from "@/lib/deviceRules";
 
 // New-device sign-in alerts (044_login_devices.sql). Each browser gets a random id in an httpOnly cookie on its first
 // sign-in. A sign-in on a device this person hasn't used before emails them, unless it's their first device. Called
 // wherever a sign-in finishes: the password, Google or a link, and the two-factor step. Never throws: a failure here
 // never stops someone signing in.
 
-const COOKIE = "cb_device";
+export const DEVICE_COOKIE = "cb_device";
+const COOKIE = DEVICE_COOKIE;
+/** The key the "This wasn't me" link is signed with. */
+export const secureKey = () => (process.env.TOKEN_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
 
 export async function noteSignIn(u: { userId: string; email: string | null; ip: string }) {
   try {
@@ -41,7 +44,9 @@ export async function noteSignIn(u: { userId: string; email: string | null; ip: 
     after(async () => {
       await audit({ workspaceId: await firstWorkspaceId(u.userId), actorId: u.userId, actorLabel: u.email, action: "auth.new_device", meta: { device: label }, ip: u.ip });
       if (!u.email) return;
-      const m = newDeviceMail({ device: label, ip: u.ip, when, appUrl: appUrl() });
+      const key = secureKey();
+      if (!key) return;
+      const m = newDeviceMail({ device: label, ip: u.ip, when, appUrl: appUrl(), token: secureToken({ userId: u.userId, device, now: when }, key) });
       await sendEmail([u.email], m.subject, m);
     });
   } catch (e) {

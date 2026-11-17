@@ -46,8 +46,27 @@ test("device ids and labels are read safely", () => {
   assert.equal(deviceLabel(""), "A browser");
 });
 
-test("the new-device email links to the reset page and says where", () => {
-  const m = newDeviceMail({ device: "Chrome on Mac", ip: "9.9.9.9", when: new Date("2026-11-17T15:00:00Z"), appUrl: "https://app.capybaroar.com/" });
-  assert.equal(m.href, "https://app.capybaroar.com/reset");
+test("the new-device email links to Sign out everywhere and says where", () => {
+  const m = newDeviceMail({ device: "Chrome on Mac", ip: "9.9.9.9", when: new Date("2026-11-17T15:00:00Z"), appUrl: "https://app.capybaroar.com/", token: "abc.def" });
+  assert.equal(m.href, "https://app.capybaroar.com/secure/abc.def");
   assert.match(m.body, /Chrome on Mac from 9\.9\.9\.9 at Tue, 17 Nov 2026 15:00:00 UTC/);
+});
+
+import { readSecureToken, secureToken } from "../src/lib/deviceRules.ts";
+
+test("the This wasn't me link works only as signed, unchanged and in time", () => {
+  const key = "k".repeat(32);
+  const now = new Date("2026-11-17T12:00:00Z");
+  const user = "11111111-1111-1111-1111-111111111111";
+  const t = secureToken({ userId: user, device: "dev-aaaaaaaaaaaaaaaa", now }, key);
+  assert.deepEqual(readSecureToken(t, key, now), { userId: user, device: "dev-aaaaaaaaaaaaaaaa" });
+  // Another key, a changed body, a changed signature, too late, or junk: refused.
+  assert.equal(readSecureToken(t, "x".repeat(32), now), null);
+  const [body, mac] = t.split(".");
+  const other = Buffer.from(JSON.stringify({ u: "22222222-2222-2222-2222-222222222222", d: "dev-aaaaaaaaaaaaaaaa", e: 9999999999 })).toString("base64url");
+  assert.equal(readSecureToken(`${other}.${mac}`, key, now), null);
+  assert.equal(readSecureToken(`${body}.${mac!.slice(0, -2)}xx`, key, now), null);
+  assert.equal(readSecureToken(t, key, new Date("2026-11-25T12:00:00Z")), null);
+  assert.equal(readSecureToken("nope", key, now), null);
+  assert.equal(readSecureToken(t, "", now), null);
 });

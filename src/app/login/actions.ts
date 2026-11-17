@@ -41,6 +41,13 @@ async function limited(kind: "login" | "reset" | "signup" | "resend", email: str
   return wait ? `Too many tries. ${retryIn(wait)}` : null;
 }
 
+/** Supabase Auth's sign-in error as one plain line. The same line for a wrong password and no account. */
+function signInError(message: string | undefined): string {
+  if (!message || /invalid login credentials|invalid.*(email|password)/i.test(message)) return "Wrong email or password";
+  if (/email not confirmed/i.test(message)) return "Confirm your email first. The link is in your inbox";
+  return message;
+}
+
 const tooShort = (p: string) => (p.length < MIN_PASSWORD ? `Use at least ${MIN_PASSWORD} characters` : null);
 /** Why a new password can't be used: too short, too easy to guess, or found in data leaks. null when it's fine. */
 const weak = async (p: string) => tooShort(p) ?? ((await passwordProblem(p)).replace(/\.$/, "") || null);
@@ -60,7 +67,7 @@ export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
   if (error || !data.user) {
     // Who it was is unknown (a wrong password looks the same as no account), so the event has no workspace.
     await audit({ workspaceId: null, actorKind: "user", actorLabel: email, action: "auth.sign_in_failed", meta: { reason: error?.code ?? "no_user" }, ip: addr });
-    return { error: error?.message ?? "Couldn't sign in" };
+    return { error: signInError(error?.message) };
   }
   let next = safeNext(String(form.get("next") ?? ""));
   // A password found in data leaks: signed in, then asked for a new one before anything else (the check sends only 5
@@ -100,6 +107,8 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
       captchaToken: token,
     },
   });
+  // An address that already has an account gets the same answer as a new one, so sign-up never tells who has one.
+  if (error && /already (registered|exists)/i.test(error.message)) return { sent: true };
   if (error) return { error: captchaError(error.message) ?? error.message };
   // Proof of consent. An address that already has an account comes back with no identities: nothing to record.
   if (policiesPublished() && data.user?.id && data.user.identities?.length !== 0) await recordAcceptance(data.user.id, currentPolicies(), "signup").catch((e) => console.error("consent:", e instanceof Error ? e.message : e));
@@ -178,6 +187,9 @@ export async function signInWithGoogle(form?: FormData) {
 
 export async function signOut() {
   const sb = await userClient();
+  const { data } = await sb.auth.getClaims();
+  const c = data?.claims;
+  if (c?.sub) await audit({ workspaceId: await firstWorkspaceId(c.sub), actorId: c.sub, actorLabel: (c.email as string | undefined) ?? null, action: "auth.sign_out", ip: await ip() });
   await sb.auth.signOut();
   redirect("/login");
 }
