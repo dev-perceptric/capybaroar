@@ -12,6 +12,8 @@ import { audit } from "@/lib/audit";
 import { firstWorkspaceId } from "@/lib/mfa";
 import { mfaGate, mfaNext, verifiedTotp } from "@/lib/mfaRules";
 import { captchaError, captchaMissing, captchaToken } from "@/lib/captcha";
+import { isDisposable } from "@/lib/disposable";
+import { passwordProblem } from "@/lib/passwordCheck";
 
 export type AuthState = { error?: string; sent?: boolean };
 
@@ -25,18 +27,21 @@ const origin = async () => {
 const ip = async () => trustedIp(await headers());
 
 /** Counts one try for the address and the visitor's IP; an error to show when either is over its limit. */
-async function limited(kind: "login" | "reset" | "signup", email: string): Promise<string | null> {
+async function limited(kind: "login" | "reset" | "signup" | "resend", email: string): Promise<string | null> {
   const addr = await ip();
   const list = [];
   if (kind === "login" && email) list.push({ bucket: hashed("login:email", email), l: LIMITS.loginEmail });
   if (kind === "reset" && email) list.push({ bucket: hashed("reset:email", email), l: LIMITS.resetEmail });
+  if (kind === "resend" && email) list.push({ bucket: hashed("resend:email", email), l: LIMITS.resetEmail });
   // No IP (a proxy that didn't send one): only the address counts, so everyone isn't sharing one bucket.
-  if (addr) list.push({ bucket: hashed(`${kind}:ip`, addr), l: kind === "login" ? LIMITS.loginIp : kind === "reset" ? LIMITS.resetIp : LIMITS.signupIp });
+  if (addr) list.push({ bucket: hashed(`${kind}:ip`, addr), l: kind === "login" ? LIMITS.loginIp : kind === "reset" || kind === "resend" ? LIMITS.resetIp : LIMITS.signupIp });
   const wait = await takeAll(list);
   return wait ? `Too many tries. ${retryIn(wait)}` : null;
 }
 
 const tooShort = (p: string) => (p.length < MIN_PASSWORD ? `Use at least ${MIN_PASSWORD} characters` : null);
+/** Why a new password can't be used: too short, too easy to guess, or found in data leaks. null when it's fine. */
+const weak = async (p: string) => tooShort(p) ?? ((await passwordProblem(p)).replace(/\.$/, "") || null);
 
 export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
   const email = String(form.get("email") ?? "").trim();
@@ -66,7 +71,8 @@ export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
 export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   const email = String(form.get("email") ?? "").trim();
   const password = String(form.get("password") ?? "");
-  const short = tooShort(password);
+  if (isDisposable(email)) return { error: "Use your work or personal email. Throwaway inboxes can't sign up" };
+  const short = await weak(password);
   if (short) return { error: short };
   if (policiesPublished() && form.get("agree") !== "yes") return { error: "Accept the Terms, Privacy Policy and Data Processing Agreement to continue" };
   const token = captchaToken(form);
@@ -92,6 +98,25 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   redirect(next);
 }
 
+/** "Send again" on Check your inbox after sign-up: the confirm email once more. Quiet about whether the address exists. */
+export async function resendSignup(_: AuthState, form: FormData): Promise<AuthState> {
+  const email = String(form.get("email") ?? "").trim();
+  if (!email) return { error: "Enter your email" };
+  const token = captchaToken(form);
+  const missing = captchaMissing(token);
+  if (missing) return { error: missing };
+  const stop = await limited("resend", email);
+  if (stop) return { error: stop };
+  const sb = await userClient();
+  const next = safeNext(String(form.get("next") ?? ""));
+  const { error } = await sb.auth.resend({ type: "signup", email, options: { emailRedirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}`, captchaToken: token } });
+  const bot = captchaError(error?.message);
+  if (bot) return { error: bot };
+  if (error && /rate limit|seconds/i.test(error.message)) return { error: "Wait a minute, then send again" };
+  if (error) console.error("resend:", error.message);
+  return { sent: true };
+}
+
 /** "Forgot password?": emails a link that signs in and opens /reset. The answer is the same whether or not the
  * address has an account. */
 export async function requestReset(_: AuthState, form: FormData): Promise<AuthState> {
@@ -114,7 +139,7 @@ export async function requestReset(_: AuthState, form: FormData): Promise<AuthSt
 /** Sets a new password for the person the reset link signed in. */
 export async function setPassword(_: AuthState, form: FormData): Promise<AuthState> {
   const password = String(form.get("password") ?? "");
-  const short = tooShort(password);
+  const short = await weak(password);
   if (short) return { error: short };
   const sb = await userClient();
   const { data } = await sb.auth.getUser();
@@ -132,7 +157,8 @@ export async function setPassword(_: AuthState, form: FormData): Promise<AuthSta
 export async function signInWithGoogle(form?: FormData) {
   const sb = await userClient();
   const next = safeNext(String(form?.get("next") ?? ""));
-  const { data, error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}` } });
+  // Google's account picker every time, so someone with two Google accounts picks the right one.
+  const { data, error } = await sb.auth.signInWithOAuth({ provider: "google", options: { queryParams: { prompt: "select_account" }, redirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}` } });
   if (error) throw new Error(error.message);
   redirect(data.url);
 }

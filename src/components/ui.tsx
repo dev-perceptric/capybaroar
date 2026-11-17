@@ -654,7 +654,7 @@ export const areaClass = "w-full rounded-md bg-panel px-3 py-2 text-[13px] text-
 export const boxClass = "overflow-hidden rounded-lg bg-panel shadow-input transition-shadow duration-[var(--duration-fast)] focus-within:shadow-focus";
 export const bareArea = "block w-full resize-none bg-transparent px-3 py-2.5 text-[13px] text-ink outline-none placeholder:text-faint disabled:text-muted";
 
-export function Input({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ className = "", ...props }: React.InputHTMLAttributes<HTMLInputElement> & { ref?: React.Ref<HTMLInputElement> }) {
   return <input {...props} className={`${inputClass} ${className}`} />;
 }
 
