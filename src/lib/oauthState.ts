@@ -34,3 +34,11 @@ export function callbackProblem(o: { state: string; cookieState: string | null |
 
 /** A network's own error, as one fixed line: its text isn't shown, since anyone can put text in a link. */
 export const networkError = (code: string | null) => (code === "access_denied" || code === "user_cancelled_login" || code === "user_cancelled_authorize" ? "Sign-in was cancelled" : "Sign-in didn't finish");
+
+/** Why a sign-in started from a connect link can't be finished, or null when it can. No Capybaroar session is needed:
+ *  the browser must hold both the link (its connect cookie, checked by the caller) and this sign-in's state. */
+export function linkCallbackProblem(o: { state: string; cookieState: string | null | undefined; createdAt: string | Date; now?: number }): string | null {
+  if (!o.cookieState || o.cookieState !== o.state) return "Start connecting from the link in this browser";
+  if ((o.now ?? Date.now()) - new Date(o.createdAt).getTime() > STATE_TTL_MS) return "Sign-in expired, try again";
+  return null;
+}

@@ -1,5 +1,5 @@
 // Webhook rules, pure so tests cover them: the events, the signature, and what happens after each delivery try.
-import { createHmac } from "node:crypto";
+import { createHmac, randomBytes } from "node:crypto";
 
 export { EVENTS, isEvent, type HookEvent } from "./events";
 
@@ -30,3 +30,37 @@ export function afterDelivery(failures: number, ok: boolean): { failures: number
   const n = failures + 1;
   return { failures: n, off: n >= OFF_AFTER };
 }
+
+// The partner webhook (046_partner.sql): Standard Webhooks (standardwebhooks.com), so the partner can check it with
+// any Standard Webhooks library. It is told when a channel of a brand it made is connected or lost.
+
+export const PARTNER_EVENTS = ["channel.connected", "channel.lost"] as const;
+export type PartnerEvent = (typeof PARTNER_EVENTS)[number];
+
+/** A Standard Webhooks secret: "whsec_" and 24 to 64 random bytes in base64. The bytes are the HMAC key. */
+export const STANDARD_SECRET = /^whsec_[A-Za-z0-9+/]{32,88}={0,2}$/;
+
+export function standardKey(secret: string): Buffer {
+  if (!STANDARD_SECRET.test(secret)) throw new Error("The secret must be whsec_ and 24 to 64 bytes in base64");
+  const key = Buffer.from(secret.slice("whsec_".length), "base64");
+  if (key.length < 24 || key.length > 64) throw new Error("The secret must be whsec_ and 24 to 64 bytes in base64");
+  return key;
+}
+
+/** The webhook-signature header: "v1," and the base64 HMAC-SHA256 of "<webhook-id>.<webhook-timestamp>.<body>". */
+export function signStandard(secret: string, msgId: string, at: number, body: string): string {
+  return `v1,${createHmac("sha256", standardKey(secret)).update(`${msgId}.${at}.${body}`).digest("base64")}`;
+}
+
+/** The three Standard Webhooks headers for one try. The id stays the same on every try; the time is the try's. */
+export function standardHeaders(secret: string, msgId: string, body: string, at = Math.floor(Date.now() / 1000)): Record<string, string> {
+  return { "webhook-id": msgId, "webhook-timestamp": String(at), "webhook-signature": signStandard(secret, msgId, at, body) };
+}
+
+/** A partner event's body, in the Standard Webhooks shape: { type, timestamp, data }. */
+export function partnerBody(type: PartnerEvent, data: Record<string, unknown>, at = new Date()): string {
+  return JSON.stringify({ type, timestamp: at.toISOString(), data });
+}
+
+/** A new Standard Webhooks secret: 32 random bytes. */
+export const newStandardSecret = () => `whsec_${randomBytes(32).toString("base64")}`;

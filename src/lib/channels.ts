@@ -5,6 +5,7 @@ import { assertCanAddChannel, newChannelCount } from "./billing";
 import type { NetworkId } from "./networks";
 import { AuthError, type Account, type Secret } from "./providers/types";
 import { record } from "./auditActor";
+import { partnerChannelEvent } from "./partnerHooks";
 
 /** A connected account: one LinkedIn profile, one Facebook Page, one TikTok account. */
 export type Channel = { id: string; network: NetworkId; account_id: string; name: string; username: string | null; avatar: string | null; status: "active" | "reconnect"; brand_id: string | null };
@@ -30,6 +31,7 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
     ? await db.from("channels").select("account_id").eq("workspace_id", workspaceId).eq("network", network).in("account_id", accounts.map((a) => a.accountId))
     : { data: [] };
   const known = new Set((had ?? []).map((r) => r.account_id as string));
+  const connected: { id: string; workspace_id: string; brand_id: string | null; network: string; name: string }[] = [];
   for (const a of accounts) {
     const { data: ch, error } = await db
       .from("channels")
@@ -38,6 +40,7 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
       .single();
     if (error) throw new Error(error.message);
     if (!ch.brand_id && brandId) await db.from("channels").update({ brand_id: brandId }).eq("id", ch.id).is("brand_id", null);
+    connected.push({ id: ch.id as string, workspace_id: workspaceId, brand_id: (ch.brand_id as string | null) ?? brandId, network, name: a.name });
     const { error: e2 } = await db.from("channel_secrets").upsert({
       channel_id: ch.id,
       access_token: seal(a.accessToken),
@@ -48,6 +51,8 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
     if (e2) throw new Error(e2.message);
     await record({ workspaceId, action: "channel.connected", target: { type: "channel", id: ch.id as string, label: a.name }, meta: { network, ...(known.has(a.accountId) ? { reconnected: true } : {}) } });
   }
+  // A partner brand's partner hears about it (channel.connected), reconnected ones too.
+  await partnerChannelEvent("channel.connected", connected);
 }
 
 export async function readSecret(channelId: string): Promise<Secret> {

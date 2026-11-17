@@ -1,10 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
+// Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links, connect links and
 // link-in-bio pages open signed out. /mfa and /mfa/setup need a session at any level; getCtx (src/lib/session.ts)
 // decides who has to go there.
-const OPEN = ["/login", "/signup", "/reset", "/auth/", "/secure/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/.well-known/"];
+const OPEN = ["/login", "/signup", "/reset", "/auth/", "/secure/", "/l/", "/invite/", "/review/", "/r/", "/b/", "/connect", "/.well-known/"];
 
 const HOME = "/calendar";
 const site = () => process.env.APP_URL || "http://localhost:3000";

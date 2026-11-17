@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { hostname } from "node:os";
 import { adminClient } from "./supabase/server";
 import { open as unseal, seal } from "./crypto";
-import { HOOK_TIMEOUT_MS, HOOK_TRIES, MAX_HOOKS, afterDelivery, afterTry, sign, type HookEvent } from "./api/hookRules";
+import { HOOK_TIMEOUT_MS, HOOK_TRIES, MAX_HOOKS, afterDelivery, afterTry, partnerBody, sign, standardHeaders, standardKey, type HookEvent, type PartnerEvent } from "./api/hookRules";
 import { BlockedAddress, safeRequest } from "./api/fetchSafe";
 import { fillPool, newPool } from "./api/hookPool";
 import { record } from "./auditActor";
@@ -28,7 +28,7 @@ const hookTarget = (id: string, url: string) => {
 };
 
 export async function listWebhooks(workspaceId: string): Promise<WebhookRow[]> {
-  const { data, error } = await adminClient().from("webhooks").select(COLS).eq("workspace_id", workspaceId).order("created_at");
+  const { data, error } = await adminClient().from("webhooks").select(COLS).eq("workspace_id", workspaceId).eq("kind", "workspace").order("created_at");
   if (error) throw new Error(error.message);
   return (data ?? []) as WebhookRow[];
 }
@@ -36,7 +36,7 @@ export async function listWebhooks(workspaceId: string): Promise<WebhookRow[]> {
 /** Add a webhook. Its signing secret comes back once. */
 export async function createWebhook(workspaceId: string, userId: string, url: URL, events: string[]): Promise<{ webhook: WebhookRow; secret: string }> {
   const db = adminClient();
-  const { count } = await db.from("webhooks").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
+  const { count } = await db.from("webhooks").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("kind", "workspace");
   if ((count ?? 0) >= MAX_HOOKS) throw new Error(`A workspace can have up to ${MAX_HOOKS} webhooks. Delete one first.`);
   const secret = `whsec_${randomBytes(24).toString("base64url")}`;
   const { data, error } = await db.from("webhooks").insert({ workspace_id: workspaceId, created_by: userId, url: url.toString(), events, secret: seal(secret) }).select(COLS).single();
@@ -46,7 +46,7 @@ export async function createWebhook(workspaceId: string, userId: string, url: UR
 }
 
 export async function deleteWebhook(workspaceId: string, id: string) {
-  const { data, error } = await adminClient().from("webhooks").delete().eq("id", id).eq("workspace_id", workspaceId).select("id, url");
+  const { data, error } = await adminClient().from("webhooks").delete().eq("id", id).eq("workspace_id", workspaceId).eq("kind", "workspace").select("id, url");
   if (error) throw new Error(error.message);
   if (!data?.length) throw new Error("Webhook not found");
   await record({ workspaceId, action: "webhook.deleted", target: hookTarget(id, data[0].url as string) });
@@ -54,7 +54,7 @@ export async function deleteWebhook(workspaceId: string, id: string) {
 
 /** Turn a webhook on or off. On again starts its failure count over. */
 export async function setWebhookOn(workspaceId: string, id: string, on: boolean) {
-  const { data, error } = await adminClient().from("webhooks").update({ enabled: on, ...(on ? { failures: 0 } : {}) }).eq("id", id).eq("workspace_id", workspaceId).select("id, url");
+  const { data, error } = await adminClient().from("webhooks").update({ enabled: on, ...(on ? { failures: 0 } : {}) }).eq("id", id).eq("workspace_id", workspaceId).eq("kind", "workspace").select("id, url");
   if (error) throw new Error(error.message);
   if (!data?.length) throw new Error("Webhook not found");
   await record({ workspaceId, action: "webhook.changed", target: hookTarget(id, data[0].url as string), meta: { to: on ? "on" : "off" } });
@@ -67,7 +67,7 @@ const body = (type: string, workspaceId: string, data: Record<string, unknown>) 
 
 /** Send a ping to one webhook now, whatever events it has, to check the URL works. */
 export async function testWebhook(workspaceId: string, id: string) {
-  const { data: h } = await adminClient().from("webhooks").select("id").eq("id", id).eq("workspace_id", workspaceId).maybeSingle();
+  const { data: h } = await adminClient().from("webhooks").select("id").eq("id", id).eq("workspace_id", workspaceId).eq("kind", "workspace").maybeSingle();
   if (!h) throw new Error("Webhook not found");
   const b = body("ping", workspaceId, { message: "A test from Capybaroar" });
   const { error } = await adminClient().from("webhook_deliveries").insert({ webhook_id: id, workspace_id: workspaceId, event: "ping", event_id: b.id, body: b.text, max_attempts: 1 });
@@ -78,7 +78,7 @@ export async function testWebhook(workspaceId: string, id: string) {
 export async function emit(workspaceId: string, type: HookEvent, data: Record<string, unknown>) {
   try {
     const db = adminClient();
-    const { data: hooks, error } = await db.from("webhooks").select("id, events").eq("workspace_id", workspaceId).eq("enabled", true);
+    const { data: hooks, error } = await db.from("webhooks").select("id, events").eq("workspace_id", workspaceId).eq("kind", "workspace").eq("enabled", true);
     if (error) throw new Error(error.message);
     const want = (hooks ?? []).filter((h) => (h.events as string[]).includes(type));
     if (!want.length) return;
@@ -90,11 +90,59 @@ export async function emit(workspaceId: string, type: HookEvent, data: Record<st
   }
 }
 
+// The partner webhook (046): one per workspace, Standard Webhooks signatures, only partner events.
+
+export type PartnerHook = { url: string; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null; created_at: string };
+const PARTNER_COLS = "url, enabled, failures, last_status, last_error, last_delivered_at, created_at";
+
+export async function getPartnerHook(workspaceId: string): Promise<PartnerHook | null> {
+  const { data, error } = await adminClient().from("webhooks").select(PARTNER_COLS).eq("workspace_id", workspaceId).eq("kind", "partner").maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as PartnerHook | null) ?? null;
+}
+
+/** Set the partner webhook's address and secret, turned on with its failures reset. Replaces the one before. */
+export async function setPartnerHook(workspaceId: string, userId: string, url: URL, secret: string): Promise<PartnerHook> {
+  standardKey(secret);
+  const db = adminClient();
+  const row = { url: url.toString(), events: ["channel.connected", "channel.lost"], secret: seal(secret), enabled: true, failures: 0, last_status: null, last_error: null };
+  const { data: had } = await db.from("webhooks").select("id").eq("workspace_id", workspaceId).eq("kind", "partner").maybeSingle();
+  const { data, error } = had
+    ? await db.from("webhooks").update(row).eq("id", had.id).select(`id, ${PARTNER_COLS}`).single()
+    : await db.from("webhooks").insert({ ...row, workspace_id: workspaceId, created_by: userId, kind: "partner" }).select(`id, ${PARTNER_COLS}`).single();
+  if (error) throw new Error(error.message);
+  await record({ workspaceId, action: had ? "webhook.changed" : "webhook.created", target: hookTarget(data.id as string, data.url as string), meta: { kind: "partner" } }, { userId });
+  const { id: _id, ...hook } = data as PartnerHook & { id: string };
+  void _id;
+  return hook;
+}
+
+export async function deletePartnerHook(workspaceId: string) {
+  const { data, error } = await adminClient().from("webhooks").delete().eq("workspace_id", workspaceId).eq("kind", "partner").select("id, url");
+  if (error) throw new Error(error.message);
+  for (const h of data ?? []) await record({ workspaceId, action: "webhook.deleted", target: hookTarget(h.id as string, h.url as string), meta: { kind: "partner" } });
+}
+
+/** Queue a partner event for the workspace's partner webhook, if it has one that's on. Never throws. */
+export async function emitPartner(workspaceId: string, type: PartnerEvent, data: Record<string, unknown>) {
+  try {
+    const db = adminClient();
+    const { data: h, error } = await db.from("webhooks").select("id").eq("workspace_id", workspaceId).eq("kind", "partner").eq("enabled", true).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!h) return;
+    const id = `msg_${randomBytes(12).toString("hex")}`;
+    const { error: e2 } = await db.from("webhook_deliveries").insert({ webhook_id: h.id, workspace_id: workspaceId, event: type, event_id: id, body: partnerBody(type, data), max_attempts: HOOK_TRIES });
+    if (e2) throw new Error(e2.message);
+  } catch (e) {
+    console.error(`[webhooks] couldn't queue partner ${type}:`, e instanceof Error ? e.message : e);
+  }
+}
+
 type Delivery = { id: number; webhook_id: string; event: string; event_id: string; body: string; attempts: number; max_attempts: number };
 
 async function deliverOne(d: Delivery) {
   const db = adminClient();
-  const { data: h } = await db.from("webhooks").select("url, secret, enabled, failures").eq("id", d.webhook_id).maybeSingle();
+  const { data: h } = await db.from("webhooks").select("url, secret, enabled, failures, kind").eq("id", d.webhook_id).maybeSingle();
   if (!h || (!h.enabled && d.event !== "ping")) {
     await db.from("webhook_deliveries").update({ done_at: new Date().toISOString(), locked_at: null, error: "The webhook is off or was deleted" }).eq("id", d.id);
     return;
@@ -102,11 +150,14 @@ async function deliverOne(d: Delivery) {
   let status: number | null = null;
   let error: string | null = null;
   try {
+    const secret = unseal(h.secret as string);
+    // The partner webhook is signed the Standard Webhooks way; workspace webhooks keep Capybaroar's own headers.
+    const signed = h.kind === "partner" ? standardHeaders(secret, d.event_id, d.body) : { "capybaroar-event": d.event, "capybaroar-delivery": d.event_id, "capybaroar-signature": sign(secret, d.body) };
     const res = await safeRequest(new URL(h.url as string), {
       method: "POST",
       body: d.body,
       timeoutMs: HOOK_TIMEOUT_MS,
-      headers: { "content-type": "application/json", "capybaroar-event": d.event, "capybaroar-delivery": d.event_id, "capybaroar-signature": sign(unseal(h.secret as string), d.body) },
+      headers: { "content-type": "application/json", ...signed },
     });
     res.body.resume();
     status = res.status;

@@ -25,6 +25,7 @@ export const AUDIT_ACTIONS = {
   "brand.deleted": "Deleted a brand",
   "brand.approval_changed": "Changed approvals",
   "brand.review_link_changed": "Changed a review link",
+  "brand.connect_link_created": "Made a link to connect channels",
   "channel.connected": "Connected a channel",
   "channel.removed": "Removed a channel",
   "channel.moved": "Moved a channel to a brand",

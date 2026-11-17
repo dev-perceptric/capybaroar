@@ -198,10 +198,11 @@ export async function removeMemberFrom(userId: string) {
 
 // API and MCP keys
 
-export async function newApiKey(name: string): Promise<{ error?: string; key?: string }> {
+/** kind "partner": a key for another product to make brands for its customers (/api/partner). */
+export async function newApiKey(name: string, kind: "member" | "partner" = "member"): Promise<{ error?: string; key?: string }> {
   try {
     const ctx = await managerCtx();
-    const { key } = await createApiKey(ctx.workspaceId, ctx.userId, name);
+    const { key } = await createApiKey(ctx.workspaceId, ctx.userId, name, kind === "partner" ? "partner" : "member");
     revalidatePath("/settings");
     return { key };
   } catch (e) {
