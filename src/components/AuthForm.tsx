@@ -9,7 +9,6 @@ import { Logo } from "./Logo";
 import { requestReset, resendSignup, setPassword, signIn, signInWithGoogle, signOut, signUp, type AuthState } from "@/app/login/actions";
 import { verifyMfa } from "@/app/mfa/actions";
 import { policiesPublished } from "@/lib/policyRules";
-import { turnstileKey } from "@/lib/captcha";
 import { suggestEmail } from "@/lib/emailTypos";
 import { strength } from "@/lib/passwordCheck";
 import { Turnstile } from "./Turnstile";
@@ -186,7 +185,8 @@ function CheckInbox({ email, next, siteKey }: { email: string; next?: string; si
   );
 }
 
-export function AuthForm({ mode, next, email, notice }: { mode: Mode; next?: string; email?: string; notice?: string }) {
+/** `google` and `siteKey` come from the page (src/lib/signinOptions.ts), read when it is asked for. */
+export function AuthForm({ mode, next, email, notice, google: googleOn = false, siteKey: key = "" }: { mode: Mode; next?: string; email?: string; notice?: string; google?: boolean; siteKey?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
   const [state, action, busy] = useActionState<AuthState, FormData>(ACTIONS[mode], {});
   const [agree, setAgree] = useState(false);
@@ -205,9 +205,9 @@ export function AuthForm({ mode, next, email, notice }: { mode: Mode; next?: str
         <Badge>Last used</Badge>
       </span>
     ) : null;
-  const google = process.env.NEXT_PUBLIC_GOOGLE_SIGNIN === "1" && (mode === "login" || mode === "signup");
+  const google = googleOn && (mode === "login" || mode === "signup");
   // The bot check on the forms that reach Supabase Auth with an email. A token works once, so each answer gets a new one.
-  const siteKey = mode === "login" || mode === "signup" || mode === "forgot" ? turnstileKey({ NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY }) : "";
+  const siteKey = mode === "login" || mode === "signup" || mode === "forgot" ? key : "";
   const [round, setRound] = useState(0);
   useEffect(() => {
     // A new answer from the server is the moment the old token is spent.
@@ -233,7 +233,7 @@ export function AuthForm({ mode, next, email, notice }: { mode: Mode; next?: str
           </h1>
         </div>
         {state.sent && mode === "signup" ? (
-          <CheckInbox email={typed.trim()} next={next} siteKey={turnstileKey({ NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY })} />
+          <CheckInbox email={typed.trim()} next={next} siteKey={key} />
         ) : state.sent ? (
           <p role="status" className="mt-6 rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
             Check your email for a link to set a new password.
