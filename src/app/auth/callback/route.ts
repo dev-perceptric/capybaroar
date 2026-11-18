@@ -7,21 +7,27 @@ import { noteSignIn } from "@/lib/devices";
 import { firstWorkspaceId } from "@/lib/mfa";
 import { mfaGate, mfaNext, verifiedTotp } from "@/lib/mfaRules";
 import { publicUrl } from "@/lib/publicUrl";
+import { linkTrouble, troubleUrl } from "@/lib/emailLink";
 
 // Email links and Google sign-in come back here with a code to swap for a session. Someone with an authenticator app
-// goes on to /mfa first: the code swap only reaches aal1.
+// goes on to /mfa first: the code swap only reaches aal1. A link that can't sign in here (opened in another browser,
+// expired) goes to /login, or /reset, with one line on what to do (linkTrouble in src/lib/emailLink.ts).
 export async function GET(request: NextRequest) {
-  const code = request.nextUrl.searchParams.get("code");
+  const q = request.nextUrl.searchParams;
+  const code = q.get("code");
   // `next` brings people back to where they started, like an invite.
-  const next = safeNext(request.nextUrl.searchParams.get("next"));
+  const next = safeNext(q.get("next"));
   // Built on the public address: request.url is the container's own (http://[::]:3000).
   const to = publicUrl(next, request.headers);
+  const said = { error: q.get("error"), errorCode: q.get("error_code"), errorDescription: q.get("error_description"), from: q.get("from") };
+  const before = linkTrouble(said);
+  if (before) return NextResponse.redirect(publicUrl(troubleUrl(before, next), request.headers));
   if (code) {
     const sb = await userClient();
     const { data, error } = await sb.auth.exchangeCodeForSession(code);
     if (error || !data.user) {
-      to.pathname = "/login";
-      to.search = "";
+      const kind = linkTrouble({ ...said, exchange: error?.code ?? error?.name ?? "no_user" }) ?? "failed";
+      return NextResponse.redirect(publicUrl(troubleUrl(kind, next), request.headers));
     } else {
       const { data: claims } = await sb.auth.getClaims();
       const c = claims?.claims;
