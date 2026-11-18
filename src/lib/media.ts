@@ -4,7 +4,7 @@ import type { MediaFile } from "./providers/types";
 import { HEAD_BYTES, checkClaim, isUploadPath, isUuid, judgeUpload, mediaFilter, type MediaScope } from "./uploadRules";
 export type { MediaScope } from "./uploadRules";
 
-export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string };
+export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string; brand_id?: string | null };
 
 const BUCKET = "media";
 export { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS } from "./uploadRules";
@@ -41,7 +41,7 @@ export async function mayUseMedia(workspaceId: string, id: string, scope?: Media
 
 export async function listMedia(workspaceId: string, scope?: MediaScope | null): Promise<(MediaRow & { thumb: string | null })[]> {
   const db = adminClient();
-  let q = db.from("media").select("id, path, name, mime, size, alt, created_at").eq("workspace_id", workspaceId);
+  let q = db.from("media").select("id, path, name, mime, size, alt, created_at, brand_id").eq("workspace_id", workspaceId);
   const f = mediaFilter(scope);
   if (f) q = q.or(f);
   const { data, error } = await q.order("created_at", { ascending: false }).limit(200);

@@ -17,11 +17,11 @@ let running = 0;
 
 const bad = (m: string) => new ApiError(400, "invalid_request", m);
 
-export async function uploadFromLink(workspaceId: string, userId: string, url: URL, alt: string | null): Promise<string> {
+export async function uploadFromLink(workspaceId: string, userId: string, url: URL, alt: string | null, brandId: string | null = null): Promise<string> {
   if (running >= AT_ONCE) throw new ApiError(503, "busy", "Other uploads are running. Try again in a minute.");
   running++;
   try {
-    return await linkToMedia(workspaceId, userId, url, { alt });
+    return await linkToMedia(workspaceId, userId, url, { alt, brandId });
   } finally {
     running--;
   }
@@ -31,7 +31,7 @@ export async function uploadFromLink(workspaceId: string, userId: string, url: U
  * Downloads a link into the media library and returns the file's id. With `place`, the file goes to that fixed path
  * (from its real type) and saving the same file again returns the first copy, so a retry never adds a second file.
  */
-export async function linkToMedia(workspaceId: string, userId: string | null, url: URL, opts: { alt: string | null; place?: (mime: string) => { path: string; name: string } }): Promise<string> {
+export async function linkToMedia(workspaceId: string, userId: string | null, url: URL, opts: { alt: string | null; brandId?: string | null; place?: (mime: string) => { path: string; name: string } }): Promise<string> {
   const dir = await mkdtemp(join(tmpdir(), "link-"));
   try {
     let res;
@@ -95,7 +95,7 @@ export async function linkToMedia(workspaceId: string, userId: string | null, ur
     }
     const up = await db.storage.from("media").upload(path, createReadStream(file), { contentType: mime, duplex: "half", upsert: !!fixed });
     if (up.error) throw new ApiError(503, "unavailable", `Couldn't save the file: ${up.error.message}`);
-    const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime, size, alt: opts.alt, created_by: userId }).select("id").single();
+    const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, brand_id: opts.brandId ?? null, path, name, mime, size, alt: opts.alt, created_by: userId }).select("id").single();
     if (error) {
       // Another try saved it first: that copy is the one.
       if (fixed && error.code === "23505") {

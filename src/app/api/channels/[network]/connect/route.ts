@@ -1,11 +1,9 @@
-import { randomBytes } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { getBrandCtx, homeBrand } from "@/lib/brands";
-import { adminClient } from "@/lib/supabase/server";
 import { providerOf } from "@/lib/providers";
-import { appUrl, redirectFor } from "@/lib/channels";
-import { STATE_COOKIE, STATE_PATH, STATE_TTL_MS, fromAnotherSite } from "@/lib/oauthState";
-import { seal } from "@/lib/crypto";
+import { appUrl } from "@/lib/channels";
+import { fromAnotherSite } from "@/lib/oauthState";
+import { beginSignIn, setStateCookie } from "@/lib/oauthStart";
 import { isPaused } from "@/lib/networks";
 import { publicUrl } from "@/lib/publicUrl";
 
@@ -25,24 +23,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (!v) return NextResponse.json({ error: `${a.label} is required` }, { status: 400 });
     input[a.key] = v;
   }
-  const state = randomBytes(24).toString("base64url");
-  const verifier = randomBytes(32).toString("base64url");
-  let url: string;
+  let started: { url: string; state: string };
   try {
-    const r = await p.oauth.authUrl({ state, verifier, redirect: redirectFor(network), input });
-    if (typeof r === "string") url = r;
-    else {
-      url = r.url;
-      Object.assign(input, r.keep);
-    }
+    started = await beginSignIn({ oauth: p.oauth, network, workspaceId: ctx.workspaceId, brandId: homeBrand(ctx), userId: ctx.userId, input });
   } catch (e) {
     return NextResponse.redirect(publicUrl(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.headers));
   }
-  // What's kept until the callback (a Mastodon app's client secret) is sealed, bound to this state.
-  const { error } = await adminClient().from("oauth_states").insert({ state, workspace_id: ctx.workspaceId, brand_id: homeBrand(ctx), user_id: ctx.userId, network, verifier, input: { sealed: seal(JSON.stringify(input), `oauth:${state}`) } });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  // The callback checks this browser started it: a sign-in link sent to someone else can't finish in their browser.
-  const res = NextResponse.redirect(url);
-  res.cookies.set(STATE_COOKIE, state, { httpOnly: true, secure: true, sameSite: "lax", path: STATE_PATH, maxAge: STATE_TTL_MS / 1000 });
-  return res;
+  return setStateCookie(NextResponse.redirect(started.url), started.state);
 }

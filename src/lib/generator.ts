@@ -15,6 +15,8 @@ export type GenRow = {
   id: string;
   workspaceId: string;
   userId: string | null;
+  /** The brand it was made for; its file goes in that brand's media. */
+  brandId?: string | null;
   kind: GenKind;
   prompt: string;
   endpoint: string;

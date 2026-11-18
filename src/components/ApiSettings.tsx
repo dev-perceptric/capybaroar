@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AppWindow, BookOpen, KeyRound, Plus, Send, Trash2 } from "lucide-react";
-import { Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
+import { Badge, Button, CardHead, Checkbox, CopyField, Field, IconButton, Input, LinkButton, PaneHead, Panel, Row, Rows, Switch, timeAgo } from "./ui";
 import { HoverTip } from "./Floating";
 import { Modal } from "./Overlay";
 import { askConfirm, askText, tell } from "./Dialogs";
@@ -13,7 +13,7 @@ import { EVENTS } from "@/lib/api/events";
 
 type Hook = { id: string; url: string; events: string[]; enabled: boolean; failures: number; last_status: number | null; last_error: string | null; last_delivered_at: string | null };
 type App = { id: string; name: string; created_at: string; last_used_at: string | null };
-export type ApiInfo = { base: string; docs: string; keys: { id: string; name: string; prefix: string; created_at: string; last_used_at: string | null }[]; apps: App[]; hooks: Hook[] | null };
+export type ApiInfo = { base: string; docs: string; keys: { id: string; name: string; prefix: string; kind?: "member" | "partner"; created_at: string; last_used_at: string | null }[]; apps: App[]; hooks: Hook[] | null };
 
 const EVENT_LABEL: Record<string, string> = {
   "post.published": "A post went out",
@@ -28,15 +28,15 @@ const EVENT_LABEL: Record<string, string> = {
 export function ApiSection({ api }: { api: ApiInfo }) {
   const router = useRouter();
   const [busy, start] = useTransition();
-  const [made, setMade] = useState<string | null>(null);
+  const [made, setMade] = useState<{ key: string; kind: "member" | "partner" } | null>(null);
   const mcp = `${api.base}/api/mcp`;
-  const add = async () => {
-    const name = await askText("New API key", { placeholder: "Claude, Cursor, our website", ok: "Make key" });
+  const add = async (kind: "member" | "partner") => {
+    const name = await askText(kind === "partner" ? "New partner key" : "New API key", { placeholder: kind === "partner" ? "Morning Telos" : "Claude, Cursor, our website", ok: "Make key" });
     if (!name) return;
     start(async () => {
-      const r = await newApiKey(name);
+      const r = await newApiKey(name, kind);
       if (r.error) await tell("Couldn't make the key", r.error);
-      else setMade(r.key ?? null);
+      else if (r.key) setMade({ key: r.key, kind });
       router.refresh();
     });
   };
@@ -61,7 +61,10 @@ export function ApiSection({ api }: { api: ApiInfo }) {
       </Rows>
       <Panel className="overflow-hidden">
         <CardHead label="Keys" count={api.keys.length}>
-          <Button variant="ghost" size="sm" onClick={add} disabled={busy}>
+          <Button variant="ghost" size="sm" onClick={() => add("partner")} disabled={busy}>
+            <Plus /> New partner key
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => add("member")} disabled={busy}>
             <Plus /> New key
           </Button>
         </CardHead>
@@ -75,7 +78,15 @@ export function ApiSection({ api }: { api: ApiInfo }) {
                     <KeyRound size={15} />
                   </span>
                 }
-                title={k.name}
+                title={
+                  k.kind === "partner" ? (
+                    <span className="flex items-center gap-2">
+                      {k.name} <Badge>Partner</Badge>
+                    </span>
+                  ) : (
+                    k.name
+                  )
+                }
                 sub={
                   <span className="block truncate">
                     <span className="font-mono">{k.prefix}…</span> made {fmtDate(k.created_at)}, {k.last_used_at ? `used ${timeAgo(k.last_used_at)}` : "not used yet"}
@@ -97,11 +108,18 @@ export function ApiSection({ api }: { api: ApiInfo }) {
       {made ? (
         <Modal title="Your new key" wide onClose={() => setMade(null)} footer={<Button onClick={() => setMade(null)}>Done</Button>}>
           <p className="text-[13px] text-muted">It shows only once. Keep it somewhere safe.</p>
-          <Rows>
-            <CopyField label="Key" value={made} />
-            <CopyField label="MCP link" value={`${mcp}/${made}`} />
-            <CopyField label="Claude Code" value={`claude mcp add --transport http capybaroar ${mcp} --header "Authorization: Bearer ${made}"`} />
-          </Rows>
+          {made.kind === "partner" ? (
+            <Rows>
+              <CopyField label="Partner key" value={made.key} />
+              <CopyField label="Partner API" value={`${api.base}/api/partner`} />
+            </Rows>
+          ) : (
+            <Rows>
+              <CopyField label="Key" value={made.key} />
+              <CopyField label="MCP link" value={`${mcp}/${made.key}`} />
+              <CopyField label="Claude Code" value={`claude mcp add --transport http capybaroar ${mcp} --header "Authorization: Bearer ${made.key}"`} />
+            </Rows>
+          )}
         </Modal>
       ) : null}
     </>

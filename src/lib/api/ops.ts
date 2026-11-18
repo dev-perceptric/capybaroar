@@ -6,7 +6,9 @@ import { threadOf } from "../thread";
 import { campaignCounts, listCampaigns } from "../campaigns";
 import { nextBestTime } from "../queue";
 import { assertPostAccess, deletePost, getPost, postsBetween, queueTime, savePost, type PostRow, type SaveInput } from "../posts";
-import { listMedia, mediaThumbs } from "../media";
+import { listMedia, mediaThumbs, type MediaScope } from "../media";
+import { mediaFilter } from "../uploadRules";
+import { brandOnly } from "./brandGuard";
 import { createWebhook, deleteWebhook, listWebhooks, setWebhookOn, testWebhook } from "../webhooks";
 import { uploadFromLink } from "./upload";
 import { getGeneration, startGeneration, type Generation } from "../generations";
@@ -89,14 +91,29 @@ export function apiActor(ctx: Pick<ApiCtx, "keyId" | "userId" | "via">): Actor {
 
 /** Every action runs as the request's actor, so the lib functions it reaches record it as the API or an app. */
 export function realOps(ctx: ApiCtx): Ops {
-  const ops = opsFor(ctx);
+  // A brand key (partner API) gets a second lock that checks every id and answer against its one brand.
+  const ops = ctx.keyKind === "brand" && ctx.brandIds?.length === 1 ? brandOnly(opsFor(ctx), ctx.brandIds[0], { mediaBrands: (ids) => mediaBrands(ctx.workspaceId, ids) }) : opsFor(ctx);
   const who = apiActor(ctx);
   return Object.fromEntries(Object.entries(ops).map(([k, f]) => [k, (...a: unknown[]) => runAs(who, () => (f as (...x: unknown[]) => Promise<unknown>)(...a))])) as unknown as Ops;
 }
 
+/** The brand of each of these files in the workspace. */
+async function mediaBrands(workspaceId: string, ids: string[]): Promise<Map<string, string | null>> {
+  if (!ids.every(isId)) throw new ApiError(400, "invalid_request", "A file must be an id from list_media");
+  const { data, error } = await adminClient().from("media").select("id, brand_id").eq("workspace_id", workspaceId).in("id", ids);
+  if (error) throw new ApiError(503, "unavailable", "Couldn't check the files just now. Try again in a moment.");
+  return new Map((data ?? []).map((m) => [m.id as string, (m.brand_id as string | null) ?? null]));
+}
+
 function opsFor(ctx: ApiCtx): Ops {
+  // A brand-limited member sees their brands' files and their own uploads. A brand key acts as the partner's owner,
+  // so "their own uploads" would be every customer's: it sees its brand's files only.
+  const mediaScope: MediaScope = { brandIds: ctx.brandIds, userId: ctx.keyKind === "brand" ? "" : ctx.userId };
+  // Files a brand key adds belong to its brand.
+  const homeBrand = ctx.keyKind === "brand" ? brandOfScope(ctx.brandIds) : null;
   // Webhooks see every brand's posts, so only owners and admins manage them.
   const manager = () => {
+    if (ctx.keyKind === "brand") throw new ApiError(403, "forbidden", "Brand keys can't manage webhooks");
     if (ctx.role !== "owner" && ctx.role !== "admin") throw new ApiError(403, "forbidden", "Only owners and admins can manage webhooks");
   };
   const hook = async (id: string) => {
@@ -130,7 +147,11 @@ function opsFor(ctx: ApiCtx): Ops {
     const files = [...new Set([...input.mediaIds, ...input.targets.map((t) => t.settings.cover).filter(Boolean), ...(input.thread ?? []).flatMap((p) => p.mediaIds)])];
     if (files.length) {
       if (!files.every(isId)) throw new ApiError(400, "invalid_request", "A cover must be a file id from list_media");
-      const { data, error } = await adminClient().from("media").select("id").eq("workspace_id", ctx.workspaceId).in("id", files);
+      let q = adminClient().from("media").select("id").eq("workspace_id", ctx.workspaceId).in("id", files);
+      // A brand-limited key can only attach files it may see.
+      const only = mediaFilter(mediaScope);
+      if (only) q = q.or(only);
+      const { data, error } = await q;
       if (error) throw new ApiError(503, "unavailable", "Couldn't check the files just now. Try again in a moment.");
       const found = new Set((data ?? []).map((m) => m.id as string));
       const missing = files.find((f) => !found.has(f));
@@ -151,14 +172,15 @@ function opsFor(ctx: ApiCtx): Ops {
   };
 
   const oneMedia = async (mediaId: string): Promise<ApiMedia | null> => {
-    const { data } = await adminClient().from("media").select("id, name, mime, size, alt, created_at").eq("id", mediaId).eq("workspace_id", ctx.workspaceId).maybeSingle();
+    const { data } = await adminClient().from("media").select("id, name, mime, size, alt, created_at, brand_id").eq("id", mediaId).eq("workspace_id", ctx.workspaceId).maybeSingle();
     if (!data) return null;
     const [m] = await mediaThumbs(ctx.workspaceId, [mediaId]);
-    return { id: mediaId, name: data.name as string, mime: data.mime as string, size: data.size as number, alt: (data.alt as string | null) ?? null, created_at: data.created_at as string, preview_url: m?.thumb ?? null };
+    return { id: mediaId, name: data.name as string, mime: data.mime as string, size: data.size as number, alt: (data.alt as string | null) ?? null, created_at: data.created_at as string, preview_url: m?.thumb ?? null, brand_id: (data.brand_id as string | null) ?? null };
   };
   const toGeneration = async (g: Generation): Promise<ApiGeneration> => ({
     id: g.id,
     kind: g.kind,
+    brand_id: g.brand_id ?? null,
     model: g.model,
     prompt: g.prompt,
     status: g.status,
@@ -215,7 +237,7 @@ function opsFor(ctx: ApiCtx): Ops {
       await record({ workspaceId: ctx.workspaceId, action: "post.deleted", target });
     },
     async uploadFromLink(url, alt) {
-      return (await oneMedia(await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt)))!;
+      return (await oneMedia(await uploadFromLink(ctx.workspaceId, ctx.userId, url, alt, homeBrand)))!;
     },
     async generate(r) {
       const g = await startGeneration({ workspaceId: ctx.workspaceId, userId: ctx.userId, brandId: ctx.spendBrand !== undefined ? ctx.spendBrand : brandOfScope(ctx.brandIds) }, r);
@@ -226,7 +248,9 @@ function opsFor(ctx: ApiCtx): Ops {
       return { plan: c.plan, plan_credits: c.planTotal, plan_credits_left: c.planLeft, bought_credits_left: c.bought, credits_left: c.left, refills_at: c.refillAt };
     },
     async generation(genId) {
-      return toGeneration(await getGeneration(ctx.workspaceId, genId));
+      const g = await getGeneration(ctx.workspaceId, genId);
+      if (ctx.keyKind === "brand" && !mayUseBrand(ctx, g.brand_id ?? null)) throw notFound("Generation");
+      return toGeneration(g);
     },
     async webhooks() {
       manager();
@@ -269,7 +293,7 @@ function opsFor(ctx: ApiCtx): Ops {
       }
     },
     async media() {
-      return (await listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId })).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb }));
+      return (await listMedia(ctx.workspaceId, mediaScope)).map((m) => ({ id: m.id, name: m.name, mime: m.mime, size: m.size, alt: m.alt, created_at: m.created_at, preview_url: m.thumb, brand_id: m.brand_id ?? null }));
     },
     async nextSlot() {
       try {

@@ -49,10 +49,11 @@ export type ApiWebhook = { id: string; url: string; events: string[]; enabled: b
 /** A saved set of channels from one brand. channel_ids: the ones still connected, ready for create_posts. */
 export type ApiChannelGroup = { id: string; name: string; brand_id: string | null; channel_ids: string[] };
 
-export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null };
+/** brand_id: the brand the file belongs to, or null for a file of the whole workspace. */
+export type ApiMedia = { id: string; name: string; mime: string; size: number; alt: string | null; created_at: string; preview_url: string | null; brand_id: string | null };
 
 /** An AI picture, video or audio file. status: queued and running are still being made; media is set once it's done. credits: what it costs; reason: why Capy picked the model. */
-export type ApiGeneration = { id: string; kind: "infographic" | "motion" | "image" | "video" | "audio"; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; credits: number; reason: string | null; created_at: string };
+export type ApiGeneration = { id: string; kind: "infographic" | "motion" | "image" | "video" | "audio"; brand_id: string | null; model: string; prompt: string; status: "queued" | "running" | "done" | "failed"; error: string | null; media: ApiMedia | null; credits: number; reason: string | null; created_at: string };
 /** A request just started: credits_charged is what it holds now (given back if it fails), credits_left what's left after it. */
 export type ApiStarted = ApiGeneration & { credits_charged: number; credits_left: number };
 /** The workspace's credits: this period's plan credits, bought credits (they last 12 months) and the total left. */
@@ -111,6 +112,8 @@ export type ApiCtx = {
   role: "owner" | "admin" | "editor";
   /** The brands the key's person may use, or null for every brand. */
   brandIds: string[] | null;
+  /** The key's kind: a person's own key, or a brand key made through the partner API (one brand, as an editor). */
+  keyKind?: "member" | "brand";
   /** How the request signed in: an API key from Settings, or an app connected with OAuth (Claude's directory). */
   via?: "key" | "oauth";
   /** For an OAuth app: the redirect addresses it registered, which say which app it is (Claude or another). */

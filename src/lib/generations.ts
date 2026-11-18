@@ -21,9 +21,9 @@ const FAL_QUEUE = "https://queue.fal.run";
 export const aiReady = () => !!process.env.FAL_KEY;
 
 export type GenStatus = "queued" | "running" | "done" | "failed";
-export type Generation = { id: string; kind: GenKind; model: string; prompt: string; status: GenStatus; error: string | null; media_id: string | null; credits: number; reason: string | null; created_at: string };
+export type Generation = { id: string; kind: GenKind; brand_id?: string | null; model: string; prompt: string; status: GenStatus; error: string | null; media_id: string | null; credits: number; reason: string | null; created_at: string };
 
-const COLUMNS = "id, kind, model, prompt, status, error, media_id, credits, reason, created_at";
+const COLUMNS = "id, kind, brand_id, model, prompt, status, error, media_id, credits, reason, created_at";
 
 // fal
 
@@ -66,6 +66,7 @@ type Db = {
   id: string;
   workspace_id: string;
   created_by: string | null;
+  brand_id?: string | null;
   kind: GenKind;
   prompt: string;
   endpoint: string;
@@ -81,6 +82,7 @@ const toRow = (r: Db): GenRow => ({
   id: r.id,
   workspaceId: r.workspace_id,
   userId: r.created_by,
+  brandId: r.brand_id ?? null,
   kind: r.kind,
   prompt: r.prompt,
   endpoint: r.endpoint,
@@ -123,6 +125,7 @@ export const genStore: GenStore = {
     try {
       return await linkToMedia(row.workspaceId, row.userId, new URL(url), {
         alt: null,
+        brandId: row.brandId ?? null,
         place: (mime) => {
           const name = fileName(row.prompt, mime);
           return { path: `ai-${row.id}-${name}`, name };
@@ -217,6 +220,7 @@ export async function startGeneration(sp: Spender, r: GenRequest): Promise<Start
       id,
       workspace_id: workspaceId,
       created_by: sp.userId,
+      brand_id: sp.brandId,
       kind: r.kind,
       model: r.model,
       prompt: r.prompt,
@@ -251,7 +255,7 @@ async function runInfographic(id: string, sp: Spender, r: GenRequest) {
     const { infoFileName } = await import("./capy/infographicRules");
     const out = await makeInfographic({ workspaceId: sp.workspaceId, brandId: sp.brandId, model: r.model as Parameters<typeof makeInfographic>[0]["model"], prompt: r.prompt, aspect: r.aspect as InfoAspect, sourceMediaId: r.sourceMediaId, website: r.website ?? null });
     const name = infoFileName(r.prompt);
-    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.png, `ai-${id}-${name}`, name, out.alt, "image/png");
+    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.png, `ai-${id}-${name}`, name, out.alt, "image/png", sp.brandId);
     await genStore.done(id, mediaId);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -267,7 +271,7 @@ async function runMotion(id: string, sp: Spender, r: GenRequest) {
     const { motionFileName } = await import("./capy/motionRules");
     const out = await makeMotion({ workspaceId: sp.workspaceId, brandId: sp.brandId, prompt: r.prompt, aspect: r.aspect as InfoAspect, sourceMediaId: r.sourceMediaId, website: r.website ?? null });
     const name = motionFileName(r.prompt);
-    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.mp4, `ai-${id}-${name}`, name, out.alt, "video/mp4");
+    const mediaId = await bufferToMedia(sp.workspaceId, sp.userId, out.mp4, `ai-${id}-${name}`, name, out.alt, "video/mp4", sp.brandId);
     await genStore.done(id, mediaId);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -277,14 +281,14 @@ async function runMotion(id: string, sp: Spender, r: GenRequest) {
 }
 
 /** Saves a made file in the media library at a fixed path, so saving it twice keeps one file. */
-async function bufferToMedia(workspaceId: string, userId: string | null, png: Buffer, fixed: string, name: string, alt: string, mime: string): Promise<string> {
+async function bufferToMedia(workspaceId: string, userId: string | null, png: Buffer, fixed: string, name: string, alt: string, mime: string, brandId: string | null = null): Promise<string> {
   const db = adminClient();
   const path = `${workspaceId}/${fixed}`;
   const { data: had } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
   if (had) return had.id as string;
   const up = await db.storage.from("media").upload(path, png, { contentType: mime, upsert: true });
   if (up.error) throw new Error(`Couldn't save the picture: ${up.error.message}`);
-  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name, mime, size: png.length, alt, created_by: userId }).select("id").single();
+  const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, brand_id: brandId, path, name, mime, size: png.length, alt, created_by: userId }).select("id").single();
   if (error) {
     const { data: first } = await db.from("media").select("id").eq("path", path).eq("workspace_id", workspaceId).maybeSingle();
     if (first) return first.id as string;

@@ -199,14 +199,88 @@ export function link(v: unknown, schemes: string[], what = "url"): URL {
 export function webhookInput(body: unknown, events: readonly string[]): { url: URL; events: string[] } {
   if (!isObject(body)) throw bad("Send a JSON object");
   for (const k of Object.keys(body)) if (k !== "url" && k !== "events") throw bad(`Unknown field "${k}"`);
-  const url = link(body.url, ["https:"]);
   // Names are checked again when a delivery is sent; plain private addresses and local names are refused here.
-  const host = url.hostname.replace(/^\[|\]$/g, "");
-  if (/^(localhost|.*\.localhost|.*\.internal|.*\.local)$/i.test(host) || (isIP(host) && !isPublicAddress(host))) throw bad("The webhook address must be on the public internet");
+  const url = publicHttps(body.url);
   if (!Array.isArray(body.events) || !body.events.length) throw bad(`events must be a list of one or more of ${events.join(", ")}`);
   const picked = [...new Set(body.events)];
   for (const e of picked) if (typeof e !== "string" || !events.includes(e)) throw bad(`Unknown event "${String(e)}". Use ${events.join(", ")}`);
   return { url, events: picked as string[] };
+}
+
+/** The address part of webhookInput, shared with the partner webhook. */
+function publicHttps(v: unknown, what = "url"): URL {
+  const url = link(v, ["https:"], what);
+  const host = url.hostname.replace(/^\[|\]$/g, "");
+  if (/^(localhost|.*\.localhost|.*\.internal|.*\.local)$/i.test(host) || (isIP(host) && !isPublicAddress(host))) throw bad("The webhook address must be on the public internet");
+  return url;
+}
+
+// The partner API (src/app/api/partner). Its errors in what was sent are 422, as the partner contract says.
+
+const unprocessable = (e: unknown) => new ApiError(422, "invalid_request", e instanceof Error ? e.message : String(e));
+const partner = <T,>(fn: () => T): T => {
+  try {
+    return fn();
+  } catch (e) {
+    throw e instanceof ApiError && e.status !== 400 ? e : unprocessable(e);
+  }
+};
+
+/** The partner's own id: letters, digits and . _ : @ -, up to 200. */
+export const EXTERNAL_ID = /^[A-Za-z0-9._:@-]{1,200}$/;
+
+/** A brand to make: { name, domain, external_id }. domain may be a bare host ("acme.com") or a link; null or left out
+ *  for none. The brand keeps it as its website (CapyInfographic reads the brand's look from it). */
+export function partnerBrandInput(body: unknown): { name: string; website: string | null; externalId: string } {
+  return partner(() => {
+    if (!isObject(body)) throw bad("Send a JSON object");
+    for (const k of Object.keys(body)) if (k !== "name" && k !== "domain" && k !== "external_id") throw bad(`Unknown field "${k}"`);
+    if (typeof body.name !== "string" || !body.name.trim()) throw bad("name is required");
+    const name = body.name.trim();
+    if (name.length > 60) throw bad("name is up to 60 characters");
+    if (typeof body.external_id !== "string" || !EXTERNAL_ID.test(body.external_id)) throw bad("external_id is required: up to 200 letters, digits and . _ : @ -");
+    let website: string | null = null;
+    if (body.domain != null && body.domain !== "") {
+      if (typeof body.domain !== "string" || body.domain.length > 253) throw bad("domain must be a web address like acme.com");
+      const raw = body.domain.trim();
+      const u = link(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`, ["https:", "http:"], "domain");
+      if (!/^([a-z0-9-]+\.)+[a-z]{2,63}$/i.test(u.hostname)) throw bad("domain must be a web address like acme.com");
+      website = `https://${u.hostname.toLowerCase()}`;
+    }
+    return { name, website, externalId: body.external_id };
+  });
+}
+
+/** The host a brand's website is on, as the partner sent it as domain. */
+export const domainOf = (website: string | null | undefined): string | null => {
+  if (!website) return null;
+  try {
+    return new URL(website).hostname;
+  } catch {
+    return null;
+  }
+};
+
+/** A month as "YYYY-MM" (UTC), or this month when left out: its first moment and the next month's. */
+export function monthRange(v: unknown, now = new Date()): { month: string; from: Date; to: Date } {
+  return partner(() => {
+    const m = v == null || v === "" ? now.toISOString().slice(0, 7) : v;
+    if (typeof m !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(m)) throw bad("month must be YYYY-MM, like 2026-11");
+    const [y, mo] = m.split("-").map(Number);
+    return { month: m, from: new Date(Date.UTC(y, mo - 1, 1)), to: new Date(Date.UTC(y, mo, 1)) };
+  });
+}
+
+/** The partner webhook: { url, secret? }. secret, when sent, is a Standard Webhooks secret (whsec_ and base64). */
+export function partnerHookInput(body: unknown, validSecret: (s: string) => boolean): { url: URL; secret: string | null } {
+  return partner(() => {
+    if (!isObject(body)) throw bad("Send a JSON object");
+    for (const k of Object.keys(body)) if (k !== "url" && k !== "secret") throw bad(`Unknown field "${k}"`);
+    const url = publicHttps(body.url);
+    if (body.secret == null || body.secret === "") return { url, secret: null };
+    if (typeof body.secret !== "string" || !validSecret(body.secret)) throw bad("secret must be whsec_ and 24 to 64 random bytes in base64, or left out to get a new one");
+    return { url, secret: body.secret };
+  });
 }
 
 /**

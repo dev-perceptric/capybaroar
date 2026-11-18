@@ -12,6 +12,7 @@ import { STATS_AFTER_MIN, runDue, runInbox, runJob, type Job, type Store, type T
 import { enqueue } from "./jobs";
 import { sendAlert } from "./alerts";
 import { deliverDue, emit, pruneDeliveries } from "./webhooks";
+import { partnerChannelEvent } from "./partnerHooks";
 import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
@@ -140,6 +141,7 @@ export const supabaseStore: Store = {
     // Webhooks hear about it once, when the channel changes, not on every try that finds it signed out.
     const { data } = await adminClient().from("channels").update({ status: "reconnect" }).eq("id", channelId).neq("status", "reconnect").select("id, workspace_id, name, network, brand_id");
     for (const c of data ?? []) await emit(c.workspace_id as string, "channel.reconnect", { channel_id: c.id, channel_name: c.name, network: c.network, brand_id: c.brand_id });
+    await partnerChannelEvent("channel.lost", (data ?? []) as { id: string; workspace_id: string; brand_id: string | null; network: string; name: string }[]);
   },
   async event(type, t, extra) {
     const { data: p } = await adminClient().from("posts").select("brand_id").eq("id", t.postId).maybeSingle();
@@ -472,7 +474,7 @@ export async function queueInbox() {
 /** Hourly: refresh tokens that expire within a week, and record today's follower counts. */
 export async function upkeep() {
   const db = adminClient();
-  const { data: chans } = await db.from("channels").select("id, workspace_id, network, account_id, name, status").eq("status", "active");
+  const { data: chans } = await db.from("channels").select("id, workspace_id, network, account_id, name, status, brand_id").eq("status", "active");
   const today = new Date().toISOString().slice(0, 10);
   const { data: done } = await db.from("metrics").select("channel_id").eq("day", today);
   const counted = new Set((done ?? []).map((r) => r.channel_id));
@@ -489,6 +491,7 @@ export async function upkeep() {
     } catch (e) {
       if (e instanceof AuthError) {
         await db.from("channels").update({ status: "reconnect" }).eq("id", c.id);
+        await partnerChannelEvent("channel.lost", [{ id: c.id, workspace_id: c.workspace_id, brand_id: c.brand_id, network: c.network, name: c.name }]);
         await sendAlert("reconnect", { channelId: c.id, workspaceId: c.workspace_id, channelName: c.name, network: c.network } as TargetCtx, e.message);
       }
       console.error(`upkeep ${c.network}:`, e instanceof Error ? e.message : e);

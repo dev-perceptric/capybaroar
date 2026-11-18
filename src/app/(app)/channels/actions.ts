@@ -11,6 +11,7 @@ import { getBrandCtx, homeBrand, mayUseBrand, moveChannel } from "@/lib/brands";
 import { providerOf } from "@/lib/providers";
 import type { NetworkId } from "@/lib/networks";
 import { record } from "@/lib/auditActor";
+import { partnerChannelEvent } from "@/lib/partnerHooks";
 
 /** Connect a network that uses a form (Bluesky, Telegram, Discord). */
 export async function connectWithForm(network: string, values: Record<string, string>): Promise<{ error?: string }> {
@@ -43,6 +44,7 @@ export async function removeChannel(id: string): Promise<{ error?: string }> {
     const { error } = await db.from("channels").delete().eq("id", id).eq("workspace_id", ctx.workspaceId);
     if (error) return { error: error.message };
     await record({ workspaceId: ctx.workspaceId, action: "channel.removed", target: { type: "channel", id, label: ch.name as string }, meta: { network: ch.network as string } }, ctx);
+    await partnerChannelEvent("channel.lost", [{ id, workspace_id: ctx.workspaceId, brand_id: (ch.brand_id as string | null) ?? null, network: ch.network as string, name: ch.name as string }]);
   } catch (e) {
     unstable_rethrow(e);
     return { error: e instanceof Error ? e.message : String(e) };

@@ -59,7 +59,7 @@ const me = (col: string): Scope => ({ col, by: "user" });
 /** "Export workspace": every row of the workspace, parents before the tables scoped by them. */
 export const WORKSPACE_TABLES: TableSpec[] = [
   { table: "workspaces", file: "workspace", columns: ["id", "name", "timezone", "created_at", "queue", "plan", "plan_status", "trial_ends_at", "current_period_end", "billing_interval", "credit_anchor", "auto_topup_pack", "auto_topup_max", "deleting_at"], order: ["id"], scope: ws("id") },
-  { table: "brands", columns: ["id", "workspace_id", "name", "color", "avatar", "needs_approval", "credit_limit", "voice", "avoid", "hashtags", "created_at"], order: ["id"], scope: ws() },
+  { table: "brands", columns: ["id", "workspace_id", "name", "color", "avatar", "needs_approval", "credit_limit", "voice", "avoid", "hashtags", "external_id", "created_at"], order: ["id"], scope: ws() },
   // Names, emails and brand names are added from the sign-ins (exports.ts).
   { table: "members", columns: ["workspace_id", "user_id", "role", "brand_ids", "created_at"], order: ["user_id"], scope: ws() },
   { table: "invites", columns: ["id", "workspace_id", "email", "role", "brand_ids", "invited_by", "expires_at", "accepted_at", "accepted_by", "created_at"], order: ["id"], scope: ws() },
@@ -85,7 +85,7 @@ export const WORKSPACE_TABLES: TableSpec[] = [
   { table: "feeds", columns: ["id", "workspace_id", "brand_id", "url", "title", "channel_ids", "template", "mode", "seen", "last_item_guid", "active", "fetched_at", "error", "created_by", "created_at"], order: ["id"], scope: ws() },
   { table: "webhooks", columns: ["id", "workspace_id", "created_by", "url", "events", "enabled", "failures", "last_status", "last_error", "last_delivered_at", "created_at"], order: ["id"], scope: ws() },
   { table: "webhook_deliveries", columns: ["id", "webhook_id", "workspace_id", "event", "event_id", "body", "attempts", "status", "error", "run_after", "done_at", "created_at"], order: ["id"], scope: ws() },
-  { table: "api_keys", columns: ["id", "workspace_id", "user_id", "name", "created_at", "last_used_at"], order: ["id"], scope: ws() },
+  { table: "api_keys", columns: ["id", "workspace_id", "user_id", "name", "kind", "brand_id", "created_at", "last_used_at"], order: ["id"], scope: ws() },
   { table: "oauth_grants", file: "connected_apps", columns: GRANT, order: ["id"], scope: ws() },
   { table: "oauth_clients", file: "connected_app_names", columns: ["id", "name", "created_at"], order: ["id"], scope: { col: "id", parent: "connected_apps", key: "client_id" } },
   { table: "credit_entries", columns: ["id", "workspace_id", "key", "kind", "seq", "bucket", "period", "lot", "expires_at", "amount", "brand_id", "user_id", "tool", "model", "post_id", "note", "created_at"], order: ["id"], scope: ws() },
@@ -110,6 +110,7 @@ export const ACCOUNT_TABLES: TableSpec[] = [
 export const LEFT_OUT: Record<string, string> = {
   channel_secrets: "Network sign-in tokens: never exported.",
   oauth_states: "Half-finished channel sign-ins with their PKCE verifiers, deleted after an hour.",
+  connect_links: "One-time links to connect a partner brand's channels (hashes), valid 24 hours.",
   oauth_codes: "One-time app sign-in codes (hashes), valid for minutes.",
   oauth_tokens: "App access tokens (hashes).",
   inbox_state: "Where each channel's last Inbox read stopped (the network's cursor): internal.",
