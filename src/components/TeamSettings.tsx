@@ -37,12 +37,18 @@ import {
 /** A brand row in Settings. creditsUsed and creditLimit are set when the plan has brand credit limits. */
 export type TeamBrand = Brand & { channels: number; reviewLink: string | null; creditsUsed?: number; creditLimit?: number | null };
 
-export type TeamInfo = {
-  me: string;
-  mail: boolean;
+/** The Brands tab: each brand with its channels and review link. */
+export type BrandsInfo = {
   brands: TeamBrand[];
   /** The plan has a credit limit for each brand: the Brands table shows Credits used and Credit limit. */
-  creditLimits?: boolean;
+  creditLimits: boolean;
+};
+
+/** The Members tab: who is in the workspace, open invites, and the brands to give people. */
+export type MembersInfo = {
+  me: string;
+  mail: boolean;
+  brands: Brand[];
   members: Member[];
   invites: Invite[];
 };
@@ -92,7 +98,7 @@ function RowMenu({ label, children }: { label: string; children: (close: () => v
   );
 }
 
-export function BrandsSection({ team }: { team: TeamInfo }) {
+export function BrandsSection({ team }: { team: BrandsInfo }) {
   const { run, busy } = useRun();
   const [kitFor, setKitFor] = useState<Brand | null>(null);
   const add = async () => {
@@ -109,7 +115,7 @@ export function BrandsSection({ team }: { team: TeamInfo }) {
   const revoke = async (b: Brand) => {
     if (await askConfirm(`Turn off the review link for ${b.name}?`, { body: "The link stops working.", ok: "Turn off", danger: true })) run(() => removeReviewLink(b.id), "Couldn't turn off the link");
   };
-  const credits = !!team.creditLimits;
+  const credits = team.creditLimits;
   return (
     <>
       <PaneHead title="Brands" line="Each brand has its own channels, posts and approvals">
@@ -333,7 +339,7 @@ function BrandLook({ brand }: { brand: Brand }) {
   );
 }
 
-export function MembersSection({ team }: { team: TeamInfo }) {
+export function MembersSection({ team }: { team: MembersInfo }) {
   const { run, busy } = useRun();
   const [inviting, setInviting] = useState(false);
   const [access, setAccess] = useState<Member | null>(null);
@@ -478,7 +484,7 @@ function BrandPicks({ brands, value, onChange }: { brands: Brand[]; value: strin
   );
 }
 
-function InviteDialog({ team, onClose }: { team: TeamInfo; onClose: () => void }) {
+function InviteDialog({ team, onClose }: { team: MembersInfo; onClose: () => void }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("editor");
@@ -553,7 +559,7 @@ function InviteDialog({ team, onClose }: { team: TeamInfo; onClose: () => void }
   );
 }
 
-function AccessDialog({ team, member, onClose }: { team: TeamInfo; member: Member; onClose: () => void }) {
+function AccessDialog({ team, member, onClose }: { team: MembersInfo; member: Member; onClose: () => void }) {
   const router = useRouter();
   const [brands, setBrands] = useState<string[] | null>(member.brandIds);
   const [error, setError] = useState("");

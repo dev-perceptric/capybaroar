@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Check, Plus, X } from "lucide-react";
-import { Button, CardHead, Chip, Field, IconButton, Input, PaneHead, Panel, inputLook } from "./ui";
+import { Button, CardHead, Chip, ErrorNote, Field, IconButton, Input, Loading, PaneHead, Panel, inputLook } from "./ui";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { BillingSection, type BillingInfo } from "./BillingSection";
-import { BrandsSection, MembersSection, type TeamInfo } from "./TeamSettings";
+import { BrandsSection, MembersSection, type BrandsInfo, type MembersInfo } from "./TeamSettings";
 import { ApiSection, type ApiInfo } from "./ApiSettings";
 import { AuditLog } from "./AuditLog";
 import { DataExport } from "./DataExport";
@@ -16,6 +16,7 @@ import { TwoFactor } from "./TwoFactor";
 import { Devices } from "./Devices";
 import { RequireTwoFactor } from "./RequireTwoFactor";
 import type { ExportView } from "@/lib/exportRules";
+import { knownTab, settingsGroups, type SettingsTab } from "@/app/(app)/settings/tabs";
 import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
 import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
 import { fmtTime } from "@/lib/format";
@@ -26,10 +27,19 @@ const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
 const zones = () => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["UTC"]);
 
-type Tab = "general" | "brands" | "members" | "queue" | "audit" | "api" | "billing" | "account";
 type Exports = { account: ExportView | null; workspace: ExportView | null };
+type Slot = { day: number; time: string };
 
-const noSub = () => () => {};
+/** What the page read for the open tab, and nothing for the others. `api` is null until migration 009 is in. */
+export type SettingsData =
+  | { tab: "general"; exports: Exports }
+  | { tab: "brands"; team: BrandsInfo }
+  | { tab: "members"; team: MembersInfo }
+  | { tab: "queue"; queue: Slot[] }
+  | { tab: "audit"; people: { userId: string; name: string; email: string }[] }
+  | { tab: "api"; api: ApiInfo | null }
+  | { tab: "billing"; billing: BillingInfo }
+  | { tab: "account"; exports: Exports };
 
 /** A short "Saved" or the error, after a save. */
 export function SaveNote({ msg }: { msg: string }) {
@@ -42,46 +52,36 @@ export function SaveNote({ msg }: { msg: string }) {
 
 /**
  * Settings, like Claritia's: a nav on the left (a row of tabs on a phone) and one pane at a time. The open pane is in
- * the address (`?tab=brands`); older links with a hash (`#brands`, `#billing`) open the same pane. `owner` adds Delete
- * workspace to General; `accountOnly` (members who don't run the workspace) shows only Your account.
+ * the address (`?tab=brands`) and the page reads only that pane's data (`data`); picking another pane changes the
+ * address, so the server reads that one's. Older links with a hash (`#brands`, `#billing`) open the same pane. `owner`
+ * adds Delete workspace to General; `accountOnly` (members who don't run the workspace) shows only Your account.
  */
-export function SettingsView({ name, timezone, queue, billing, team, api, owner = false, email, accountOnly = false, exports = { account: null, workspace: null } }: { name: string; timezone: string; queue: { day: number; time: string }[]; billing?: BillingInfo; team?: TeamInfo; api?: ApiInfo; owner?: boolean; email?: string; accountOnly?: boolean; exports?: Exports }) {
+export function SettingsView({ name, timezone, data, owner = false, email, accountOnly = false }: { name: string; timezone: string; data: SettingsData; owner?: boolean; email: string; accountOnly?: boolean }) {
   const [tz, setTz] = useState(timezone);
-  const account = email != null ? [{ label: "Account", tabs: [{ id: "account" as const, label: "Your account" }] }] : [];
-  const groups: { label: string; tabs: { id: Tab; label: string }[] }[] = accountOnly
-    ? account
-    : [
-        {
-          label: "Workspace",
-          tabs: [{ id: "general", label: "General" }, ...(team ? [{ id: "brands" as const, label: "Brands" }, { id: "members" as const, label: "Members" }] : []), { id: "queue", label: "Queue" }, ...(team ? [{ id: "audit" as const, label: "Audit log" }] : [])],
-        },
-        ...(billing ? [{ label: "Plan", tabs: [{ id: "billing" as const, label: "Billing" }] }] : []),
-        ...(api ? [{ label: "Developers", tabs: [{ id: "api" as const, label: "API and MCP" }] }] : []),
-        ...account,
-      ];
-  const all = groups.flatMap((g) => g.tabs.map((t) => t.id));
-  const known = (v: string | null | undefined): Tab | null => (v && (all as string[]).includes(v) ? (v as Tab) : null);
-  const params = useSearchParams();
-  const fromQuery = known(params.get("tab"));
-  const [picked, setPicked] = useState<Tab | null>(null);
-  // A link to another pane (the sidebar's Manage brands) wins over the last pick.
-  const [seen, setSeen] = useState(fromQuery);
-  if (fromQuery !== seen) {
-    setSeen(fromQuery);
-    setPicked(null);
-  }
+  const groups = settingsGroups(!accountOnly);
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  // The picked tab shows in the nav at once; its pane waits for the server's data.
+  const [tab, setTab] = useOptimistic<SettingsTab>(data.tab);
+  const go = (t: SettingsTab) =>
+    start(() => {
+      setTab(t);
+      router.replace(`/settings?tab=${t}`, { scroll: false });
+    });
   // An older link with a hash (#brands) opens that pane. Read in the browser only.
-  const fromHash = known(useSyncExternalStore(noSub, () => window.location.hash.slice(1), () => ""));
-  const tab: Tab = picked ?? fromQuery ?? fromHash ?? all[0] ?? "general";
+  useEffect(() => {
+    const fromHash = knownTab(window.location.hash.slice(1), !accountOnly);
+    if (!fromHash || fromHash === data.tab || new URLSearchParams(window.location.search).has("tab")) return;
+    start(() => {
+      setTab(fromHash);
+      router.replace(`/settings?tab=${fromHash}`, { scroll: false });
+    });
+  }, [accountOnly, data.tab, router, setTab]);
   // On a phone the panes are one row of tabs that scrolls sideways: keep the open one in view.
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
     if (window.matchMedia("(max-width: 767px)").matches) nav.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: "nearest", inline: "center" });
   }, [tab]);
-  const pick = (t: Tab) => {
-    setPicked(t);
-    window.history.replaceState(null, "", `/settings?tab=${t}`);
-  };
 
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-5 md:flex-row md:gap-10">
@@ -94,7 +94,9 @@ export function SettingsView({ name, timezone, queue, billing, team, api, owner 
                 key={t.id}
                 type="button"
                 aria-current={tab === t.id ? "page" : undefined}
-                onClick={() => pick(t.id)}
+                onClick={() => {
+                  if (t.id !== tab) go(t.id);
+                }}
                 className={`flex h-8 shrink-0 items-center rounded-md px-3 text-left text-[13px] whitespace-nowrap transition-[background-color,box-shadow,color] duration-[var(--duration-fast)] ${tab === t.id ? "bg-panel font-medium text-ink shadow-chip" : "text-body hover:bg-hover hover:text-ink"}`}
               >
                 {t.label}
@@ -103,18 +105,38 @@ export function SettingsView({ name, timezone, queue, billing, team, api, owner 
           </div>
         ))}
       </nav>
-      <div className="flex max-w-[760px] min-w-0 flex-1 flex-col gap-5">
-        {tab === "general" ? <General name={name} tz={tz} setTz={setTz} owner={owner} exports={exports} /> : null}
-        {tab === "brands" && team ? <BrandsSection team={team} /> : null}
-        {tab === "members" && team ? <MembersSection team={team} /> : null}
-        {tab === "queue" ? <Queue initial={queue} timezone={tz} /> : null}
-        {tab === "audit" && team ? <AuditLog timezone={tz} people={team.members.map((m) => ({ userId: m.userId, name: m.name, email: m.email }))} /> : null}
-        {tab === "api" && api ? <ApiSection api={api} /> : null}
-        {tab === "billing" && billing ? <BillingSection info={billing} /> : null}
-        {tab === "account" && email != null ? <Account email={email} exports={exports} /> : null}
-      </div>
+      <div className="flex max-w-[760px] min-w-0 flex-1 flex-col gap-5">{pending || tab !== data.tab ? <Loading /> : <Pane data={data} name={name} tz={tz} setTz={setTz} owner={owner} email={email} />}</div>
     </div>
   );
+}
+
+/** The open tab's pane, from the data the page read for it. */
+function Pane({ data, name, tz, setTz, owner, email }: { data: SettingsData; name: string; tz: string; setTz: (v: string) => void; owner: boolean; email: string }) {
+  switch (data.tab) {
+    case "general":
+      return <General name={name} tz={tz} setTz={setTz} owner={owner} exports={data.exports} />;
+    case "brands":
+      return <BrandsSection team={data.team} />;
+    case "members":
+      return <MembersSection team={data.team} />;
+    case "queue":
+      return <Queue initial={data.queue} timezone={tz} />;
+    case "audit":
+      return <AuditLog timezone={tz} people={data.people} />;
+    case "api":
+      return data.api ? (
+        <ApiSection api={data.api} />
+      ) : (
+        <>
+          <PaneHead title="API and MCP" />
+          <ErrorNote message="API keys aren't available in this workspace yet" />
+        </>
+      );
+    case "billing":
+      return <BillingSection info={data.billing} />;
+    case "account":
+      return <Account email={email} exports={data.exports} />;
+  }
 }
 
 function General({ name, tz, setTz, owner, exports }: { name: string; tz: string; setTz: (v: string) => void; owner: boolean; exports: Exports }) {
