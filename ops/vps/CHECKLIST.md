@@ -39,20 +39,28 @@ until step 8 is done, so a firewall mistake can't lock you out.
 4. Sign-ups confirm their email, passwords at least 8 characters. Supabase's `SMTP_*` settings in `.env` must be
    filled in, or new people can't confirm, and sign-in links and reset emails never arrive.
 
-   Email goes through Resend. `capybaroar.com` is a domain in Resend (sending only); its DNS records live at Namecheap
-   on `resend._domainkey`, `send` and `rsend`, so the root's email forwarding stays as it is. In `.env`:
+   Email goes through Resend, in the "arrowsterr" team (the dev-arrowsterr login), from `mail.capybaroar.com`. Its DNS
+   records sit on `mail.capybaroar.com` at Namecheap; the root `capybaroar.com` keeps Namecheap's email forwarding, so
+   never switch Namecheap's Mail Settings to Custom MX (that turns forwarding off). The team's "Capybaroar" key is the
+   one the app already sends with; Supabase Auth uses the same key. Copy it across instead of pasting it anywhere:
 
    ```sh
-   SMTP_HOST=smtp.resend.com
-   SMTP_PORT=465
-   SMTP_USER=resend
-   SMTP_PASS=re_...            # a Resend API key with sending access to capybaroar.com
-   SMTP_ADMIN_EMAIL=hello@capybaroar.com
-   SMTP_SENDER_NAME=Capybaroar
+   cd /docker/sb-capybaroar && cp .env .env.bak
+   sed -i '/^SMTP_\(HOST\|PORT\|USER\|PASS\|ADMIN_EMAIL\|SENDER_NAME\)=/d' .env
+   grep '^SMTP_PASS=' /docker/capybaroar/.env >> .env
+   printf 'SMTP_HOST=smtp.resend.com\nSMTP_PORT=465\nSMTP_USER=resend\nSMTP_ADMIN_EMAIL=hello@mail.capybaroar.com\nSMTP_SENDER_NAME=Capybaroar\n' >> .env
+   docker compose up -d auth
    ```
 
-   The app's own emails (alerts, reports, invites) read the same names in the app's `.env`, plus
-   `ALERT_FROM="Capybaroar <hello@capybaroar.com>"`.
+   The emails themselves (confirm, sign-in link and code, reset, invite, email change, security code) are
+   `public/email-templates/*.html`, made by `npm run email-templates` and loaded by Supabase Auth from the app through
+   `docker-compose.override.yml`. Copy the override up and run `docker compose up -d auth` after changing it.
+
+   The app's own emails (alerts, reports, invites) read `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` and `SMTP_PASS` from
+   `/docker/capybaroar/.env`, and go out from `ALERT_FROM="Capybaroar <hello@mail.capybaroar.com>"` (src/lib/mailFrom.ts
+   uses that address when ALERT_FROM is missing).
+
+   To test: "Forgot password?" on app.capybaroar.com, then the team's Emails page in Resend shows it delivered.
 
    ```sh
    cd /docker/sb-capybaroar

@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { adminClient } from "./supabase/server";
+import { mailFrom } from "./mailFrom";
 import { appUrl } from "./channels";
 import { networkOf, type NetworkId } from "./networks";
 import type { TargetCtx } from "./publisher";
@@ -52,7 +53,7 @@ export async function emailsOf(userIds: string[]) {
 export async function sendEmail(to: string[], subject: string, mail: { title: string; body: string; button: string; href: string; label?: string }) {
   if (!mailReady() || !to.length) return false;
   try {
-    await mailer().sendMail({ from: process.env.ALERT_FROM || process.env.SMTP_USER, to, subject, html: html(mail.title, mail.body, mail.button, mail.href, mail.label) });
+    await mailer().sendMail({ from: mailFrom(), to, subject, html: html(mail.title, mail.body, mail.button, mail.href, mail.label) });
     return true;
   } catch (e) {
     console.error("mail:", e instanceof Error ? e.message : e);
@@ -97,7 +98,7 @@ export async function sendAlert(kind: "post_failed" | "reconnect", t: Pick<Targe
       kind === "post_failed"
         ? { subject: `A post to ${t.channelName} didn't go out`, html: html(`A post to ${t.channelName} (${net}) didn't go out`, error, "Open the calendar", `${appUrl()}/calendar`) }
         : { subject: `Reconnect ${t.channelName}`, html: html(`Reconnect ${t.channelName} (${net})`, `${net} stopped accepting posts from Capybaroar: ${error}. Scheduled posts to it wait until you reconnect.`, "Reconnect", `${appUrl()}/channels`) };
-    await mailer().sendMail({ from: process.env.ALERT_FROM || process.env.SMTP_USER, to: emails, ...mail });
+    await mailer().sendMail({ from: mailFrom(), to: emails, ...mail });
   } catch (e) {
     console.error("alert:", e instanceof Error ? e.message : e);
   }

@@ -44,7 +44,19 @@ services:
       # wins either way. Sign-ups then need Supabase's SMTP_* settings in .env to receive their confirmation email.
       GOTRUE_MAILER_AUTOCONFIRM: "false"
       GOTRUE_PASSWORD_MIN_LENGTH: "8"
-      # The sign-in link email with its 6-digit code (/login/link, src/lib/emailLink.ts), served by the app.
+      # Every sign-in email in Capybaroar's style, served by the app (made by scripts/email-templates.mjs). The emails
+      # say links and codes work for 1 hour, so the expiry is set here to match.
+      GOTRUE_MAILER_OTP_LENGTH: "6"
+      GOTRUE_MAILER_OTP_EXP: "3600"
+      GOTRUE_MAILER_TEMPLATES_CONFIRMATION: "https://app.capybaroar.com/email-templates/confirmation.html"
+      GOTRUE_MAILER_SUBJECTS_CONFIRMATION: "Confirm your email for Capybaroar"
       GOTRUE_MAILER_TEMPLATES_MAGIC_LINK: "https://app.capybaroar.com/email-templates/magic-link.html"
       GOTRUE_MAILER_SUBJECTS_MAGIC_LINK: "{{ .Token }} is your Capybaroar sign-in code"
-      GOTRUE_MAILER_OTP_LENGTH: "6"
+      GOTRUE_MAILER_TEMPLATES_RECOVERY: "https://app.capybaroar.com/email-templates/recovery.html"
+      GOTRUE_MAILER_SUBJECTS_RECOVERY: "Reset your Capybaroar password"
+      GOTRUE_MAILER_TEMPLATES_INVITE: "https://app.capybaroar.com/email-templates/invite.html"
+      GOTRUE_MAILER_SUBJECTS_INVITE: "You're invited to Capybaroar"
+      GOTRUE_MAILER_TEMPLATES_EMAIL_CHANGE: "https://app.capybaroar.com/email-templates/email-change.html"
+      GOTRUE_MAILER_SUBJECTS_EMAIL_CHANGE: "Confirm your new Capybaroar email"
+      GOTRUE_MAILER_TEMPLATES_REAUTHENTICATION: "https://app.capybaroar.com/email-templates/reauthentication.html"
+      GOTRUE_MAILER_SUBJECTS_REAUTHENTICATION: "{{ .Token }} is your Capybaroar security code"

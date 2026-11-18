@@ -1,46 +1,22 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
-    <title>Sign in to Capybaroar</title>
-  </head>
-  <!-- Supabase Auth's "Magic link" email (ops/vps/docker-compose.override.yml loads it from this address). It fills in
-       {{ .ConfirmationURL }}, {{ .Token }} and {{ .Email }}. Email clients need inline styles and hex colors. -->
-  <body style="margin:0;padding:0;background:#f4f4f2;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#262626;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f2;padding:32px 16px;">
-      <tr>
-        <td align="center">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:16px;padding:32px;">
-            <tr>
-              <td style="font-size:15px;font-weight:600;color:#262626;padding-bottom:24px;">Capybaroar</td>
-            </tr>
-            <tr>
-              <td style="font-size:22px;line-height:1.2;font-weight:600;color:#171717;padding-bottom:12px;">Sign in to Capybaroar</td>
-            </tr>
-            <tr>
-              <td style="font-size:14px;line-height:1.55;color:#525252;padding-bottom:24px;">Use the button or the code to sign in as {{ .Email }}. Both work once, for 1 hour.</td>
-            </tr>
-            <tr>
-              <td style="padding-bottom:24px;">
-                <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#333333;color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;padding:12px 22px;border-radius:999px;">Sign in</a>
-              </td>
-            </tr>
-            <tr>
-              <td style="font-size:12px;color:#737373;padding-bottom:6px;">Or enter this code</td>
-            </tr>
-            <tr>
-              <td style="padding-bottom:24px;">
-                <span style="display:inline-block;background:#fff6c7;color:#262209;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:24px;letter-spacing:6px;font-weight:600;padding:10px 16px;border-radius:8px;">{{ .Token }}</span>
-              </td>
-            </tr>
-            <tr>
-              <td style="font-size:12px;line-height:1.55;color:#737373;border-top:1px solid #ececea;padding-top:16px;">If you didn't ask to sign in, you can ignore this email. Your account stays as it is.</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Sign in to Capybaroar</title>
+</head>
+<!-- Made by scripts/email-templates.mjs. Edit that file, not this one. -->
+<body style="margin:0;padding:24px 16px;background:#FFFFFF;font-family:Inter,Helvetica,Arial,sans-serif;color:#0A0A0A">
+<span style="display:none;max-height:0;overflow:hidden">Your sign-in link and code. Both work once, for 1 hour.</span>
+<div style="max-width:520px">
+<p style="margin:0 0 24px"><img src="https://capybaroar.com/brand/wordmark-light@2x.png" width="136" height="24" alt="Capybaroar" style="display:block;border:0;width:136px;height:auto"></p>
+<h1 style="margin:0 0 12px;font-size:20px;font-weight:600;color:#0A0A0A">Sign in to Capybaroar</h1>
+<p style="margin:0 0 16px;font-size:14px;line-height:1.55;color:#737373">Use the button or the code to sign in as {{ .Email }}. Both work once, for 1 hour.</p>
+<p style="margin:0 0 20px"><a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#FFE100;color:#0A0A0A;border:1px solid #0A0A0A;padding:10px 16px;text-decoration:none;font-weight:600;font-size:13px">Sign in</a></p>
+<p style="margin:0 0 6px;font-size:12px;color:#737373">Or enter this code</p>
+<p style="margin:0 0 20px"><span style="display:inline-block;border:1px solid #0A0A0A;padding:8px 14px;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:22px;letter-spacing:6px;font-weight:600;color:#0A0A0A">{{ .Token }}</span></p>
+<p style="margin:24px 0 0;padding-top:16px;border-top:1px solid #EDEDED;font-size:12px;line-height:1.55;color:#737373">If you didn't ask to sign in, you can ignore this email. Your account stays as it is.</p>
+</div>
+</body>
 </html>
