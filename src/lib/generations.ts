@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { hostname } from "node:os";
 import { adminClient } from "./supabase/server";
 import { linkToMedia } from "./api/upload";
+import { makeThumb } from "./media";
 import { ApiError } from "./api/input";
 import { checkLimits, falCall, fileName, type GenKind, type GenRequest, type GenUse } from "./genRules";
 import { creditsOf, hold, settle, type Spender } from "./credits";
@@ -294,6 +295,7 @@ async function bufferToMedia(workspaceId: string, userId: string | null, png: Bu
     if (first) return first.id as string;
     throw new Error(`Couldn't save the picture: ${error.message}`);
   }
+  await makeThumb(workspaceId, data.id as string, path, mime, png.length, png);
   return data.id as string;
 }
 

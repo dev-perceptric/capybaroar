@@ -1,10 +1,11 @@
 import "server-only";
 import { createReadStream, createWriteStream } from "node:fs";
-import { mkdtemp, open, rm, stat } from "node:fs/promises";
+import { mkdtemp, open, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { adminClient } from "../supabase/server";
-import { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS } from "../media";
+import { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS, makeThumb } from "../media";
+import { thumbable } from "../thumbRules";
 import { ApiError } from "./input";
 import { BlockedAddress, safeGet } from "./fetchSafe";
 import { nameFromUrl, sniffMime } from "./net";
@@ -105,6 +106,9 @@ export async function linkToMedia(workspaceId: string, userId: string | null, ur
       await db.storage.from("media").remove([path]);
       throw new ApiError(503, "unavailable", `Couldn't save the file: ${error.message}`);
     }
+    // The download is still on disk: the thumbnail is made from it, not from a second download.
+    const bytes = thumbable(mime, size) ? await readFile(file).catch(() => undefined) : undefined;
+    if (bytes) await makeThumb(workspaceId, data.id as string, path, mime, size, bytes);
     return data.id as string;
   } finally {
     await rm(dir, { recursive: true, force: true });

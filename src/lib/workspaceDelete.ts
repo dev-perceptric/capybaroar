@@ -5,6 +5,7 @@ import { providerOf } from "./providers";
 import { stripe } from "./billing";
 import { enqueue } from "./jobs";
 import { accountPlan, deleteWorkspaceWith, revokeBlocked, type AccountWorkspace, type ChannelRef } from "./retention";
+import { storedPaths } from "./thumbRules";
 
 // Deleting a workspace or an account (rules and order in retention.ts). The request removes everyone's access at
 // once; a "workspace_delete" job does the rest, so a slow network or Stripe never holds up the person.
@@ -86,9 +87,10 @@ async function filesOf(workspaceId: string) {
     }
   }
   for (let from = 0; ; from += 1000) {
-    const { data, error } = await db.from("media").select("path").eq("workspace_id", workspaceId).order("id").range(from, from + 999);
+    // Thumbnails are in the folder's thumbs/ subfolder, found above too.
+    const { data, error } = await db.from("media").select("path, thumb_path").eq("workspace_id", workspaceId).order("id").range(from, from + 999);
     if (error) throw new Error(error.message);
-    for (const r of data ?? []) out.push(r.path as string);
+    for (const r of data ?? []) out.push(...storedPaths([r as { path: string; thumb_path: string | null }]));
     if ((data ?? []).length < 1000) break;
   }
   return out;

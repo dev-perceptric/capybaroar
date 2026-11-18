@@ -10,10 +10,11 @@ import { Loader } from "./Loader";
 import { askConfirm } from "./Dialogs";
 import { Modal } from "./Overlay";
 import { GenerateForm, PendingTile, useGenerations } from "./Generate";
+import { VideoTile } from "./MediaThumb";
 import { endUpload, mediaUsage, removeMedia, startUpload } from "@/app/(app)/media/actions";
 import { toUploadable } from "@/lib/imageConvert";
 
-type File = { id: string; name: string; mime: string; size: number; thumb: string | null };
+type File = { id: string; name: string; mime: string; size: number; thumb: string | null; tile: string | null };
 
 const mb = (n: number) => `${(n / 1024 / 1024).toFixed(n < 10 * 1024 * 1024 ? 1 : 0)} MB`;
 
@@ -128,10 +129,10 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
                       <audio src={f.thumb ?? undefined} controls preload="metadata" className="w-full" />
                     </div>
                   ) : f.mime.startsWith("video/") ? (
-                    <video src={f.thumb ?? undefined} className="size-full object-cover" muted controls preload="metadata" />
+                    <VideoTile src={f.thumb} controls />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={f.thumb ?? ""} alt={f.name} loading="lazy" decoding="async" className="size-full object-cover" />
+                    <img src={f.tile ?? f.thumb ?? ""} alt={f.name} loading="lazy" decoding="async" className="size-full object-cover" />
                   )}
                   <span className="absolute top-2 right-2 hidden group-focus-within:block group-hover:block">
                     <IconButton label="Delete" variant="ghost" align="end" onClick={() => del(f)}>

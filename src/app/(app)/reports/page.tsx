@@ -31,7 +31,7 @@ export default async function ReportsPage() {
       brand={ctx.brand?.id ?? null}
       allBrands={ctx.scope === null}
       whiteLabel={plan.whiteLabel}
-      images={media.filter((m) => m.mime.startsWith("image/") && m.thumb).map((m) => ({ id: m.id, name: m.name, thumb: m.thumb! }))}
+      images={media.flatMap((m) => (m.mime.startsWith("image/") && m.tile ? [{ id: m.id, name: m.name, thumb: m.tile }] : []))}
     />
   );
 }

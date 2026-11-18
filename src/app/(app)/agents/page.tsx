@@ -58,7 +58,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
           const g = gens.get(genOf.get(b.id) ?? "");
           if (!g) return [];
           const m = g.media_id ? thumbs.get(g.media_id) : undefined;
-          return [{ key, role: "media", text: g.prompt, media: { kind: g.kind, status: g.status, error: g.error, thumb: m?.thumb ?? null, mime: m?.mime ?? null, model: modelOf(g.model)?.name ?? g.model, credits: g.credits, reason: g.reason } }];
+          return [{ key, role: "media", text: g.prompt, media: { kind: g.kind, status: g.status, error: g.error, thumb: m?.tile ?? null, mime: m?.mime ?? null, model: modelOf(g.model)?.name ?? g.model, credits: g.credits, reason: g.reason } }];
         }
         return [];
       }),

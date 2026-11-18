@@ -1,7 +1,7 @@
 import "server-only";
 import { adminClient } from "./supabase/server";
 import { listChannels } from "./channels";
-import { ALLOWED, MAX_BYTES } from "./media";
+import { ALLOWED, MAX_BYTES, makeThumb } from "./media";
 import { savePost, type Actor, type PostStatus } from "./posts";
 import { MAX_CSV, parseBulk, queueTimes, dailyTimes, settingsFor } from "./bulk";
 import { splitThread } from "./thread";
@@ -30,6 +30,7 @@ export async function importMediaUrl(workspaceId: string, userId: string, url: s
     await db.storage.from("media").remove([path]);
     throw new Error(error.message);
   }
+  await makeThumb(workspaceId, data.id as string, path, mime, got.body.length, got.body);
   return data.id as string;
 }
 

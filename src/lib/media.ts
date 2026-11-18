@@ -2,9 +2,13 @@ import "server-only";
 import { adminClient } from "./supabase/server";
 import type { MediaFile } from "./providers/types";
 import { HEAD_BYTES, checkClaim, isUploadPath, isUuid, judgeUpload, mediaFilter, type MediaScope } from "./uploadRules";
+import { THUMB_MIME, keepThumb, renderThumb, storedPaths, thumbPathOf, thumbable, tilePath } from "./thumbRules";
 export type { MediaScope } from "./uploadRules";
 
 export type MediaRow = { id: string; path: string; name: string; mime: string; size: number; alt: string | null; created_at: string; brand_id?: string | null };
+/** A library file with links: `thumb` is the original (editing, previews, attaching), `tile` the small picture for a
+ * tile (its thumbnail, or the original for files that have none). */
+export type ListedMedia = MediaRow & { thumb: string | null; tile: string | null };
 
 const BUCKET = "media";
 export { ALLOWED, MAX_BYTES, MAX_PDF, UPLOADS } from "./uploadRules";
@@ -39,17 +43,17 @@ export async function mayUseMedia(workspaceId: string, id: string, scope?: Media
   return !!data;
 }
 
-export async function listMedia(workspaceId: string, scope?: MediaScope | null): Promise<(MediaRow & { thumb: string | null })[]> {
+export async function listMedia(workspaceId: string, scope?: MediaScope | null): Promise<ListedMedia[]> {
   const db = adminClient();
-  let q = db.from("media").select("id, path, name, mime, size, alt, created_at, brand_id").eq("workspace_id", workspaceId);
+  let q = db.from("media").select("id, path, thumb_path, name, mime, size, alt, created_at, brand_id").eq("workspace_id", workspaceId);
   const f = mediaFilter(scope);
   if (f) q = q.or(f);
   const { data, error } = await q.order("created_at", { ascending: false }).limit(200);
   if (error) throw new Error(error.message);
-  const rows = (data ?? []) as MediaRow[];
+  const rows = (data ?? []) as (MediaRow & { thumb_path: string | null })[];
   if (!rows.length) return [];
-  const thumbs = await showLinks(rows.map((r) => r.path));
-  return rows.map((r, i) => ({ ...r, thumb: thumbs[i] }));
+  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map(tilePath))]);
+  return rows.map((r, i) => ({ id: r.id, path: r.path, name: r.name, mime: r.mime, size: r.size, alt: r.alt, created_at: r.created_at, brand_id: r.brand_id, thumb: full[i], tile: small[i] ?? full[i] }));
 }
 
 /** Step 1 of an upload: check the file and hand back a one-time link the browser uploads to directly. */
@@ -115,14 +119,45 @@ export async function finishUpload(workspaceId: string, userId: string, file: { 
   }
   const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, brand_id: isUuid(brandId) ? brandId : null, path: file.path, name: file.name.slice(0, 200), mime: real.mime, size: real.size, created_by: userId }).select("id").single();
   if (error) throw new Error(error.message);
+  await makeThumb(workspaceId, data.id as string, file.path, real.mime, real.size);
   return data.id as string;
+}
+
+/**
+ * Makes a picture's thumbnail (renderThumb), stores it at thumbPathOf(path) and records it on the media row. Never
+ * throws: a file without one shows its original. Pass the original's bytes when they're at hand; otherwise they're
+ * downloaded.
+ */
+export async function makeThumb(workspaceId: string, id: string, path: string, mime: string, size: number, bytes?: Uint8Array): Promise<void> {
+  if (!thumbable(mime, size)) return;
+  const db = adminClient();
+  try {
+    let src = bytes;
+    if (!src) {
+      const { data, error } = await db.storage.from(BUCKET).download(path);
+      if (error || !data) throw new Error(error?.message ?? "Couldn't read the file");
+      src = new Uint8Array(await data.arrayBuffer());
+    }
+    const out = await renderThumb(src);
+    if (!keepThumb(out.length, src.length)) return;
+    const thumb = thumbPathOf(path);
+    const up = await db.storage.from(BUCKET).upload(thumb, out, { contentType: THUMB_MIME, upsert: true });
+    if (up.error) throw new Error(up.error.message);
+    const { error } = await db.from("media").update({ thumb_path: thumb }).eq("id", id).eq("workspace_id", workspaceId);
+    if (error) {
+      await db.storage.from(BUCKET).remove([thumb]);
+      throw new Error(error.message);
+    }
+  } catch (e) {
+    console.error("thumbnail:", id, e instanceof Error ? e.message : e);
+  }
 }
 
 export async function deleteMedia(workspaceId: string, id: string, scope?: MediaScope | null) {
   if (!(await mayUseMedia(workspaceId, id, scope))) throw new Error("File not found");
   const db = adminClient();
-  const { data } = await db.from("media").delete().eq("id", id).eq("workspace_id", workspaceId).select("path").maybeSingle();
-  if (data?.path) await db.storage.from(BUCKET).remove([data.path]);
+  const { data } = await db.from("media").delete().eq("id", id).eq("workspace_id", workspaceId).select("path, thumb_path").maybeSingle();
+  if (data?.path) await db.storage.from(BUCKET).remove(storedPaths([data as { path: string; thumb_path: string | null }]));
 }
 
 /** Media for publishing: a signed link networks can fetch for an hour, and the bytes for networks we upload to. */
@@ -167,16 +202,18 @@ export async function setAlt(workspaceId: string, id: string, alt: string, scope
   if (error) throw new Error(error.message);
 }
 
-/** Signed links to show these files (an hour), for previews outside the app. */
-export async function mediaThumbs(workspaceId: string, ids: string[]): Promise<{ id: string; mime: string; thumb: string | null; alt: string | null }[]> {
+/**
+ * Signed links to show these files, good for at least an hour (reused like the library's), for previews outside the
+ * app. `thumb` is the original; `tile` the small picture for a tile (its thumbnail, or the original).
+ */
+export async function mediaThumbs(workspaceId: string, ids: string[]): Promise<{ id: string; mime: string; thumb: string | null; tile: string | null; alt: string | null }[]> {
   if (!ids.length) return [];
-  const db = adminClient();
-  const { data, error } = await db.from("media").select("id, path, mime, alt").eq("workspace_id", workspaceId).in("id", ids);
+  const { data, error } = await adminClient().from("media").select("id, path, thumb_path, mime, alt").eq("workspace_id", workspaceId).in("id", ids);
   if (error) throw new Error(error.message);
-  const rows = data ?? [];
+  const rows = (data ?? []) as { id: string; path: string; thumb_path: string | null; mime: string; alt: string | null }[];
   if (!rows.length) return [];
-  const { data: signed } = await db.storage.from(BUCKET).createSignedUrls(rows.map((r) => r.path as string), 3600);
-  return rows.map((r, i) => ({ id: r.id as string, mime: r.mime as string, thumb: signed?.[i]?.signedUrl ?? null, alt: (r.alt as string | null) ?? null }));
+  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map(tilePath))]);
+  return rows.map((r, i) => ({ id: r.id, mime: r.mime, thumb: full[i], tile: small[i] ?? full[i], alt: r.alt ?? null }));
 }
 
 /** Saves a file the server made (a carousel PDF, slideshow pictures) to the media library. Returns its id. */
@@ -188,5 +225,6 @@ export async function saveMadeFile(workspaceId: string, userId: string, bytes: B
   if (up.error) throw new Error(`Couldn't save ${name}: ${up.error.message}`);
   const { data, error } = await db.from("media").insert({ workspace_id: workspaceId, path, name: name.slice(0, 200), mime, size: bytes.length, created_by: userId }).select("id").single();
   if (error) throw new Error(error.message);
+  await makeThumb(workspaceId, data.id as string, path, mime, bytes.length, bytes);
   return data.id as string;
 }

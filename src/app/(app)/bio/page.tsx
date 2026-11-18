@@ -30,8 +30,8 @@ export default async function BioEditorPage({ searchParams }: { searchParams: Pr
       brands={b.brand ? [] : brands.map((x) => ({ id: x.id, name: x.name }))}
       page={page}
       base={bioUrl("")}
-      images={media.filter((m) => m.mime.startsWith("image/")).map((m) => ({ id: m.id, name: m.name, thumb: m.thumb }))}
-      posts={posts.map((p) => ({ id: p.id, text: p.text, url: p.url, thumb: thumbs.find((t) => t.id === p.mediaId)?.thumb ?? null }))}
+      images={media.filter((m) => m.mime.startsWith("image/")).map((m) => ({ id: m.id, name: m.name, thumb: m.tile }))}
+      posts={posts.map((p) => ({ id: p.id, text: p.text, url: p.url, thumb: thumbs.find((t) => t.id === p.mediaId)?.tile ?? null }))}
       social={social}
       badgeOff={PLANS[effectivePlan(billing)].bioBadgeOff}
       agent={PLANS[effectivePlan(billing)].ai}

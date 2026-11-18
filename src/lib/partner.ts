@@ -9,6 +9,7 @@ import { ApiError } from "./api/input";
 import { OFFERED, isPaused, type NetworkId } from "./networks";
 import { PROVIDERS } from "./providers";
 import { BrandTaken, LINK_TTL_MS, linkProblem, sha256, type ConnectLink, type LinkProblem, type PartnerBrand, type PartnerStore } from "./partnerRules";
+import { storedPaths } from "./thumbRules";
 
 // The partner API on the real database (rules in partnerRules.ts) and connect link sessions.
 
@@ -30,10 +31,10 @@ async function removeBrandData(workspaceId: string, brandId: string) {
   if (e2) throw busy();
   // The brand's files, from storage too.
   for (;;) {
-    const { data: files, error } = await db.from("media").select("id, path").eq("workspace_id", workspaceId).eq("brand_id", brandId).limit(100);
+    const { data: files, error } = await db.from("media").select("id, path, thumb_path").eq("workspace_id", workspaceId).eq("brand_id", brandId).limit(100);
     if (error) throw busy();
     if (!files?.length) break;
-    await db.storage.from("media").remove(files.map((f) => f.path as string));
+    await db.storage.from("media").remove(storedPaths(files as { path: string; thumb_path: string | null }[]));
     const { error: e3 } = await db.from("media").delete().in("id", files.map((f) => f.id as string));
     if (e3) throw busy();
   }

@@ -9,6 +9,7 @@ import { Loader } from "./Loader";
 import { Logo } from "./Logo";
 import { Drawing } from "./Drawing";
 import { Floating } from "./Floating";
+import { VideoTile } from "./MediaThumb";
 import { Markdown } from "./Markdown";
 import { ChatsMenu, CHATS_EVENT } from "./AgentChats";
 import { send } from "@/app/(app)/agents/actions";
@@ -33,7 +34,7 @@ export type Shown = {
 };
 
 type Make = "auto" | GenKind;
-type File = { id: string; name: string; mime: string; thumb: string | null };
+type File = { id: string; name: string; mime: string; thumb: string | null; tile?: string | null };
 
 const MAKE_KEY = "cb_agent_make";
 const MAKE_ICON: Record<Make, React.ReactNode> = { infographic: <ChartColumn />, motion: <Clapperboard />, auto: <Sparkles />, image: <ImageIcon />, video: <Video />, audio: <AudioLines /> };
@@ -425,10 +426,10 @@ function FilePicker({ anchor, picked, onPick, onClose }: { anchor: React.RefObje
           {library.map((f) => (
             <button key={f.id} type="button" title={f.name} aria-pressed={on(f)} onClick={() => onPick(on(f) ? picked.filter((x) => x.id !== f.id) : [...picked, f].slice(0, 10))} className={`relative aspect-square overflow-hidden rounded-md bg-paper ${on(f) ? "shadow-picked" : "shadow-chip"}`}>
               {f.mime.startsWith("video/") ? (
-                <video src={f.thumb ?? undefined} className="size-full object-cover" muted preload="metadata" />
+                <VideoTile src={f.thumb} small />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={f.thumb ?? ""} alt={f.name} loading="lazy" className="size-full object-cover" />
+                <img src={f.tile ?? f.thumb ?? ""} alt={f.name} loading="lazy" decoding="async" className="size-full object-cover" />
               )}
               {on(f) ? (
                 <span className="absolute top-1 right-1 flex size-5 items-center justify-center rounded-full bg-signal text-on-signal">
