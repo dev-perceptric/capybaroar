@@ -43,16 +43,39 @@ export async function mayUseMedia(workspaceId: string, id: string, scope?: Media
   return !!data;
 }
 
+// Until migration 048 has run, media has no thumb_path column, and a select naming it fails (the Media page, the
+// composer's library, deletes). Every read of it asks here first: whether the column exists, remembered for good once
+// it does and looked at again every 5 minutes while it doesn't, so the app works before and after the migration.
+let thumbCol: { has: boolean; at: number } | null = null;
+async function hasThumbColumn(): Promise<boolean> {
+  if (thumbCol && (thumbCol.has || Date.now() - thumbCol.at < 300_000)) return thumbCol.has;
+  const { error } = await adminClient().from("media").select("thumb_path").limit(1);
+  // Any other error (the database busy) says nothing about the column: don't remember it.
+  const missing = !!error && (error.code === "42703" || error.code === "PGRST204" || /thumb_path/.test(error.message));
+  if (!error || missing) thumbCol = { has: !error, at: Date.now() };
+  return !error;
+}
+/** `cols` plus thumb_path when the column exists. */
+export async function withThumb(cols: string): Promise<string> {
+  return (await hasThumbColumn()) ? `${cols}, thumb_path` : cols;
+}
+type StoredRow = { path: string; thumb_path?: string | null };
+/** A row read with withThumb, as storedPaths and tilePath take it. */
+export const stored = (row: unknown) => {
+  const r = row as StoredRow;
+  return { path: r.path, thumb_path: r.thumb_path ?? null };
+};
+
 export async function listMedia(workspaceId: string, scope?: MediaScope | null): Promise<ListedMedia[]> {
   const db = adminClient();
-  let q = db.from("media").select("id, path, thumb_path, name, mime, size, alt, created_at, brand_id").eq("workspace_id", workspaceId);
+  let q = db.from("media").select(await withThumb("id, path, name, mime, size, alt, created_at, brand_id")).eq("workspace_id", workspaceId);
   const f = mediaFilter(scope);
   if (f) q = q.or(f);
   const { data, error } = await q.order("created_at", { ascending: false }).limit(200);
   if (error) throw new Error(error.message);
-  const rows = (data ?? []) as (MediaRow & { thumb_path: string | null })[];
+  const rows = (data ?? []) as unknown as (MediaRow & { thumb_path?: string | null })[];
   if (!rows.length) return [];
-  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map(tilePath))]);
+  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map((r) => tilePath(stored(r))))]);
   return rows.map((r, i) => ({ id: r.id, path: r.path, name: r.name, mime: r.mime, size: r.size, alt: r.alt, created_at: r.created_at, brand_id: r.brand_id, thumb: full[i], tile: small[i] ?? full[i] }));
 }
 
@@ -129,7 +152,7 @@ export async function finishUpload(workspaceId: string, userId: string, file: { 
  * downloaded.
  */
 export async function makeThumb(workspaceId: string, id: string, path: string, mime: string, size: number, bytes?: Uint8Array): Promise<void> {
-  if (!thumbable(mime, size)) return;
+  if (!thumbable(mime, size) || !(await hasThumbColumn())) return;
   const db = adminClient();
   try {
     let src = bytes;
@@ -156,8 +179,8 @@ export async function makeThumb(workspaceId: string, id: string, path: string, m
 export async function deleteMedia(workspaceId: string, id: string, scope?: MediaScope | null) {
   if (!(await mayUseMedia(workspaceId, id, scope))) throw new Error("File not found");
   const db = adminClient();
-  const { data } = await db.from("media").delete().eq("id", id).eq("workspace_id", workspaceId).select("path, thumb_path").maybeSingle();
-  if (data?.path) await db.storage.from(BUCKET).remove(storedPaths([data as { path: string; thumb_path: string | null }]));
+  const { data } = await db.from("media").delete().eq("id", id).eq("workspace_id", workspaceId).select(await withThumb("path")).maybeSingle();
+  if (data) await db.storage.from(BUCKET).remove(storedPaths([stored(data)]));
 }
 
 /** Media for publishing: a signed link networks can fetch for an hour, and the bytes for networks we upload to. */
@@ -208,11 +231,11 @@ export async function setAlt(workspaceId: string, id: string, alt: string, scope
  */
 export async function mediaThumbs(workspaceId: string, ids: string[]): Promise<{ id: string; mime: string; thumb: string | null; tile: string | null; alt: string | null }[]> {
   if (!ids.length) return [];
-  const { data, error } = await adminClient().from("media").select("id, path, thumb_path, mime, alt").eq("workspace_id", workspaceId).in("id", ids);
+  const { data, error } = await adminClient().from("media").select(await withThumb("id, path, mime, alt")).eq("workspace_id", workspaceId).in("id", ids);
   if (error) throw new Error(error.message);
-  const rows = (data ?? []) as { id: string; path: string; thumb_path: string | null; mime: string; alt: string | null }[];
+  const rows = (data ?? []) as unknown as { id: string; path: string; thumb_path?: string | null; mime: string; alt: string | null }[];
   if (!rows.length) return [];
-  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map(tilePath))]);
+  const [full, small] = await Promise.all([showLinks(rows.map((r) => r.path)), showLinks(rows.map((r) => tilePath(stored(r))))]);
   return rows.map((r, i) => ({ id: r.id, mime: r.mime, thumb: full[i], tile: small[i] ?? full[i], alt: r.alt ?? null }));
 }
 

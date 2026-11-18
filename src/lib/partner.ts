@@ -10,6 +10,7 @@ import { OFFERED, isPaused, type NetworkId } from "./networks";
 import { PROVIDERS } from "./providers";
 import { BrandTaken, LINK_TTL_MS, linkProblem, sha256, type ConnectLink, type LinkProblem, type PartnerBrand, type PartnerStore } from "./partnerRules";
 import { storedPaths } from "./thumbRules";
+import { stored, withThumb } from "./media";
 
 // The partner API on the real database (rules in partnerRules.ts) and connect link sessions.
 
@@ -31,11 +32,12 @@ async function removeBrandData(workspaceId: string, brandId: string) {
   if (e2) throw busy();
   // The brand's files, from storage too.
   for (;;) {
-    const { data: files, error } = await db.from("media").select("id, path, thumb_path").eq("workspace_id", workspaceId).eq("brand_id", brandId).limit(100);
+    const { data, error } = await db.from("media").select(await withThumb("id, path")).eq("workspace_id", workspaceId).eq("brand_id", brandId).limit(100);
     if (error) throw busy();
-    if (!files?.length) break;
-    await db.storage.from("media").remove(storedPaths(files as { path: string; thumb_path: string | null }[]));
-    const { error: e3 } = await db.from("media").delete().in("id", files.map((f) => f.id as string));
+    const files = (data ?? []) as unknown as { id: string }[];
+    if (!files.length) break;
+    await db.storage.from("media").remove(storedPaths(files.map(stored)));
+    const { error: e3 } = await db.from("media").delete().in("id", files.map((f) => f.id));
     if (e3) throw busy();
   }
 }

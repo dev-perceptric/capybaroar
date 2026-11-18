@@ -37,7 +37,7 @@ import { read } from "@/lib/read";
 // Crop and trim load when first used.
 const MediaEdit = dynamic(() => import("./MediaEdit").then((m) => m.MediaEdit), { ssr: false });
 
-type Media = { id: string; name: string; mime: string; thumb: string | null; alt: string | null };
+type Media = { id: string; name: string; mime: string; thumb: string | null; tile?: string | null; alt: string | null };
 type Target = { text: string | null; settings: Record<string, string> };
 type Uploading = { key: string; name: string; error?: string };
 
