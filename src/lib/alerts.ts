@@ -61,6 +61,13 @@ export async function sendEmail(to: string[], subject: string, mail: { title: st
   }
 }
 
+/** An email built elsewhere (getting-started emails, src/lib/nurtureMail.ts): its HTML and plain text, with a
+ *  reply-to and headers like List-Unsubscribe. Throws, so the caller can give its claim back. */
+export async function sendBuiltMail(to: string, m: { subject: string; html: string; text: string }, extra: { replyTo?: string; headers?: Record<string, string> } = {}) {
+  if (!mailReady()) throw new Error("SMTP_HOST is not set");
+  await mailer().sendMail({ from: mailFrom(), to, subject: m.subject, html: m.html, text: m.text, ...(extra.replyTo ? { replyTo: extra.replyTo } : {}), ...(extra.headers ? { headers: extra.headers } : {}) });
+}
+
 /** Approvals: tell approvers a post is waiting, or tell its author it was approved or sent back. Never throws. */
 export async function sendReviewMail(kind: "submitted" | "approved" | "rejected", p: { workspaceId: string; brandId: string | null; brandName: string; text: string; authorId: string | null; comment?: string }) {
   if (!mailReady()) return;

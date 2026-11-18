@@ -305,3 +305,20 @@ export async function removeConnectedApp(id: string): Promise<{ error?: string }
     return { error: e instanceof Error ? e.message : String(e) };
   }
 }
+
+// Getting-started emails (049, src/lib/nurture.ts): each person turns them on or off for this workspace.
+
+/** Whether you get getting-started tips here, or null before 049_nurture.sql has run. */
+export async function loadTips(): Promise<boolean | null> {
+  const ctx = await getCtx();
+  const { data, error } = await adminClient().from("members").select("tips").eq("workspace_id", ctx.workspaceId).eq("user_id", ctx.userId).maybeSingle();
+  if (error) return null;
+  return (data as { tips?: boolean } | null)?.tips ?? true;
+}
+
+export async function saveTips(on: boolean): Promise<{ error?: string }> {
+  const ctx = await getCtx();
+  const { error } = await adminClient().from("members").update({ tips: on }).eq("workspace_id", ctx.workspaceId).eq("user_id", ctx.userId);
+  return error ? { error: error.message } : {};
+}
+

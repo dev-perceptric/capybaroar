@@ -16,6 +16,7 @@ import { partnerChannelEvent } from "./partnerHooks";
 import { queueReports, runReport } from "./reports";
 import { HeldJobs, keepHeld, onePerPeriod } from "./ops";
 import { beat, cleanupOps, opsStore, trackError } from "./opsdb";
+import { sendNurture } from "./nurture";
 import { BEAT_LINE_MS, logLine, runnerLine } from "./logLines";
 import { aiReady, runGenerations } from "./generations";
 import { runAutoTopUps, sweepHolds } from "./credits";
@@ -414,9 +415,18 @@ export function startRunner() {
     console.error("reports:", e instanceof Error ? e.message : e);
     void trackError(e, "runner: reports");
   });
+  // Getting-started emails (src/lib/nurture.ts): one server a quarter hour; the log stops a second send.
+  const nurture = () =>
+    onePerPeriod(opsStore, "nurture", 840, 1800, WORKER, async () => {
+      await sendNurture();
+    }).catch((e) => {
+      console.error("nurture:", e);
+      void trackError(e, "runner: nurture");
+    });
   setInterval(() => {
     hourly();
     void reports();
+    void nurture();
   }, 300000);
   setTimeout(hourly, 30000);
   // Jobs still running keep their lock; the beat tells /api/health this server's runner is alive.
