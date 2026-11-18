@@ -138,6 +138,8 @@ export function useGenerations(onDone: (mediaId: string, kind: GenKind) => void 
     const ids = key.split(",");
     let stop = false;
     const look = async () => {
+      // A hidden tab waits; the next look after it's open again picks everything up.
+      if (document.visibilityState !== "visible") return;
       let rows;
       try {
         rows = await generationsStatus(ids);

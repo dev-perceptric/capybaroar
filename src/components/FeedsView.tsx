@@ -26,14 +26,12 @@ export function FeedsView({ feeds, channels, brands, brandId }: { feeds: FeedRow
     start(async () => {
       const r = await editFeed(f.id, { active });
       if (r.error) await tell("Couldn't change the feed", r.error);
-      router.refresh();
     });
   const del = async (f: FeedRow) => {
     if (!(await askConfirm(`Remove ${f.title || f.url}?`, { body: "Posts it already made stay on the calendar.", ok: "Remove", danger: true }))) return;
     start(async () => {
       const r = await removeFeed(f.id);
       if (r.error) await tell("Couldn't remove the feed", r.error);
-      router.refresh();
     });
   };
   const add = (size: "sm" | "md") => (

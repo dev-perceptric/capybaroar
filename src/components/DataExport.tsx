@@ -41,6 +41,7 @@ export function DataExport({ account, workspace, owner, only }: DataExportProps)
   useEffect(() => {
     if (!busy) return;
     const t = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
       void exportStatus().then((r) => r.exports && setNow(r.exports)).catch(() => {});
     }, 5000);
     return () => clearInterval(t);

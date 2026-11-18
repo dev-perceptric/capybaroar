@@ -30,14 +30,15 @@ export async function listMembers(workspaceId: string): Promise<Member[]> {
   const db = adminClient();
   const { data, error } = await db.from("members").select("user_id, role, brand_ids").eq("workspace_id", workspaceId).order("created_at");
   if (error) throw new Error(error.message);
-  const out: Member[] = [];
-  for (const m of data ?? []) {
-    const { data: u } = await db.auth.admin.getUserById(m.user_id as string);
-    const email = u.user?.email ?? "";
-    const name = (u.user?.user_metadata?.name as string | undefined) || email.split("@")[0] || "Member";
-    out.push({ userId: m.user_id as string, name, email, role: m.role as Role, brandIds: (m.brand_ids as string[] | null) ?? null });
-  }
-  return out;
+  // Each person's email and name from Supabase Auth, all at once instead of one after another.
+  return Promise.all(
+    (data ?? []).map(async (m) => {
+      const { data: u } = await db.auth.admin.getUserById(m.user_id as string);
+      const email = u.user?.email ?? "";
+      const name = (u.user?.user_metadata?.name as string | undefined) || email.split("@")[0] || "Member";
+      return { userId: m.user_id as string, name, email, role: m.role as Role, brandIds: (m.brand_ids as string[] | null) ?? null };
+    }),
+  );
 }
 
 /** Invites not yet accepted and not expired, newest first. */

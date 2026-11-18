@@ -18,6 +18,7 @@ import {
   deleteFactor,
   enrollTry,
   firstWorkspaceId,
+  forgetAuthenticator,
   me,
   qrSrc,
   recoverWithBackup,
@@ -174,6 +175,7 @@ export async function confirmTwoFactor(factorId: string, code: string): Promise<
   if (stop) return { error: stop };
   const r = await verifyTotp(totpApi(m.sb), factorId, code);
   if (!r.ok) return { error: r.reason === "locked" ? (r.message ?? LOCKED) : r.reason === "failed" ? FAILED : WRONG };
+  forgetAuthenticator(m.userId);
   await audit({ workspaceId: await eventWorkspace(m.userId), actorId: m.userId, actorLabel: m.email, action: "auth.mfa_enabled", ip: await ip() });
   try {
     return { codes: await saveBackupCodes(m.userId) };
@@ -212,8 +214,10 @@ export async function turnOffTwoFactor(code: string): Promise<{ error?: string }
       });
   } catch (e) {
     console.error("mfa: unenroll:", e instanceof Error ? e.message : e);
+    forgetAuthenticator(m.userId);
     return { error: "Couldn't turn off 2FA. Try again." };
   }
+  forgetAuthenticator(m.userId);
   await clearBackupCodes(m.userId).catch((e) => console.error("mfa: clear codes:", e instanceof Error ? e.message : e));
   await m.sb.auth.refreshSession().catch(() => {});
   await audit({ workspaceId: await eventWorkspace(m.userId), actorId: m.userId, actorLabel: m.email, action: "auth.mfa_disabled", meta: { via: "settings" }, ip: await ip() });

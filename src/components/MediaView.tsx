@@ -61,7 +61,6 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
           break;
         }
       }
-      router.refresh();
     });
   };
   const del = async (f: File) => {
@@ -70,7 +69,6 @@ export function MediaView({ files, ai = false }: { files: File[]; ai?: boolean }
     if (!(await askConfirm(`Delete ${f.name}?`, { ok: "Delete", danger: true, body }))) return;
     start(async () => {
       await removeMedia(f.id);
-      router.refresh();
     });
   };
   const button = (

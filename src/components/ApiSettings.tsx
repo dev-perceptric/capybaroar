@@ -26,7 +26,6 @@ const EVENT_LABEL: Record<string, string> = {
 
 /** Keys for the REST API and the MCP server. A key acts as the person who made it. */
 export function ApiSection({ api }: { api: ApiInfo }) {
-  const router = useRouter();
   const [busy, start] = useTransition();
   const [made, setMade] = useState<{ key: string; kind: "member" | "partner" } | null>(null);
   const mcp = `${api.base}/api/mcp`;
@@ -37,7 +36,6 @@ export function ApiSection({ api }: { api: ApiInfo }) {
       const r = await newApiKey(name, kind);
       if (r.error) await tell("Couldn't make the key", r.error);
       else if (r.key) setMade({ key: r.key, kind });
-      router.refresh();
     });
   };
   const del = async (k: ApiInfo["keys"][number]) => {
@@ -45,7 +43,6 @@ export function ApiSection({ api }: { api: ApiInfo }) {
     start(async () => {
       const r = await removeApiKey(k.id);
       if (r.error) await tell("Couldn't delete the key", r.error);
-      router.refresh();
     });
   };
   return (
@@ -128,14 +125,12 @@ export function ApiSection({ api }: { api: ApiInfo }) {
 
 /** Apps connected with a sign-in (OAuth), like Claude's Capybaroar connector. Removing one signs it out at once. */
 function ConnectedApps({ apps }: { apps: App[] }) {
-  const router = useRouter();
   const [busy, start] = useTransition();
   const del = async (a: App) => {
     if (!(await askConfirm(`Remove ${a.name}?`, { body: "It stops working right away. You can connect it again later.", ok: "Remove", danger: true }))) return;
     start(async () => {
       const r = await removeConnectedApp(a.id);
       if (r.error) await tell("Couldn't remove the app", r.error);
-      router.refresh();
     });
   };
   return (
@@ -190,7 +185,6 @@ function Webhooks({ hooks }: { hooks: Hook[] }) {
       setUrl("");
       setError("");
       setSecret(r.secret ?? null);
-      router.refresh();
     });
   const del = async (h: Hook) => {
     if (await askConfirm("Delete this webhook?", { body: h.url, ok: "Delete", danger: true })) run(() => removeWebhook(h.id), "Couldn't delete the webhook");

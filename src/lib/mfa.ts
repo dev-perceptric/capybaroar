@@ -37,6 +37,20 @@ export async function totpFactors(userId: string) {
 /** The person's verified authenticator apps. */
 export const verifiedFactors = async (userId: string) => verifiedTotp(await totpFactors(userId));
 
+// Whether someone has an authenticator app, for the check on every page (getCtx in src/lib/session.ts), remembered for
+// a minute in this server so each page doesn't ask Supabase Auth again. Every change here (set up, turned off, a backup
+// code used) forgets it at once; another server picks a change up within the minute.
+const known = new Map<string, { has: boolean; until: number }>();
+export async function hasAuthenticator(userId: string): Promise<boolean> {
+  const hit = known.get(userId);
+  if (hit && hit.until > Date.now()) return hit.has;
+  const has = (await verifiedFactors(userId)).length > 0;
+  if (known.size > 5000) known.clear();
+  known.set(userId, { has, until: Date.now() + 60_000 });
+  return has;
+}
+export const forgetAuthenticator = (userId: string) => void known.delete(userId);
+
 /** sb.auth.mfa as mfaRules.verifyTotp calls it. Verifying moves this session to aal2 (new cookies). */
 export const totpApi = (sb: SupabaseClient): TotpApi => ({
   challenge: async (p) => {
@@ -103,6 +117,7 @@ export async function deleteFactor(userId: string, id: string) {
     const { error } = await adminClient().auth.admin.mfa.deleteFactor({ userId, id });
     if (error && error.code !== "mfa_factor_not_found" && error.status !== 404) throw error;
   });
+  forgetAuthenticator(userId);
 }
 
 /** After a backup code: the lost authenticator apps go, so do the other codes, and this browser gets a new session

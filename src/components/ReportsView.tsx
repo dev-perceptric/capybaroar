@@ -29,14 +29,12 @@ const DEFAULT_SECTIONS: SectionKey[] = ["summary", "growth", "top", "best", "for
 const ALL = "all";
 
 export function ReportsView({ reports, brands, brand, allBrands, whiteLabel, images }: Props) {
-  const router = useRouter();
   const [editing, setEditing] = useState<Report | "new" | null>(null);
   const [busy, start] = useTransition();
   const run = (fn: () => Promise<{ error?: string }>, failTitle: string) =>
     start(async () => {
       const r = await fn();
       if (r.error) await tell(failTitle, r.error);
-      router.refresh();
     });
   const del = async (r: Report) => {
     if (await askConfirm(`Delete ${r.name}?`, { body: "Its link stops working.", ok: "Delete", danger: true })) run(() => removeReport(r.id), "Couldn't delete the report");

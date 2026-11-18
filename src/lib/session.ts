@@ -3,9 +3,10 @@ import { cache } from "react";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { adminClient, userClient } from "./supabase/server";
-import { verifiedFactors } from "./mfa";
+import { hasAuthenticator } from "./mfa";
 import { mfaGate, mfaNext } from "./mfaRules";
 import { safeNext } from "../proxy";
+import { sessionClaims } from "./jwt";
 
 /** owner and admin run the workspace; editors write posts; clients see their brands' calendar and approve. */
 export type Role = "owner" | "admin" | "editor" | "client";
@@ -45,9 +46,8 @@ export const PATH_HEADER = "x-cb-path";
  */
 export const getCtx = cache(async (): Promise<Ctx> => {
   const sb = await userClient();
-  // Checks the sign-in token's signature here (cached public key), with no round trip to Supabase Auth.
-  const { data } = await sb.auth.getClaims();
-  const c = data?.claims;
+  // Checks the sign-in token here (src/lib/jwt.ts), with no round trip to Supabase Auth when SUPABASE_JWT_SECRET is set.
+  const c = await sessionClaims(sb);
   if (!c?.sub) redirect("/login");
   const user = { id: c.sub, email: (c.email as string) ?? "", user_metadata: (c.user_metadata ?? {}) as Record<string, unknown> };
   const aal = (c.aal as string | undefined) ?? null;
@@ -55,7 +55,7 @@ export const getCtx = cache(async (): Promise<Ctx> => {
   // An aal2 session has passed a code; anything less needs to know whether there's an app to ask for (Supabase Auth).
   const [{ data: rows, error: readError }, early] = await Promise.all([
     db.from("members").select("workspace_id, role, brand_ids, workspaces(name, timezone, require_mfa)").eq("user_id", user.id).order("created_at"),
-    aal === "aal2" ? null : verifiedFactors(user.id),
+    aal === "aal2" ? null : hasAuthenticator(user.id),
   ]);
   // A failed read must never look like "no workspace yet", which would make a new one.
   if (readError) throw new Error(readError.message);
@@ -65,7 +65,7 @@ export const getCtx = cache(async (): Promise<Ctx> => {
   const picked = all.find((r) => r.workspace_id === want) ?? all[0];
   const required = Boolean(picked?.workspaces.require_mfa);
   // aal2 with the workspace's rule: the app could have been removed since the code, so look.
-  const verified = early ? early.length > 0 : required ? (await verifiedFactors(user.id)).length > 0 : true;
+  const verified = early !== null ? early : required ? await hasAuthenticator(user.id) : true;
   const gate = mfaGate({ aal, verified, required, next: mfaNext((await headers()).get(PATH_HEADER), safeNext) });
   if (gate) redirect(gate);
   if (all.length) {

@@ -119,12 +119,22 @@ export function AgentChat({ chatId, title, messages, ai = false, credits = null 
   useEffect(() => {
     end.current?.scrollIntoView({ block: "end" });
   }, [messages.length, pending]);
-  // Files still being made: look again every 5 seconds until they're in.
+  // Files still being made: look again until they're in, after 5 seconds and then less often (up to every 30), and only
+  // while the tab is open, since each look renders the page again on the server.
   const making = messages.some((m) => m.media && (m.media.status === "queued" || m.media.status === "running"));
   useEffect(() => {
     if (!making || busy) return;
-    const t = setInterval(() => router.refresh(), 5000);
-    return () => clearInterval(t);
+    let wait = 5000;
+    let t: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      if (document.visibilityState === "visible") {
+        router.refresh();
+        wait = Math.min(Math.round(wait * 1.5), 30_000);
+      }
+      t = setTimeout(tick, wait);
+    };
+    t = setTimeout(tick, wait);
+    return () => clearTimeout(t);
   }, [making, busy, router]);
 
   const submit = (t = text.trim()) => {

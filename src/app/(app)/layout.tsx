@@ -6,7 +6,10 @@ import { PolicyNotice } from "@/components/PolicyNotice";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const ctx = await getBrandCtx();
-  const [inbox, policy] = await Promise.all([ctx.role === "client" ? 0 : openCount(ctx.workspaceId, ctx.scope), pendingFor(ctx.userId)]);
+  // The inbox count streams in after the page: started here, awaited by the sidebar's badge behind a Suspense boundary,
+  // so no page waits on it.
+  const inbox = ctx.role === "client" ? 0 : openCount(ctx.workspaceId, ctx.scope).catch(() => 0);
+  const policy = await pendingFor(ctx.userId);
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-shell md:flex-row">
       <RailScript />

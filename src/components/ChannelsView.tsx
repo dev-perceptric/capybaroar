@@ -96,21 +96,18 @@ export function AddChannel({ ready, asks }: { ready: NetworkId[]; asks: Record<s
 export function ChannelsView({ channels, ready, asks, error, brands = [] }: { channels: Channel[]; ready: NetworkId[]; asks: Record<string, Ask>; error: string | null; brands?: { id: string; name: string }[] }) {
   const [brand, setBrand] = useState("all");
   const [, start] = useTransition();
-  const router = useRouter();
   const { connect, dialog } = useConnect(asks);
   const del = async (c: Channel) => {
     if (!(await askConfirm(`Remove ${c.name}?`, { body: "Scheduled posts stop going to this channel.", ok: "Remove", danger: true }))) return;
     start(async () => {
       const r = await removeChannel(c.id);
       if (r.error) await tell("Couldn't remove the channel", r.error);
-      router.refresh();
     });
   };
   const move = (c: Channel, brandId: string) =>
     start(async () => {
       const r = await setChannelBrand(c.id, brandId);
       if (r.error) await tell("Couldn't move the channel", r.error);
-      router.refresh();
     });
   const shown = brand === "all" ? channels : brand === "none" ? channels.filter((c) => !c.brand_id) : channels.filter((c) => c.brand_id === brand);
   return (

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { Suspense, use, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { usePathname } from "next/navigation";
 import { BarChart3, Bot, CalendarDays, Check, ChevronsUpDown, FileText, Image as ImageIcon, Inbox, Link2, LogOut, PanelLeftClose, PanelLeftOpen, Plug, Settings } from "lucide-react";
 import { Avatar, Dot, Input } from "./ui";
 import { Floating, HoverTip } from "./Floating";
@@ -62,26 +62,41 @@ function toggleRail() {
   }
 }
 
-function NavLink({ href, label, icon, count }: { href: string; label: string; icon: React.ReactNode; count?: number }) {
+/** The inbox badge. The count comes as a promise from the layout, so the page draws first and the badge after. */
+function Count({ value }: { value: number | Promise<number> }) {
+  const count = typeof value === "number" ? value : use(value);
+  if (!count) return null;
+  return (
+    <span
+      aria-label={`${count} open`}
+      className="ml-auto inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-signal px-1.5 text-[11px] leading-none font-medium text-on-signal tabular-nums rail:absolute rail:-top-1 rail:-right-1.5 rail:h-4 rail:min-w-4 rail:px-1 rail:text-[10px]"
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
+function NavLink({ href, label, icon, count }: { href: string; label: string; icon: React.ReactNode; count?: number | Promise<number> }) {
   const rail = useRail();
   const path = usePathname();
   const on = path === href || path.startsWith(`${href}/`);
   const ref = useRef<HTMLAnchorElement>(null);
+  // Every link prefetches down to the loading screen, so a click shows it at once. The whole page is rendered ahead
+  // only for the link someone points at or tabs to; fully prefetching all nine pages on every load (and again after
+  // every refresh) kept the server busy rendering pages nobody opened.
+  const [warm, setWarm] = useState(false);
   // On a phone the links are one row that scrolls sideways: keep the open page's link in view.
   useEffect(() => {
     if (on && window.matchMedia("(max-width: 767px)").matches) ref.current?.scrollIntoView({ block: "nearest", inline: "center" });
   }, [on]);
   return (
-    <Link ref={ref} href={href} prefetch aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
+    <Link ref={ref} href={href} prefetch={warm ? true : null} onPointerEnter={() => setWarm(true)} onFocus={() => setWarm(true)} aria-current={on ? "page" : undefined} className={`${item} ${on ? itemOn : itemOff}`}>
       <span className={`-ml-0.5 flex size-5 shrink-0 items-center justify-center rounded-xs rail:ml-0 [&_svg]:size-3.5 ${on ? "bg-signal text-on-signal [&_svg]:stroke-[2.25]" : "text-muted group-hover:text-ink"}`}>{icon}</span>
       <span className="rail:sr-only">{label}</span>
-      {count ? (
-        <span
-          aria-label={`${count} open`}
-          className="ml-auto inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-signal px-1.5 text-[11px] leading-none font-medium text-on-signal tabular-nums rail:absolute rail:-top-1 rail:-right-1.5 rail:h-4 rail:min-w-4 rail:px-1 rail:text-[10px]"
-        >
-          {count > 99 ? "99+" : count}
-        </span>
+      {count !== undefined ? (
+        <Suspense fallback={null}>
+          <Count value={count} />
+        </Suspense>
       ) : null}
       {rail ? <HoverTip text={label} placement="right-start" /> : null}
     </Link>
@@ -90,7 +105,7 @@ function NavLink({ href, label, icon, count }: { href: string; label: string; ic
 
 export type Switcher = { role: Role; brands: Brand[]; brand: string | null; workspaces: { id: string; name: string }[]; workspaceId: string };
 
-export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name: string; email: string; workspace: string; switcher: Switcher; inbox?: number }) {
+export function Sidebar({ name, email, workspace, switcher, inbox = 0 }: { name: string; email: string; workspace: string; switcher: Switcher; inbox?: number | Promise<number> }) {
   const settings = switcher.role === "owner" || switcher.role === "admin";
   const rail = useRail();
   return (
@@ -158,7 +173,6 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
   const [q, setQ] = useState("");
   const [busy, start] = useTransition();
   const button = useRef<HTMLButtonElement>(null);
-  const router = useRouter();
   const manager = s.role === "owner" || s.role === "admin";
   if (!manager && s.brands.length < 2 && s.workspaces.length < 2)
     return (
@@ -173,9 +187,9 @@ function BrandSwitcher({ s, workspace }: { s: Switcher; workspace: string }) {
   const pick = (fn: () => Promise<{ error?: string }>) => {
     setOpen(false);
     start(async () => {
+      // The switch action revalidates the whole layout, and its answer already carries the new pages: no refresh here.
       const r = await fn();
       if (r.error) await tell("Couldn't switch", r.error);
-      router.refresh();
     });
   };
   return (

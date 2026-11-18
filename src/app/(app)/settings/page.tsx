@@ -9,7 +9,7 @@ import { brandUse, creditsOf, usageOf } from "@/lib/credits";
 import { PACKS } from "@/lib/creditRules";
 import { modelOf } from "@/lib/genRules";
 import { emailsOf } from "@/lib/alerts";
-import { listBrands, reviewLinks } from "@/lib/brands";
+import { getBrandCtx, reviewLinks } from "@/lib/brands";
 import { listInvites, listMembers } from "@/lib/team";
 import { mailReady } from "@/lib/alerts";
 import { listApiKeys } from "@/lib/api/keys";
@@ -20,22 +20,26 @@ import { lastExports } from "@/lib/exports";
 
 export default async function SettingsPage() {
   const ctx = await getCtx();
+  // Started now, read with everything else below.
+  const exportsP = lastExports(ctx.userId, ctx.workspaceId, ctx.role === "owner").catch(() => ({ account: null, workspace: null }));
   // Members who don't run the workspace see only their own account.
-  const exports = await lastExports(ctx.userId, ctx.workspaceId, ctx.role === "owner").catch(() => ({ account: null, workspace: null }));
-  if (!canManage(ctx.role))
+  if (!canManage(ctx.role)) {
+    const exports = await exportsP;
     return (
       <Page icon={<Settings />} title="Settings">
         <SettingsView name={ctx.workspaceName} timezone={ctx.timezone} queue={[]} email={ctx.email} accountOnly exports={exports} />
       </Page>
     );
+  }
   const db = adminClient();
-  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys, apps, hooks, credits, history, { data: topUp }] = await Promise.all([
+  const [{ data }, ws, posts, channels, seats, brands, links, members, invites, counts, keys, apps, hooks, credits, history, { data: topUp }, exports] = await Promise.all([
     db.from("workspaces").select("queue").eq("id", ctx.workspaceId).single(),
     getBilling(ctx.workspaceId),
     postsThisMonth(ctx.workspaceId),
     db.from("channels").select("id", { count: "exact", head: true }).eq("workspace_id", ctx.workspaceId),
     seatsUsed(ctx.workspaceId, false),
-    listBrands(ctx.workspaceId),
+    // The layout already read the brands (owners and admins see all of them): reused, not read again.
+    getBrandCtx().then((b) => b.brands),
     reviewLinks(ctx.workspaceId),
     listMembers(ctx.workspaceId),
     listInvites(ctx.workspaceId),
@@ -49,13 +53,16 @@ export default async function SettingsPage() {
     creditsOf(ctx.workspaceId).catch(() => null),
     usageOf(ctx.workspaceId, 50).catch(() => []),
     db.from("workspaces").select("auto_topup_pack, auto_topup_max").eq("id", ctx.workspaceId).maybeSingle(),
+    exportsP,
   ]);
   const plan = PLANS[effectivePlan(ws)];
   const [used, limits] = plan.brandLimits && credits
     ? await Promise.all([brandUse(ctx.workspaceId).catch(() => ({}) as Record<string, number>), db.from("brands").select("id, credit_limit").eq("workspace_id", ctx.workspaceId)])
     : [null, null];
+  // Who made each credit entry: members' emails are already here; only people who left are looked up.
+  const memberEmail = new Map(members.map((m) => [m.userId, m.email || null] as const));
   const people = [...new Set(history.map((h) => h.userId).filter((x): x is string => !!x))];
-  const names = Object.fromEntries(await Promise.all(people.map(async (id) => [id, (await emailsOf([id]).catch(() => []))[0] ?? null] as const)));
+  const names = Object.fromEntries(await Promise.all(people.map(async (id) => [id, memberEmail.has(id) ? memberEmail.get(id)! : ((await emailsOf([id]).catch(() => []))[0] ?? null)] as const)));
   const perBrand = new Map<string, number>();
   for (const c of counts.data ?? []) if (c.brand_id) perBrand.set(c.brand_id as string, (perBrand.get(c.brand_id as string) ?? 0) + 1);
   // Agency's credit limit for each brand, shown in the Brands table.

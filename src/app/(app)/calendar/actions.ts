@@ -153,17 +153,19 @@ export async function saveAlt(id: string, alt: string): Promise<{ error?: string
  * null when it failed. */
 export async function composerData() {
   const ctx = await getCtx();
-  const { suggestedTimes } = await import("@/lib/analytics");
-  const { listCampaigns } = await import("@/lib/campaigns");
-  const [best, media, campaigns] = await Promise.allSettled([suggestedTimes(ctx.workspaceId, ctx.timezone), listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }), listCampaigns(ctx.workspaceId, ctx.brandIds)]);
-  const { aiReady } = await import("@/lib/generations");
-  // Without enough results of its own, the workspace sees each network's popular hours across Capybaroar.
+  const [{ suggestedTimes, popularTimes }, { listCampaigns }, { aiReady }, { brandKits }] = await Promise.all([import("@/lib/analytics"), import("@/lib/campaigns"), import("@/lib/generations"), import("@/lib/brands")]);
+  // Everything at once. Popular hours across Capybaroar (for a workspace without enough results of its own) are cached
+  // per time zone for a day, so starting them alongside costs nothing when they turn out not to be needed.
+  const [best, media, campaigns, popularAll, kitsAll] = await Promise.allSettled([
+    suggestedTimes(ctx.workspaceId, ctx.timezone),
+    listMedia(ctx.workspaceId, { brandIds: ctx.brandIds, userId: ctx.userId }),
+    listCampaigns(ctx.workspaceId, ctx.brandIds),
+    popularTimes(ctx.timezone),
+    brandKits(ctx.workspaceId),
+  ]);
   const own = best.status === "fulfilled" ? best.value : [];
-  const popular = own.length ? {} : await import("@/lib/analytics").then((a) => a.popularTimes(ctx.timezone)).catch(() => ({}));
-  const { brandKits } = await import("@/lib/brands");
-  const kits = await brandKits(ctx.workspaceId)
-    .then((all) => Object.fromEntries(Object.entries(all).filter(([id]) => !ctx.brandIds || ctx.brandIds.includes(id))))
-    .catch(() => ({}));
+  const popular = own.length || popularAll.status !== "fulfilled" ? {} : popularAll.value;
+  const kits = kitsAll.status === "fulfilled" ? Object.fromEntries(Object.entries(kitsAll.value).filter(([id]) => !ctx.brandIds || ctx.brandIds.includes(id))) : {};
   return { best: best.status === "fulfilled" ? best.value : null, popular, kits, media: media.status === "fulfilled" ? media.value : null, campaigns: campaigns.status === "fulfilled" ? campaigns.value : [], ai: aiReady() };
 }
 

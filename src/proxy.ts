@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { publicUrl } from "./lib/publicUrl";
+import { sessionClaims } from "./lib/jwt";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links, connect links and
 // link-in-bio pages open signed out. /mfa and /mfa/setup need a session at any level; getCtx (src/lib/session.ts)
@@ -44,9 +45,9 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  // Verified locally against Supabase's public key; refreshes the session when it has expired.
-  const { data } = await sb.auth.getClaims();
-  const user = data?.claims?.sub ? data.claims : null;
+  // Refreshes the session when it has expired, then checks the token here with SUPABASE_JWT_SECRET (src/lib/jwt.ts),
+  // so a page doesn't wait on a round trip to Supabase Auth.
+  const user = await sessionClaims(sb);
   const path = request.nextUrl.pathname;
   const open = OPEN.some((p) => path === p || path.startsWith(p));
   if (!user && !open) {

@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
   // A self-contained server for the Docker image on Fly.
   output: "standalone",
   poweredByHeader: false,
+  // React Compiler memoizes components and values on its own, so a keystroke in the composer, chat or inbox search
+  // re-renders only what changed instead of the whole screen.
+  reactCompiler: true,
   // Native modules that draw slides: loaded by Node as they are, not bundled.
   serverExternalPackages: ["@resvg/resvg-js", "sharp", "playwright-core", "@remotion/renderer", "remotion"],
   // Remotion starts its own encoder binary, which file tracing can't see.
