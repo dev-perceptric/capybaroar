@@ -1,9 +1,10 @@
 // Cloudflare Turnstile on sign-in, sign-up and "Forgot password?". The widget (src/components/Turnstile.tsx) puts a
 // one-time token in the form; the server actions hand it to Supabase Auth, which checks it with Cloudflare when bot
 // protection is on (Supabase, Authentication, Attack Protection, Turnstile, with the same keys).
-// On only when NEXT_PUBLIC_TURNSTILE_SITE_KEY is set. Pure, so tests/captcha.test.ts runs it.
+// On only when TURNSTILE_SITE_KEY is set on the server (NEXT_PUBLIC_TURNSTILE_SITE_KEY still works). Read at request
+// time and handed to the form by its page (src/lib/signinOptions.ts). Pure, so tests/captcha.test.ts runs it.
 
-export const turnstileKey = (env: Record<string, string | undefined> = process.env) => env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || "";
+export const turnstileKey = (env: Record<string, string | undefined> = process.env) => (env.TURNSTILE_SITE_KEY || env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
 
 /** The token the widget left in the form, or undefined when there's none. */
 export function captchaToken(form: { get(name: string): unknown }): string | undefined {

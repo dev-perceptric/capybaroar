@@ -5,6 +5,7 @@ import { appUrl } from "@/lib/channels";
 import { fromAnotherSite } from "@/lib/oauthState";
 import { beginSignIn, setStateCookie } from "@/lib/oauthStart";
 import { isPaused } from "@/lib/networks";
+import { publicUrl } from "@/lib/publicUrl";
 
 // Start connecting a channel: remember who asked (and what they typed, like a Mastodon server), then send them
 // to the network's sign-in.
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     started = await beginSignIn({ oauth: p.oauth, network, workspaceId: ctx.workspaceId, brandId: homeBrand(ctx), userId: ctx.userId, input });
   } catch (e) {
-    return NextResponse.redirect(new URL(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.url));
+    return NextResponse.redirect(publicUrl(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.headers));
   }
   return setStateCookie(NextResponse.redirect(started.url), started.state);
 }

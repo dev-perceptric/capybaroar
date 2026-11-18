@@ -1,6 +1,7 @@
 import { AuthForm } from "@/components/AuthForm";
+import { signinOptions } from "@/lib/signinOptions";
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ next?: string; email?: string }> }) {
-  const q = await searchParams;
-  return <AuthForm mode="signup" next={q.next?.startsWith("/") && !q.next.startsWith("//") ? q.next : undefined} email={q.email} />;
+  const [q, o] = await Promise.all([searchParams, signinOptions()]);
+  return <AuthForm mode="signup" google={o.google} siteKey={o.siteKey} next={q.next?.startsWith("/") && !q.next.startsWith("//") ? q.next : undefined} email={q.email} />;
 }

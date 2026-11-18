@@ -59,3 +59,21 @@ test("the client IP comes from the header our proxy sets, never from what the vi
   assert.equal(trustedIp(h({ "cf-connecting-ip": "7.7.7.7", "x-real-ip": "5.6.7.8" }), { CLIENT_IP_HEADER: "CF-Connecting-IP" }), "7.7.7.7");
   assert.equal(trustedIp(h({}), {}), "");
 });
+
+// Redirects are built on the public address (src/lib/publicUrl.ts): the container's own bind address ([::]:3000,
+// HOSTNAME=:: in the Dockerfile) is never one a browser gets sent to.
+import { publicOrigin, publicUrl } from "../src/lib/publicUrl";
+
+test("redirects use APP_URL, then the proxy's Host, never the container's bind address", () => {
+  const h = (m: Record<string, string>) => ({ get: (n: string) => m[n.toLowerCase()] ?? null });
+  assert.equal(publicOrigin(h({ host: "[::]:3000" }), { APP_URL: "https://app.capybaroar.com/" }), "https://app.capybaroar.com");
+  assert.equal(publicOrigin(h({ host: "app.capybaroar.com", "x-forwarded-proto": "https" }), {}), "https://app.capybaroar.com");
+  assert.equal(publicOrigin(h({ "x-forwarded-host": "app.capybaroar.com", host: "[::]:3000" }), {}), "https://app.capybaroar.com");
+  assert.equal(publicOrigin(h({ host: "localhost:3000", "x-forwarded-proto": "http" }), {}), "http://localhost:3000");
+  // Bind-all and junk hosts fall back instead of being echoed into a Location header.
+  assert.equal(publicOrigin(h({ host: "[::]:3000" }), {}), "http://localhost:3000");
+  assert.equal(publicOrigin(h({ host: "0.0.0.0:3000" }), {}), "http://localhost:3000");
+  assert.equal(publicOrigin(h({ host: "evil.com/x?y" }), {}), "http://localhost:3000");
+  assert.equal(publicOrigin(h({ host: "app.capybaroar.com" }), { APP_URL: "not a url" }), "https://app.capybaroar.com");
+  assert.equal(publicUrl("/calendar?x=1", h({ host: "[::]:3000" }), { APP_URL: "https://app.capybaroar.com" }).href, "https://app.capybaroar.com/calendar?x=1");
+});
