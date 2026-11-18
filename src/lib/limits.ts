@@ -12,6 +12,11 @@ export const LIMITS = {
   signupIp: { windowS: 3600, max: 10 },
   signupEmail: { windowS: 3600, max: 5 },
   resetEmail: { windowS: 3600, max: 3 },
+  // Sign-in links (src/lib/emailLink.ts): per address and per IP, and tries at the code from the email.
+  linkEmail: { windowS: 3600, max: 5 },
+  linkIp: { windowS: 3600, max: 20 },
+  codeEmail: { windowS: 600, max: 5 },
+  codeIp: { windowS: 600, max: 30 },
   resetIp: { windowS: 3600, max: 10 },
   reportSend: { windowS: 3600, max: 5 },
   reportWorkspaceDay: { windowS: 86400, max: 50 },

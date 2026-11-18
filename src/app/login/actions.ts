@@ -15,6 +15,7 @@ import { captchaError, captchaMissing, captchaToken } from "@/lib/captcha";
 import { isDisposable } from "@/lib/disposable";
 import { leakedCount, passwordProblem } from "@/lib/passwordCheck";
 import { notePasswordChanged, noteSignIn } from "@/lib/devices";
+import { cleanCode, codeError, linkReturn, quietLinkError } from "@/lib/emailLink";
 
 export type AuthState = { error?: string; sent?: boolean };
 
@@ -28,15 +29,18 @@ const origin = async () => {
 const ip = async () => trustedIp(await headers());
 
 /** Counts one try for the address and the visitor's IP; an error to show when either is over its limit. */
-async function limited(kind: "login" | "reset" | "signup" | "resend", email: string): Promise<string | null> {
+async function limited(kind: "login" | "reset" | "signup" | "resend" | "link" | "code", email: string): Promise<string | null> {
   const addr = await ip();
   const list = [];
   if (kind === "login" && email) list.push({ bucket: hashed("login:email", email), l: LIMITS.loginEmail });
   if (kind === "reset" && email) list.push({ bucket: hashed("reset:email", email), l: LIMITS.resetEmail });
   if (kind === "signup" && email) list.push({ bucket: hashed("signup:email", email.toLowerCase()), l: LIMITS.signupEmail });
   if (kind === "resend" && email) list.push({ bucket: hashed("resend:email", email), l: LIMITS.resetEmail });
+  if (kind === "link" && email) list.push({ bucket: hashed("link:email", email), l: LIMITS.linkEmail });
+  if (kind === "code" && email) list.push({ bucket: hashed("code:email", email), l: LIMITS.codeEmail });
   // No IP (a proxy that didn't send one): only the address counts, so everyone isn't sharing one bucket.
-  if (addr) list.push({ bucket: hashed(`${kind}:ip`, addr), l: kind === "login" ? LIMITS.loginIp : kind === "reset" || kind === "resend" ? LIMITS.resetIp : LIMITS.signupIp });
+  const ipLimit = { login: LIMITS.loginIp, reset: LIMITS.resetIp, resend: LIMITS.resetIp, signup: LIMITS.signupIp, link: LIMITS.linkIp, code: LIMITS.codeIp }[kind];
+  if (addr) list.push({ bucket: hashed(`${kind}:ip`, addr), l: ipLimit });
   const wait = await takeAll(list);
   return wait ? `Too many tries. ${retryIn(wait)}` : null;
 }
@@ -133,6 +137,50 @@ export async function resendSignup(_: AuthState, form: FormData): Promise<AuthSt
   if (error && /rate limit|seconds/i.test(error.message)) return { error: "Wait a minute, then send again" };
   if (error) console.error("resend:", error.message);
   return { sent: true };
+}
+
+/** "Email me a sign-in link": a link and a code in one email, for an account that exists. The answer is the same
+ *  whether or not it does, so the screen never tells who has an account. */
+export async function sendLink(_: AuthState, form: FormData): Promise<AuthState> {
+  const email = String(form.get("email") ?? "").trim();
+  if (!email) return { error: "Enter your email" };
+  const token = captchaToken(form);
+  const missing = captchaMissing(token);
+  if (missing) return { error: missing };
+  const stop = await limited("link", email);
+  if (stop) return { error: stop };
+  const sb = await userClient();
+  const next = safeNext(String(form.get("next") ?? ""));
+  // The browser keeps the link's PKCE half in a cookie, so the link signs in here; the code works anywhere.
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: linkReturn(await origin(), next), captchaToken: token } });
+  const bot = captchaError(error?.message);
+  if (bot) return { error: bot };
+  if (error && /rate limit|seconds/i.test(error.message)) return { error: "Wait a minute, then send again" };
+  if (error && !quietLinkError(error.message)) console.error("link:", error.message);
+  return { sent: true };
+}
+
+/** The code from the sign-in email. Signs in here, then goes on like any sign-in: the 2FA code first when there's
+ *  an authenticator app, else where they were going. */
+export async function verifyLink(_: AuthState, form: FormData): Promise<AuthState> {
+  const email = String(form.get("email") ?? "").trim();
+  const code = cleanCode(form.get("code"));
+  if (!email || !code) return { error: "Enter the code from the email" };
+  const stop = await limited("code", email);
+  if (stop) return { error: stop };
+  const sb = await userClient();
+  const { data, error } = await sb.auth.verifyOtp({ email, token: code, type: "email" });
+  const addr = await ip();
+  if (error || !data.user) {
+    await audit({ workspaceId: null, actorKind: "user", actorLabel: email, action: "auth.sign_in_failed", meta: { reason: error?.code ?? "no_user", step: "email_code" }, ip: addr });
+    return { error: codeError(error?.message) };
+  }
+  const next = safeNext(String(form.get("next") ?? ""));
+  const gate = mfaGate({ aal: "aal1", verified: verifiedTotp(data.user.factors).length > 0, required: false, next: mfaNext(next, safeNext) });
+  if (gate) redirect(gate);
+  await audit({ workspaceId: await firstWorkspaceId(data.user.id), actorId: data.user.id, actorLabel: data.user.email ?? email, action: "auth.sign_in", meta: { method: "email_code" }, ip: addr });
+  await noteSignIn({ userId: data.user.id, email: data.user.email ?? email, ip: addr });
+  redirect(next);
 }
 
 /** "Forgot password?": emails a link that signs in and opens /reset. The answer is the same whether or not the

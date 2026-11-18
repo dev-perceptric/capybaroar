@@ -6,21 +6,23 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { Badge, Button, Checkbox, Field, Input } from "./ui";
 import { Loader } from "./Loader";
 import { Logo } from "./Logo";
-import { requestReset, resendSignup, setPassword, signIn, signInWithGoogle, signOut, signUp, type AuthState } from "@/app/login/actions";
+import { requestReset, resendSignup, sendLink, setPassword, signIn, signInWithGoogle, signOut, signUp, verifyLink, type AuthState } from "@/app/login/actions";
 import { verifyMfa } from "@/app/mfa/actions";
 import { policiesPublished } from "@/lib/policyRules";
 import { suggestEmail } from "@/lib/emailTypos";
 import { strength } from "@/lib/passwordCheck";
 import { Turnstile } from "./Turnstile";
 
-// login and signup; forgot asks for the email a reset link goes to; reset sets the new password after that link; mfa
-// asks for the code from the authenticator app (or a backup code) after a password or Google (/mfa).
-type Mode = "login" | "signup" | "forgot" | "reset" | "mfa";
-const ACTIONS = { login: signIn, signup: signUp, forgot: requestReset, reset: setPassword, mfa: verifyMfa };
-const SUBMIT = { login: "Sign in", signup: "Create account", forgot: "Send reset link", reset: "Save password", mfa: "Verify" };
+// login and signup; link emails a sign-in link and code (/login/link); forgot asks for the email a reset link goes to;
+// reset sets the new password after that link; mfa asks for the code from the authenticator app (or a backup code)
+// after a password, a link or Google (/mfa).
+type Mode = "login" | "signup" | "link" | "forgot" | "reset" | "mfa";
+const ACTIONS = { login: signIn, signup: signUp, link: sendLink, forgot: requestReset, reset: setPassword, mfa: verifyMfa };
+const SUBMIT = { login: "Sign in", signup: "Create account", link: "Email me a sign-in link", forgot: "Send reset link", reset: "Save password", mfa: "Verify" };
 const TITLES: Record<Exclude<Mode, "mfa">, [string, string]> = {
   login: ["Welcome back.", "Sign in to your calendar."],
   signup: ["Create your account.", "Free plan, no card needed."],
+  link: ["Sign in with email.", "We'll send a link and a code."],
   forgot: ["Reset your password.", "We'll email you a link."],
   reset: ["Choose a new password.", "Then you're back in."],
 };
@@ -185,6 +187,90 @@ function CheckInbox({ email, next, siteKey }: { email: string; next?: string; si
   );
 }
 
+const mailLink = "flex h-9 items-center justify-center rounded-full bg-panel px-3 text-[13px] font-medium text-ink shadow-outline hover:bg-hover";
+
+/** After "Email me a sign-in link": the code from the email (for a link opened on another device), the inbox, and
+ *  sending again after 30 seconds. */
+function LinkSent({ email, next, siteKey }: { email: string; next?: string; siteKey: string }) {
+  const [checked, check, checking] = useActionState<AuthState, FormData>(verifyLink, {});
+  const [again, resend, sending] = useActionState<AuthState, FormData>(sendLink, {});
+  const [round, setRound] = useState(0);
+  const [wait, setWait] = useState(30);
+  const [code, setCode] = useState("");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRound((r) => r + 1);
+    if (again.sent) setWait(30);
+  }, [again]);
+  useEffect(() => {
+    if (wait <= 0) return;
+    const t = setTimeout(() => setWait((w) => w - 1), 1000);
+    return () => clearTimeout(t);
+  }, [wait]);
+  const keep = next ? `?${new URLSearchParams({ next })}` : "";
+  return (
+    <div className="mt-6 flex flex-col gap-4">
+      <p role="status" className="rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
+        If <span className="font-medium break-all">{email}</span> has an account, a sign-in link and code are on the way. Click the link, or enter the code.
+      </p>
+      <form action={check} className="flex flex-col gap-3">
+        <input type="hidden" name="email" value={email} />
+        {next ? <input type="hidden" name="next" value={next} /> : null}
+        <Field label="Code">
+          <Input
+            name="code"
+            autoFocus
+            required
+            autoComplete="one-time-code"
+            inputMode="numeric"
+            pattern="[0-9 ]{6,11}"
+            maxLength={11}
+            placeholder="123456"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/[^\d ]/g, ""))}
+            className="font-mono tracking-[0.12em]"
+          />
+        </Field>
+        {checked.error ? (
+          <p role="alert" className="text-[12px] text-danger">
+            {checked.error}
+          </p>
+        ) : null}
+        <Button type="submit" disabled={checking || code.replace(/\s/g, "").length < 6} className="w-full justify-center">
+          {checking ? <Loader /> : null}
+          Sign in
+        </Button>
+      </form>
+      <div className="grid grid-cols-2 gap-2">
+        <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank" rel="noreferrer" className={mailLink}>
+          Open Gmail
+        </a>
+        <a href="https://outlook.office.com/mail/" target="_blank" rel="noreferrer" className={mailLink}>
+          Open Outlook
+        </a>
+      </div>
+      <form action={resend} className="flex flex-col gap-3">
+        <input type="hidden" name="email" value={email} />
+        {next ? <input type="hidden" name="next" value={next} /> : null}
+        {siteKey ? <Turnstile siteKey={siteKey} round={round} /> : null}
+        {again.error ? (
+          <p role="alert" className="text-[12px] text-danger">
+            {again.error}
+          </p>
+        ) : null}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[12px]">
+          <Link href={`/login/link${keep}`} className="text-muted underline-offset-2 hover:text-ink hover:underline">
+            Use a different email
+          </Link>
+          <button type="submit" disabled={sending || wait > 0} className="font-medium text-ink underline-offset-2 hover:underline disabled:text-muted disabled:no-underline">
+            {sending ? "Sending" : wait > 0 ? `Send again in ${wait}s` : "Send again"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 /** `google` and `siteKey` come from the page (src/lib/signinOptions.ts), read when it is asked for. */
 export function AuthForm({ mode, next, email, notice, google: googleOn = false, siteKey: key = "" }: { mode: Mode; next?: string; email?: string; notice?: string; google?: boolean; siteKey?: string }) {
   const keep = next ? `?${new URLSearchParams({ next, ...(email ? { email } : {}) })}` : "";
@@ -192,7 +278,7 @@ export function AuthForm({ mode, next, email, notice, google: googleOn = false, 
   const [agree, setAgree] = useState(false);
   const [backup, setBackup] = useState(false);
   const [typed, setTyped] = useState(email ?? "");
-  const typo = mode === "login" || mode === "signup" || mode === "forgot" ? suggestEmail(typed) : "";
+  const typo = mode === "login" || mode === "signup" || mode === "link" || mode === "forgot" ? suggestEmail(typed) : "";
   const [last, setLast] = useState<Method | null>(null);
   useEffect(() => {
     // Read after the first draw, so the server's page and the browser's match.
@@ -207,7 +293,7 @@ export function AuthForm({ mode, next, email, notice, google: googleOn = false, 
     ) : null;
   const google = googleOn && (mode === "login" || mode === "signup");
   // The bot check on the forms that reach Supabase Auth with an email. A token works once, so each answer gets a new one.
-  const siteKey = mode === "login" || mode === "signup" || mode === "forgot" ? key : "";
+  const siteKey = mode === "login" || mode === "signup" || mode === "link" || mode === "forgot" ? key : "";
   const [round, setRound] = useState(0);
   useEffect(() => {
     // A new answer from the server is the moment the old token is spent.
@@ -234,6 +320,8 @@ export function AuthForm({ mode, next, email, notice, google: googleOn = false, 
         </div>
         {state.sent && mode === "signup" ? (
           <CheckInbox email={typed.trim()} next={next} siteKey={key} />
+        ) : state.sent && mode === "link" ? (
+          <LinkSent email={typed.trim()} next={next} siteKey={key} />
         ) : state.sent ? (
           <p role="status" className="mt-6 rounded-lg bg-signal-soft px-3.5 py-3 text-[13px] text-ink shadow-picked">
             Check your email for a link to set a new password.
@@ -353,12 +441,21 @@ export function AuthForm({ mode, next, email, notice, google: googleOn = false, 
               Sign out
             </button>
           ) : mode === "reset" ? null : mode === "login" ? (
-            <>
-              New here?{" "}
-              <Link href={`/signup${keep}`} className="font-medium text-ink underline underline-offset-2">
-                Create an account
+            <span className="flex flex-col items-center gap-2">
+              <Link href={`/login/link${keep}`} className="font-medium text-ink underline underline-offset-2">
+                Email me a sign-in link
               </Link>
-            </>
+              <span>
+                New here?{" "}
+                <Link href={`/signup${keep}`} className="font-medium text-ink underline underline-offset-2">
+                  Create an account
+                </Link>
+              </span>
+            </span>
+          ) : mode === "link" ? (
+            <Link href={`/login${keep}`} className="font-medium text-ink underline underline-offset-2">
+              Sign in with a password
+            </Link>
           ) : (
             <>
               Have an account?{" "}
