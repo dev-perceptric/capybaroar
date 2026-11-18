@@ -26,3 +26,6 @@ __pycache__/
 .scratch/
 motion-bundle/
 .motion-public/
+
+# Email previews (scripts/nurture-previews.ts)
+/email-previews/

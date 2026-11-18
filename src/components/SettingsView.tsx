@@ -3,7 +3,7 @@
 import { useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Plus, X } from "lucide-react";
-import { Button, CardHead, Chip, ErrorNote, Field, IconButton, Input, Loading, PaneHead, Panel, inputLook } from "./ui";
+import { Button, CardHead, Chip, ErrorNote, Field, IconButton, Input, Loading, PaneHead, Panel, Switch, inputLook } from "./ui";
 import { askConfirm, askText, tell } from "./Dialogs";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
@@ -17,7 +17,7 @@ import { Devices } from "./Devices";
 import { RequireTwoFactor } from "./RequireTwoFactor";
 import type { ExportView } from "@/lib/exportRules";
 import { knownTab, settingsGroups, type SettingsTab } from "@/app/(app)/settings/tabs";
-import { bestQueue, deleteMyAccount, deleteWorkspace, saveQueue, saveWorkspace } from "@/app/(app)/settings/actions";
+import { bestQueue, deleteMyAccount, deleteWorkspace, loadTips, saveQueue, saveTips, saveWorkspace } from "@/app/(app)/settings/actions";
 import { QUEUE_PRESETS, type QueuePreset } from "@/lib/queue";
 import { fmtTime } from "@/lib/format";
 
@@ -188,6 +188,7 @@ function Account({ email, exports }: { email: string; exports: Exports }) {
       <PaneHead title="Your account" line={email} />
       <TwoFactor />
       <Devices />
+      <Tips />
       <DataExport account={exports.account} workspace={null} owner={false} only="account" />
       <Danger
         title="Delete my account"
@@ -198,6 +199,42 @@ function Account({ email, exports }: { email: string; exports: Exports }) {
         run={deleteMyAccount}
       />
     </>
+  );
+}
+
+/** Getting-started emails (049): hidden until that migration has run. The switch answers at once and goes back if
+ *  the save fails. */
+function Tips() {
+  const [on, setOn] = useState<boolean | null>(null);
+  const [msg, setMsg] = useState("");
+  const [busy, start] = useTransition();
+  useEffect(() => {
+    let live = true;
+    loadTips().then((v) => live && setOn(v)).catch(() => live && setOn(null));
+    return () => {
+      live = false;
+    };
+  }, []);
+  if (on === null) return null;
+  const flip = (next: boolean) =>
+    start(async () => {
+      setOn(next);
+      setMsg("");
+      const r = await saveTips(next);
+      if (r.error) {
+        setOn(!next);
+        setMsg("That didn't save. Try again.");
+      }
+    });
+  return (
+    <Panel>
+      <CardHead label="Emails" />
+      <div className="flex items-center gap-3 px-4 py-3">
+        <span className="flex-1 font-medium">Getting-started tips</span>
+        <Switch on={on} label="Getting-started tips" disabled={busy} onChange={flip} />
+      </div>
+      {msg ? <ErrorNote message={msg} className="mx-4 mb-4" /> : null}
+    </Panel>
   );
 }
 

@@ -119,6 +119,7 @@ export const LEFT_OUT: Record<string, string> = {
   agent_messages: "Private to each person: in their own Download my data.",
   jobs: "The background queue.",
   data_exports: "The exports themselves.",
+  nurture_log: "Which getting-started emails went out, so none sends twice: internal.",
 };
 
 /** Columns kept out of tables that are in the export, and why (for the report and the README). */
