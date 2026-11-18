@@ -15,7 +15,7 @@ import { captchaError, captchaMissing, captchaToken } from "@/lib/captcha";
 import { isDisposable } from "@/lib/disposable";
 import { leakedCount, passwordProblem } from "@/lib/passwordCheck";
 import { notePasswordChanged, noteSignIn } from "@/lib/devices";
-import { cleanCode, codeError, linkReturn, quietLinkError } from "@/lib/emailLink";
+import { cleanCode, codeError, linkReturn, quietLinkError, signupReturn } from "@/lib/emailLink";
 
 export type AuthState = { error?: string; sent?: boolean };
 
@@ -107,7 +107,7 @@ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
     password,
     options: {
       data: { name: String(form.get("name") ?? "").trim(), company: String(form.get("company") ?? "").trim() },
-      emailRedirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}`,
+      emailRedirectTo: signupReturn(await origin(), next),
       captchaToken: token,
     },
   });
@@ -131,7 +131,7 @@ export async function resendSignup(_: AuthState, form: FormData): Promise<AuthSt
   if (stop) return { error: stop };
   const sb = await userClient();
   const next = safeNext(String(form.get("next") ?? ""));
-  const { error } = await sb.auth.resend({ type: "signup", email, options: { emailRedirectTo: `${await origin()}/auth/callback${next === "/calendar" ? "" : `?next=${encodeURIComponent(next)}`}`, captchaToken: token } });
+  const { error } = await sb.auth.resend({ type: "signup", email, options: { emailRedirectTo: signupReturn(await origin(), next), captchaToken: token } });
   const bot = captchaError(error?.message);
   if (bot) return { error: bot };
   if (error && /rate limit|seconds/i.test(error.message)) return { error: "Wait a minute, then send again" };
