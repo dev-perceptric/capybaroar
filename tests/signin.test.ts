@@ -7,11 +7,15 @@ import { strength } from "../src/lib/passwordCheck.ts";
 import { suggestEmail } from "../src/lib/emailTypos.ts";
 import { isDisposable } from "../src/lib/disposable.ts";
 
-test("weak passwords score low and good ones pass", () => {
+test("strength goes by length; only short, well-known or one-character passwords are too weak", () => {
   for (const p of ["password1", "capybaroar123", "12345678", "aaaaaaaa", "short"]) assert.equal(strength(p).score, 1, p);
-  assert.ok(strength("abcd1234efgh").score <= 2);
-  assert.ok(strength("Plum-Harbor-Window-42").score >= 3);
   assert.equal(strength("").score, 0);
+  assert.deepEqual(strength("tulip-moon"), { score: 2, label: "Okay" });
+  assert.deepEqual(strength("abcd1234efgh"), { score: 3, label: "Good" });
+  // Long passwords are Strong, repeats and sequences inside them included (the old rules called these Okay).
+  assert.deepEqual(strength("Plum-Harbor-Window-42"), { score: 4, label: "Strong" });
+  assert.deepEqual(strength("hoanghy2032002hoanghy2032002abc"), { score: 4, label: "Strong" });
+  assert.deepEqual(strength("passwordsarelongnow"), { score: 4, label: "Strong" });
 });
 
 test("common email slips get the right fix; real addresses are left alone", () => {
