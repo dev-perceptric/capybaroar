@@ -13,6 +13,7 @@ import { signOut } from "@/app/login/actions";
 import { switchBrand, switchWorkspace } from "@/app/(app)/actions";
 import type { Brand } from "@/lib/brands";
 import type { Role } from "@/lib/session";
+import { onInboxCount } from "@/lib/inboxCount";
 
 const ITEMS = [
   { href: "/calendar", label: "Calendar", icon: <CalendarDays />, client: true },
@@ -64,7 +65,11 @@ function toggleRail() {
 
 /** The inbox badge. The count comes as a promise from the layout, so the page draws first and the badge after. */
 function Count({ value }: { value: number | Promise<number> }) {
-  const count = typeof value === "number" ? value : use(value);
+  const given = typeof value === "number" ? value : use(value);
+  // Done and reply on the inbox screen announce the new count, so the badge follows without a page refresh.
+  const [live, setLive] = useState<{ from: number | Promise<number>; n: number } | null>(null);
+  useEffect(() => onInboxCount((n) => setLive({ from: value, n })), [value]);
+  const count = live && live.from === value ? live.n : given;
   if (!count) return null;
   return (
     <span

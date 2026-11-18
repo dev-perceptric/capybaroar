@@ -5,8 +5,9 @@ import { Button, Field, Segmented, TextArea } from "./ui";
 import { Select } from "./Select";
 import { Loader } from "./Loader";
 import { ALL_ASPECTS, ASPECTS, CAPY, KINDS, MAX_PROMPT, MAX_SCRIPT, SECONDS, capyPick, modelOf, modelsFor, type Aspect, type GenKind, type Seconds } from "@/lib/genRules";
-import { aiCredits, generate, generationsStatus } from "@/app/(app)/media/actions";
+import { aiCredits, generate } from "@/app/(app)/media/actions";
 import { creditGate } from "./creditGate";
+import { read } from "@/lib/read";
 
 // Making AI pictures, videos and audio (fal.ai): people pick CapyImage, CapyVideo or CapyAudio and Capy picks the
 // model, or they pick one under Other models. The rules live in genRules.ts.
@@ -142,7 +143,7 @@ export function useGenerations(onDone: (mediaId: string, kind: GenKind) => void 
       if (document.visibilityState !== "visible") return;
       let rows;
       try {
-        rows = await generationsStatus(ids);
+        rows = await read("generationsStatus", ids);
       } catch {
         return; // a hiccup: look again next time
       }

@@ -12,8 +12,10 @@ import { networkOf } from "@/lib/networks";
 import type { Channel } from "@/lib/channels";
 import type { InboxStatus, Item, Thread, ThreadRow } from "@/lib/inbox";
 import type { InboxKind } from "@/lib/providers/types";
-import { hide, like, loadThread, loadThreads, mark, reply, suggest } from "@/app/(app)/inbox/actions";
+import { hide, like, mark, reply, suggest } from "@/app/(app)/inbox/actions";
 import { creditGate } from "./creditGate";
+import { read } from "@/lib/read";
+import { announceInboxCount } from "@/lib/inboxCount";
 
 type Kind = InboxKind | "";
 const KINDS: { value: Kind; label: string }[] = [
@@ -48,7 +50,7 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
 
   const refresh = useCallback(async () => {
     setListBusy(true);
-    const r = await loadThreads({ status, channelId: channel, kind: kind || null, q: term });
+    const r = await read("loadThreads", { status, channelId: channel, kind: kind || null, q: term });
     setListBusy(false);
     if (r.error) setError(r.error);
     else {
@@ -90,7 +92,7 @@ export function InboxView({ channels, errors, initial }: { channels: Channel[]; 
     if (r.error) {
       setError(r.error);
       void refresh();
-    }
+    } else announceInboxCount(r.open);
   };
 
   const keys = useRef<(e: KeyboardEvent) => void>(() => {});
@@ -200,7 +202,7 @@ function Face({ item, channel, size = 32 }: { item: Pick<Item, "author_name" | "
     <span className="relative shrink-0" style={{ width: size, height: size }}>
       {item.author_avatar ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.author_avatar} alt="" width={size} height={size} className="rounded-full object-cover" style={{ width: size, height: size }} referrerPolicy="no-referrer" />
+        <img src={item.author_avatar} alt="" loading="lazy" decoding="async" width={size} height={size} className="rounded-full object-cover" style={{ width: size, height: size }} referrerPolicy="no-referrer" />
       ) : (
         <Avatar label={item.author_name || "?"} size={size} />
       )}
@@ -238,7 +240,7 @@ function Row({ row, channel, on, onClick }: { row: ThreadRow; channel?: Channel;
 
 function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { picked: Picked; channel?: Channel; status: InboxStatus; onBack: () => void; onToggle: () => void; onSent: () => void }) {
   const loaded = useLoad(async (): Promise<Thread> => {
-    const r = await loadThread(picked.channelId, picked.threadId);
+    const r = await read("loadThread", picked.channelId, picked.threadId);
     if (r.error || !r.thread) throw new Error(r.error ?? "This conversation is gone");
     return r.thread;
   }, picked.key);
@@ -273,6 +275,7 @@ function ThreadPane({ picked, channel, status, onBack, onToggle, onSent }: { pic
     const r = await reply(target.id, body);
     setSending(false);
     if (r.error) return setError(r.error);
+    announceInboxCount(r.open);
     setText("");
     loaded.reload();
     onSent();

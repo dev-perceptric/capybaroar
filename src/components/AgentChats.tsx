@@ -6,7 +6,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MoreHorizontal, SquarePen, Trash2 } from "lucide-react";
 import { Floating, type Placement } from "./Floating";
 import { askConfirm, tell } from "./Dialogs";
-import { deleteChat, recentChats } from "@/app/(app)/agents/actions";
+import { deleteChat } from "@/app/(app)/agents/actions";
+import { read } from "@/lib/read";
 
 // The Agent's chats: this person's chats, newest first, then New chat. It sits under Agents in
 // the main sidebar while an Agents page is open, and in a menu on phones. The chat page tells it to look again with
@@ -19,7 +20,7 @@ function useChats() {
   const [chats, setChats] = useState<Chat[] | null>(null);
   useEffect(() => {
     let live = true;
-    const load = () => recentChats().then((c) => live && setChats(c), () => live && setChats((x) => x ?? []));
+    const load = () => read("recentChats").then((c) => live && setChats(c), () => live && setChats((x) => x ?? []));
     load();
     window.addEventListener(CHATS_EVENT, load);
     return () => {

@@ -23,7 +23,7 @@ import type { Channel } from "@/lib/channels";
 import type { CreatorInfo } from "@/lib/providers/tiktok";
 import type { Comment, PostRow, TargetResult } from "@/lib/posts";
 import type { Access } from "./CalendarView";
-import { aiFormat, approve, channelGroups, composerData, duplicate, loadComments, loadMedia, loadResults, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
+import { aiFormat, approve, duplicate, loadMedia, newCampaign, reject, remove, removeChannelGroup, save, saveAlt, saveChannelGroup } from "@/app/(app)/calendar/actions";
 import type { Campaign } from "@/lib/campaignRules";
 import { groupChannels, isGroup, selectAll, type ChannelGroup } from "@/lib/groupRules";
 import { Floating } from "./Floating";
@@ -32,6 +32,7 @@ import { endUpload, startUpload } from "@/app/(app)/media/actions";
 import { EvergreenButton } from "./Evergreen";
 import { GenerateForm, PendingTile, useGenerations } from "./Generate";
 import { dialogIn, fadeIn } from "@/lib/motion";
+import { read } from "@/lib/read";
 
 // Crop and trim load when first used.
 const MediaEdit = dynamic(() => import("./MediaEdit").then((m) => m.MediaEdit), { ssr: false });
@@ -96,13 +97,13 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [deleting, setDeleting] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   useEffect(() => {
-    if (post) loadComments(post.id).then(setComments, () => setComments([]));
+    if (post) read("loadComments", post.id).then(setComments, () => setComments([]));
   }, [post]);
   // A post that went out: its numbers, and editing it on the networks that allow it.
   const [results, setResults] = useState<TargetResult[] | null>(null);
   const [liveEdit, setLiveEdit] = useState(false);
   useEffect(() => {
-    if (post && wentOut) loadResults(post.id).then(setResults, () => setResults([]));
+    if (post && wentOut) read("loadResults", post.id).then(setResults, () => setResults([]));
   }, [post, wentOut]);
   const [targets, setTargets] = useState<Record<string, Target>>(() => {
     if (post) return Object.fromEntries(post.post_targets.map((t) => [t.channel_id, { text: t.text, settings: t.settings ?? {} }]));
@@ -197,7 +198,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [popular, setPopular] = useState<Record<string, { day: number; hour: number }[]>>({});
   const [kits, setKits] = useState<Record<string, BrandKit>>({});
   useEffect(() => {
-    composerData().then(
+    read("composerData").then(
       (d) => {
         setBest(d.best ?? []);
         setPopular(d.popular ?? {});
@@ -281,7 +282,7 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
   const [groupMenu, setGroupMenu] = useState(false);
   const groupMenuBtn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    channelGroups().then(setGroups, () => setGroups([]));
+    read("channelGroups").then(setGroups, () => setGroups([]));
   }, []);
   const pickedIds = channels.filter((c) => targets[c.id]).map((c) => c.id);
   const setPicked = (ids: string[]) =>
@@ -1279,7 +1280,6 @@ function FitBox({ width, children }: { width: number; children: React.ReactNode 
   );
 }
 
-
 /** What TikTok requires next to the Post button: the label promotional posts get and the policies the person agrees to. */
 function TikTokConsent({ brand }: { brand: string }) {
   const link = (href: string, label: string) => (
@@ -1298,7 +1298,6 @@ function TikTokConsent({ brand }: { brand: string }) {
     </div>
   );
 }
-
 
 /** The TikTok account the post goes to, as TikTok names it, shown above its settings. */
 function TikTokCreator({ info }: { info: CreatorInfo | { error: string } | undefined }) {

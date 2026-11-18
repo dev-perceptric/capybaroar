@@ -1,9 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { writerCtx } from "@/lib/session";
 import { getBrandCtx } from "@/lib/brands";
-import { channelsIn, itemChannel, getThread, listThreads, replyTo, setHidden, setLiked, setThreadStatus, suggestReply, type Filters, type InboxStatus, type Thread, type ThreadRow } from "@/lib/inbox";
+import { channelsIn, itemChannel, getThread, listThreads, openCount, replyTo, setHidden, setLiked, setThreadStatus, suggestReply, type Filters, type InboxStatus, type Thread, type ThreadRow } from "@/lib/inbox";
 
 /** Team members only, and only the channels of the brands they may see. */
 async function allowed(check?: { channelId?: string; itemId?: string }) {
@@ -16,6 +15,10 @@ async function allowed(check?: { channelId?: string; itemId?: string }) {
 }
 
 const fail = (e: unknown) => ({ error: e instanceof Error ? e.message : String(e) });
+
+// Done and reply don't re-render the inbox page: the screen already updates its own list, and re-rendering read up to
+// 400 threads again only to be ignored. They answer with the sidebar's new open count instead (inboxCount, Sidebar).
+const openNow = (ctx: { workspaceId: string; scope: string[] | null }) => openCount(ctx.workspaceId, ctx.scope).catch(() => undefined);
 
 export async function loadThreads(f: Filters): Promise<{ error?: string; threads?: ThreadRow[] }> {
   try {
@@ -35,15 +38,14 @@ export async function loadThread(channelId: string, threadId: string): Promise<{
   }
 }
 
-export async function reply(itemId: string, text: string): Promise<{ error?: string }> {
+export async function reply(itemId: string, text: string): Promise<{ error?: string; open?: number }> {
   try {
     const ctx = await allowed({ itemId });
     await replyTo(ctx.workspaceId, ctx.userId, itemId, text);
+    return { open: await openNow(ctx) };
   } catch (e) {
     return fail(e);
   }
-  revalidatePath("/inbox");
-  return {};
 }
 
 export async function like(itemId: string, on: boolean): Promise<{ error?: string }> {
@@ -66,15 +68,14 @@ export async function hide(itemId: string, on: boolean): Promise<{ error?: strin
   }
 }
 
-export async function mark(channelId: string, threadId: string, status: InboxStatus): Promise<{ error?: string }> {
+export async function mark(channelId: string, threadId: string, status: InboxStatus): Promise<{ error?: string; open?: number }> {
   try {
     const ctx = await allowed({ channelId });
     await setThreadStatus(ctx.workspaceId, channelId, threadId, status);
+    return { open: await openNow(ctx) };
   } catch (e) {
     return fail(e);
   }
-  revalidatePath("/inbox");
-  return {};
 }
 
 export async function suggest(itemId: string): Promise<{ error?: string; text?: string }> {

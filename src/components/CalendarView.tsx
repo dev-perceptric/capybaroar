@@ -12,10 +12,11 @@ import { Sheet } from "@/components/Overlay";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
-import { loadCampaigns, loadPosts, move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
+import { move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
 import { askConfirm, askText, tell } from "@/components/Dialogs";
 import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
 import { fmtNum } from "@/lib/format";
+import { read } from "@/lib/read";
 
 // The composer (previews, text tools, uploads) loads after the calendar shows, and is fetched while the browser is
 // idle so it opens at once.
@@ -60,7 +61,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   const [campaigns, setCampaigns] = useState<(Campaign & { counts: CampaignCounts })[]>([]);
   const [campaignSheet, setCampaignSheet] = useState(false);
   const reloadCampaigns = useCallback(() => {
-    loadCampaigns().then(setCampaigns, () => setCampaigns([]));
+    read("loadCampaigns").then(setCampaigns, () => setCampaigns([]));
   }, []);
   useEffect(() => reloadCampaigns(), [reloadCampaigns]);
   const [posts, setPosts] = useState<PostRow[]>(() => initial?.posts ?? []);
@@ -77,7 +78,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
     return { from, to: new Date(from.getTime() + (mode === "week" ? 7 : 42) * DAY) };
   }, [mode, anchor]);
   const reload = useCallback(() => {
-    loadPosts(range.from.toISOString(), range.to.toISOString()).then(setPosts, () => setPosts([]));
+    read("loadPosts", range.from.toISOString(), range.to.toISOString()).then(setPosts, () => setPosts([]));
   }, [range]);
   // The first range comes with the page when the server's covers it; after that, load on every change.
   const seeded = useRef(initial ? { key: initial.from, from: Date.parse(initial.from), to: Date.parse(initial.to) } : null);
@@ -334,7 +335,7 @@ function Faces({ post, byId, size = 18 }: { post: PostRow; byId: Map<string, Cha
         >
           {c.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={c.avatar} alt="" className="size-full object-cover" />
+            <img src={c.avatar} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
           ) : (
             <NetworkLogo id={c.network} size={Math.round(size * 0.6)} />
           )}
