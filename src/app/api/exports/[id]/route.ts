@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { userClient } from "@/lib/supabase/server";
 import { downloadUrl } from "@/lib/exports";
+import { publicUrl } from "@/lib/publicUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const { data } = await (await userClient()).auth.getClaims();
   const userId = data?.claims?.sub;
-  if (!userId) return NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(`/api/exports/${id}`)}`, req.url));
+  if (!userId) return NextResponse.redirect(publicUrl(`/login?next=${encodeURIComponent(`/api/exports/${id}`)}`, req.headers));
   try {
     const r = await downloadUrl(id, userId);
     if ("url" in r) return NextResponse.redirect(r.url, { status: 303, headers: { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } });

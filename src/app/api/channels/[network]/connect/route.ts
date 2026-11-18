@@ -7,6 +7,7 @@ import { appUrl, redirectFor } from "@/lib/channels";
 import { STATE_COOKIE, STATE_PATH, STATE_TTL_MS, fromAnotherSite } from "@/lib/oauthState";
 import { seal } from "@/lib/crypto";
 import { isPaused } from "@/lib/networks";
+import { publicUrl } from "@/lib/publicUrl";
 
 // Start connecting a channel: remember who asked (and what they typed, like a Mastodon server), then send them
 // to the network's sign-in.
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       Object.assign(input, r.keep);
     }
   } catch (e) {
-    return NextResponse.redirect(new URL(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.url));
+    return NextResponse.redirect(publicUrl(`/channels?error=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`, request.headers));
   }
   // What's kept until the callback (a Mastodon app's client secret) is sealed, bound to this state.
   const { error } = await adminClient().from("oauth_states").insert({ state, workspace_id: ctx.workspaceId, brand_id: homeBrand(ctx), user_id: ctx.userId, network, verifier, input: { sealed: seal(JSON.stringify(input), `oauth:${state}`) } });

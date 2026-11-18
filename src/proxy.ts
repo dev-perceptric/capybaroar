@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { publicUrl } from "./lib/publicUrl";
 
 // Keeps the Supabase session fresh and sends signed-out people to /login. Invites, review links, report links and
 // link-in-bio pages open signed out. /mfa and /mfa/setup need a session at any level; getCtx (src/lib/session.ts)
@@ -49,14 +50,13 @@ export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const open = OPEN.some((p) => path === p || path.startsWith(p));
   if (!user && !open) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    const url = publicUrl("/login", request.headers);
     // An app's sign-in request (OAuth) comes back here after logging in, with all its parameters.
     url.search = path === "/oauth/authorize" ? `?next=${encodeURIComponent(path + request.nextUrl.search)}` : "";
     return NextResponse.redirect(url);
   }
   if (user && (path === "/login" || path === "/signup")) {
-    const url = new URL(safeNext(request.nextUrl.searchParams.get("next")), request.url);
+    const url = publicUrl(safeNext(request.nextUrl.searchParams.get("next")), request.headers);
     return NextResponse.redirect(url);
   }
   return response;
