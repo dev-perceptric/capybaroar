@@ -37,7 +37,22 @@ until step 8 is done, so a firewall mistake can't lock you out.
    in the override (for example to `127.0.0.1:3010:3000`).
 
 4. Sign-ups confirm their email, passwords at least 8 characters. Supabase's `SMTP_*` settings in `.env` must be
-   filled in, or new people can't confirm.
+   filled in, or new people can't confirm, and sign-in links and reset emails never arrive.
+
+   Email goes through Resend. `capybaroar.com` is a domain in Resend (sending only); its DNS records live at Namecheap
+   on `resend._domainkey`, `send` and `rsend`, so the root's email forwarding stays as it is. In `.env`:
+
+   ```sh
+   SMTP_HOST=smtp.resend.com
+   SMTP_PORT=465
+   SMTP_USER=resend
+   SMTP_PASS=re_...            # a Resend API key with sending access to capybaroar.com
+   SMTP_ADMIN_EMAIL=hello@capybaroar.com
+   SMTP_SENDER_NAME=Capybaroar
+   ```
+
+   The app's own emails (alerts, reports, invites) read the same names in the app's `.env`, plus
+   `ALERT_FROM="Capybaroar <hello@capybaroar.com>"`.
 
    ```sh
    cd /docker/sb-capybaroar
