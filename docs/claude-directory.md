@@ -25,7 +25,7 @@ Submit at claude.ai/directory/manage. Paste these fields as they are.
   You sign in with your Capybaroar account and pick one workspace. Claude acts with your role and brand access, and every post goes through the same checks as the app (limits, required media, approvals). Remove the connection any time in Settings, API and MCP, Connected apps. Capybaroar has a free plan.
 
 - **Categories:** Marketing, Productivity
-- **Docs:** https://capybaroar.com/docs/mcp
+- **Docs:** https://docs.capybaroar.com/ai/mcp/
 - **Privacy policy:** https://capybaroar.com/privacy
 - **Terms:** https://capybaroar.com/terms
 - **Support:** hello@capybaroar.com

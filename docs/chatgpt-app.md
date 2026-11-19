@@ -14,7 +14,7 @@ Capybaroar's MCP server works as a ChatGPT app with no extra build: it signs in 
 - **Name:** Capybaroar
 - **Description:** Plan, write and schedule social media posts to Instagram, TikTok, LinkedIn, YouTube, X and 9 more networks, and see what worked. Ask for a week of posts, a thread from an article, or last month's results; posts are saved as drafts unless you ask to schedule them.
 - **Website:** https://capybaroar.com
-- **Support:** https://capybaroar.com/docs (hello@capybaroar.com)
+- **Support:** https://docs.capybaroar.com/ (hello@capybaroar.com)
 - **Privacy policy:** https://capybaroar.com/privacy
 - **Terms:** https://capybaroar.com/terms
 

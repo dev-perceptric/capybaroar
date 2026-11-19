@@ -19,4 +19,4 @@ Networks: Instagram, Facebook, TikTok, LinkedIn (profiles and Pages), YouTube, X
 
 You need a Capybaroar account (free plan available): https://app.capybaroar.com/signup
 
-Docs: https://capybaroar.com/docs/mcp, Privacy: https://capybaroar.com/privacy, Support: hello@capybaroar.com
+Docs: https://docs.capybaroar.com/ai/mcp/, Privacy: https://capybaroar.com/privacy, Support: hello@capybaroar.com

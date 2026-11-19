@@ -136,10 +136,3 @@ capybaroar.com, www.capybaroar.com {
 		import upstream
 	}
 }
-
-# The help docs live on the homepage at /docs (site/build/build_docs.py). docs.capybaroar.com used to point at an
-# unused Mintlify starter site; every address on it now goes there. DNS: an A record for docs to this server.
-docs.capybaroar.com {
-	import edge
-	redir https://capybaroar.com/docs permanent
-}

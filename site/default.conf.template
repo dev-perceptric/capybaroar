@@ -1,6 +1,37 @@
 # capybaroar.com: the homepage's own files first; any other one-word address is a link-in-bio page, served by the app
 # (capybaroar-web) over the private network, so visitors' addresses reach it as they are. The bio page's files
 # (/_next/), pictures and posts (/b/) and tracked links (/l/) go the same way.
+
+# The help docs moved to https://docs.capybaroar.com (the capybaroar-docs repo). Every old /docs address, with or
+# without .html, .md or a trailing slash, goes to the matching new page; anything else under /docs goes to its home.
+map $uri $old_docs_page {
+  "~^/docs/(?<slug>[a-z0-9-]+)(\.html|\.md)?/?$" $slug;
+  default "";
+}
+map $old_docs_page $new_docs_path {
+  default                    /;
+  welcome                    /get-started/welcome/;
+  create-account             /get-started/create-account/;
+  connect-a-channel          /get-started/connect-a-channel/;
+  schedule-your-first-post   /get-started/schedule-your-first-post/;
+  instagram                  /channels/instagram/;
+  facebook                   /channels/facebook/;
+  tiktok                     /channels/tiktok/;
+  linkedin                   /channels/linkedin/;
+  youtube                    /channels/youtube/;
+  x                          /channels/x/;
+  threads                    /channels/threads/;
+  pinterest                  /channels/pinterest/;
+  bluesky                    /channels/bluesky/;
+  mastodon                   /channels/mastodon/;
+  discord                    /channels/discord/;
+  agent                      /ai/agent/;
+  plan-a-week                /ai/plan-a-week/;
+  ai-credits                 /ai/ai-credits/;
+  rewrite-with-ai            /ai/rewrite-with-ai/;
+  mcp                        /ai/mcp/;
+}
+
 server {
   listen 8080;
   listen [::]:8080;
@@ -28,15 +59,13 @@ server {
   # The homepage preview became the homepage.
   location = /home-v2 { return 301 /; }
 
-  location / {
-    try_files $uri $uri.html $uri/ @bio;
+  # /docs, /docs.html, /docs.md, /docs/ and every /docs/... address.
+  location ~ ^/docs(?:[./]|$) {
+    return 301 https://docs.capybaroar.com$new_docs_path;
   }
 
-  # Markdown copies of the docs (for people and AI assistants) open as text.
-  location ~ \.md$ {
-    types { }
-    default_type "text/markdown; charset=utf-8";
-    try_files $uri =404;
+  location / {
+    try_files $uri $uri.html $uri/ @bio;
   }
 
   location ~ ^/(b|l|_next)/ {

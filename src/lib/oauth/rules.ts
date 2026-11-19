@@ -116,7 +116,7 @@ export const protectedResource = (base: string) => ({
   scopes_supported: [SCOPE],
   bearer_methods_supported: ["header"],
   resource_name: "Capybaroar",
-  resource_documentation: "https://capybaroar.com/docs/mcp",
+  resource_documentation: "https://docs.capybaroar.com/ai/mcp/",
 });
 
 export const resourceMetadataUrl = (base: string) => `${base}/.well-known/oauth-protected-resource`;
@@ -134,7 +134,7 @@ export const authorizationServer = (base: string) => ({
   token_endpoint_auth_methods_supported: ["none"],
   revocation_endpoint_auth_methods_supported: ["none"],
   scopes_supported: [SCOPE],
-  service_documentation: "https://capybaroar.com/docs/mcp",
+  service_documentation: "https://docs.capybaroar.com/ai/mcp/",
 });
 
 /** The WWW-Authenticate header for a request to the MCP server with no valid token. */

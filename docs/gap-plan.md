@@ -6,7 +6,7 @@ Rules for every item:
 - Every write goes through `savePost`. Every feature is added to both the REST API and MCP (`src/lib/api/ops.ts`), or to neither.
 - New network settings go in `src/lib/networks.ts`, so the composer, bulk CSV, API and docs pick them up.
 - Every network call has a test with the network's real error, and the publish loop is tested on a flaky case (a part that fails, then works on retry).
-- The help docs (`site/build/docs/`) and `facts.json` are updated in the same change.
+- The help docs (the `capybaroar-docs` repo, docs.capybaroar.com) are updated in the same change.
 
 ## Phase 1: Post types (3 weeks)
 
