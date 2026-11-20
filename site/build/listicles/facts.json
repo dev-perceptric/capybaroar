@@ -1902,5 +1902,492 @@
   "trialShort": "15 days",
   "vendorBestFor": "Businesses and agencies",
   "kind": "the social media management tool in the Zoho suite, with a forever free plan"
+ },
+ "iconosquare": {
+  "id": "iconosquare",
+  "name": "Iconosquare",
+  "home": "https://www.iconosquare.com",
+  "pricing": "https://www.iconosquare.com/plans-and-pricing",
+  "domain": "iconosquare.com",
+  "captured": "November 2026",
+  "kind": "an analytics-first social media management tool for planning, publishing and reporting",
+  "priceShort": "$10/mo",
+  "priceLine": "From $10 a month billed yearly (Starter); Launch from $39 and Scale from $79 a month, billed yearly",
+  "freeShort": "2 profiles",
+  "freeLine": "Up to 2 social profiles, 1 user, 10 posts a month per profile, 1 month of analytics history",
+  "trialShort": "14 days",
+  "bestFor": "teams that report on results",
+  "freePlan": "Up to 2 social profiles, 1 user, 10 posts per month per profile",
+  "trial": "14-day free trial on paid plans, no card required",
+  "ai": "Uma AI Analyst on paid plans, plus AI tools to create content faster",
+  "inbox": "Comments, DMs and mentions in one inbox from Launch",
+  "approvals": "Post approval workflows on Scale",
+  "analytics": "100+ real-time metrics, custom dashboards and best times to post; up to 2 years of history on Scale",
+  "reports": "Automated reports from Launch; white-label reports on Custom",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [
+   "instagram",
+   "tiktok",
+   "facebook",
+   "linkedin",
+   "x",
+   "pinterest",
+   "youtube"
+  ],
+  "pros": [
+   "A real free plan for 2 profiles",
+   "Custom dashboards and up to 2 years of history on Scale",
+   "Competitor, hashtag and industry tracking on Scale"
+  ],
+  "cons": [
+   "Starter allows 30 posts a month across up to 5 profiles",
+   "The inbox and automated reports start on Launch at $39 a month, billed yearly"
+  ],
+  "quotes": {
+   "freePlan": "Up to 2 social profiles | 1 user | 10 posts per month per profile",
+   "priceFrom": "Starter | From $10/month | Billed yearly",
+   "trial": "2 weeks free, no card required",
+   "inbox": "Manage comments, DMs & mentions in one inbox",
+   "approvals": "Collaborate with post approval workflows",
+   "analytics": "Monitor 100+ real-time social media metrics across every account, post, and platform.",
+   "reports": "Automated reports to showcase results | Customizable white-label reporting",
+   "ai": "Uma AI Analyst | AI tools to create content faster"
+  }
+ },
+ "brand24": {
+  "id": "brand24",
+  "name": "Brand24",
+  "home": "https://brand24.com",
+  "pricing": "https://brand24.com/prices/",
+  "domain": "brand24.com",
+  "captured": "November 2026",
+  "kind": "an AI social listening tool that tracks mentions across social media, news, blogs, videos, forums, podcasts and reviews",
+  "priceShort": "$199/mo",
+  "priceLine": "Individual $199, Team $299, Pro $399 and Business $599 a month, billed yearly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "14 days",
+  "bestFor": "brands that want listening with AI sentiment",
+  "freePlan": null,
+  "trial": "Free 14-day trial",
+  "ai": "AI sentiment analysis on every plan; AI insights, topics and a brand assistant from Pro",
+  "inbox": null,
+  "approvals": null,
+  "analytics": "Mention volume, reach, engagement, sentiment, influencer and source analysis",
+  "reports": "Reports on your PR coverage; Advanced Reports on Business",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "Covers social, news, blogs, podcasts, newsletters and review sites",
+   "AI sentiment on every plan",
+   "Unlimited users from the Team plan"
+  ],
+  "cons": [
+   "No free plan, and the lowest plan is $199 a month, billed yearly",
+   "Individual tracks 3 keywords and 2,000 mentions a month"
+  ],
+  "quotes": {
+   "priceFrom": "Individual | $ 199 per month, billed annually | 3 keywords | 2K mentions / mo",
+   "trial": "Try our free 14-day trial!",
+   "ai": "AI Sentiment Analysis",
+   "analytics": "Mentions Volume | Engagement tracking | Reach tracking | Influencer Analysis"
+  }
+ },
+ "brandwatch": {
+  "id": "brandwatch",
+  "name": "Brandwatch",
+  "home": "https://www.brandwatch.com",
+  "pricing": "https://www.brandwatch.com/suite/consumer-intelligence/",
+  "domain": "brandwatch.com",
+  "captured": "November 2026",
+  "kind": "a consumer intelligence and social suite, with social listening built on a large archive of online conversations",
+  "priceShort": null,
+  "priceLine": "Not listed; pricing comes through a demo",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": null,
+  "bestFor": "large brands doing deep consumer research",
+  "freePlan": null,
+  "trial": null,
+  "ai": "Iris, an AI assistant that turns data into readable insights, plus image analysis",
+  "inbox": null,
+  "approvals": "Approvals in its social media management product",
+  "analytics": "50+ live visualizations and 1.7 trillion historical conversations back to 2010",
+  "reports": "Exports to Excel, PPT, PDF or the API, and AI email alerts",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "History back to 2010 and 501 million new conversations a day",
+   "Image analysis finds logos and scenes in pictures",
+   "Listening, publishing and influencer tools in one suite"
+  ],
+  "cons": [
+   "No public prices; you book a demo",
+   "Built for big teams, so it is more than a small brand needs"
+  ],
+  "quotes": {
+   "analytics": "1.7 trillion historical conversations back to 2010 | 501 million new conversations added every day | Choose from 50+ live visualizations to analyze data",
+   "ai": "Iris, your AI assistant, turns data into human-readable insights instantly",
+   "reports": "Instantly share insights via Excel, PPT, PDF, or via the Brandwatch API"
+  }
+ },
+ "talkwalker": {
+  "id": "talkwalker",
+  "name": "Talkwalker",
+  "home": "https://www.talkwalker.com",
+  "pricing": "https://www.talkwalker.com/pricing",
+  "domain": "talkwalker.com",
+  "captured": "November 2026",
+  "kind": "a social listening and media monitoring platform, now called Lumen by Talkwalker as it moves closer to Hootsuite",
+  "priceShort": null,
+  "priceLine": "Custom quote on the Core, Analyze and Business plans",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": null,
+  "bestFor": "global brands watching many markets",
+  "freePlan": null,
+  "trial": null,
+  "ai": "Peak detection, forecasting, AI summaries, an AI agent for questions and LLM Insights on how AI assistants talk about your brand",
+  "inbox": null,
+  "approvals": null,
+  "analytics": "Topic and channel analytics across 150 million sources, 30+ social platforms and 187 languages",
+  "reports": "Custom dashboards, reports and alerts",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "Unlimited users on every plan",
+   "Tracks how AI assistants talk about your brand",
+   "187 languages and 196 countries"
+  ],
+  "cons": [
+   "No public prices; every plan is a custom quote",
+   "Made for large teams, with onboarding and strategy reviews"
+  ],
+  "quotes": {
+   "plans": "Pick your plan to get a custom quote | Core | Analyze | Business",
+   "ai": "AI Agent: Ask questions and instantly surface insights from your data | LLM Insights: Monitor how AI assistants talk about your brand and industry",
+   "analytics": "150 million data sources | 30+ social platforms | 187 languages"
+  }
+ },
+ "mention": {
+  "id": "mention",
+  "name": "Mention",
+  "home": "https://mention.com/en/",
+  "pricing": "https://mention.com/en/pricing/",
+  "domain": "mention.com",
+  "captured": "November 2026",
+  "kind": "a social listening and media monitoring tool that tracks any topic on social media and the web",
+  "priceShort": null,
+  "priceLine": "The pricing page shows a Company plan sold through a demo",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "Free trial",
+  "bestFor": "PR teams tracking press and reviews",
+  "freePlan": null,
+  "trial": "Start a free trial",
+  "ai": "Sentiment analysis and AI tools",
+  "inbox": null,
+  "approvals": null,
+  "analytics": "Sentiment, share of voice, competitor benchmarking and influence scoring",
+  "reports": "Custom reports and dashboards, with white-label options",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "Monitors 75+ review sites, including Google, Trustpilot and Amazon",
+   "Boolean search for exact alerts",
+   "Data up to 2 years back"
+  ],
+  "cons": [
+   "No prices on the pricing page we read",
+   "Its own publishing and replying tools are being retired; it points users to Agorapulse"
+  ],
+  "quotes": {
+   "reviews": "75+ review sites including Google, Facebook, Trustpilot, Amazon, and Glassdoor and more",
+   "cons": "we have decided to progressively deprecate the \"Publish\" and \"Respond\" features in Mention | We recommend using Agorapulse",
+   "monitor": "1 billion sources Real time monitoring Data up to 2 years"
+  }
+ },
+ "awario": {
+  "id": "awario",
+  "name": "Awario",
+  "home": "https://awario.com",
+  "pricing": "https://awario.com/pricing/",
+  "domain": "awario.com",
+  "captured": "November 2026",
+  "kind": "a social listening and brand monitoring tool that tracks conversations across social media, news, blogs, videos, forums and reviews",
+  "priceShort": "$29/mo",
+  "priceLine": "Starter $29, Pro $89 and Enterprise $249 a month billed yearly, or $49, $149 and $399 billed monthly",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "Free trial",
+  "bestFor": "small teams that want low-cost listening",
+  "freePlan": null,
+  "trial": "Free trial of the Starter plan, no card needed",
+  "ai": null,
+  "inbox": null,
+  "approvals": null,
+  "analytics": "Sentiment, reach, share of mentions and a topic cloud",
+  "reports": "PDF reports and white-label reports are listed in its plans",
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "The cheapest paid listening plan here",
+   "Unlimited keywords per topic on every plan",
+   "Crawls over 13 billion web pages a day on top of APIs"
+  ],
+  "cons": [
+   "Starter covers 3 topics and 1 team member",
+   "Export is only on Pro and Enterprise"
+  ],
+  "quotes": {
+   "priceFrom": "Starter | $49/mo | $29/mo | billed annually",
+   "trial": "Awario trial grants you free access to the Starter plan | You don't need a credit card to sign up for a free trial.",
+   "cons": "The export option is available to the Pro and Enterprise plan users."
+  }
+ },
+ "chatgpt": {
+  "id": "chatgpt",
+  "name": "ChatGPT",
+  "home": "https://chatgpt.com",
+  "pricing": "https://chatgpt.com/pricing",
+  "domain": "chatgpt.com",
+  "captured": "November 2026",
+  "kind": "OpenAI's AI assistant for writing, research, images and voice",
+  "priceShort": "Free",
+  "priceLine": "Free plan; the Go, Plus and Pro prices did not show on the pricing page we captured",
+  "freeShort": "Yes",
+  "freeLine": "Unlimited text chats with limited uploads, image creation and deep research",
+  "trialShort": null,
+  "bestFor": "drafting ideas and captions by chat",
+  "freePlan": "Unlimited text chats, limited uploads and image creation",
+  "trial": null,
+  "ai": "Writing, image creation, deep research, custom GPTs and scheduled tasks on Plus",
+  "inbox": null,
+  "approvals": null,
+  "analytics": null,
+  "reports": null,
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "A free plan with unlimited text chats",
+   "Image creation and deep research in the same chat",
+   "Custom GPTs and scheduled tasks on Plus"
+  ],
+  "cons": [
+   "It writes posts but does not schedule them to your channels",
+   "The Go plan may include ads"
+  ],
+  "quotes": {
+   "freePlan": "Unlimited text chats with GPT-6 | Limited image creation",
+   "ai": "Projects, scheduled tasks, and custom GPTs",
+   "cons": "This plan may include ads."
+  }
+ },
+ "claude": {
+  "id": "claude",
+  "name": "Claude",
+  "home": "https://claude.com/product/overview",
+  "pricing": "https://claude.com/pricing",
+  "domain": "claude.com",
+  "captured": "November 2026",
+  "kind": "Anthropic's AI assistant for writing, research and longer tasks, which connects to your apps through connectors and MCP",
+  "priceShort": "$17/mo",
+  "priceLine": "Free plan; Pro $17 a month billed yearly or $20 monthly; Max from $100 a month",
+  "freeShort": "Yes",
+  "freeLine": "Limited use every 5 hours and every week, with web search, files and connectors",
+  "trialShort": null,
+  "bestFor": "longer writing and running tools by chat",
+  "freePlan": "Limited usage every 5 hours and every week",
+  "trial": null,
+  "ai": "Writing, research, files, Artifacts and scheduled tasks on Pro",
+  "inbox": null,
+  "approvals": null,
+  "analytics": null,
+  "reports": null,
+  "mcp": "Connectors, including interactive MCP apps, and custom MCPs",
+  "mobileApp": "Chat on web, desktop and mobile",
+  "networks": [],
+  "pros": [
+   "Connects to other apps through connectors and MCP, so it can act inside them",
+   "A free plan that includes connectors",
+   "Scheduled tasks on Pro"
+  ],
+  "cons": [
+   "It does not post to social networks on its own; it needs a connected tool",
+   "Usage limits reset every 5 hours and every week"
+  ],
+  "quotes": {
+   "priceFrom": "Pro | $17 | Per month with annual subscription discount ($200 billed up front). $20 if billed monthly.",
+   "freePlan": "Limited usage every 5 hours and every week* | Connect your apps and tools",
+   "mcp": "Connectors — Connect the apps you already use, including interactive MCP apps."
+  }
+ },
+ "canva": {
+  "id": "canva",
+  "name": "Canva",
+  "home": "https://www.canva.com",
+  "pricing": "https://www.canva.com/pricing/",
+  "domain": "canva.com",
+  "captured": "November 2026",
+  "kind": "an online design tool for social posts, videos and presentations, with AI built in",
+  "priceShort": "$18/mo",
+  "priceLine": "Free plan; Pro US$18 a month for one person and Business US$25 a month per person (50% off the first 3 months when we checked)",
+  "freeShort": "Yes",
+  "freeLine": "The editor, 1.6M+ templates, 1 Brand Kit (3 colors) and limited AI",
+  "trialShort": "Free trial",
+  "bestFor": "making on-brand graphics fast",
+  "freePlan": "Drag-and-drop editor, 1.6M+ templates, 5GB storage",
+  "trial": "Free trial of Canva Pro or Business",
+  "ai": "AI tools to resize, translate and remove backgrounds on Pro, plus Magic Write for text",
+  "inbox": null,
+  "approvals": null,
+  "analytics": null,
+  "reports": null,
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "A big free plan with 1.6M+ templates",
+   "Pro includes social content scheduling",
+   "Brand Kits keep every design on brand"
+  ],
+  "cons": [
+   "Scheduling is a Pro feature, and it has no inbox or deep analytics",
+   "Free AI use is limited"
+  ],
+  "quotes": {
+   "priceFrom": "Pro | US$18 | US$ 9 | 50% off | /month for one person",
+   "pro": "Social content scheduling | 5 Brand Kits",
+   "trial": "You can start a free trial of Canva Pro or Canva Business."
+  }
+ },
+ "capcut": {
+  "id": "capcut",
+  "name": "CapCut",
+  "home": "https://www.capcut.com",
+  "pricing": "https://www.capcut.com/pricing",
+  "domain": "capcut.com",
+  "captured": "November 2026",
+  "kind": "an AI photo and video editor for making short social videos",
+  "priceShort": "$19.99/mo",
+  "priceLine": "Free plan; Pro US$19.99 a month, Ultra US$79 a month and Teams US$12.49 per seat a month",
+  "freeShort": "Yes",
+  "freeLine": "Free templates and basic editing tools",
+  "trialShort": null,
+  "bestFor": "editing short videos for Reels, TikTok and Shorts",
+  "freePlan": "Free templates and basic editing tools",
+  "trial": null,
+  "ai": "AI video and image generation, text to speech and background removal, with 1,200 AI credits a month on Pro",
+  "inbox": null,
+  "approvals": null,
+  "analytics": null,
+  "reports": null,
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "A free plan for everyday editing",
+   "AI video, image and voice tools in one editor",
+   "A Teams plan with a brand kit"
+  ],
+  "cons": [
+   "It makes videos but does not schedule them across your channels",
+   "AI use runs on monthly credits"
+  ],
+  "quotes": {
+   "priceFrom": "Pro | USD 19.99 /month | 1200 monthly AI credits",
+   "freePlan": "Free templates to start fast | Basic editing tools"
+  }
+ },
+ "opusclip": {
+  "id": "opusclip",
+  "name": "OpusClip",
+  "home": "https://www.opus.pro",
+  "pricing": "https://www.opus.pro/pricing",
+  "domain": "opus.pro",
+  "captured": "November 2026",
+  "kind": "an AI video clipping tool that turns long videos into short clips",
+  "priceShort": "$15/mo",
+  "priceLine": "Free plan; Starter $15 a month; Pro $29 a month, or $14.50 a month billed yearly",
+  "freeShort": "60 credits",
+  "freeLine": "60 credits a month, free forever",
+  "trialShort": "Free trial",
+  "bestFor": "turning long videos into Shorts and Reels",
+  "freePlan": "60 credits a month",
+  "trial": "Free trial with no card required",
+  "ai": "AI clipping with a Virality Score, AI animated captions in 20+ languages and AI B-roll on Pro",
+  "inbox": null,
+  "approvals": null,
+  "analytics": null,
+  "reports": null,
+  "mcp": null,
+  "mobileApp": null,
+  "networks": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "pros": [
+   "Auto posts clips to YouTube Shorts, TikTok and Reels from Starter",
+   "Captions in 20+ languages",
+   "A free plan to test it"
+  ],
+  "cons": [
+   "Credits limit how much video you can clip each month",
+   "The social media scheduler starts on Pro"
+  ],
+  "quotes": {
+   "priceFrom": "Starter | $15 USD/mo",
+   "post": "Auto post to YouTube Shorts, TikTok, IG Reels, or download",
+   "pro": "Social media scheduler | 6 social account connections",
+   "freePlan": "Free forever | $0 USD/mo | 60 credits"
+  }
+ },
+ "predis": {
+  "id": "predis",
+  "name": "Predis.ai",
+  "home": "https://predis.ai",
+  "pricing": "https://predis.ai/pricing/",
+  "domain": "predis.ai",
+  "captured": "November 2026",
+  "kind": "an AI ad and social post generator that makes video ads, UGC ads and image ads, then schedules them",
+  "priceShort": "$32/mo",
+  "priceLine": "Core $32, Rise $79 and Enterprise+ $249 a month; yearly plans were 50% off for Black Friday when we checked",
+  "freeShort": null,
+  "freeLine": null,
+  "trialShort": "3 days",
+  "bestFor": "ecommerce brands that need a stream of ads",
+  "freePlan": null,
+  "trial": "3 days free; a card is taken to start the trial",
+  "ai": "Makes ads, carousels and videos from a product link, a prompt or an image, with competitor ad tracking",
+  "inbox": null,
+  "approvals": null,
+  "analytics": "Reports on which ads earned the click",
+  "reports": null,
+  "mcp": "Predis.ai MCP",
+  "mobileApp": null,
+  "networks": [],
+  "pros": [
+   "Turns a product link into finished ads and posts",
+   "Auto posting and API access from Rise",
+   "Tracks the ads your competitors run"
+  ],
+  "cons": [
+   "Core has no auto posting",
+   "The trial needs a card and lasts 3 days"
+  ],
+  "quotes": {
+   "priceFrom": "Core | $ 19 /month $32",
+   "trial": "Every plan starts with 3 days free. We take a card to start the trial and charge it when day 3 ends",
+   "cons": "1 Brand | No Auto Posting",
+   "mcp": "Predis.ai MCP"
+  }
  }
 }

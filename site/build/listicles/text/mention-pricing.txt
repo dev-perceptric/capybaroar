@@ -1,0 +1,277 @@
+https://mention.com/en/pricing/
+captured 2026-11-20
+
+Mention
+Features
+
+Monitor
+
+Track any topic on social media and the web and gain relevant insights instantly.
+
+1 billion sources Real time monitoring Data up to 2 years
+
+Analyze
+
+Get the big picture on any topic, measure your impact with social listening metrics.
+
+Ready-to-use templates Sentiment analysis Share of voice
+
+Engage
+
+Interact with your community on social media and improve your reach and engagement.
+
+AI tools
+
+Sources
+
+& more !
+
+Use cases
+
+Brand management
+
+Understand and improve your brand's reputation online by easily identifying everything that's being said about it on the web and social media.
+
+PR management
+
+Measure and analyze the impact of your press relations campaigns by tracking the results and reactions of your audience.
+
+Competitive analysis
+
+Monitor and strengthen your market position by tracking every move your competitors make.
+
+Crisis management
+
+Manage and reduce the effects of a brand crisis by identifying it at an early stage and interacting with those who are fuelling it.
+
+Market research
+
+Identify movements in a given market and anticipate the emergence of new technologies, regulatory changes or consumer behavior.
+
+Social media management
+
+Manage your social media effortlessly by easily scheduling, and publishing posts to multiple social channels.
+
+Sources
+
+& more !
+
+Pricing
+Resources
+
+Customer stories
+
+Delve into our Customer Stories to explore successes and experiences shared by our diverse user community.
+
+Educational Material
+
+Dive into our Educational Resources' hubâan extensive collection of valuable insights, guides, webinars, and courses.
+
+Blog
+
+Explore groundbreaking insights on social media, monitoring, and marketing strategies from top industry minds.
+
+Help center
+
+Empower yourself with insights and solutions! Explore our comprehensive hub designed to tackle all your queries and challenges.
+
+Free tools
+
+Discover our Free Tools section - a treasure trove of practical solutions and resources at your fingertips.
+
+Login
+Get a demo
+Start a free trial
+Enterprise-Grade Social Intelligence
+for Your Business
+
+Company
+Complete media monitoring solution with advanced social listening, sentiment analysis, and competitive intelligence. Tailored to your organization's specific monitoring needs and scale.
+Get a demo
+Key Features
+Social Media & Review Monitoring
+Real-time mention tracking across social platforms 
+Facebook, Instagram, Twitter/X, Reddit, TikTok, Pinterest, YouTube, and more
+	
+Comprehensive web monitoring 
+news, blogs, forums
+	
+Review monitoring 
+75+ review sites including Google, Facebook, Trustpilot, Amazon, and Glassdoor and more
+	
+Advanced Boolean search capabilities 
+	
+Historical data access 
+Not included in this plan — available as a paid add-on.
+	
+Analytics & Insights
+	
+Sentiment analysis and trend identification 
+	
+Competitor benchmarking and analysis 
+	
+Custom reporting and dashboards 
+	
+Share of voice 
+	
+Influence scoring and audience insights 
+	
+Collaboration
+	
+Team collaboration tools 
+mention assignment, shared access to alerts, and team member roles
+	
+Multi-user access controls 
+	
+White-label reporting options 
+	
+API access for custom integrations 
+Not included in this plan — available as a paid add-on.
+	
+Integrations 
+Slack, Zapier, and other tools
+	
+Alerts and notifications 
+	
+Support & Services
+	
+Dedicated Account Manager 
+	
+Custom onboarding and training 
+	
+Priority technical support 
+	
+Frequently asked questions
+What is Boolean Search?
+
+Boolean Search enables you to enhance the quality of your results and to monitor more precisely the topics that matter to you. While an alert is a simple keyword search, a Boolean alert makes use of operators like "AND", "NOT" and "OR". Say breakfast is your alert, you can have "breakfast NOT egg" as your Boolean alert to pin down your results. Only our Advanced Alert has the ability to build custom Boolean Queries, using up to 2,000 characters. Our Standard Alert offers a simplified but limited version of Boolean Search with the help of a query builder.
+
+What’s the difference between alerts and mentions?
+
+An alert is a keyword or set of keywords that Mention will crawl the web and social media for. A mention is a result that it finds. For example, if your alert is your company name, your mentions would be the places talking about it.
+
+How do I know when there are new mentions?
+
+Easy. You will get notifications sent by email or desktop push notifications. You can adjust your notification settings in your account.
+
+Can I use Mention on my own website?
+
+Of course! We provide an API for that. You can have a look at our detailed documentation at https://dev.mention.com.
+
+Do you offer discounts for NGOs?
+
+Yes! We offer discounts for non-profit organisations. Please contact us if interested.
+
+Why can't I access the "Publish" and "Respond" features in Mention anymore?
+
+As part of our ongoing efforts to streamline our services and focus on delivering the best user experience, we have decided to progressively deprecate the "Publish" and "Respond" features in Mention. This decision allows us to redirect our resources and focus towards enhancing our core offerings and integrating more closely with Agorapulse, which is now our official solution for publishing and responding needs.
+
+What should I use instead of Mention for publishing and responding?
+
+We recommend using Agorapulse for all your publishing and responding requirements. Agorapulse is designed to provide a comprehensive suite of tools that are perfect for managing social media effectively.
+
+Platform
+
+Social Listening
+Social Publishing
+
+
+
+Media Monitoring
+
+Social Media Listening
+Social Media Management
+Competitive Analysis
+Web Monitoring
+
+
+
+Mention For
+
+Agencies
+Education
+
+
+
+Support
+
+What's New in Mention?
+Help Center
+
+
+
+Need to contact us?
+
+info@mention.com
+
+
+
+Marketing Resources
+
+Case studies
+Educational resources
+Blog
+The Instagram Report
+Social listening guide
+Media monitoring guide
+
+
+
+More Info
+
+About us
+Pricing
+Jobs
+Terms and Privacy
+Agorapulse
+
+
+
+Free Threads Tools
+
+Threads Post Generator
+Threads Bio Generator
+
+
+
+Free LinkedIn Tools
+
+LinkedIn Post Generator
+LinkedIn Summary Generator
+
+
+
+Free Facebook Tools
+
+Facebook Post Generator
+Facebook Bio Generator
+
+
+
+Free Instagram Tools
+
+Instagram Caption Generator
+Instagram Bio Generator
+
+
+
+Free Twitter Tools
+
+Twitter Engagement Calculator
+AI Tweet Generator
+Twitter Bio Generator
+
+
+
+Free TikTok Tools
+
+TikTok Caption Generator
+TikTok Bio Generator
+
+
+
+
+Languages: 
+English
+Français
+28,466,624,368 Mentions delivered ✌️

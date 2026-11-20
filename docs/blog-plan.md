@@ -41,20 +41,20 @@ $0 a month at Beta (50 teams) and Growth (500 teams). Posts are static pages; sc
 
 ## Batches
 
-### Batch 1: Best Tools Listicles
+### Batch 1: Best Tools Listicles (done)
 
 | # | Title | Slug | Type | Status | Note |
 |---|---|---|---|---|---|
-| 1 | 8 Best Pinterest Schedulers in 2027 | `pinterest-schedulers` | list | todo |  |
-| 2 | 7 Best YouTube Shorts Schedulers (2027) | `youtube-shorts-schedulers` | list | todo |  |
-| 3 | 7 Best Threads Scheduling Tools in 2027 | `threads-scheduling-tools` | list | todo |  |
-| 4 | 6 Best Bluesky Scheduling Tools (2027) | `bluesky-scheduling-tools` | list | todo |  |
-| 5 | 10 Best Social Media Analytics Tools in 2027 | `social-media-analytics-tools` | list | todo |  |
-| 6 | 10 Best Social Media Reporting Tools for Agencies (2027) | `social-media-reporting-tools-for-agencies` | list | todo |  |
-| 7 | 9 Best Social Listening Tools in 2027 | `social-listening-tools` | list | todo |  |
-| 8 | 10 Best AI Social Media Post Generators (2027) | `ai-social-media-post-generators` | list | todo |  |
-| 9 | 12 Best AI Tools for Social Media Managers in 2027 | `ai-tools-for-social-media-managers` | list | todo |  |
-| 10 | 10 Best AI Caption Generators (2027) | `ai-caption-generators` | list | todo |  |
+| 1 | 8 Best Pinterest Schedulers in 2027 | `pinterest-schedulers` | list | live |  |
+| 2 | 7 Best YouTube Shorts Schedulers (2027) | `youtube-shorts-schedulers` | list | live |  |
+| 3 | 7 Best Threads Scheduling Tools in 2027 | `threads-scheduling-tools` | list | live |  |
+| 4 | 6 Best Bluesky Scheduling Tools (2027) | `bluesky-scheduling-tools` | list | live |  |
+| 5 | 10 Best Social Media Analytics Tools in 2027 | `social-media-analytics-tools` | list | live |  |
+| 6 | 10 Best Social Media Reporting Tools for Agencies (2027) | `social-media-reporting-tools-for-agencies` | list | live |  |
+| 7 | 9 Best Social Listening Tools in 2027 | `social-listening-tools` | list | live |  |
+| 8 | 10 Best AI Social Media Post Generators (2027) | `ai-social-media-post-generators` | list | live |  |
+| 9 | 12 Best AI Tools for Social Media Managers in 2027 | `ai-tools-for-social-media-managers` | list | live |  |
+| 10 | 10 Best AI Caption Generators (2027) | `ai-caption-generators` | list | live |  |
 
 ### Batch 2: Best Tools Listicles
 

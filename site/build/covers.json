@@ -28,5 +28,15 @@
   {"slug": "tiktok-post-schedulers", "type": "list", "network": "tiktok", "bg": "paper", "tools": ["later.com", "metricool.com", "buffer.com", "postiz.com"]},
   {"slug": "social-media-tools-for-small-business", "type": "calendar", "networks": ["facebook", "instagram", "tiktok", "pinterest", "youtube"]},
   {"slug": "x-post-schedulers", "type": "list", "network": "x", "bg": "paper", "tools": ["typefully.com", "buffer.com", "metricool.com", "publer.com"]},
-  {"slug": "social-media-tools-for-agencies", "type": "analytics", "networks": ["instagram", "linkedin", "facebook"]}
+  {"slug": "social-media-tools-for-agencies", "type": "analytics", "networks": ["instagram", "linkedin", "facebook"]},
+  {"slug": "pinterest-schedulers", "type": "list", "network": "pinterest", "bg": "yolk", "tools": ["tailwindapp.com", "later.com", "buffer.com", "metricool.com"]},
+  {"slug": "youtube-shorts-schedulers", "type": "list", "network": "youtube", "bg": "yolk", "tools": ["opus.pro", "buffer.com", "publer.com", "metricool.com"]},
+  {"slug": "threads-scheduling-tools", "type": "list", "network": "threads", "bg": "yolk", "tools": ["typefully.com", "buffer.com", "hypefury.com", "metricool.com"]},
+  {"slug": "bluesky-scheduling-tools", "type": "list", "network": "bluesky", "bg": "yolk", "tools": ["typefully.com", "buffer.com", "postiz.com", "publer.com"]},
+  {"slug": "social-media-analytics-tools", "type": "list", "network": "instagram", "bg": "yolk", "tools": ["metricool.com", "iconosquare.com", "sproutsocial.com", "agorapulse.com"]},
+  {"slug": "social-media-reporting-tools-for-agencies", "type": "analytics", "networks": ["instagram", "linkedin", "facebook"]},
+  {"slug": "social-listening-tools", "type": "inbox", "networks": ["x", "instagram", "facebook", "linkedin"]},
+  {"slug": "ai-social-media-post-generators", "type": "agent", "ai": "claude", "networks": ["instagram", "linkedin", "tiktok"]},
+  {"slug": "ai-tools-for-social-media-managers", "type": "agent", "ai": "chatgpt", "networks": ["instagram", "tiktok", "linkedin"]},
+  {"slug": "ai-caption-generators", "type": "list", "network": "instagram", "bg": "yolk", "tools": ["contentstudio.io", "loomly.com", "socialbee.com", "pallyy.com"]}
 ]
