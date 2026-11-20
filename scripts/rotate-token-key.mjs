@@ -25,6 +25,8 @@ const COLUMNS = [
   { table: "review_links", id: "brand_id", cols: ["token"] },
   { table: "reports", id: "id", cols: ["token"] },
   { table: "subprocessor_subscribers", id: "id", cols: ["unsub_sealed"], extra: ["email"], aad: (row) => `unsub:${row.email}` },
+  // White-label sign-ins (051): what the exchange needs and the accounts waiting for a pick, gone within a day.
+  { table: "partner_connects", id: "id", cols: ["kept", "pick_accounts"], aad: (row) => `partner_connect:${row.id}` },
 ];
 const PAGE = 500;
 

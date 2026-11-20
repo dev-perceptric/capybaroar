@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type InboxRef, type MediaFile, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
+import { AuthError, NoAccounts, PostError, call, form, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type InboxRef, type MediaFile, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 /** Inbox permissions are asked for only once they are added to the Meta app (META_INBOX=1), so sign-in never breaks. */
 const inboxScopes = () => process.env.META_INBOX === "1";
@@ -306,7 +306,7 @@ export const facebook: Provider = {
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const tok = await userToken(code, redirect);
       const list = await pages(tok, "id,name,access_token,username,picture{url}");
-      if (!list.length) throw new PostError("No Facebook Pages were shared with Capybaroar");
+      if (!list.length) throw new NoAccounts("No Facebook Pages were shared with Capybaroar");
       const scopes = await granted(tok);
       return list.map((p) => ({ accountId: p.id, name: p.name, username: p.username ?? null, avatar: p.picture?.data?.url ?? null, accessToken: p.access_token, extra: { scopes } }));
     },
@@ -407,7 +407,7 @@ export const instagram: Provider = {
     exchange: async ({ code, redirect }): Promise<Account[]> => {
       const tok = await userToken(code, redirect);
       const list = (await pages(tok, "id,name,access_token,instagram_business_account{id,username,name,profile_picture_url}")).filter((p) => p.instagram_business_account);
-      if (!list.length) throw new PostError("No Instagram professional account is linked to your Facebook Pages");
+      if (!list.length) throw new NoAccounts("No Instagram professional account is linked to your Facebook Pages");
       const scopes = await granted(tok);
       return list.map((p) => {
         const ig = p.instagram_business_account!;

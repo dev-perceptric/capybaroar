@@ -178,6 +178,10 @@ export class AuthError extends Error {}
 /** A failure that a retry won't fix: the post itself is wrong for this network. */
 export class PostError extends Error {}
 
+/** A sign-in that worked but shared nothing to post to (no Facebook Page, no YouTube channel). A PostError, so it reads
+ *  the same everywhere; the white-label connect tells it apart (cb_status=error&reason=no_accounts). */
+export class NoAccounts extends PostError {}
+
 /** The network answered 404: what was asked for isn't there (a deleted post). Still a plain, retryable Error elsewhere. */
 export class NotFound extends Error {}
 

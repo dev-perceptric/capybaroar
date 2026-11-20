@@ -18,6 +18,8 @@ export async function pruneOld(now = new Date()) {
     ["oauth_states", () => db.from("oauth_states").delete().lt("created_at", iso(c.oauthStates))],
     // Connect links (046) a week after they expired.
     ["connect_links", () => db.from("connect_links").delete().lt("expires_at", iso(new Date(now.getTime() - 7 * 86400000)))],
+    // White-label sign-ins (051) a day after they were started: they work for 30 minutes, their picks 30 more.
+    ["partner_connects", () => db.from("partner_connects").delete().lt("created_at", iso(new Date(now.getTime() - 86400000)))],
     ["inbox_items", () => db.from("inbox_items").delete().eq("status", "done").lt("created_at", iso(c.inboxDone))],
     ["agent_chats", () => db.rpc("prune_agent_chats", { before: iso(c.agentChats) })],
     // Waiting and running jobs have no done_at, so they never match.

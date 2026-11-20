@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isVideo, qs, type Account, type InboxItem, type PostStats, type Provider, type Publishable, type Secret } from "./types";
+import { AuthError, NoAccounts, PostError, call, form, isVideo, qs, type Account, type InboxItem, type PostStats, type Provider, type Publishable, type Secret } from "./types";
 
 // YouTube: Google sign-in (offline access) + YouTube Data API v3, resumable video upload from our server.
 // Until Google audits the app, uploads from an unverified API project are locked to private.
@@ -93,7 +93,7 @@ export const youtube: Provider = {
         { what: "YouTube sign-in" },
       );
       const r = await call<{ items?: Channel[] }>(`${API}/channels?${qs({ part: "snippet,statistics", mine: "true" })}`, { headers: auth(t.access_token) }, { what: "YouTube channel" });
-      if (!r.items?.length) throw new PostError("This Google account has no YouTube channel");
+      if (!r.items?.length) throw new NoAccounts("This Google account has no YouTube channel");
       return r.items.map((c) => ({
         accountId: c.id,
         name: c.snippet.title,

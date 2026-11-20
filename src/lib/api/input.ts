@@ -283,6 +283,50 @@ export function partnerHookInput(body: unknown, validSecret: (s: string) => bool
   });
 }
 
+/** The hosts a partner may send people back to after connecting (PARTNER_RETURN_HOSTS: exact host names, comma or
+ *  space separated). Nothing listed: no return_url is allowed. */
+export const returnHosts = (v: string | undefined): string[] =>
+  (v ?? "")
+    .split(/[\s,]+/)
+    .map((h) => h.trim().toLowerCase())
+    .filter((h) => /^([a-z0-9-]+\.)+[a-z]{2,63}$/.test(h));
+
+/**
+ * Where a white-label sign-in sends the person back: https, on a listed host exactly (no other port, no user name, no
+ * fragment), so a partner key can't turn the callback into an open redirect.
+ */
+export function returnUrl(v: unknown, hosts: readonly string[]): string {
+  return partner(() => {
+    const u = link(v, ["https:"], "return_url");
+    if (u.port) throw bad("return_url can't name a port");
+    if (u.hash) throw bad("return_url can't have a #fragment");
+    if (!hosts.includes(u.hostname.toLowerCase())) throw bad("return_url must be on a host allowed for this partner");
+    return u.toString();
+  });
+}
+
+/** A white-label connect start: { network, return_url }. `networks` are the ones set up on this server. */
+export function partnerConnectInput(body: unknown, networks: readonly string[], hosts: readonly string[]): { network: string; returnUrl: string } {
+  return partner(() => {
+    if (!isObject(body)) throw bad("Send a JSON object");
+    for (const k of Object.keys(body)) if (k !== "network" && k !== "return_url") throw bad(`Unknown field "${k}"`);
+    if (typeof body.network !== "string" || !networks.includes(body.network)) throw bad(`network must be one of ${networks.join(", ") || "(none set up)"}`);
+    return { network: body.network, returnUrl: returnUrl(body.return_url, hosts) };
+  });
+}
+
+/** The accounts picked after a sign-in: { ids: [...] }, ids as the pick listed them. */
+export function partnerPickInput(body: unknown): string[] {
+  return partner(() => {
+    if (!isObject(body)) throw bad("Send a JSON object");
+    for (const k of Object.keys(body)) if (k !== "ids") throw bad(`Unknown field "${k}"`);
+    if (!Array.isArray(body.ids) || !body.ids.length) throw bad("ids must be a list of one or more option ids");
+    if (body.ids.length > 100) throw bad("ids can have up to 100 ids");
+    for (const x of body.ids) if (typeof x !== "string" || !x || x.length > 200) throw bad("ids must be option ids from the pick");
+    return [...new Set(body.ids as string[])];
+  });
+}
+
 /**
  * How to delete a post. Without `everywhere` only Capybaroar's record goes (a post that went out stays on the
  * networks). With it, the post is deleted on its channels: all of them, or the ones in `channel_ids` (a list, or the
