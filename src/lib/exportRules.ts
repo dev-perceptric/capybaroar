@@ -111,6 +111,7 @@ export const LEFT_OUT: Record<string, string> = {
   channel_secrets: "Network sign-in tokens: never exported.",
   oauth_states: "Half-finished channel sign-ins with their PKCE verifiers, deleted after an hour.",
   connect_links: "One-time links to connect a partner brand's channels (hashes), valid 24 hours.",
+  partner_connects: "A partner's white-label sign-ins and picks (hashes, sealed network tokens), valid 30 minutes.",
   oauth_codes: "One-time app sign-in codes (hashes), valid for minutes.",
   oauth_tokens: "App access tokens (hashes).",
   inbox_state: "Where each channel's last Inbox read stopped (the network's cursor): internal.",

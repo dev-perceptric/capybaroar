@@ -1,4 +1,4 @@
-import { AuthError, PostError, call, form, isPdf, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
+import { AuthError, NoAccounts, PostError, call, form, isPdf, isVideo, qs, sleep, type Account, type InboxBatch, type InboxItem, type InboxQuery, type PostStats, type Provider, type Publishable, type Published, type Secret } from "./types";
 
 // LinkedIn: Sign In with LinkedIn (OpenID) + Share on LinkedIn for people; Community Management API for Pages.
 // Pages use their own app (LinkedIn wants that product alone on its app).
@@ -349,7 +349,7 @@ export const linkedinPage: Provider = {
           expiresAt: new Date(Date.now() + t.expires_in * 1000),
         });
       }
-      if (!accounts.length) throw new PostError("This LinkedIn account isn't an admin of any Page");
+      if (!accounts.length) throw new NoAccounts("This LinkedIn account isn't an admin of any Page");
       return accounts;
     },
   },

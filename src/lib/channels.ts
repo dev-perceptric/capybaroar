@@ -23,8 +23,9 @@ export async function listChannels(workspaceId: string, scope: string[] | null =
   return (data ?? []) as Channel[];
 }
 
-/** Save connected accounts into a brand. Reconnecting the same account updates it in place and keeps its brand. */
-export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[], brandId: string | null = null) {
+/** Save connected accounts into a brand. Reconnecting the same account updates it in place and keeps its brand.
+ *  Returns the channels it saved. */
+export async function saveAccounts(workspaceId: string, network: NetworkId, accounts: Account[], brandId: string | null = null): Promise<{ id: string; workspace_id: string; brand_id: string | null; network: string; name: string }[]> {
   await assertCanAddChannel(workspaceId, await newChannelCount(workspaceId, network, accounts.map((a) => a.accountId)));
   const db = adminClient();
   const { data: had } = accounts.length
@@ -53,6 +54,7 @@ export async function saveAccounts(workspaceId: string, network: NetworkId, acco
   }
   // A partner brand's partner hears about it (channel.connected), reconnected ones too.
   await partnerChannelEvent("channel.connected", connected);
+  return connected;
 }
 
 export async function readSecret(channelId: string): Promise<Secret> {

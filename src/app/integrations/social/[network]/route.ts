@@ -8,15 +8,28 @@ import { open } from "@/lib/crypto";
 import { linkSession } from "@/lib/partner";
 import { CONNECT_COOKIE, readConnectCookie } from "@/lib/partnerRules";
 import type { NetworkId } from "@/lib/networks";
+import { connectStore, partnerFinish } from "@/lib/partnerConnect";
+import { partnerCallback } from "@/lib/partnerConnectRules";
 
 const ROW = "workspace_id, brand_id, user_id, verifier, input, created_at";
 type Row = { workspace_id: string; brand_id: string | null; user_id: string; verifier: string | null; input: Record<string, string> | null; created_at: string };
 
 // The network sends people back here after they approve. The state ties it to the workspace that asked. A sign-in
-// started from a connect link (a partner's customer, no account) finishes here too, back to the link's page.
+// started from a connect link (a partner's customer, no account) finishes here too, back to the link's page. A
+// partner's white-label sign-in (partnerConnectRules.ts) finishes first, back to the partner's own page.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ network: string }> }) {
   const { network } = await params;
   const q = request.nextUrl.searchParams;
+  const partner = await partnerCallback(connectStore, { network, state: q.get("state"), code: q.get("code"), error: q.get("error") }, partnerFinish).catch((e: unknown) => {
+    console.error("[partner-connect] callback:", e instanceof Error ? e.message : e);
+    return null;
+  });
+  if (partner) {
+    const res = NextResponse.redirect(partner, 302);
+    res.headers.set("cache-control", "no-store");
+    res.headers.set("referrer-policy", "no-referrer");
+    return res;
+  }
   const backTo = (page: string) => (error?: string) => {
     const res = NextResponse.redirect(`${appUrl()}${page}${error ? `?error=${encodeURIComponent(error)}` : `?connected=${network}`}`);
     res.cookies.set(STATE_COOKIE, "", { httpOnly: true, secure: true, sameSite: "lax", path: STATE_PATH, maxAge: 0 });
