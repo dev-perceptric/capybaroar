@@ -7,6 +7,8 @@ import { enqueue } from "./jobs";
 import { accountPlan, deleteWorkspaceWith, revokeBlocked, type AccountWorkspace, type ChannelRef } from "./retention";
 import { storedPaths } from "./thumbRules";
 import { stored, withThumb } from "./media";
+import { record } from "./auditActor";
+import { partnerChannelEvent } from "./partnerHooks";
 
 // Deleting a workspace or an account (rules and order in retention.ts). The request removes everyone's access at
 // once; a "workspace_delete" job does the rest, so a slow network or Stripe never holds up the person.
@@ -46,6 +48,24 @@ export async function revokeChannel(id: string, leaving: Set<string> = new Set([
     // The token may already be gone; deleting still goes ahead.
     return false;
   }
+}
+
+type Removing = { id: string; brand_id: string | null; network: string; name: string };
+
+/**
+ * Disconnects one channel, the same way from the Channels page and the partner API: ends the app's access on the
+ * network (revokeChannel, best effort), deletes the row (its Inbox items, results and posts' targets go with it, on
+ * delete cascade), logs channel.removed and tells a partner brand's partner (channel.lost). False when the channel
+ * was already gone, and then nothing is logged or sent. Throws when the database refuses the delete.
+ */
+export async function disconnectChannel(workspaceId: string, ch: Removing, by: Parameters<typeof record>[1], meta: Record<string, unknown> = {}): Promise<boolean> {
+  await revokeChannel(ch.id);
+  const { data, error } = await adminClient().from("channels").delete().eq("id", ch.id).eq("workspace_id", workspaceId).select("id");
+  if (error) throw new Error(error.message);
+  if (!data?.length) return false;
+  await record({ workspaceId, action: "channel.removed", target: { type: "channel", id: ch.id, label: ch.name }, meta: { network: ch.network, ...meta } }, by);
+  await partnerChannelEvent("channel.lost", [{ id: ch.id, workspace_id: workspaceId, brand_id: ch.brand_id, network: ch.network, name: ch.name }]);
+  return true;
 }
 
 /** Cancels every live subscription of the workspace's Stripe customer. An already cancelled one counts as done. */

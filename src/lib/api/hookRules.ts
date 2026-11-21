@@ -62,5 +62,12 @@ export function partnerBody(type: PartnerEvent, data: Record<string, unknown>, a
   return JSON.stringify({ type, timestamp: at.toISOString(), data });
 }
 
+/** What channel.connected and channel.lost carry: the brand, the partner's external_id for it and the channel. */
+export const partnerChannelData = (c: { id: string; brand_id: string | null; network: string; name: string }, externalId: string) => ({
+  brand_id: c.brand_id,
+  external_id: externalId,
+  channel: { id: c.id, network: c.network, name: c.name },
+});
+
 /** A new Standard Webhooks secret: 32 random bytes. */
 export const newStandardSecret = () => `whsec_${randomBytes(32).toString("base64")}`;

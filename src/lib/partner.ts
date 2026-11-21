@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { adminClient } from "./supabase/server";
 import { assertCanAddBrand } from "./billing";
 import { record } from "./auditActor";
-import { revokeChannel } from "./workspaceDelete";
+import { disconnectChannel, revokeChannel } from "./workspaceDelete";
 import { createBrandKey, revokeBrandKeys } from "./api/keys";
 import { ApiError } from "./api/input";
 import { OFFERED, isPaused, type NetworkId } from "./networks";
@@ -81,6 +81,13 @@ export const partnerStore: PartnerStore = {
     const { data, error } = await adminClient().from("channels").select("id, network, name, status").eq("workspace_id", workspaceId).eq("brand_id", brandId).order("created_at");
     if (error) throw busy();
     return (data ?? []) as { id: string; network: string; name: string; status: "active" | "reconnect" }[];
+  },
+  async removeChannel(p, b, c) {
+    try {
+      return await disconnectChannel(p.workspaceId, { id: c.id, brand_id: b.id, network: c.network, name: c.name }, { userId: p.userId }, { via: "partner", external_id: b.external_id });
+    } catch {
+      throw busy();
+    }
   },
   makeKey: (p, b) => createBrandKey(p, b.id, b.name),
   revokeKeys: (workspaceId, brandId) => revokeBrandKeys(workspaceId, brandId),

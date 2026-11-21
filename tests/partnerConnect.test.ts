@@ -54,7 +54,7 @@ function brands(): PartnerStore {
     [BRAND_OTHER, { id: BRAND_OTHER, workspace_id: WS2, name: "Other", website: null, external_id: "mt-2" }],
   ]);
   const no = () => Promise.reject(new Error("not used"));
-  return { brand: async (id) => rows.get(id) ?? null, brandByExternal: no, addBrand: no, removeBrand: no, channels: async () => [], makeKey: no, revokeKeys: no, addLink: no, usage: no };
+  return { brand: async (id) => rows.get(id) ?? null, brandByExternal: no, addBrand: no, removeBrand: no, channels: async () => [], removeChannel: no, makeKey: no, revokeKeys: no, addLink: no, usage: no };
 }
 
 type Row = NewSession & { kept: Kept; used_at: string | null; pick_hash: string | null; pick_accounts: Account[] | null; pick_expires_at: string | null; picked_at: string | null };
