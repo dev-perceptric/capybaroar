@@ -1,8 +1,41 @@
 # Ops
 
-Running Capybaroar in production on the VPS (45.90.109.7): the app and homepage containers pulled from the images CI
-builds (`.github/workflows/build-images.yml`), the self-hosted Supabase in `/docker/sb-capybaroar`, and Caddy in
-front. Server hardening is in `ops/vps/CHECKLIST.md`.
+Running Capybaroar in production on the OVH server (149.56.19.140; the old Hostinger VPS, 45.90.109.7, is gone): the
+app and homepage containers pulled from the images CI builds (`.github/workflows/build-images.yml`), the self-hosted
+Supabase at db.capybaroar.com, and Traefik in front. Server hardening is in `ops/vps/CHECKLIST.md` (written for the old
+VPS: swap in the new address).
+
+## Deploys
+
+Every merge to `claude/compassionate-bell-kidk43` deploys on its own:
+
+1. `checks.yml` runs the typecheck and tests. Only if they pass, `build-images.yml` builds `capybaroar-web` and
+   `capybaroar-site`, tagged `latest` and the commit, with the commit inside each image.
+2. Job `deploy` SSHes to the server and runs `ops/deploy.sh <commit>`: it pulls the images and restarts only the
+   containers that run them (found by image, in whichever compose project started them). The newest copy of the script
+   is inside the app image, so a change to it needs nothing done on the server.
+3. The job waits until `https://app.capybaroar.com/api/version` and `https://capybaroar.com/version.json` both show the
+   commit, and fails the run if they don't within 5 minutes. A red run means the merge is not live.
+
+The server's autodeploy also pulls `latest` every 5 minutes. Until the SSH settings exist, step 2 is skipped and step 3
+waits up to 12 minutes for autodeploy instead.
+
+Database changes are not deployed: apply a new `supabase/migrations` file in Studio before merging the code that reads it.
+
+Setup, once:
+
+1. On your computer: `ssh-keygen -t ed25519 -N '' -C github-capybaroar-deploy -f capybaroar-deploy`.
+2. On the server, as the deploy user (`ubuntu`, in the docker group):
+   `mkdir -p ~/capybaroar && curl -fsSL https://raw.githubusercontent.com/dev-perceptric/capybaroar/claude/compassionate-bell-kidk43/ops/deploy.sh -o ~/capybaroar/deploy.sh && chmod 755 ~/capybaroar/deploy.sh`,
+   then add one line to `~/.ssh/authorized_keys` (the public key from step 1):
+   `command="/home/ubuntu/capybaroar/deploy.sh",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ssh-ed25519 AAAA... github-capybaroar-deploy`
+   Run `~/capybaroar/deploy.sh` once by hand and read what it restarts.
+3. In GitHub (Settings, Secrets and variables, Actions): variables `DEPLOY_HOST=149.56.19.140`, `DEPLOY_USER=ubuntu`;
+   secrets `DEPLOY_SSH_KEY` (the private key file) and `DEPLOY_KNOWN_HOSTS` (`ssh-keyscan -t ed25519 149.56.19.140`).
+   Then delete the private key from your computer.
+
+Roll back: pin the app's compose service to an earlier image (`capybaroar-web:<commit>`) and `docker compose up -d`.
+The deploy then leaves it on that commit (it pulls the tag each container was started from).
 
 ## More than one app container
 

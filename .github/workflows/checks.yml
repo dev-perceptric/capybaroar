@@ -1,6 +1,6 @@
 # Typecheck and tests. Pull requests and manual runs start it here; pushes to the deploy branch run it from
-# build-images.yml (workflow_call), which builds the images only after these checks pass. The app and homepage run
-# on the Hostinger VPS, which picks the images up on its own.
+# build-images.yml (workflow_call), which builds the images only after these checks pass and then deploys them to
+# the OVH server.
 # Actions are pinned to full commit SHAs (the tag each one was at is in the comment).
 name: Checks
 
