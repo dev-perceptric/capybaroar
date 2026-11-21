@@ -12,6 +12,8 @@ import { Sheet } from "@/components/Overlay";
 import { NetworkLogo } from "@/components/NetworkLogo";
 import type { Channel } from "@/lib/channels";
 import type { PostRow } from "@/lib/posts";
+import { neighbors } from "@/lib/postNav";
+import type { PostNav } from "@/components/Composer";
 import { move, newCampaign, removeCampaign, renameCampaign } from "@/app/(app)/calendar/actions";
 import { askConfirm, askText, tell } from "@/components/Dialogs";
 import type { Campaign, CampaignCounts } from "@/lib/campaignRules";
@@ -54,7 +56,7 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
   const startNew = useSearchParams().has("new") && access.write;
   const [mode, setMode] = useState<Mode>("week");
   const [anchor, setAnchor] = useState(() => new Date());
-  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow } | null>(() => (startNew ? {} : null));
+  const [compose, setCompose] = useState<{ at?: Date; post?: PostRow; stepped?: boolean } | null>(() => (startNew ? {} : null));
   const [bulk, setBulk] = useState(false);
   const [channel, setChannel] = useState<string>("all");
   const [campaign, setCampaign] = useState<string>("all");
@@ -143,6 +145,16 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
     reload();
   };
   const open = (p: PostRow) => setCompose({ post: p });
+  // The arrows in the post editor: the post before and after this one among the posts on screen, by time.
+  const near = compose?.post ? neighbors(shown, compose.post.id) : null;
+  const nav: PostNav | undefined = near
+    ? {
+        index: near.index,
+        total: near.total,
+        prev: near.prev ? () => setCompose({ post: near.prev!, stepped: true }) : null,
+        next: near.next ? () => setCompose({ post: near.next!, stepped: true }) : null,
+      }
+    : undefined;
   const pick = access.write ? (at: Date) => setCompose({ at }) : null;
   // Month and List open at the top (Week scrolls to the working hours itself).
   useEffect(() => {
@@ -292,11 +304,14 @@ export function CalendarView({ channels, initial, access }: { channels: Channel[
       ) : null}
       {compose ? (
         <Composer
+          key={compose.post?.id ?? "new"}
           channels={channels}
           at={compose.at}
           post={compose.post}
           preset={channel === "all" ? undefined : channel}
           access={access}
+          nav={nav}
+          still={compose.stepped}
           onClose={() => setCompose(null)}
           onSaved={() => {
             setCompose(null);
