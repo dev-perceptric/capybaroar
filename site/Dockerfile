@@ -8,3 +8,6 @@ ENV CAPY_RESOLVER="[fdaa::3] valid=10s ipv6=on" \
     CAPY_CLIENT_IP="\$http_x_real_ip"
 COPY default.conf.template /etc/nginx/templates/default.conf.template
 COPY public /usr/share/nginx/html
+# The commit this image is built from, at capybaroar.com/version.json, so a deploy can check it went live.
+ARG GIT_COMMIT=""
+RUN printf '{"commit":"%s"}\n' "$GIT_COMMIT" > /usr/share/nginx/html/version.json
