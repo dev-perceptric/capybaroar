@@ -59,31 +59,51 @@ UTILITIES = [('/tools/font-generator', 'i-text', 'Font generator', 'Fonts for In
              ('/tools/emoji-copy-paste', 'i-smile', 'Emoji copy and paste', 'Every emoji, one click'), ('/tools/linkedin-text-formatter', 'i-pen', 'LinkedIn formatter', 'Bold and lists for LinkedIn'),
              ('/tools/instagram-post-size', 'i-image', 'Instagram post size', 'Check and resize pictures'), ('/tools/best-time-to-post', 'i-clock', 'Best time to post', 'Your audience\'s hours, your time'),
              ('/tools/utm-builder', 'i-link', 'UTM link builder', 'Track every post'), ('/tools', 'i-grid', 'All free tools', '29 tools, no account needed')]
+# The agent pages (built by build_agents.py from agents/agents.json): one per AI app, each logo served as a small file.
+AGENT_JSON = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'agents', 'agents.json')))
+AGENT_ROLE = {'chatgpt': 'Chat app', 'claude': 'Chat app', 'claude-code': 'In your terminal', 'claude-cowork': 'Desktop agent', 'codex': 'In your terminal',
+              'cursor': 'Code editor', 'gemini-cli': 'In your terminal', 'github-copilot': 'In VS Code', 'windsurf': 'Code editor', 'perplexity': 'Desktop app',
+              'manus': 'AI agent', 'grok': 'Chat app', 'n8n': 'Automations'}
+os.makedirs(P + 'img/agents/logos', exist_ok=True)
+for _logo, _svg in AGENT_JSON['logos'].items():
+    if 'xmlns=' not in _svg[:200]:
+        _svg = _svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ', 1)
+    open(P + f'img/agents/logos/{_logo}.svg', 'w').write(_svg)
+AGENTS_NAV = [('/' + k, a['logo'], a['name'], AGENT_ROLE.get(k, 'AI app')) for k, a in AGENT_JSON['agents'].items() if not a.get('href')]
 CHEV = '<svg class="dd-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
 
-def dd_item(u, ic, t, d, logo=False):
-    mark = f'<svg class="nl" aria-hidden="true"><use href="#n-{ic}"/></svg>' if logo else f'<svg class="ico" aria-hidden="true"><use href="#{ic}"/></svg>'
-    return f'<a class="dd-item" href="{u}"><span class="dd-ic{" logo" if logo else ""}">{mark}</span><span class="dd-tx"><b>{t}</b><small>{d}</small></span></a>'
+def dd_item(u, ic, t, d, logo=False, img=False):
+    if img:
+        mark = f'<img class="nl" src="/img/agents/logos/{ic}.svg" alt="" width="20" height="20">'
+    else:
+        mark = f'<svg class="nl" aria-hidden="true"><use href="#n-{ic}"/></svg>' if logo else f'<svg class="ico" aria-hidden="true"><use href="#{ic}"/></svg>'
+    return f'<a class="dd-item" href="{u}"><span class="dd-ic{" logo" if logo or img else ""}">{mark}</span><span class="dd-tx"><b>{t}</b><small>{d}</small></span></a>'
 
 
-def dd(key, label, items, logo=False, cols=1, foot=''):
-    body = ''.join(dd_item(*x, logo=logo) for x in items)
+def dd(key, label, items, logo=False, cols=1, foot='', img=False):
+    body = ''.join(dd_item(*x, logo=logo, img=img) for x in items)
     return (f'<div class="dd" data-dd="{key}"><button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-{key}">{label}{CHEV}</button>'
             f'<div class="dd-panel" id="dd-{key}"><div class="dd-box cols{cols}">{body}{foot}</div></div></div>')
 
 
+ALLAG = '<a class="dd-all" href="/mcp">Using another AI app? Read the MCP guide<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>'
 ALLCH = '<a class="dd-all" href="/social-media-scheduler#networks">See what you can post on each network<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>'
 NAV = (dd('platform', 'Features', PLATFORM, cols=2) + dd('channels', 'Platforms', CHANNELS_NAV, logo=True, cols=3, foot=ALLCH)
+       + dd('agents', 'AI agents', AGENTS_NAV, img=True, cols=3, foot=ALLAG)
        + '<a class="nav-a" href="/pricing">Pricing</a>' + dd('resources', 'Resources', RESOURCES) + dd('utilities', 'Utilities', UTILITIES, cols=2))
 
 
-def sheet_group(title, items, logo=False, cols=1):
-    links = ''.join(f'<a href="{u}">' + (f'<svg class="nl" aria-hidden="true"><use href="#n-{ic}"/></svg>' if logo else f'<svg class="ico" aria-hidden="true"><use href="#{ic}"/></svg>') + f'{t}</a>' for u, ic, t, _ in items)
+def sheet_group(title, items, logo=False, cols=1, img=False):
+    def mark(ic):
+        if img:
+            return f'<img class="nl" src="/img/agents/logos/{ic}.svg" alt="" width="16" height="16">'
+        return f'<svg class="nl" aria-hidden="true"><use href="#n-{ic}"/></svg>' if logo else f'<svg class="ico" aria-hidden="true"><use href="#{ic}"/></svg>'
+    links = ''.join(f'<a href="{u}">' + mark(ic) + f'{t}</a>' for u, ic, t, _ in items)
     return f'<div class="sh-g"><p class="sh-t">{title}</p><div class="sh-l cols{cols}">{links}</div></div>'
 
 
-SHEET = (sheet_group('Features', PLATFORM, cols=2) + sheet_group('Platforms', CHANNELS_NAV, logo=True, cols=2)
+SHEET = (sheet_group('Features', PLATFORM, cols=2) + sheet_group('Platforms', CHANNELS_NAV, logo=True, cols=2) + sheet_group('AI agents', AGENTS_NAV, img=True, cols=2)
          + sheet_group('Resources', RESOURCES) + sheet_group('Utilities', UTILITIES, cols=2)
          + '<div class="sh-g sh-end"><a href="/pricing">Pricing</a><a href="https://app.capybaroar.com/login">Log in</a></div>')
 FOOT = ''.join(f'<li><a href="{u}">{n}</a></li>' for u, _, n, _ in PLATFORM) + '<li><a href="/pricing">Pricing</a></li><li><a href="https://docs.capybaroar.com/">Docs</a></li><li><a href="/blog">Blog</a></li><li><a href="/tools">Free tools</a></li><li><a href="/api">API docs</a></li>'
