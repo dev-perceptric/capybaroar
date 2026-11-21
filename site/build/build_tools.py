@@ -128,3 +128,6 @@ exec(open(os.path.join(HERE, 'build_listicles.py')).read())
 # ---------- social media glossary ----------
 exec(open(os.path.join(HERE, 'build_glossary.py')).read())
 
+# ---------- agent pages (/chatgpt, /claude and the rest) ----------
+exec(open(os.path.join(HERE, 'build_agents.py')).read())
+
