@@ -18,6 +18,9 @@ export interface PartnerStore {
   /** Delete the brand with its channels, posts, files, keys and connect links. */
   removeBrand(p: PartnerCtx, b: PartnerBrand): Promise<void>;
   channels(workspaceId: string, brandId: string): Promise<PartnerChannel[]>;
+  /** Disconnect one of the brand's channels the way the Channels page does, and send channel.lost. False when it was
+   *  already gone. */
+  removeChannel(p: PartnerCtx, b: PartnerBrand, c: PartnerChannel): Promise<boolean>;
   makeKey(p: PartnerCtx, b: PartnerBrand): Promise<{ key: string; prefix: string }>;
   revokeKeys(workspaceId: string, brandId: string): Promise<void>;
   addLink(row: { workspace_id: string; brand_id: string; created_by: string; token_hash: string; expires_at: string }): Promise<void>;
@@ -80,6 +83,18 @@ export async function deletePartnerBrand(store: PartnerStore, p: PartnerCtx, id:
   const b = await ownBrand(store, p, id);
   await store.revokeKeys(p.workspaceId, b.id);
   await store.removeBrand(p, b);
+}
+
+/** Disconnect one channel of the brand. A channel that isn't this brand's now (already disconnected, another brand's,
+ *  or never there) is 404, so a retry after a disconnect that went through answers 404 too. */
+export async function disconnectPartnerChannel(store: PartnerStore, p: PartnerCtx, brandId: string, channelId: string) {
+  const b = await ownBrand(store, p, brandId);
+  const gone = () => new ApiError(404, "not_found", "Channel not found");
+  if (!isId(channelId)) throw gone();
+  const c = (await store.channels(p.workspaceId, b.id)).find((x) => x.id === channelId.toLowerCase());
+  if (!c) throw gone();
+  // Two disconnects at once: the other one did it.
+  if (!(await store.removeChannel(p, b, c))) throw gone();
 }
 
 export async function makeBrandKey(store: PartnerStore, p: PartnerCtx, id: string) {

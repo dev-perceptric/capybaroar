@@ -2,16 +2,19 @@
 // lookups, an in-memory partner store and fake actions that leak on purpose. They prove: each key kind is told apart
 // by its shape and its stored kind; a brand key acts as an editor of its one brand and a partner key works only on
 // /api/partner; partner routes refuse no key, member keys, brand keys and another workspace's partner key; making a
-// brand is safe to retry; deleting a brand revokes its keys; a connect link is one browser's for 24 hours; and a brand
-// key can't see or touch another brand or its channels through any MCP tool or REST action.
+// brand is safe to retry; deleting a brand revokes its keys; a connect link is one browser's for 24 hours; a brand
+// key can't see or touch another brand or its channels through any MCP tool or REST action; and a partner disconnects
+// one channel of its own brand only, the way the Channels page does, with channel.lost to its webhook.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac, randomBytes } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ApiError, monthRange, partnerBrandInput, partnerHookInput } from "../src/lib/api/input";
 import { BRAND_PREFIX, KEY_PREFIX, PARTNER_PREFIX, keyContext, keyKinds, looksLikeKey, partnerContext, shownPrefix, type KeyLookup, type KeyRow, type MemberRow } from "../src/lib/api/keyRules";
 import { brandOnly } from "../src/lib/api/brandGuard";
 import { TOOLS, callTool } from "../src/lib/api/mcp";
-import { PARTNER_EVENTS, partnerBody, signStandard, standardHeaders, standardKey, newStandardSecret, STANDARD_SECRET } from "../src/lib/api/hookRules";
+import { PARTNER_EVENTS, partnerBody, partnerChannelData, signStandard, standardHeaders, standardKey, newStandardSecret, STANDARD_SECRET } from "../src/lib/api/hookRules";
 import { linkCallbackProblem } from "../src/lib/oauthState";
 import {
   BrandTaken,
@@ -20,6 +23,7 @@ import {
   brandUsage,
   createPartnerBrand,
   deletePartnerBrand,
+  disconnectPartnerChannel,
   getPartnerBrand,
   linkProblem,
   makeBrandKey,
@@ -29,6 +33,7 @@ import {
   sha256,
   type ConnectLink,
   type PartnerBrand,
+  type PartnerChannel,
   type PartnerStore,
 } from "../src/lib/partnerRules";
 import type { ApiChannel, ApiMedia, ApiPost, Ops } from "../src/lib/api/types";
@@ -187,8 +192,17 @@ class MemoryStore implements PartnerStore {
     this.removed.push(b.id);
     this.brands.delete(b.id);
   }
+  chans = new Map<string, PartnerChannel[]>([[BRAND_A, [{ id: "ch1", network: "instagram", name: "acme", status: "active" }]]]);
+  disconnected: { brand: string; channel: string; workspace: string }[] = [];
   async channels(_ws: string, brandId: string) {
-    return brandId === BRAND_A ? [{ id: "ch1", network: "instagram", name: "acme", status: "active" as const }] : [];
+    return this.chans.get(brandId) ?? [];
+  }
+  async removeChannel(p: { workspaceId: string }, b: PartnerBrand, c: PartnerChannel) {
+    const left = (this.chans.get(b.id) ?? []).filter((x) => x.id !== c.id);
+    if (left.length === (this.chans.get(b.id) ?? []).length) return false;
+    this.chans.set(b.id, left);
+    this.disconnected.push({ brand: b.id, channel: c.id, workspace: p.workspaceId });
+    return true;
   }
   async makeKey(p: { workspaceId: string }, b: PartnerBrand) {
     const key = keyOf(BRAND_PREFIX);
@@ -306,6 +320,84 @@ test("usage counts the month's posts that went out as tasks", async () => {
   assert.equal(m.to.toISOString(), "2027-01-01T00:00:00.000Z");
   assert.equal(monthRange(undefined, new Date("2026-11-17T10:00:00Z")).month, "2026-11");
   for (const bad of ["2026-13", "2026-1", "26-01", "november"]) assert.throws(() => monthRange(bad), (e: unknown) => e instanceof ApiError && e.status === 422);
+});
+
+// ---- disconnecting a channel
+
+const CH_1 = "c1000000-0000-4000-8000-000000000001";
+const CH_2 = "c2000000-0000-4000-8000-000000000002";
+const CH_B = "cb000000-0000-4000-8000-00000000000b";
+function withChannels() {
+  const store = new MemoryStore();
+  store.brands.set(BRAND_A, brandRow(BRAND_A));
+  store.brands.set(BRAND_B, brandRow(BRAND_B));
+  store.chans = new Map<string, PartnerChannel[]>([
+    [BRAND_A, [{ id: CH_1, network: "instagram", name: "acme", status: "active" }, { id: CH_2, network: "linkedin", name: "Acme", status: "reconnect" }]],
+    [BRAND_B, [{ id: CH_B, network: "x", name: "acme_b", status: "active" }]],
+  ]);
+  return store;
+}
+
+test("a partner disconnects one channel of its brand; the brand keeps the rest", async () => {
+  const store = withChannels();
+  await disconnectPartnerChannel(store, P, BRAND_A, CH_1.toUpperCase());
+  assert.deepEqual(store.disconnected, [{ brand: BRAND_A, channel: CH_1, workspace: WS }]);
+  const b = await getPartnerBrand(store, P, BRAND_A);
+  assert.deepEqual(b.channels.map((c) => c.id), [CH_2]);
+  assert.equal(b.status, "needs_reconnect");
+  await disconnectPartnerChannel(store, P, BRAND_A, CH_2);
+  assert.equal((await getPartnerBrand(store, P, BRAND_A)).status, "no_channels");
+  assert.equal(store.chans.get(BRAND_B)!.length, 1, "another brand's channel stays");
+});
+
+test("disconnecting again, or a channel that was never the brand's, is 404 and removes nothing", async () => {
+  const store = withChannels();
+  await disconnectPartnerChannel(store, P, BRAND_A, CH_1);
+  const gone = (p: Promise<unknown>) => assert.rejects(p, (e: unknown) => e instanceof ApiError && e.status === 404 && e.code === "not_found" && e.message === "Channel not found");
+  await gone(disconnectPartnerChannel(store, P, BRAND_A, CH_1));
+  await gone(disconnectPartnerChannel(store, P, BRAND_A, "f0000000-0000-4000-8000-00000000000f"));
+  await gone(disconnectPartnerChannel(store, P, BRAND_A, "../ch1"));
+  await gone(disconnectPartnerChannel(store, P, BRAND_A, "ch1"));
+  // Another brand's channel, named under this brand.
+  await gone(disconnectPartnerChannel(store, P, BRAND_A, CH_B));
+  // Two at once: the store finds it already gone.
+  const raced: PartnerStore = Object.assign(Object.create(store), { removeChannel: async () => false });
+  await gone(disconnectPartnerChannel(raced, P, BRAND_A, CH_2));
+  assert.deepEqual(store.disconnected.map((d) => d.channel), [CH_1]);
+  assert.equal(store.chans.get(BRAND_B)!.length, 1);
+});
+
+test("a partner can't disconnect a channel of another workspace's brand or of a brand made in the app", async () => {
+  const store = withChannels();
+  const theirs = (await createPartnerBrand(store, P2, { name: "Theirs", website: null, externalId: "t1" })).body.id;
+  store.chans.set(theirs, [{ id: CH_B, network: "x", name: "theirs", status: "active" }]);
+  await rejects(disconnectPartnerChannel(store, P, theirs, CH_B), 403);
+  store.brands.set(BRAND_B, brandRow(BRAND_B, WS, null));
+  await rejects(disconnectPartnerChannel(store, P, BRAND_B, CH_B), 403);
+  await rejects(disconnectPartnerChannel(store, P, "f0000000-0000-4000-8000-00000000000f", CH_1), 404, /Brand not found/);
+  assert.deepEqual(store.disconnected, []);
+  assert.equal(store.chans.get(theirs)!.length, 1);
+});
+
+test("a disconnect sends channel.lost with the brand, its external_id and the channel", () => {
+  const data = partnerChannelData({ id: CH_1, brand_id: BRAND_A, network: "instagram", name: "acme" }, "ws_1");
+  const body = JSON.parse(partnerBody("channel.lost", data, new Date("2026-11-21T12:00:00Z")));
+  assert.deepEqual(body, { type: "channel.lost", timestamp: "2026-11-21T12:00:00.000Z", data: { brand_id: BRAND_A, external_id: "ws_1", channel: { id: CH_1, network: "instagram", name: "acme" } } });
+  const read = (f: string) => readFileSync(join(import.meta.dirname, "..", f), "utf8");
+  // The partner store, the Channels page and the event all run the one disconnect.
+  const del = read("src/lib/workspaceDelete.ts");
+  const fn = del.slice(del.indexOf("export async function disconnectChannel"));
+  const at = (re: RegExp) => fn.search(re);
+  assert.ok(at(/await revokeChannel\(ch\.id\)/) >= 0, "the network's access ends");
+  assert.ok(at(/\.from\("channels"\)\.delete\(\)/) > at(/await revokeChannel/), "then the row goes");
+  assert.ok(at(/if \(!data\?\.length\) return false;/) > at(/\.delete\(\)/), "nothing is sent when it was already gone");
+  assert.ok(at(/await partnerChannelEvent\("channel\.lost", \[/) > at(/return false;/), "channel.lost goes out after the delete");
+  assert.match(read("src/lib/partnerHooks.ts"), /emitPartner\(c\.workspace_id, type, partnerChannelData\(c, external\)\)/);
+  assert.match(read("src/lib/partner.ts"), /async removeChannel\(p, b, c\) \{[\s\S]*?disconnectChannel\(p\.workspaceId,/);
+  assert.match(read("src/app/(app)/channels/actions.ts"), /await disconnectChannel\(ctx\.workspaceId,/);
+  const route = read("src/app/api/partner/brands/[id]/channels/[channelId]/route.ts");
+  assert.match(route, /export const DELETE = partnerRoute<P>\(/, "the partner key and its rate limit");
+  assert.match(route, /disconnectPartnerChannel\(partnerStore, partner, params\.id, params\.channelId\)/);
 });
 
 // ---- connect links
