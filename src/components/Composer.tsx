@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { Check, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Copy, Crop, History, ImagePlus, Layers, Monitor, MoreHorizontal, Pencil, Plus, Scissors, Smartphone, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { Badge, Button, Chip, Field, IconButton, Input, Segmented, TextArea, bareArea, boxClass, inputLook } from "./ui";
 import { MultiSelect, Select } from "./Select";
 import { Loader } from "./Loader";
@@ -33,6 +33,7 @@ import { EvergreenButton } from "./Evergreen";
 import { GenerateForm, PendingTile, useGenerations } from "./Generate";
 import { dialogIn, fadeIn } from "@/lib/motion";
 import { read } from "@/lib/read";
+import { keepsArrows } from "@/lib/postNav";
 
 // Crop and trim load when first used.
 const MediaEdit = dynamic(() => import("./MediaEdit").then((m) => m.MediaEdit), { ssr: false });
@@ -78,6 +79,9 @@ const writeLocal = (key: string, v: string | null) => {
   }
 };
 /** The next time this weekday and hour comes around (browser time, which matches the workspace for most people). */
+const isMac = () => typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+/** The posts just before and after this one on the calendar, by time, for the arrows in the header. */
+export type PostNav = { index: number; total: number; prev: (() => void) | null; next: (() => void) | null };
 const nextAt = (day: number, hour: number) => {
   const d = new Date();
   d.setMinutes(0, 0, 0);
@@ -89,7 +93,7 @@ const nextAt = (day: number, hour: number) => {
 };
 
 /** Write a post once, change it per channel, see it on a phone and a desktop, pick when it goes out. Full screen. */
-export function Composer({ channels, at, post, preset, access = { write: true, approve: false }, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; access?: Access; onClose: () => void; onSaved: () => void }) {
+export function Composer({ channels, at, post, preset, access = { write: true, approve: false }, nav, still = false, onClose, onSaved }: { channels: Channel[]; at?: Date; post?: PostRow; preset?: string; access?: Access; nav?: PostNav; still?: boolean; onClose: () => void; onSaved: () => void }) {
   const locked = !access.write || (post ? !["draft", "review", "scheduled", "failed"].includes(post.status) : false);
   const inReview = post?.status === "review";
   // A post that went out is deleted on its networks (or only here) from its own dialog.
@@ -177,11 +181,20 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
     if (dirty && !locked && !(await askConfirm("Close without saving?", { body: "Your changes stay on this device. Open this post again to get them back.", ok: "Close" }))) return;
     onClose();
   };
+  // Moving to the post before or after asks first when there are changes, like closing.
+  const step = async (go: (() => void) | null | undefined) => {
+    if (!go) return;
+    if (dirty && !locked && !(await askConfirm("Leave without saving?", { body: "Your changes stay on this device. Open this post again to get them back.", ok: "Leave" }))) return;
+    go();
+  };
 
   const keys = useRef<(e: KeyboardEvent) => void>(() => {});
   useLayoutEffect(() => {
+    // Stepping to the post before or after swaps the content in place, without the opening animation.
+    if (still) return;
     void fadeIn(shell.current);
     void dialogIn(card.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => keys.current(e);
@@ -464,6 +477,16 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
         if (e.defaultPrevented || aiOpen || editing || deleting || document.querySelector('[role="menu"],[role="listbox"]')) return;
         e.preventDefault();
         void requestClose();
+      } else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && nav && !cmd && !e.shiftKey) {
+        // Plain arrows switch posts unless a text box or picker has them. Alt+arrow works from anywhere,
+        // except in a Mac text box, where Option+arrow moves by word.
+        const owned = keepsArrows(e.target);
+        if (e.altKey ? owned && isMac() : owned) return;
+        if (e.defaultPrevented || aiOpen || editing || deleting || picking || document.querySelector('[role="menu"],[role="listbox"]')) return;
+        const go = e.key === "ArrowLeft" ? nav.prev : nav.next;
+        if (!go) return;
+        e.preventDefault();
+        void step(go);
       } else if (cmd && e.key === "Enter" && !locked) {
         e.preventDefault();
         if (ready && !busy) submit(e.shiftKey ? "now" : "schedule");
@@ -503,6 +526,19 @@ export function Composer({ channels, at, post, preset, access = { write: true, a
       >
         <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-line py-2 pr-3 pl-5">
           <h2 className="text-[16px] font-semibold tracking-[-0.02em]">{post ? (locked ? "Post" : "Edit post") : "New post"}</h2>
+          {nav ? (
+            <span className="flex items-center gap-0.5">
+              <IconButton label={`Previous post (${isMac() ? "←" : "← or Alt+←"})`} onClick={() => void step(nav.prev)} disabled={!nav.prev}>
+                <ChevronLeft size={16} />
+              </IconButton>
+              <IconButton label={`Next post (${isMac() ? "→" : "→ or Alt+→"})`} onClick={() => void step(nav.next)} disabled={!nav.next}>
+                <ChevronRight size={16} />
+              </IconButton>
+              <span className="px-1 text-[12px] text-muted tabular-nums">
+                {nav.index + 1} of {nav.total}
+              </span>
+            </span>
+          ) : null}
           {inReview ? <Badge tone="violet">In review</Badge> : null}
           {locked && error ? <span className="min-w-0 truncate text-[12px] text-danger">{error}</span> : null}
           {wentOut && post ? (
