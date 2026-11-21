@@ -1,7 +1,17 @@
 # Build the app and the homepage images on every push to the deploy branch and publish them to GitHub's container
 # registry (ghcr.io), only after the checks (checks.yml) pass on the same commit. Each image is tagged latest and with
-# the commit SHA, so a bad release can be rolled back by pinning the VPS to an earlier SHA.
-# The Hostinger VPS pulls these images. The database is the self-hosted Supabase at db.capybaroar.com; its public (anon) key
+# the commit SHA, so a bad release can be rolled back by pinning the server to an earlier SHA.
+# Then deploy them to the OVH server (149.56.19.140) and check they went live: job "deploy" SSHes in and runs
+# ops/deploy.sh (it pulls the new images and restarts the app and homepage containers), then waits until
+# app.capybaroar.com/api/version and capybaroar.com/version.json both show this commit. The server's own autodeploy
+# also pulls :latest every 5 minutes, so until the SSH settings below exist, the job skips the SSH step and only waits
+# for that, which still fails the run when the new commit doesn't go live.
+# The SSH step runs only once the repo has the variable DEPLOY_HOST. It needs (Settings, Secrets and variables, Actions):
+#   variables: DEPLOY_HOST (the server's address), DEPLOY_USER (the SSH user), DEPLOY_PORT (optional, default 22),
+#              APP_URL (optional, default https://app.capybaroar.com), SITE_URL (optional, default https://capybaroar.com)
+#   secrets:   DEPLOY_SSH_KEY (a private key made only for this), DEPLOY_KNOWN_HOSTS (the line from ssh-keyscan for the server)
+# Server setup: ops/README.md, Deploys. To deploy by hand: Actions, Build images, Run workflow.
+# The database is the self-hosted Supabase at db.capybaroar.com; its public (anon) key
 # is baked into the browser build, so it lives here in the open like any browser key.
 # Actions are pinned to full commit SHAs (the tag each one was at is in the comment).
 name: Build images
@@ -45,6 +55,7 @@ jobs:
           context: .
           push: true
           build-args: |
+            GIT_COMMIT=${{ github.sha }}
             NEXT_PUBLIC_SUPABASE_URL=https://db.capybaroar.com
             NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzk0MTI5Njc0LCJleHAiOjIxMDk0ODk2NzR9.-Q8KakixmXY0vJdU39SLEahf6uZuSvv-yVClsc70MzY
           tags: |
@@ -73,6 +84,53 @@ jobs:
         with:
           context: site
           push: true
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/capybaroar-site:latest
             ghcr.io/${{ github.repository_owner }}/capybaroar-site:${{ github.sha }}
+
+  deploy:
+    needs: [web, site]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    # One deploy at a time.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - name: Restart the app and homepage on the server
+        if: ${{ vars.DEPLOY_HOST != '' }}
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          HOST: ${{ vars.DEPLOY_HOST }}
+          USER_NAME: ${{ vars.DEPLOY_USER }}
+          PORT: ${{ vars.DEPLOY_PORT || '22' }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          # The server's authorized_keys locks this key to ops/deploy.sh, so the command here is only a fallback.
+          ssh -i ~/.ssh/deploy_key -p "$PORT" -o StrictHostKeyChecking=yes -o BatchMode=yes "$USER_NAME@$HOST" deploy.sh "$GITHUB_SHA"
+      - name: Wait for the app and homepage to show this commit
+        env:
+          APP_URL: ${{ vars.APP_URL || 'https://app.capybaroar.com' }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://capybaroar.com' }}
+          WANT: ${{ github.sha }}
+          # Without the SSH step this waits for the server's autodeploy (every 5 minutes, plus the pull).
+          MINUTES: ${{ vars.DEPLOY_HOST != '' && '5' || '12' }}
+        run: |
+          commit() { curl -fsS -m 10 "$1" | sed -n 's/.*"commit":"\([0-9a-f]*\)".*/\1/p' || true; }
+          for i in $(seq 1 $((MINUTES * 12))); do
+            app=$(commit "$APP_URL/api/version")
+            site=$(commit "$SITE_URL/version.json?$i")
+            if [ "$app" = "$WANT" ] && [ "$site" = "$WANT" ]; then echo "Live: $WANT"; exit 0; fi
+            echo "Waiting for $WANT (app has ${app:-nothing yet}, homepage has ${site:-nothing yet})"
+            sleep 5
+          done
+          echo "The server didn't switch to $WANT within $MINUTES minutes (app: ${app:-nothing}, homepage: ${site:-nothing})." >&2
+          exit 1

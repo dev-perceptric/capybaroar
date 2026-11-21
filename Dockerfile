@@ -23,6 +23,11 @@ COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 # The CapyMotion scene kit, bundled by scripts/build-motion.mjs during the build.
 COPY --from=build /app/motion-bundle ./motion-bundle
+# The newest deploy script, which the server copies out on every deploy (ops/deploy.sh).
+COPY --from=build /app/ops/deploy.sh ./deploy.sh
+# The commit this image is built from (build-images.yml), shown at /api/version so a deploy can check it went live.
+ARG GIT_COMMIT=""
+ENV GIT_COMMIT=$GIT_COMMIT
 RUN mkdir -p .next/cache && chown -R node:node .next
 USER node
 EXPOSE 3000
