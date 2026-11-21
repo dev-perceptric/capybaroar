@@ -449,6 +449,9 @@ export const RESERVED = new Set([
   // Pages on capybaroar.com, where link-in-bio pages live too, now or soon.
   "affiliates", "brand", "careers", "changelog", "compare", "cookies", "customers", "data-deletion", "features", "guides", "img",
   "index", "integrations", "learn", "legal", "partners", "press", "pricing", "robots", "sitemap", "templates", "tools",
+  // Agent pages (site/build/build_agents.py) and the MCP guide.
+  "chatgpt", "claude", "claude-code", "claude-cowork", "codex", "cursor", "gemini-cli", "github-copilot", "grok", "manus", "mcp",
+  "n8n", "perplexity", "windsurf",
 ]);
 
 /** Why an address can't be used, or null. The page's current address always stays usable. */

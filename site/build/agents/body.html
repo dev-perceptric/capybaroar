@@ -1,0 +1,113 @@
+<link rel="stylesheet" href="/agents.css?v={{V}}">
+<div class="agp" id="agp">
+<div class="ag-wrap">
+  <div class="ag-hero">
+    <div>
+      <span class="ag-pair"><span class="ag-ag-dot" data-ag="logo">{{LOGO}}</span><span style="font-weight:600">+</span><img src="/img/agents/capybaroar.svg" alt="Capybaroar" style="height:18px"></span>
+      <h1>Run your socials from <span data-ag="name">{{NAME}}</span>.<br><em>Set up in two minutes.</em></h1>
+      <ul>
+        <li>One MCP link connects every channel you run</li>
+        <li>Ask in plain words. Drafts, schedules and bulk edits happen in Capybaroar</li>
+        <li>Instagram, Pinterest, X, LinkedIn, TikTok and more</li>
+      </ul>
+      <div class="ag-ctas">
+        <a class="ag-btn ag-dark" href="https://app.capybaroar.com/settings?tab=api">Get my MCP link</a>
+        <a class="ag-btn ag-ghost" href="https://app.capybaroar.com/signup">Start free</a>
+      </div>
+    </div>
+    <div class="ag-hero-art" aria-hidden="true">
+      <div class="ag-mini">
+        <div class="ag-bubble">Schedule 3 posts a day for December from my store photos. No captions.</div>
+        <div class="ag-reply"><span class="ag-ag-dot" data-ag="logo">{{LOGO}}</span><p>Done. 93 posts are on your calendar, Dec 1 to Dec 31.</p></div>
+        <div class="ag-mcal" id="heroCal"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="connect-sec">
+  <div class="ag-wrap">
+    <div class="ag-sec-head">
+      <span class="ag-eyebrow">Connect</span>
+      <h2 style="margin-top:10px">How do I connect Capybaroar to <span data-ag="name">{{NAME}}</span>?</h2>
+      <p id="connectLead">Copy your MCP link from Capybaroar, then paste it into <span data-ag="name">{{NAME}}</span>. Every plan has it, Free too.</p>
+    </div>
+    <div class="ag-steps">
+      <div class="ag-step">
+        <div class="ag-top"><span class="ag-num">1</span><span class="ag-time">about 30 seconds</span></div>
+        <h3>Copy your link from Capybaroar</h3>
+        <p>Open <b>Settings</b>, then <b>API and MCP</b>, and press <b>New key</b>. Copy the <b>MCP link</b>.</p>
+        <div class="ag-code"><div class="ag-bar"><span class="ag-dots"><i></i><i></i><i></i></span>Settings → API and MCP<button type="button" data-copy="https://app.capybaroar.com/api/mcp/cbr_••••••••">Copy</button></div><pre>https://app.capybaroar.com/api/mcp/cbr_••••••••</pre></div>
+        <p class="ag-note">Keep it private. Anyone with the link can post as you.</p>
+      </div>
+      <div class="ag-step">
+        <div class="ag-top"><span class="ag-num">2</span><span class="ag-time" id="s2time">about a minute</span></div>
+        <h3 id="s2title">Add it to ChatGPT</h3>
+        <p id="s2body"></p>
+        <div class="ag-code" id="s2code"><div class="ag-bar"><span class="ag-dots"><i></i><i></i><i></i></span><span id="s2where"></span><button type="button" id="s2copy">Copy</button></div><pre id="s2pre"></pre></div>
+        <p class="ag-note" id="s2note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ag-demo-sec" id="demo">
+  <div class="ag-wrap">
+    <div class="ag-sec-head">
+      <span class="ag-eyebrow">Live demo</span>
+      <h2 style="margin-top:10px">What can <span data-ag="name">{{NAME}}</span> do with Capybaroar?</h2>
+      <p>One request, start to finish. This is a replay of a real session with Blazed Kitty, a Y2K clothing shop: scrape the store, pick the best photos, match the feed, catch problems, bulk edit and schedule a month.</p>
+    </div>
+    <ol class="ag-rail" id="rail" aria-label="Workflow steps"></ol>
+    <div class="ag-stage">
+      <div class="ag-chat" id="chat">
+        <div class="ag-hd"><span class="ag-ag-dot" data-ag="logo">{{LOGO}}</span><span data-ag="name">{{NAME}}</span><span class="ag-conn"><i></i>Capybaroar connected</span></div>
+        <div class="ag-log" id="log" aria-live="polite"></div>
+        <div class="ag-composer"><div class="ag-field ag-empty" id="field">Ask anything</div><button class="ag-send" type="button" aria-label="Send" tabindex="-1"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></button></div>
+      </div>
+      <div class="ag-app" aria-label="Capybaroar app preview">
+        <div class="ag-hd">
+          <img class="ag-logo-img" src="/img/agents/capybaroar.svg" alt="Capybaroar">
+          <span class="ag-brandsel"><img src="/img/agents/bk.png" alt="" style="width:18px;height:18px;border-radius:50%;display:block">Blazed Kitty</span>
+          <span class="ag-vt" id="vt"><span data-v="calendar">Calendar</span><span data-v="media">Media</span><span data-v="analytics">Analytics</span></span>
+        </div>
+        <div class="ag-sub" id="sub"></div>
+        <div class="ag-view" id="view"></div>
+      </div>
+    </div>
+    <div class="ag-controls">
+      <button type="button" id="playBtn">Pause</button>
+      <button type="button" id="replayBtn">Replay</button>
+      <span class="ag-cap"><b>capybaroar.*</b> are real Capybaroar MCP tools. web.fetch and vision.review are the agent's own tools. Photos are real Blazed Kitty products.</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding-bottom:0">
+  <div class="ag-wrap">
+    <div class="ag-sec-head"><span class="ag-eyebrow">Agents</span><h2 style="margin-top:10px">Works with the AI you already use</h2><p>Same MCP link, same tools. Pick your agent for setup steps.</p></div>
+    <div class="ag-agents-grid" id="agentsGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="ag-wrap">
+    <div class="ag-sec-head">
+      <span class="ag-eyebrow">Channels</span>
+      <h2 style="margin-top:10px">One connector runs every channel</h2>
+      <p>Connect your accounts in Capybaroar once. From then on <span data-ag="name">{{NAME}}</span> can post to any of them, and Capybaroar publishes at the time you set, even after you close the chat.</p>
+    </div>
+    <div class="ag-chgrid" id="chgrid"></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="ag-wrap">
+    <div class="ag-sec-head">
+      <span class="ag-eyebrow">Try these</span>
+      <h2 style="margin-top:10px">Prompts to paste into <span data-ag="name">{{NAME}}</span></h2>
+    </div>
+    <ul class="ag-plist" id="prompts"></ul>
+  </div>
+</section>
+</div>
