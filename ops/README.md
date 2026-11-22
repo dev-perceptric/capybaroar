@@ -94,6 +94,36 @@ restart; run `npx tsx scripts/rotate-token-key.mjs` (dry run, counts values per 
 more to see nothing left; only then remove the old key. Back up first (below), since a value sealed only with a
 removed key can't be opened again.
 
+## Storage on R2
+
+People's pictures, videos and PDFs live in Supabase Storage. It started on the server's disk; `ops/storage-r2.sh` moves
+it to the Cloudflare R2 bucket `capybaroar-media` (private, eastern North America, unfinished uploads cleared after
+7 days). Supabase keeps the same API, so the app doesn't change. R2 has no size limit and no download fees, which
+matters because every network fetches each picture when a post goes out.
+
+Once:
+
+1. Cloudflare, R2, Manage API tokens, Create API token: Object Read & Write, this bucket only. Keep the access key and
+   the secret access key (shown once).
+2. On the server, `/etc/capybaroar/r2.env` (chmod 600): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+   `R2_BUCKET=capybaroar-media`.
+3. Add the `storage:` block from `ops/vps/docker-compose.override.yml` to `/docker/sb-capybaroar/docker-compose.override.yml`.
+4. `sudo bash ops/storage-r2.sh`. It copies every file with its content type, switches Storage, copies what came in
+   meanwhile, and checks the count and one file read back through Supabase. The files on disk stay, so removing the
+   override block and `docker compose up -d storage` goes back.
+5. Backups: in `backup.env` set `MEDIA_DIR=r2:capybaroar-media` and the same `RCLONE_CONFIG_R2_*` values the script
+   uses, so the nightly run copies media from R2 to B2. Delete the old files on disk after a week and a good backup.
+
+What it costs (R2 Standard: $0.015 per GB a month after 10 GB free, $4.50 per million writes after 1 million, $0.36
+per million reads after 10 million, downloads free; cloudflare.com/developer-platform/products/r2, check). Sizes guess
+1 GB per team:
+
+| | Beta (50 teams) | Growth (500 teams) |
+|---|---|---|
+| Storage (50 GB / 500 GB) | $0.60 | $7.35 |
+| Writes and reads | $0 (inside the free amounts) | about $1 (check) |
+| Downloads | $0 | $0 |
+
 ## Backups
 
 `ops/backup.sh` runs on the VPS from cron every night:
