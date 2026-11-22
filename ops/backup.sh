@@ -19,7 +19,8 @@
 #   DB_CONTAINER    the Supabase Postgres container (sb-capybaroar-db-1)
 #   PG_USER         a superuser in that container (supabase_admin); its password is the container's POSTGRES_PASSWORD
 #   SUPABASE_DIR    the Supabase compose folder (/docker/sb-capybaroar)
-#   MEDIA_DIR       the Storage files volume (/docker/sb-capybaroar/volumes/storage); "" to skip media
+#   MEDIA_DIR       the Storage files volume (/docker/sb-capybaroar/volumes/storage), or an rclone remote once Storage
+#                   is on R2 (r2:capybaroar-media, with RCLONE_CONFIG_R2_* set here); "" to skip media
 #   MEDIA_REMOTE    where media goes ($RCLONE_REMOTE/media); point it at an rclone crypt remote to encrypt media too
 #   EXTRA_FILES     more files for the config tarball, space separated (the app's .env)
 #   KEEP_DAILY (30), KEEP_MONTHLY (12), KEEP_DELETED_DAYS (30), WORK_DIR (/var/tmp), PING_URL
@@ -148,7 +149,10 @@ prune db/daily "$KEEP_DAILY"
 prune db/monthly "$KEEP_MONTHLY"
 
 if [ -n "$MEDIA_DIR" ]; then
-  [ -d "$MEDIA_DIR" ] || die "MEDIA_DIR $MEDIA_DIR is not a folder"
+  case "$MEDIA_DIR" in
+    /*) [ -d "$MEDIA_DIR" ] || die "MEDIA_DIR $MEDIA_DIR is not a folder" ;;
+    *:*) rclone lsf "$MEDIA_DIR" --max-depth 1 >/dev/null || die "can't read MEDIA_DIR $MEDIA_DIR" ;;
+  esac
   log "syncing media from ${MEDIA_DIR}"
   rclone sync "$MEDIA_DIR" "${MEDIA_REMOTE%/}/current" --backup-dir "${MEDIA_REMOTE%/}/deleted/${DAY}" \
     --fast-list --retries 5 --low-level-retries 10 --stats-one-line --stats 0 || die "media sync failed"
