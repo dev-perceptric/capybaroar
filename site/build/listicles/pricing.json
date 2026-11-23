@@ -1,0 +1,365 @@
+{
+  "capybaroar": {
+    "lines": [
+      "Free: $0/month (3 channels, 30 scheduled posts a month)",
+      "Creator: $29/month billed monthly",
+      "Pro: $49/month billed monthly",
+      "Agency: $149/month billed monthly"
+    ],
+    "start": "$29/month",
+    "free": true,
+    "note": "From facts entry (no text file). Yearly plans get 2 months free, but no yearly price is given, so only monthly prices are listed. Pro includes 5 members, Agency 15."
+  },
+  "agorapulse": {
+    "lines": [
+      "Free: $0/month (limits not listed)",
+      "Standard: $79/user/month (billing period not shown)",
+      "Professional: $119/user/month (billing period not shown)",
+      "Advanced: $149/user/month (billing period not shown)",
+      "Custom: Custom pricing, contact sales"
+    ],
+    "start": "$79/user/month",
+    "free": true,
+    "note": "Page has a Pay monthly / Pay annually toggle (save up to 20%) but does not say which period $79/$119/$149 belong to; the 'Save $240/year' style lines do not settle it. Free plan is only mentioned in the FAQ (keep using it after the trial); its limits are not listed."
+  },
+  "buffer": {
+    "lines": [
+      "Free: $0/month (3 channels, 10 scheduled posts per channel)",
+      "Essentials: $5/channel/month billed annually",
+      "Team: $10/channel/month billed annually"
+    ],
+    "start": "$5/channel/month (annual)",
+    "free": true,
+    "note": "Only the yearly view was captured ($60 and $120 per channel billed yearly). No monthly price appears in the capture, so it is left out (the $6 in the brief is not in the text)."
+  },
+  "contentstudio": {
+    "lines": [
+      "Standard: $19/month billed annually or $29/month billed monthly",
+      "Advanced: $49/month billed annually or $69/month billed monthly",
+      "Agency Unlimited: $99/month billed annually or $139/month billed monthly",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$19/month (annual)",
+    "free": false,
+    "note": "No free plan, 7-day free trial. Separate developer API plan ($15/month billed annually) left out."
+  },
+  "hootsuite": {
+    "lines": [
+      "Standard: $99/user/month billed annually",
+      "Professional: $199/user/month billed annually",
+      "Advanced: $399/user/month billed annually",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$99/user/month (annual)",
+    "free": false,
+    "note": "Page footnote says prices are based on annual billing; no monthly price shown. A fall sale banner offered 50% off Standard at capture time (not reflected in the lines)."
+  },
+  "hypefury": {
+    "lines": [
+      "Flexible: $60/platform/year billed annually or $6/platform/month billed monthly",
+      "Creator: $190/year billed annually or $19/month billed monthly",
+      "Pro: $390/year billed annually or $39/month billed monthly"
+    ],
+    "start": "$6/platform/month",
+    "free": false,
+    "note": "Yearly prices are shown only as yearly totals (12 months for the price of 10), so they are written per year rather than as a per-month figure. Billing unit for Flexible is a platform. No free plan, 7-day trial."
+  },
+  "later": {
+    "lines": [
+      "Starter: $18.75/month billed annually",
+      "Growth: $37.50/month billed annually",
+      "Scale: $82.50/month billed annually"
+    ],
+    "start": "$18.75/month (annual)",
+    "free": false,
+    "note": "Only the yearly view was captured (3 months free, 25% off); monthly prices are not shown. 14-day trial, no free plan."
+  },
+  "loomly": {
+    "lines": [
+      "Starter: $49/month billed annually",
+      "Beyond: $249/month billed annually",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$49/month (annual)",
+    "free": false,
+    "note": "Only yearly prices shown ($588 and $2,988 per year); monthly prices not captured. 7-day trial, no free plan."
+  },
+  "metricool": {
+    "lines": [
+      "Free: $0/month (1 brand, 20 posts per month)",
+      "Starter: from $20/month billed annually or from $25/month billed monthly",
+      "Advanced: from $53/month billed annually or from $67/month billed monthly",
+      "Custom: Custom pricing, contact sales"
+    ],
+    "start": "$20/month (annual)",
+    "free": true,
+    "note": "Starter and Advanced prices scale with the number of brands (e.g. Starter $20 for 5 brands, $36 for 10 annually)."
+  },
+  "pallyy": {
+    "lines": [
+      "Free: $0/month (1 social set, 15 scheduled posts a month)",
+      "Pro: $25/month billed monthly",
+      "Agency: $79/month billed annually or $99/month billed monthly",
+      "Scale: $165/month billed annually or $199/month billed monthly",
+      "Custom: Custom pricing, contact sales"
+    ],
+    "start": "$25/month",
+    "free": true,
+    "note": "Yearly prices for Agency and Scale come from the home page text; no yearly price is shown for Pro. Extra social sets are $10/month each."
+  },
+  "planable": {
+    "lines": [
+      "Free: $0/month (first 50 posts, no time limit)",
+      "Basic: $33/workspace/month (billing period not shown)",
+      "Pro: $49/workspace/month (billing period not shown)",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$33/workspace/month",
+    "free": true,
+    "note": "Page has a Monthly/Yearly (2 months free) toggle and does not label which period $33/$49 belong to. Add-on prices on the cards ($7.5, $82.5) are 10/12 of the table prices ($9, $99), which suggests the cards show yearly billing, but this is not stated. The free offer is 50 free posts, not a monthly plan."
+  },
+  "postiz": {
+    "lines": [
+      "Standard: $29/month (billing period not shown)",
+      "Team: $39/month (billing period not shown)",
+      "Pro: $49/month (billing period not shown)",
+      "Ultimate: $99/month (billing period not shown)"
+    ],
+    "start": "$29/month",
+    "free": false,
+    "note": "Monthly/Yearly toggle with 'Save with yearly billing!' but no yearly price and no label on the shown prices (likely monthly, not stated). 7-day trial, no free plan."
+  },
+  "publer": {
+    "lines": [
+      "Free: $0/month (3 social accounts, 10 scheduled posts per account)",
+      "Professional: $4/social account/month billed annually or $5/social account/month billed monthly",
+      "Business: $8/social account/month billed annually or $10/social account/month billed monthly",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$4/social account/month (annual)",
+    "free": true,
+    "note": "Price scales with social accounts (every 10th free) and extra members; the per-social-account unit is taken from the FAQ example (20 accounts, pay for 18). Free plan excludes X."
+  },
+  "sendible": {
+    "lines": [
+      "Core: $35/month billed monthly",
+      "Plus: $99/month billed monthly",
+      "Premium: $169/month billed annually or $199/month billed monthly",
+      "Elite: $299/month billed monthly",
+      "Enterprise: $750/month billed monthly"
+    ],
+    "start": "$35/month",
+    "free": false,
+    "note": "Only monthly prices shown; annual billing is 15% off. The Premium annual $169 comes from the home page comparison (most popular plan, annual billing). A custom plan is also offered via demo (not listed, 5-line cap)."
+  },
+  "socialbee": {
+    "lines": [
+      "Bootstrap: $24.20/month billed annually or $29/month billed monthly",
+      "Accelerate: $40.80/month billed annually or $49/month billed monthly",
+      "Pro: $82.50/month billed annually or $99/month billed monthly"
+    ],
+    "start": "$24.20/month (annual)",
+    "free": false,
+    "note": "Only the Standard tab was captured; Agency-tab plans are not in the text. Yearly totals on the page ($290, $490, $990) are slightly different from 12 x the per-month annual prices. 14-day trial, no free plan."
+  },
+  "socialpilot": {
+    "lines": [
+      "Essentials: $25.50/month billed annually or $30/month billed monthly",
+      "Standard: $42.50/month billed annually or $50/month billed monthly",
+      "Premium: $85/month billed annually or $100/month billed monthly",
+      "Ultimate: $170/month billed annually or $200/month billed monthly",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$25.50/month (annual)",
+    "free": false,
+    "note": "Monthly prices ($30, $50, $100, $200) are the second figure on each card next to 'Billed annually (Save 15%)'; they are not labelled 'monthly' in words but match exactly 15% above the annual price."
+  },
+  "sprout": {
+    "lines": [
+      "Essentials: $79/seat/month billed annually or $99/seat/month billed monthly",
+      "Standard: $199/seat/month billed annually",
+      "Professional: $299/seat/month billed annually",
+      "Advanced: $399/seat/month billed annually",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$79/seat/month (annual)",
+    "free": false,
+    "note": "Standard/Professional/Advanced are under the 'Annual billing' heading; monthly prices for them are not shown. 30-day trial, no free plan."
+  },
+  "tailwind": {
+    "lines": [
+      "Free: $0/month (limits not listed)",
+      "Pinterest SEO: $11.99/Pinterest account/month billed annually or $14.99/Pinterest account/month billed monthly",
+      "Pinterest Engagement: $11.99/Pinterest account/month billed annually or $14.99/Pinterest account/month billed monthly",
+      "Pin Scheduling & Creation: $17.99/Pinterest account/month billed annually or $29.99/Pinterest account/month billed monthly",
+      "Bundle (all three): $29.98/Pinterest account/month billed annually"
+    ],
+    "start": "$11.99/Pinterest account/month (annual)",
+    "free": true,
+    "note": "Annual view captured (Save 40%), monthly price shown as the second figure. Bundle monthly price not shown and its 'Save $180.00 a year' does not match the $41.97 vs $29.98 figures. Pinterest SEO and Engagement do not include Pin scheduling. Free start, limits not listed."
+  },
+  "taplio": {
+    "lines": [
+      "Starter: $39/month billed monthly",
+      "Growth: $69/month billed monthly",
+      "Pro: $199/month billed monthly"
+    ],
+    "start": "$39/month",
+    "free": false,
+    "note": "Yearly toggle shows -25% but no yearly price captured. 7-day trial, no free plan."
+  },
+  "typefully": {
+    "lines": [
+      "Free: $0/month (1 social set, 10 posts per month)"
+    ],
+    "start": "Price not shown",
+    "free": true,
+    "note": "Creator (annual billing only) and Business (per social set, billed yearly) prices are blank in the capture, so those tiers are left out. Only 1 line."
+  },
+  "vistasocial": {
+    "lines": [
+      "Professional: $950/year billed annually or $80/month billed monthly",
+      "Advanced: $1,910/year billed annually or $160/month billed monthly",
+      "Scale: $4,310/year billed annually or $360/month billed monthly",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$80/month",
+    "free": false,
+    "note": "Page labels $80/$160/$360 as monthly and $950/$1,910/$4,310 as yearly, but the yearly totals are only about 1% under 12 x monthly while the page says 'Save 20% with yearly billing'. Likely a capture or page inconsistency; check. Yearly written as totals."
+  },
+  "zoho": {
+    "lines": [
+      "Free: $0/month (1 brand with 6 channels, 1 team member)",
+      "Standard: $10/month billed annually",
+      "Professional: $30/month billed annually",
+      "Premium: $40/month billed annually",
+      "Custom: Custom pricing, contact sales"
+    ],
+    "start": "$10/month (annual)",
+    "free": true,
+    "note": "Only the yearly view (Save 33%) captured; monthly prices not shown. Each plan is 1 brand; extra brands and members are add-ons. Only the For Businesses tab captured."
+  },
+  "iconosquare": {
+    "lines": [
+      "Free: $0/month (2 social profiles, 10 posts per month per profile)",
+      "Starter: from $10/month billed annually",
+      "Launch: from $39/month billed annually",
+      "Scale: from $79/month billed annually",
+      "Custom: from $139/month billed annually, contact sales"
+    ],
+    "start": "$10/month (annual)",
+    "free": true,
+    "note": "Only the yearly view captured (2 months free); monthly prices not shown. Prices rise with the number of profiles."
+  },
+  "brand24": {
+    "lines": [
+      "Individual: $199/month billed annually",
+      "Team: $299/month billed annually",
+      "Pro: $399/month billed annually",
+      "Business: $599/month billed annually",
+      "Enterprise: from $1,499/month billed annually"
+    ],
+    "start": "$199/month (annual)",
+    "free": false,
+    "note": "Only the annual view captured; monthly prices not shown. 14-day trial, no free plan."
+  },
+  "brandwatch": {
+    "lines": [
+      "Custom pricing, contact sales"
+    ],
+    "start": "Custom pricing",
+    "free": false,
+    "note": "No prices on the captured page; pricing via demo."
+  },
+  "talkwalker": {
+    "lines": [
+      "Custom pricing, contact sales"
+    ],
+    "start": "Custom pricing",
+    "free": false,
+    "note": "Core, Analyze and Business plans are all custom quote."
+  },
+  "mention": {
+    "lines": [
+      "Custom pricing, contact sales"
+    ],
+    "start": "Custom pricing",
+    "free": false,
+    "note": "Only a Company plan sold through a demo; a free trial is offered."
+  },
+  "awario": {
+    "lines": [
+      "Starter: $29/month billed annually or $49/month billed monthly",
+      "Pro: $89/month billed annually or $149/month billed monthly",
+      "Enterprise: $249/month billed annually or $399/month billed monthly",
+      "Custom: Custom pricing, contact sales"
+    ],
+    "start": "$29/month (annual)",
+    "free": false,
+    "note": "Free trial of Starter, no free plan."
+  },
+  "chatgpt": {
+    "lines": [
+      "Free: $0/month (unlimited text chats, limited uploads and image creation)",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "Price not shown",
+    "free": true,
+    "note": "Go, Plus and Pro prices (and Business) are blank in the capture, so those tiers are left out. Only 2 lines."
+  },
+  "claude": {
+    "lines": [
+      "Free: $0/month (limited usage every 5 hours and every week)",
+      "Pro: $17/month billed annually or $20/month billed monthly",
+      "Max: $100/month billed monthly",
+      "Ultra: $200/month billed monthly",
+      "Enterprise: $20/seat/month billed annually, plus usage at API rates"
+    ],
+    "start": "$17/month (annual)",
+    "free": true,
+    "note": "Pro annual is $200 billed up front, which is a little under 12 x $17. Team plans are on a separate tab, not captured."
+  },
+  "canva": {
+    "lines": [
+      "Free: $0/month (1 person, 5GB cloud storage)",
+      "Pro: $18/month billed monthly",
+      "Business: $25/user/month billed monthly",
+      "Enterprise: Custom pricing, contact sales"
+    ],
+    "start": "$18/month",
+    "free": true,
+    "note": "Monthly is inferred: the cards show the 50% off first 3 months offer, which the footnote limits to monthly plans. Yearly prices not shown (toggle says save from 16%). Promo prices ($9, $12.50) not used."
+  },
+  "capcut": {
+    "lines": [
+      "Free: $0/month (free templates, basic editing tools)",
+      "Pro: $19.99/month (billing period not shown)",
+      "Teams: $12.49/seat/month (billing period not shown)",
+      "Ultra: $79/month (billing period not shown)"
+    ],
+    "start": "$19.99/month",
+    "free": true,
+    "note": "Monthly/Yearly toggle but no label on the shown prices; page says displayed pricing is for reference only. Teams is per seat (shown with 2 seats), so it is placed after Pro rather than first."
+  },
+  "opusclip": {
+    "lines": [
+      "Free: $0/month (60 credits per month, watermark)",
+      "Starter: $15/month billed monthly",
+      "Pro: $14.50/month billed annually or $29/month billed monthly",
+      "Business: Custom pricing, contact sales"
+    ],
+    "start": "$14.50/month (annual)",
+    "free": true,
+    "note": "Starter is monthly only; Pro on annual billing ($174/year) is cheaper per month than Starter, so start uses $14.50 (annual). Use $15/month if start should be the cheapest tier instead."
+  },
+  "predis": {
+    "lines": [
+      "Core: $19/month billed annually (Black Friday price) or $32/month billed monthly",
+      "Rise: $40/month billed annually (Black Friday price) or $79/month billed monthly",
+      "Enterprise+: $212/month billed annually (Black Friday price) or $249/month billed monthly"
+    ],
+    "start": "$32/month",
+    "free": false,
+    "note": "Captured during a Black Friday offer (ended about 11 days after Nov 20); regular annual prices are not shown. $32/$79/$249 are the struck-through prices on the annual cards; reading them as monthly prices matches the 'You save $X a year' figures but is not stated. Start uses the regular $32. 3-day trial needs a card; no free plan."
+  }
+}

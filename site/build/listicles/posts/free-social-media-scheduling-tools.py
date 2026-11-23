@@ -1,65 +1,111 @@
 POST = {
     'order': 11,
     'slug': 'free-social-media-scheduling-tools',
-    'keyword': 'free social media scheduling tools',
-    'title': '9 Free Social Media Scheduling Tools Compared by Limits',
-    'desc': 'Free plans differ a lot. We compared 9 free social media scheduling tools by channels, posts a month and users, with limits checked in November 2026.',
-    'h1a': '9 free social media scheduling tools',
-    'h1b': 'compared by their limits.',
-    'lead': 'Almost every scheduler says it has a free plan. The real question is how many channels and posts you get before you have to pay. Here are 9 free plans side by side.',
+    'keyword': 'free social media scheduling tool',
+    'title': '11 Best Free Social Media Scheduling Tools in 2027',
+    'desc': 'Compare the 11 best free social media scheduling tools in 2027 by channels, post caps and limits. See why Capybaroar has the most complete free plan.',
+    'heroAlt': 'A post composer and calendar on a free plan, for the best free social media scheduling tools in 2027',
     'cover': {'type': 'list', 'tools': ['buffer.com', 'publer.com', 'metricool.com', 'zoho.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', '30 scheduled posts a month on 3 channels, plus an inbox, analytics and an API.'),
-        ('Best for many networks', 'zoho', '6 channels for one brand, WhatsApp and Snapchat included, on a plan that stays free after the trial.'),
-        ('Most posts to start', 'planable', 'Your first 50 posts are free, with no time limit.'),
+    'leaders': ['buffer', 'publer'],
+    'intro': '''<p>Almost every scheduler says it has a free plan. The real question is how many channels and posts you get before you have to pay, and which networks the free plan leaves out.</p>
+<p>A free social media scheduling tool lets you connect a few accounts, write posts once and publish them on time for $0. Creators, side projects, small businesses and new teams use one to build a posting habit before they buy anything.</p>
+<p>The result is a steady plan with no monthly bill. Below are 11 tools with real free plans, their limits and G2 ratings, checked in November 2026. 🙌</p>''',
+    'whatH2': 'What Is a Free Social Media Scheduling Tool?',
+    'what': {
+        'def': 'A free social media scheduling tool is an app that publishes your posts to social networks at a set time, on a plan that costs nothing to keep.',
+        'body': '<p>You connect your accounts, write a post, add an image or video and pick a time, and the tool posts it through each network\'s official API. Free plans cap something, such as channels, posts a month or users, and some leave out a network like X or LinkedIn. Most run as a web app, and many add a phone app.</p>',
+        'bullets': ['A calendar for a few channels', 'A clear monthly post cap', 'Basic analytics on your posts', 'An easy path to paid'],
+        'close': 'The result is a working posting plan before you spend a single dollar.',
+    },
+    'whyH2': 'Why Do You Need a Free Social Media Scheduling Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Posting by hand is free too, but it ties you to your phone at the right minute. Paid tools fix that, though not every new brand has the budget yet.</p>\n<p>A free social media scheduling tool solves this.</p>',
+        'bullets': [
+            ('No monthly cost', 'You schedule posts for a few channels without a card, so a side project can start today.'),
+            ('Time saved', 'You batch a week of posts in one sitting instead of posting live every day.'),
+            ('A real test', 'You learn how a tool works with your own posts before you pay for a plan.'),
+            ('More than a calendar', 'The best free plans add an inbox, analytics and an API, so you can grow without switching tools.'),
+        ],
+    },
+    'quizH3': 'Free Social Media Scheduling Tools: Quick Match',
+    'quiz': [
+        {'q': 'Where do you post most?', 'options': [
+            ('Instagram and TikTok', ['capybaroar', 'buffer', 'metricool', 'pallyy']),
+            ('X and LinkedIn', ['typefully', 'buffer', 'capybaroar']),
+            ('Pinterest', ['tailwind']),
+            ('Many networks', ['capybaroar', 'publer', 'zoho'])]},
+        {'q': 'How many posts do you need a month?', 'options': [
+            ('Fewer than 20', ['metricool', 'typefully', 'iconosquare', 'pallyy']),
+            ('20 to 30', ['capybaroar', 'buffer', 'publer']),
+            ('A short burst to test', ['planable', 'agorapulse'])]},
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['buffer', 'publer', 'typefully', 'capybaroar']),
+            ('A small team', ['capybaroar', 'planable', 'agorapulse']),
+            ('An agency with clients', ['pallyy', 'planable', 'capybaroar'])]},
+        {'q': 'What else do you need for free?', 'options': [
+            ('Analytics', ['metricool', 'iconosquare', 'capybaroar']),
+            ('An inbox', ['capybaroar', 'buffer']),
+            ('An API or MCP', ['capybaroar', 'typefully']),
+            ('Many networks', ['zoho', 'publer'])]},
     ],
-    'intro': '''<p>A free plan is only useful if it fits your week. Some free plans cap you by channel, some by posts a month, and some by posts per account. A few leave out a network you need, like X or LinkedIn. So we lined up the free plans by the 2 numbers that matter most: how many channels you can connect and how many posts you can schedule.</p>
-<div class="scroll"><table class="cmp"><thead><tr><th>Tool</th><th>Channels</th><th>Posts</th><th>Users and other limits</th></tr></thead><tbody>
-<tr><td>Capybaroar</td><td>3 channels</td><td>30 scheduled posts a month</td><td>1 member, free forever</td></tr>
-<tr><td>Buffer</td><td>Up to 3 channels</td><td>10 scheduled posts per channel</td><td>1 user</td></tr>
-<tr><td>Publer</td><td>3 social accounts (no X)</td><td>10 scheduled posts per account</td><td>1 user</td></tr>
-<tr><td>Metricool</td><td>1 brand, no LinkedIn or X</td><td>20 posts a month</td><td>30 days of analytics</td></tr>
-<tr><td>Zoho Social</td><td>1 brand (6 channels)</td><td>Not listed</td><td>1 team member, 5 AI credits</td></tr>
-<tr><td>Pallyy</td><td>1 social set</td><td>15 scheduled posts a month</td><td>Image posts only</td></tr>
-<tr><td>Planable</td><td>Not listed</td><td>Your first 50 posts, no time limit</td><td>Not listed</td></tr>
-<tr><td>Typefully</td><td>1 social set</td><td>10 posts a month</td><td>1 user</td></tr>
-<tr><td>Tailwind</td><td>Pinterest only</td><td>Not listed</td><td>Free to start with no card</td></tr>
-</tbody></table></div>
-<p>All limits come from each tool's own pricing page in November 2026. "Not listed" means the page doesn't say. Free plans change often, so check before you build your routine around one.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'calendar', 'text': '''<p>Capybaroar's Free plan gives you 3 channels and 30 scheduled posts a month, for 1 member and 1 brand, with no end date. Capybaroar works with 14 networks, including Instagram, TikTok, LinkedIn, YouTube, Bluesky and Discord.</p>
-<p>The free plan holds more than a calendar. It includes one inbox for comments and mentions, analytics with best times to post, a link in bio page, and the MCP server and REST API, so you can schedule from Claude, ChatGPT or Cursor. AI writing and the agent need a paid plan. When you outgrow Free, Creator is $29 a month for 8 channels and unlimited posts.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer's free plan covers up to 3 channels with 10 scheduled posts per channel, for 1 user. That is up to 30 posts in the queue at once, and you can refill it as posts go out. It works with a long list of networks, including Threads, Bluesky, Mastodon and Substack.</p>
-<p>Free users get the community inbox for replying to comments and 30 days of insights. When you need more, you pay per channel: $5 a month per channel on Essentials, billed yearly. That makes Buffer an easy step up if you only add one or two channels.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer's free plan lets 1 user connect 3 social accounts and schedule 10 posts per account. You also get 25 saved drafts. The catch is X: the free plan can't connect X accounts, and post history only goes back 24 hours.</p>
-<p>Publer supports more networks than most tools here, including Telegram, WordPress and Google Business Profile. If you upgrade, Professional starts at $5 a month, or $4 a month billed yearly, with the final price based on how many accounts and members you pick. Analytics and unlimited AI need Business, from $10 a month.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool's free plan covers 1 brand and lets you schedule up to 20 posts a month, with 30 days of analytics. Metricool doesn't charge per network, so one brand can hold several channels. Two are missing on Free, though: LinkedIn and X.</p>
-<p>Metricool is strongest on numbers, so the free plan is a good way to see its reports before you pay. Paid plans keep your full history. Starter is from $20 a month billed yearly for up to 5 brands, or $25 billed monthly. X needs a $10 a month add-on per account even on paid plans.</p>'''},
-        {'id': 'zoho', 'shot': 'pricing', 'text': '''<p>Zoho Social starts you on a 15-day free trial with no card. After that, your account moves to a forever free plan with 1 brand, 6 channels, 1 team member and 5 AI credits. Zoho's page doesn't list a post limit for the free plan, and it calls the free features limited.</p>
-<p>Zoho covers networks that most tools here skip, like WhatsApp and Snapchat, and it can turn comments into CRM leads. If you need more, Standard is US$10 a month billed yearly for 14 channels. The inbox and approvals sit on Premium at US$40 a month.</p>'''},
-        {'id': 'pallyy', 'shot': 'pricing', 'text': '''<p>Pallyy's free plan gives you 1 social set and 15 scheduled posts a month, with no card needed. A social set can hold up to 11 accounts, so one brand can post to many networks from it. The big limit is format: the free plan allows image posts only.</p>
-<p>That makes it fine for a brand that posts photos and graphics, and a poor fit if you post video. Pro is $25 a month for unlimited posts, the social inbox and AI captions. Pallyy is built for agencies, and each extra client is a flat $10 a month.</p>'''},
-        {'id': 'planable', 'shot': 'pricing', 'text': '''<p>Planable takes a different route. There is no monthly free plan. Instead, your first 50 posts are free, with no time limit and no credit card. That is a total, so it works best as a long test drive before a team commits.</p>
-<p>Planable is built for teams that review posts together, with feedback and approvals right on each post. Paid plans are priced per workspace: Basic is $33 per workspace a month for 60 posts a month and unlimited users. The inbox and analytics cost extra below Enterprise, at $7.5 and $12 per workspace a month.</p>'''},
-        {'id': 'typefully', 'shot': 'pricing', 'text': '''<p>Typefully is a writing tool first. Its free plan gives 1 user 1 social set and 10 posts a month, with limited media uploads. It cross-posts to X, LinkedIn, Bluesky, Threads and Mastodon, so it suits people who mostly post text.</p>
-<p>Free also includes advanced scheduling plus agents, the API and MCP, which is rare at $0. AI writing and X analytics need a paid plan. Creator is billed yearly only, and Business is priced per social set. If you post video to Instagram or TikTok, pair it with another tool.</p>'''},
-        {'id': 'tailwind', 'shot': 'pricing', 'text': '''<p>Tailwind is for one network: Pinterest. You can get started free with no credit card, but its pricing page doesn't list what the free start includes, so you will find the limits only after you sign up.</p>
-<p>If Pinterest drives your traffic, Tailwind goes deeper than any general tool here. It makes new Pins from your keywords each week and tracks how they rank. Paid plans are per Pinterest account. Pin scheduling starts at $17.99 a month, and Pinterest SEO and engagement are sold apart from scheduling. Tailwind has been a Pinterest developer partner since 2012.</p>'''},
+        {'id': 'capybaroar', 'shot': 'composer', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant free social media scheduling tools for teams that want to plan, post and reply from one place. Instead of only queuing a few posts, its Free plan includes 3 channels, 30 scheduled posts a month, one inbox, analytics and an MCP server. Paid plans start with Creator at $29 a month and add an AI agent that drafts the week. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/pricing">Free plan</a> with 30 scheduled posts a month',
+                  '<a href="/social-media-calendar">One calendar</a> across 14 networks',
+                  '<a href="/social-media-inbox">Inbox</a> and <a href="/social-media-analytics">analytics</a> on Free',
+                  '<a href="/mcp">MCP server and REST API</a> on Free',
+                  '<a href="/ai-social-media-agent">AI agent</a> from the $29 Creator plan'],
+         'cons': ['Not a free AI writing tool']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Free plan for 3 channels',
+         'overview': '<p>Buffer is one of the most popular free social media scheduling tools for creators who run a few channels. Its free plan covers up to 3 channels with 10 scheduled posts per channel for 1 user, and the queue refills as posts go out. Free users also get the community inbox and 30 days of insights. When more channels are needed, Essentials adds them at $5 a month per channel, billed yearly.</p>',
+         'pros': ['Simple queue and calendar', 'Community inbox on every plan', 'AI Assistant on every plan', 'Long network list, Substack included', 'Free plan for 3 channels'],
+         'cons': ['Paid price can grow with each channel', 'Free insights may cover only a month', 'Free post caps can feel tight per channel']},
+        {'id': 'publer', 'shot': 'pricing', 'best': '13 networks to start',
+         'overview': '<p>Publer is one of the most widely used free social media scheduling tools for creators who post to many networks. Its free plan lets 1 user connect 3 social accounts, schedule 10 posts per account and keep 25 drafts. The free plan cannot connect X, and post history only goes back 24 hours. Paid plans start at $5 a month and cover 13 networks, from Telegram to WordPress.</p>',
+         'pros': ['13 networks, WordPress included', '25 saved drafts on Free', 'Approvals for team and clients', 'Low price when you upgrade', 'Free plan for 3 accounts'],
+         'cons': ['Paid price can grow with accounts and members', 'Free post history may be very short', 'Free plan may not connect X']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Analytics on Free',
+         'overview': '<p>Metricool is a free social media scheduling tool designed specifically for managers who want analytics next to their calendar. The free plan covers 1 brand, 20 posts a month and 30 days of analytics, and one brand can hold several networks. LinkedIn and X are not on Free, though. Paid plans keep your full history, which makes it useful for testing reports before paying.</p>',
+         'pros': ['Calendar with analytics side by side', 'Several networks under one brand', '30 days of analytics on Free', 'PDF and PPT reports on paid plans', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra even on paid plans', 'Approvals may need the Advanced plan', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'zoho', 'shot': 'pricing', 'best': '6 free channels',
+         'overview': '<p>Zoho Social is a free social media scheduling tool for small businesses that post to many networks under one brand. After a 15-day trial, accounts move to a forever free plan with 1 brand, 6 channels, 1 team member and 5 AI credits. Zoho calls the free features limited and lists no post cap, but it covers WhatsApp, Telegram and Snapchat. That network list suits local businesses that reach customers beyond the big networks.</p>',
+         'pros': ['6 channels for one brand on Free', 'WhatsApp, Telegram and Snapchat support', '5 AI credits on Free', 'Apps for Android and iOS', 'Forever free plan after the trial'],
+         'cons': ['Extra members can add to the bill', 'Inbox and approvals may need the top plan', 'Free features may be limited']},
+        {'id': 'iconosquare', 'shot': 'pricing', 'best': 'Analytics-first free plan',
+         'overview': '<p>Iconosquare is an analytics-first free social media scheduling tool for teams that track results closely. Its free plan covers up to 2 social profiles, 1 user and 10 posts a month per profile, with 1 month of analytics history. Paid plans start at $10 a month billed yearly, and the inbox and automated reports start on Launch. It is a relevant option for users who mainly need clear numbers for a small set of profiles.</p>',
+         'pros': ['100+ real-time metrics', 'Custom dashboards and posting times', 'Inbox from the Launch plan', 'Automated reports from Launch', 'Free plan for 2 profiles'],
+         'cons': ['Prices can rise with each profile added', 'Inbox and reports may need Launch', 'Free history may cover only a month']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Inbox-first platform',
+         'overview': '<p>Agorapulse is a strong free social media scheduling tool option for business teams that want to test an inbox-first platform. Its 30-day free trial needs no credit card, and Agorapulse says accounts can keep a free plan afterward, though the page does not list its limits. Paid plans include one inbox for messages and comments, unlimited post scheduling and 10 social profiles. Paid seats start at US $79 per user, which suits teams that grow into ROI reports.</p>',
+         'pros': ['One inbox for messages and comments', 'Unlimited post scheduling on paid plans', 'ROI reports on Advanced', '30-day trial with no card', 'Free plan after the trial'],
+         'cons': ['X publishing can cost extra as an add-on', 'Per-user pricing can grow with each hire', 'Free plan limits may be unclear']},
+        {'id': 'planable', 'shot': 'pricing', 'best': '50 free posts',
+         'overview': '<p>Planable is a free social media scheduling tool focused on teamwork for groups that review posts together. There is no monthly free plan: the first 50 posts are free, with no time limit and no credit card. Teammates leave comments and suggestions on each post, and paid plans add unlimited users per workspace. The free posts work well as a long test of approvals before a team commits.</p>',
+         'pros': ['Feed view shows each post as it will look', 'Comments and suggestions on each post', 'Approval workflows on every plan', 'Unlimited users on paid plans', 'First 50 posts free'],
+         'cons': ['Post caps can bite on paid plans', 'Inbox and analytics can cost extra', 'Free posts may run out quickly']},
+        {'id': 'pallyy', 'shot': 'pricing', 'best': 'Client approvals by link',
+         'overview': '<p>Pallyy is a free social media scheduling tool for agencies that plan client posts and bill per client. Its free plan gives 1 social set and 15 scheduled posts a month, with no card needed, but only for image posts. Clients approve posts from a shared link without an account, and Pro adds unlimited posts and the social inbox for $25 a month. It works well for small agencies that post photos and graphics.</p>',
+         'pros': ['Clients approve from a shared link', 'Social inbox on paid plans', 'Priced per client, not per channel', 'Analytics kept for years on paid plans', 'Free plan with 15 posts a month'],
+         'cons': ['Extra social sets can add to the bill', 'Free plan may allow image posts only', 'Pro may include only one user']},
+        {'id': 'typefully', 'shot': 'pricing', 'best': 'Writing-first text posts',
+         'overview': '<p>Typefully is a free social media scheduling tool built for writers who mostly post text. Its free plan gives 1 user 1 social set and 10 posts a month, with agents, the API and MCP included. It cross-posts to X, LinkedIn, Bluesky, Threads and Mastodon. It is especially useful for founders and creators who build an audience with words.</p>',
+         'pros': ['Writing-first editor for text posts', 'Cross-posts to X, LinkedIn and Threads', 'Agents, API and MCP on Free', 'Team tools on Business', 'Free plan with 10 posts a month'],
+         'cons': ['Creator plan may need yearly billing', 'No Instagram, TikTok or YouTube support', 'Free media uploads can feel limited']},
+        {'id': 'tailwind', 'shot': 'pricing', 'best': 'Pinterest growth',
+         'overview': '<p>Tailwind is a dedicated free social media scheduling tool for brands that grow through Pinterest. Teams can start free with no credit card, but the pricing page does not list what the free start includes. Paid plans are priced per Pinterest account, and Pin scheduling starts at $17.99 a month billed yearly. Many teams use it as a specialized tool to make and schedule Pins before they plan other networks.</p>',
+         'pros': ['Makes new Pins each week', 'Pinterest keyword research and rank tracking', 'Pinterest developer partner since 2012', 'Buy only the tools you need', 'Free start with no card'],
+         'cons': ['Scheduling can cost extra apart from SEO', 'No support for networks beyond Pinterest', 'Free limits may be unclear before signup']},
     ],
-    'how': '''<p>We only looked at tools you can use for $0 with no end date, like a free plan or Planable's free posts. A short free trial alone didn't count.</p>
-<ul><li><b>Channels:</b> how many accounts or channels the free plan connects, and which networks it leaves out.</li>
-<li><b>Posts:</b> the post cap, and whether it counts per month, per channel or in total.</li>
-<li><b>Upgrade cost:</b> what the first paid step costs, from each tool's own pricing page in November 2026.</li>
-<li><b>Extras:</b> whether the free plan includes an inbox, analytics or an API.</li></ul>
-<p>Capybaroar is our product. We judged its free plan by the same numbers as everyone else's.</p>''',
-    'verdict': '''<p>For most brands on 3 channels, Capybaroar's 30 posts a month plus an inbox and analytics is the most complete free plan here. Buffer and Publer give you about the same number of posts but count them per channel or account. If you need more channels for one brand, Zoho Social gives you 6 and Pallyy's social set holds up to 11 accounts, though Pallyy caps you at 15 image posts a month. Planable's 50 free posts suit a team that wants to try approvals first.</p>
-<p>For a single network, Typefully covers text posts on X and LinkedIn, and Tailwind covers Pinterest. Start with the free plan that fits the networks you use most.</p>''',
+    'conclusion': '''<p>A free social media scheduling tool lets you post on time without paying a cent. It turns posting into a steady weekly habit for creators and small brands.</p>
+<p>But the best free plan does more than hold a few posts. It should give you enough posts each month, an inbox for comments and analytics on what worked, with a clear path to paid features later.</p>
+<p>That is why <a href="https://capybaroar.com/pricing">Capybaroar</a> stands out. Its Free plan combines 30 posts a month, one inbox, analytics and an MCP server with every social channel in one calendar. For brands that want room to grow, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best free social media scheduling tool?', 'For most brands, Capybaroar. Its Free plan gives you 3 channels and 30 scheduled posts a month, plus an inbox, analytics, a link in bio page and an API. Buffer and Zoho Social are good choices too.'),
-        ('Which free scheduler gives you the most posts?', 'Planable gives the most in total, with 50 free posts and no time limit. For a monthly cap, Capybaroar allows 30 scheduled posts a month, and Buffer and Publer allow 10 per channel or account.'),
-        ('Can I schedule to LinkedIn and X for free?', 'Capybaroar, Buffer and Typefully all list LinkedIn and X among their networks, and none of their free plans names either one as left out. Metricool\'s free plan leaves out LinkedIn and X, and Publer\'s free plan can\'t connect X.'),
-        ('Are free scheduling tools free forever?', 'Capybaroar, Publer and Zoho Social describe their free plans as free forever. Planable\'s 50 free posts have no time limit, but they run out once you use them.'),
-        ('Do free plans include AI writing?', 'Mostly no. Capybaroar keeps AI for paid plans, and Zoho Social gives 5 AI credits on its free plan. Publer and Typefully keep unlimited AI or AI writing for paid plans.'),
-        ('When should I move to a paid plan?', 'Move when you hit the post cap every month or need a fourth channel. Capybaroar Creator is $29 a month for 8 channels and unlimited posts, and Buffer charges $5 per channel a month billed yearly.'),
+        ('What is a free social media scheduling tool?', 'A free social media scheduling tool is an app that publishes your posts to social networks at a set time, on a plan that costs nothing. Each free plan has limits, such as the number of channels, posts a month or users, and some leave out networks like X or LinkedIn.'),
+        ('How do free social media scheduling tools publish posts?', 'Free social media scheduling tools publish posts through each network\'s official API, the same way paid plans do. You connect your accounts, write a post in a web or phone app and pick a time. The tool sends it for you, up to the post cap your free plan allows each month or per channel.'),
+        ('Why use a free social media scheduling tool for your brand?', 'A free social media scheduling tool keeps a new brand posting on a steady plan without a monthly bill. You batch a week of posts in one sitting, test how the tool fits your work and only pay once you outgrow the free limits. That makes it a low-risk first step.'),
+        ('What features should modern free social media scheduling tools include?', 'Modern free social media scheduling tools should include a calendar, enough posts for a steady week, support for the networks you use and basic analytics. An inbox for comments helps once people reply. The newest free plans also include an MCP server and API, so you can schedule posts straight from an AI assistant.'),
+        ('Which tool is recommended for teams that need more than a few free posts?', 'For teams that need more than a few free posts, we recommend Capybaroar. Its Free plan gives 3 channels and 30 posts a month with one inbox and analytics, and paid plans put every social channel in one calendar with an AI agent. Creators with only a couple of channels may prefer Buffer, and Pinterest-first brands may prefer Tailwind.'),
     ],
 }

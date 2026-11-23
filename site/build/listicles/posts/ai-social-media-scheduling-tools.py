@@ -1,53 +1,116 @@
 POST = {
     'order': 10,
     'slug': 'ai-social-media-scheduling-tools',
-    'keyword': 'best tool for scheduling social media posts',
-    'title': '8 Best Tools for Scheduling Social Media Posts with AI',
-    'desc': 'The best tool for scheduling social media posts now plans and writes them too. 8 tools with AI and MCP, compared on what the AI really does.',
-    'h1a': '8 best tools for scheduling',
-    'h1b': 'social media posts with AI.',
-    'lead': "AI in social tools now goes past writing captions. Some tools plan the week and schedule it, and some let you run everything from Claude or ChatGPT. Here's what the AI in 8 tools really does.",
+    'keyword': 'AI social media scheduling tool',
+    'title': '12 Best AI Social Media Scheduling Tools in 2027',
+    'desc': 'Compare the 12 best AI social media scheduling tools in 2027, from AI agents to MCP. See what each AI really does and why Capybaroar leads the list.',
+    'heroAlt': 'An AI agent filling a social calendar with drafts, for the best AI social media scheduling tools in 2027',
     'cover': {'type': 'agent', 'ai': 'claude', 'networks': ['instagram', 'linkedin', 'tiktok']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'An agent plans and writes posts from one message, plus MCP on every plan.'),
-        ('Best for developers', 'postiz', 'MCP server, CLI and API on every plan, from $29 a month.'),
-        ('Best for planning', 'socialbee', 'Copilot builds a posting schedule and writes posts, with unlimited AI.'),
+    'leaders': ['hootsuite', 'buffer'],
+    'intro': '''<p>Every social media tool now says it has AI, and the word hides a big range. In some tools, AI only rewrites a caption you already typed. In others, an agent plans the week, writes the posts and puts them on the calendar for you to check.</p>
+<p>An AI social media scheduling tool joins both jobs. You tell it what is coming up, it drafts the posts for each network, and it publishes them at the right time. Creators, marketing teams and agencies use one to fill a busy calendar with less typing.</p>
+<p>The result is a full week of posts in the time it takes to review them. Below are 12 tools, with what each AI does and its real prices, checked in November 2026. 🤖</p>''',
+    'whatH2': 'What Is an AI Social Media Scheduling Tool?',
+    'what': {
+        'def': 'An AI social media scheduling tool is an app that writes, plans and publishes your social posts by pairing an AI model with each network\'s official API.',
+        'body': '<p>You connect your accounts, then ask the AI for a post, a set of ideas or a whole week. The tool turns the answer into drafts, places them on a calendar and sends each one at the set time. Most run as a web app with a calendar view, and some also connect to Claude or ChatGPT through an MCP server.</p>',
+        'bullets': ['AI that drafts posts', 'A calendar for every channel', 'Review before anything posts', 'MCP or API access'],
+        'close': 'The result is a week of posts that only needs your yes.',
+    },
+    'whyH2': 'Why Do You Need an AI Social Media Scheduling Tool for Your Content?',
+    'why': {
+        'lead': '<p>Writing posts by hand works for one account and a few posts a week. Once you add networks and formats, the blank caption box eats your mornings.</p>\n<p>An AI social media scheduling tool solves this.</p>',
+        'bullets': [
+            ('Faster first drafts', 'The AI writes a version for each network, so you start from an edit instead of a blank page.'),
+            ('A steady plan', 'Posts land on the calendar for weeks ahead, which keeps your accounts active on busy days.'),
+            ('One place to work', 'Writing, review and scheduling sit in one app, so nothing gets lost between tabs.'),
+            ('An agent that plans', 'The best tools take one message and return a full week of drafts for you to approve.'),
+        ],
+    },
+    'quizH3': 'AI Social Media Scheduling Tools: Quick Match',
+    'quiz': [
+        {'q': 'What should the AI do for you?', 'options': [
+            ('Plan and write the whole week', ['capybaroar', 'postiz', 'socialbee', 'loomly']),
+            ('Write single posts fast', ['buffer', 'publer', 'socialpilot', 'hypefury']),
+            ('Make images and video too', ['capybaroar', 'contentstudio', 'postiz']),
+            ('Answer messages and explain results', ['sprout', 'hootsuite', 'vistasocial'])]},
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['capybaroar', 'buffer', 'hypefury', 'socialbee']),
+            ('A small team', ['capybaroar', 'loomly', 'publer', 'contentstudio']),
+            ('An agency', ['capybaroar', 'vistasocial', 'socialpilot']),
+            ('A large brand team', ['hootsuite', 'sprout'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['buffer', 'publer']),
+            ('$10 to $50', ['capybaroar', 'contentstudio', 'socialbee', 'postiz', 'socialpilot', 'hypefury', 'loomly']),
+            ('$50 to $150', ['capybaroar', 'vistasocial']),
+            ('More than $150', ['hootsuite', 'sprout'])]},
+        {'q': 'Do you want to work from Claude or ChatGPT?', 'options': [
+            ('Yes, on every plan', ['capybaroar', 'postiz', 'contentstudio', 'vistasocial', 'hypefury']),
+            ('Yes, on a higher plan is fine', ['publer', 'hootsuite', 'buffer', 'socialpilot']),
+            ('No, the app is enough', ['socialbee', 'loomly', 'sprout'])]},
     ],
-    'intro': '''<p>Every social media tool now says it has AI, and the word covers a lot. In some tools, AI rewrites a caption you already wrote. In others, an agent plans the week, writes the posts and puts them on the calendar for you to approve.</p>
-<p>There is a second AI feature to look for: an MCP server or connector. MCP lets an AI app you already use, like Claude or ChatGPT, work with the social tool, so you can ask it to draft or schedule posts from a chat. If you already spend your day in one of those apps, this can save more time than the tool's own AI.</p>
-<p>We describe each tool's AI only from what its own site says, captured in November 2026. Where AI runs on credits, we list how many you get.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar's AI agent works from one message. Tell it something like "plan next week's launch posts for LinkedIn, Instagram and Threads," and it plans the posts, writes them and saves them as drafts for your review. Paid plans also make AI images and video from credits and suggest replies in the inbox.</p>
-<p>The MCP server and REST API come with every plan, Free included, so you can schedule from Claude, ChatGPT or Cursor. Creator is $29 a month with 1,000 AI credits, Pro is $49 with 2,500 and Agency is $149 with 8,000. The free plan has no AI of its own, but the 14-day Pro trial includes 200 AI credits.</p>'''},
-        {'id': 'postiz', 'shot': 'home', 'text': '''<p>Postiz calls itself an agentic social media scheduler. Its AI agents plan, write and schedule posts to 30+ networks, and you review everything in one calendar. It also has an AI copilot, AI video clipping and a Smart Agent, with AI images and videos counted per month by plan.</p>
-<p>Its strongest point is access for your own agents. Every plan includes an MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule for you. Standard is $29 a month for 5 channels with 3 AI videos a month, but no AI images and no team support. Team is $39 a month with 100 AI images and 10 AI videos.</p>'''},
-        {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite's AI is called Wisdom, and every plan gets it. Hootsuite describes it as an AI teammate that helps you create content and turn your analytics into smarter decisions. On every plan it generates posts and images, and Professional and up add automated inbox replies.</p>
-<p>Hootsuite also offers MCP connectors for ChatGPT, Claude, Copilot and Gemini, so you can manage your social work from those apps. The catch is cost. Standard is $99 per user a month billed yearly, and there is no free plan. A team of 3 pays $297 a month before any add-ons.</p>'''},
-        {'id': 'socialbee', 'shot': 'home', 'text': '''<p>SocialBee's Copilot works at the planning level. It recommends which networks to use, sets up your content categories, builds a posting schedule and writes ready-to-edit posts. That makes it a good start if you don't have a content plan yet. AI content generation is unlimited on every plan.</p>
-<p>SocialBee's pages don't list an MCP connector, so the AI lives inside the app. Bootstrap is $24.20 a month billed yearly for 5 profiles and 1 user. Post approvals start on Accelerate at $40.80 a month billed yearly, and you can try any plan for 14 days with no card.</p>'''},
-        {'id': 'contentstudio', 'shot': 'pricing', 'text': '''<p>ContentStudio's AI Studio makes text, images and video, and it can learn your brand voice. Standard includes 25,000 AI text credits, 25 AI image credits and 100 AI video credits a month. AI captions and hashtags are built in, and AI replies start on Advanced.</p>
-<p>MCP integration and API access come on every plan, and ContentStudio also offers its own MCP server and a CLI. A separate API plan, at $15 a month billed yearly, is built for automations with tools like Claude, Zapier and n8n. Standard is $19 a month billed yearly for 5 accounts and 1 user. There is no free plan, only a 7-day trial.</p>'''},
-        {'id': 'vistasocial', 'shot': 'home', 'text': '''<p>Vista Social's AI is Ask Vista, a set of AI agents built to run your recurring social work. Its plans include AI training and knowledge features, and the AI runs on credits that scale with your plan. Ask Vista and MCP come with every plan.</p>
-<p>Professional is $80 a month, or $950 a year, for 15 social profiles and 2 users. That is a lot of profiles for the money, and there are apps for iOS, Android, Mac and Windows. Posting to X costs a $29 a month add-on, and there is a 14-day free trial with no card.</p>'''},
-        {'id': 'sprout', 'shot': 'home', 'text': '''<p>Sprout Social's AI agent is Trellis, included on every plan with 100 credits per seat a month. It gives you inbox briefings, report summaries with competitor comparisons, drafted replies and post variations, and you can ask it questions about your social data. Trellis Plus raises that to 1,000 credits per seat, bought in the app.</p>
-<p>Sprout's pricing page doesn't list an MCP connector. Its AI leans toward teams that handle lots of messages and reports, more than toward planning posts. Plans start at $79 per seat a month billed yearly, and there is a 30-day free trial with no card.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer's AI Assist writes posts, makes images and helps you reply to comments. On Business, AI prompts are unlimited for both text and images at no extra cost, with hashtag suggestions too. The Publer MCP lets AI assistants create and schedule content, manage your posts and read analytics insights.</p>
-<p>Unlimited AI and MCP both need Business, from $10 a month or $8 billed yearly, and the price grows with each account and member. That is a low starting price for unlimited AI. There is a 14-day free trial on Business.</p>'''},
+        {'id': 'capybaroar', 'shot': 'agent', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant AI social media scheduling tools for teams that want to hand weekly planning to an agent. Instead of only rewriting a caption, it plans and writes a week of posts from one message and saves them as drafts for review. Paid plans add AI images and video from credits, and the MCP server works on every plan. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/ai-social-media-agent">AI agent</a> plans and writes the week as drafts',
+                  '<a href="/social-media-scheduler">Schedules to 14 networks</a> from one calendar',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan',
+                  '<a href="/ai-studio">AI images and video</a> from credits on paid plans',
+                  '<a href="/pricing">Free plan</a> with <a href="/social-media-inbox">inbox</a> and <a href="/social-media-analytics">analytics</a>'],
+         'cons': ['Not a standalone AI writing app']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'AI teammate on every plan',
+         'overview': '<p>Hootsuite is one of the most popular AI social media scheduling tools for brand teams and social media pros. Every plan runs on Wisdom, an AI teammate that drafts posts and images and turns analytics into suggestions. Its trend streams let the AI draft posts from hot topics, and MCP connectors link it to ChatGPT, Claude, Copilot and Gemini. This makes it a common choice for social pros who manage busy brand accounts.</p>',
+         'pros': ['Wisdom AI teammate on every plan', 'Drafts posts from trending topics', 'Generates posts and images', 'MCP connectors for major AI apps', 'Good fit for large brand teams'],
+         'cons': ['Per-user pricing can add up quickly', 'Interface can feel complex for new users', 'Trial accounts may have daily posting limits']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Free AI Assistant',
+         'overview': '<p>Buffer is one of the most established AI social media scheduling tools for solo creators and small teams. Its AI Assistant brainstorms ideas, rewrites content and crafts posts for each platform, with unlimited credits on every plan. Buffer also connects to Claude or ChatGPT, so posts drafted in a chat land straight in the queue. A key strength is that the free plan for 3 channels includes the AI Assistant.</p>',
+         'pros': ['AI Assistant with unlimited credits', 'Platform-specific posts from one idea', 'Drafts into the queue from Claude', 'Pay only for the channels you use', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel added', 'Analytics can feel light next to full suites', 'Free plan may keep only recent insights']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Trellis AI agent',
+         'overview': '<p>Sprout Social is a large AI social media scheduling tool and suite used by marketing teams, care teams and agencies. Every plan comes with Trellis, an AI agent that drafts replies and post variations and answers questions about social data. AI Assist can also enhance a post before it is scheduled. Sprout focuses heavily on reporting, making it suitable for teams that need quick answers from their social data.</p>',
+         'pros': ['Trellis AI agent on every plan', 'Drafts post variations and replies', 'AI Assist enhances each post', 'Mobile app on every plan', 'Good fit for large marketing teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Inbox may need the Standard plan', 'Premium Analytics can cost extra']},
+        {'id': 'postiz', 'shot': 'pricing', 'best': 'Agentic scheduling with MCP',
+         'overview': '<p>Postiz is an agentic AI social media scheduling tool for developers and AI-first marketers. Its AI agents plan, generate and schedule posts to 30+ networks, and the team reviews everything in one visual calendar. Every plan includes an MCP server, CLI and API, so Claude, ChatGPT or a custom agent can post through it. The platform is particularly popular among builders who want their own agents to run social posting.</p>',
+         'pros': ['AI agents plan, write and schedule', 'MCP server, CLI and API on every plan', 'AI images, video and clipping', 'Open-source version to self-host', 'Good fit for developer teams'],
+         'cons': ['AI images may need a higher plan', 'Inbox and approvals may be missing', 'Trial can feel short for testing']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'AI Studio for media',
+         'overview': '<p>ContentStudio is an AI social media scheduling tool designed specifically for content teams that plan, curate and post a lot. Its AI Studio makes text, images and video, and the AI learns the brand voice from its knowledge settings. ContentStudio says it can plan, create and publish on-brand posts, with a review step or full autopilot. MCP and API access come on every plan, which makes it useful for teams that automate their content.</p>',
+         'pros': ['AI Studio for text, images and video', 'AI brand voice and knowledge', 'AI captions with hashtags', 'MCP and API on every plan', 'iOS and Android apps'],
+         'cons': ['No free plan, only a short trial', 'Inbox and approvals may need Advanced', 'AI credits can vary a lot by plan']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'AI agents for many brands',
+         'overview': '<p>Vista Social is an AI social media scheduling tool for agencies and teams that run many brands. Its Ask Vista agents take on recurring social work, backed by AI training and knowledge features and credits that scale by plan. Ask Vista and MCP come with every plan, along with 15 social profiles on Professional. It is especially useful for agency managers, brand leads and consultants who want AI to add capacity.</p>',
+         'pros': ['Ask Vista AI agents', 'Ask Vista and MCP on every plan', 'Scalable AI credits', '15 profiles on the first plan', 'Apps for iOS, Android, Mac and Windows'],
+         'cons': ['X publishing can cost extra each month', 'More users may need a pricier plan', 'White label may need the Scale plan']},
+        {'id': 'socialbee', 'shot': 'pricing', 'best': 'Copilot content plans',
+         'overview': '<p>SocialBee is a practical AI social media scheduling tool for solo marketers and small teams. Its Copilot recommends networks, sorts posts into content categories, builds a posting schedule and writes ready-to-edit posts. AI content generation is unlimited on every plan, and evergreen posts can be recycled to keep the queue full. Many solo marketers use it as a specialized tool to build a content plan before they grow a team.</p>',
+         'pros': ['Copilot builds a posting schedule', 'Unlimited AI content on every plan', 'AI hashtag generator', 'Recycles evergreen posts', 'Good fit for solo marketers'],
+         'cons': ['Approvals may need the Accelerate plan', 'No MCP or API listed for AI apps', 'Bootstrap analytics may keep only recent data']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Unlimited AI prompts',
+         'overview': '<p>Publer is a low-cost AI social media scheduling tool for creators, small businesses and agencies. Its AI Assist writes posts, completes text, makes images and helps reply to comments. The Business plan adds unlimited AI prompts and the Publer MCP, so AI assistants can create and schedule posts. It is a relevant option for users who mainly need plenty of AI text and images without paying for a much larger suite.</p>',
+         'pros': ['AI Assist writes posts and makes images', 'Unlimited AI prompts on Business', 'MCP on the Business plan', 'Supports 13 networks', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'MCP and unlimited AI may need Business', 'Free plan may not connect X']},
+        {'id': 'loomly', 'shot': 'pricing', 'best': 'AI calendar with approvals',
+         'overview': '<p>Loomly is an AI social media scheduling tool for marketing teams that need sign-off before posts go live. Its AI assistant learns the brand voice, suggests timing and topics, and builds a social calendar in minutes. Loomly also generates captions, visuals and variations for each platform, plus AI replies to comments and DMs. Approval workflows start on the lowest plan, which makes it attractive for teams with a set review step.</p>',
+         'pros': ['AI builds a social calendar', 'Captions and variations per platform', 'AI replies for comments and DMs', 'Approvals on the lowest plan', 'Good fit for teams with reviews'],
+         'cons': ['Yearly plans may not end early', 'No MCP server listed, unlike some tools', 'AI use may hit a monthly limit']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'AI credits for agencies',
+         'overview': '<p>SocialPilot is an AI social media scheduling tool built for agencies and growing brands on a budget. Its AI Pilot writes posts for the calendar, with AI credits that grow from 500 on Essentials to unlimited on Ultimate. An MCP server integration links it to AI apps, and bulk scheduling from a CSV file starts on Premium. It suits agencies that want AI writing across many client accounts for a modest price.</p>',
+         'pros': ['AI Pilot writes posts', 'AI credits on every plan', 'MCP server integration', 'Many accounts for the price', 'Good fit for budget agencies'],
+         'cons': ['Extra accounts can raise the bill', 'Social inbox can start only on Standard', 'Lowest plan may lack analytics']},
+        {'id': 'hypefury', 'shot': 'pricing', 'best': 'AI posts in your voice',
+         'overview': '<p>Hypefury is an AI social media scheduling tool for creators who sell to their audience. It reads a creator\'s best posts, writes new ones in that voice, picks the time and publishes them once approved. Autoplug adds AI-written variations, and MCP lets creators run it from Claude or ChatGPT. Its Instagram auto DMs, with no fee per DM, help creators turn posts into sales.</p>',
+         'pros': ['AI writes posts in the creator\'s voice', 'Picks the time and publishes', 'AI-written Autoplug variations', 'MCP for Claude and ChatGPT', 'Good fit for creators who sell'],
+         'cons': ['No free plan after the trial ends', 'No inbox or reports, unlike full suites', 'Analytics may cover only some networks']},
     ],
-    'how': '''<p>We judged each tool on what its AI really does, using only the vendor's own pages from November 2026.</p>
-<ul><li><b>Planning:</b> can the AI plan a schedule, or only write single posts?</li>
-<li><b>Writing and media:</b> text, images and video, and how many credits each plan includes.</li>
-<li><b>MCP and API:</b> can you use the tool from Claude, ChatGPT or your own agent, and on which plan?</li>
-<li><b>Price:</b> the cheapest plan that includes the AI, with monthly or yearly billing noted.</li></ul>
-<p>Capybaroar is our product. We described its AI the same way, from its own feature list.</p>''',
-    'verdict': '''<p>If you want AI to plan and write your week, look at Capybaroar, Postiz and SocialBee. Capybaroar and Postiz also let your own AI apps schedule through MCP on every plan. ContentStudio and Publer give you plenty of AI text and images for a low price. Hootsuite, Sprout Social and Vista Social put AI on top of bigger and pricier suites.</p>
-<p>Whatever you pick, keep a person in the loop before posts go live. Tools that save AI posts as drafts make that easy. Capybaroar's 14-day Pro trial includes 200 AI credits and needs no card.</p>''',
+    'conclusion': '''<p>An AI social media scheduling tool turns a blank caption box into a stack of drafts. It makes posting faster and steadier, and it keeps a person in charge of what goes out.</p>
+<p>But the best tool today does more than write one post at a time. It should plan the whole week, make the images, answer comments and let your own AI apps work with the calendar.</p>
+<p>That is why <a href="https://capybaroar.com/ai-social-media-agent">Capybaroar</a> stands out. It pairs an AI agent and MCP on every plan with every social channel in one calendar. For teams that want AI to plan and write the week, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best tool for scheduling social media posts with AI?', 'For most teams, Capybaroar. Its AI agent plans and writes posts from one message and saves them as drafts, and the MCP server works on every plan. Postiz is a strong pick for developers.'),
-        ('Can ChatGPT or Claude schedule social media posts?', 'Yes, through a tool with an MCP server or connector. Capybaroar, Postiz, ContentStudio, Vista Social and Hootsuite list MCP on their pages, and Publer includes it on Business.'),
-        ('What is MCP in social media tools?', 'MCP, the Model Context Protocol, is a standard way for AI apps to use other software. A social tool with an MCP server lets Claude or ChatGPT draft and schedule posts for you.'),
-        ('Is AI in social media tools free?', "Sometimes. Some tools include a basic AI writer on every plan, but most put the stronger AI on paid plans or count it in credits. Capybaroar's AI needs a paid plan, from $29 a month with 1,000 AI credits."),
-        ('Will AI post without my approval?', "Capybaroar's agent saves posts as drafts for your review, so nothing goes out until you approve it. In other tools it depends on how you set things up, so check before you connect an agent to live accounts."),
-        ('Which AI social media tool has unlimited AI?', 'SocialBee includes unlimited AI content generation on every plan, and Publer has unlimited AI prompts on Business. ContentStudio and Sprout Social count AI in monthly credits.'),
+        ('What is an AI social media scheduling tool?', 'An AI social media scheduling tool is an app that writes your social posts with AI and publishes them at a set time. You connect your accounts once, ask the AI for posts or a full plan, review the drafts and let the tool send each one through the network\'s official API.'),
+        ('How do AI social media scheduling tools write and publish posts?', 'AI social media scheduling tools send your prompt, your brand details and sometimes your past posts to an AI model, which returns drafts. The tool places those drafts on a calendar. Once you approve them, it publishes each post through the network\'s API, and some tools also take orders from Claude or ChatGPT through MCP.'),
+        ('Why use an AI social media scheduling tool for your content?', 'An AI social media scheduling tool cuts the slowest part of social media, which is writing the first draft. It turns one idea into a version for each network, fills the calendar for weeks ahead and keeps writing, review and posting in one place. That saves hours and keeps your accounts active.'),
+        ('What features should modern AI social media scheduling tools include?', 'Modern AI social media scheduling tools should include AI writing for each network, AI images, a calendar for every channel and a review step before anything goes live. MCP or API access lets your own AI apps join in. The newest tools add an agent that plans and writes a whole week from one message.'),
+        ('Which tool is recommended for teams that need more than AI captions?', 'For teams that need more than AI captions, we recommend Capybaroar. Its AI agent plans and writes the week as drafts, its MCP server works on every plan, and it puts every social channel in one calendar. Developers who want to build their own agents may prefer Postiz, and solo creators may prefer Buffer.'),
     ],
 }

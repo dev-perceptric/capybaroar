@@ -2,60 +2,115 @@ POST = {
     'order': 7,
     'slug': 'social-media-post-schedulers',
     'keyword': 'social media post scheduler',
-    'title': '12 Social Media Post Schedulers That Post for You',
-    'desc': 'Set it and forget it. 12 social media post schedulers compared on queues, bulk upload and recycling, with prices checked in November 2026.',
-    'h1a': '12 social media post schedulers',
-    'h1b': 'that post for you.',
-    'lead': 'A good scheduler does the posting so you can get on with your day. Here are 12 tools, what each one offers for queues, bulk upload and recycling, and what it costs.',
+    'title': '12 Best Social Media Post Schedulers in 2027',
+    'desc': 'Compare the 12 best social media post schedulers in 2027 with G2 ratings, pros, cons and prices. See why Capybaroar leads for hands-off posting.',
+    'heroAlt': 'A posting queue with set time slots, for the best social media post schedulers in 2027',
     'cover': {'type': 'list', 'tools': ['buffer.com', 'publer.com', 'socialpilot.co', 'socialbee.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Queue times, bulk upload and an AI agent that drafts the week, from $29 a month.'),
-        ('Best for recycling', 'socialbee', 'Content categories and recycling keep evergreen posts going out.'),
-        ('Best on a budget', 'publer', 'A queue, RSS automations and bulk scheduling from $5 a month.'),
+    'leaders': ['hootsuite', 'buffer'],
+    'intro': '''<p>The point of a post scheduler is simple. You do the work once, and the tool posts for you while you get on with your day. Posting by hand ties you to your phone at every set time.</p>
+<p>A social media post scheduler fixes this. You load posts into a queue or a calendar, and the tool publishes each one in its slot. Creators, small businesses and agencies use one to keep their feeds moving.</p>
+<p>The result is a steady feed with less effort every week. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 📬</p>''',
+    'whatH2': 'What Is a Social Media Post Scheduler?',
+    'what': {
+        'def': 'A social media post scheduler is a tool that publishes your posts to social networks at a set time, often from a queue of time slots.',
+        'body': '<p>You connect your accounts once and set posting times for each channel. New posts drop into the next open slot, or you pick an exact date and time on a calendar. Most tools run as a web app, and many add a phone app too. Many tools also load posts in bulk from a CSV file, recycle evergreen posts or turn new blog posts into social posts through RSS.</p>',
+        'bullets': ['Queues with set posting times', 'Bulk upload from CSV', 'Evergreen post recycling', 'RSS to social posts'],
+        'close': 'The result is a feed that keeps posting while you work on something else.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Post Scheduler for Your Business?',
+    'why': {
+        'lead': '<p>Posting by hand works for a few posts a week. Once you post every day on several networks, setting up each post takes hours and some posts start to slip.</p>\n<p>A social media post scheduler solves this.</p>',
+        'bullets': [
+            ('Set times once', 'Queue slots fill in order, so new posts go out at your chosen times without extra steps.'),
+            ('Bulk loading', 'You load weeks of posts at once from a spreadsheet instead of one by one.'),
+            ('Evergreen reuse', 'Recycling sends strong older posts out again, so the feed never runs dry.'),
+            ('AI drafts', 'An AI agent can plan and write the week, and nothing goes out until you approve it.'),
+        ],
+    },
+    'quizH3': 'Social Media Post Schedulers: Quick Match',
+    'quiz': [
+        {'q': 'How do you add posts?', 'options': [
+            ('One at a time as I go', ['buffer', 'pallyy', 'capybaroar']),
+            ('Big batches from a spreadsheet', ['socialpilot', 'contentstudio', 'publer', 'capybaroar']),
+            ('Recycled evergreen posts', ['socialbee', 'publer', 'postiz']),
+            ('Let AI write them', ['capybaroar', 'postiz', 'vistasocial'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer', 'metricool']),
+            ('$10 to $50', ['capybaroar', 'socialpilot', 'socialbee', 'metricool', 'contentstudio', 'later', 'pallyy', 'postiz']),
+            ('More than $50', ['hootsuite', 'vistasocial', 'capybaroar'])]},
+        {'q': 'What matters most?', 'options': [
+            ('Unlimited posts for a big team', ['hootsuite', 'capybaroar']),
+            ('RSS and blog posts', ['metricool', 'socialpilot', 'contentstudio']),
+            ('Client sets for an agency', ['pallyy', 'socialpilot', 'vistasocial']),
+            ('Posting times by network', ['later', 'hootsuite'])]},
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['buffer', 'publer', 'socialbee', 'later']),
+            ('A small team', ['capybaroar', 'metricool', 'contentstudio']),
+            ('An agency', ['socialpilot', 'pallyy', 'vistasocial', 'capybaroar']),
+            ('A large brand team', ['hootsuite'])]},
     ],
-    'intro': '''<p>The point of a post scheduler is simple. You do the work once, and the tool posts for you while you do something else. Every tool here lets you schedule posts ahead. Where they differ is how much of the setup they take off your plate.</p>
-<p>We looked for 4 things that save the most time. A <b>queue</b> lets you set posting times once, so new posts drop into the next open slot. <b>Bulk upload</b> loads weeks of posts from a CSV file. <b>Recycling</b> sends your evergreen posts out again so the feed never runs dry. <b>RSS posting</b> turns new blog posts into social posts on its own.</p>
-<p>Prices below come from each tool's own pricing page in November 2026. Some of these features sit on higher plans, and we say which.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'week', 'text': '''<p>Capybaroar covers the core of hands-off posting. You set queue times for each channel, load posts with bulk upload, and schedule a first comment on Instagram, LinkedIn and Facebook. A preview for each network shows how a post will look before it goes out. The free plan schedules up to 30 posts a month on 3 channels.</p>
-<p>The biggest time saver is the AI agent on paid plans. Send one message, like "fill next week with 2 posts a day on LinkedIn and Threads," and it plans and writes the posts and saves them as drafts for you to approve. Creator is $29 a month for 8 channels and unlimited posts. If recycling old posts matters most to you, look at SocialBee and Publer too.</p>'''},
-        {'id': 'buffer', 'shot': 'home', 'text': '''<p>Buffer is the classic queue tool. You add posts to a queue that you can rearrange or shuffle, and Buffer sends them out. You can group channels so one post goes to many at once, add posts from any web page with the browser extension, or send WordPress posts to the queue with a plugin.</p>
-<p>The free plan holds 10 scheduled posts per channel on up to 3 channels, and it refills as posts go out. Essentials removes the cap for $5 a month per channel, billed yearly. Buffer's pages don't mention post recycling or CSV bulk upload, so it suits people who add posts as they go.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer packs a lot of automation into a low price. Add posts to the queue and it schedules them on a posting schedule you define. It also has bulk scheduling from a CSV file or a media uploader, unlimited RSS automations, and auto-share and auto-delete after a post goes live.</p>
-<p>Professional starts at $5 a month, or $4 billed yearly, and the final price grows with the social accounts and members you pick. Post recycling, which reposts evergreen content so your queue never runs dry, needs Business, from $10 a month. The free plan allows 10 scheduled posts per account on 3 accounts, with no X.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot gives you Smart Queues and repeat posts on every plan, plus RSS feeds that post for you: 5 feeds on Essentials, rising to 20 on Ultimate. Every plan also schedules first comments and LinkedIn document posts, so carousels and PDFs can run on autopilot too.</p>
-<p>Bulk scheduling with CSV uploads, which handles 500 or more posts at once, starts on Premium at $85 a month billed yearly. Essentials is $25.50 a month billed yearly for 7 accounts and 1 user, and Standard is $42.50 for 15 accounts and 3 users. Extra accounts cost $4 a month each.</p>'''},
-        {'id': 'socialbee', 'shot': 'home', 'text': '''<p>SocialBee is built around recycling. You sort posts into content categories, like tips or blog posts, and plan a sharing cadence for each profile. SocialBee can then recycle evergreen posts and expire ones with a deadline, so a sale post doesn't come back after the sale ends. It can also publish at the best time for your audience.</p>
-<p>Bootstrap is $24.20 a month billed yearly for 5 profiles. CSV uploads and the bulk post editor start on Accelerate at $40.80 a month billed yearly, and both plans include 1 user. The AI Copilot can build a posting schedule and write ready-to-edit posts, with unlimited AI content generation on every plan.</p>'''},
-        {'id': 'metricool', 'shot': 'home', 'text': '''<p>Metricool's Autolists let you build automated content lists, so a channel stays active without scheduling each post by hand. It also has recurring scheduling, unlimited RSS feeds and best times to post. You plan in a drag and drop calendar that covers all your networks.</p>
-<p>The free plan posts up to 20 times a month for 1 brand, but it can't connect LinkedIn or X. Paid plans remove the post limit, starting with Starter at $20 a month billed yearly for up to 5 brands. X needs a $10 a month add-on per account.</p>'''},
-        {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite schedules unlimited posts on every plan and shows the best times to post for each network. Bulk scheduling and AI post writing help you fill the calendar fast, and Professional adds automated inbox replies and workflows.</p>
-<p>It is the priciest scheduler here. Standard is $99 per user a month billed yearly for up to 10 social accounts, and there is no free plan. The 14-day trial has a daily limit of 10 to 20 posts per organization, and bulk scheduling is turned off until you pay, so you can't fully test a hands-off setup first.</p>'''},
-        {'id': 'later', 'shot': 'home', 'text': '''<p>Later schedules across 8 profiles per social set, one for each network it supports, Snapchat included. It shows the best times to post for Instagram, Facebook and TikTok, and Growth adds best times across several profiles plus Smart Scheduling with Future Trends.</p>
-<p>The limit to watch is post count. Starter, at $18.75 a month billed yearly, allows 30 posts per profile a month, about one a day. Growth at $37.50 raises that to 180, and only Scale at $82.50 a month is unlimited. Later's pricing page doesn't list recycling or CSV bulk upload.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social lists 31 planning and scheduling features and adds Ask Vista, AI agents built to run your recurring social work. It suits teams that want posting and DM automations in one place, and it has apps for iOS, Android, Mac and Windows.</p>
-<p>Professional is $80 a month, or $950 a year, for 15 social profiles and 2 users. That is a lot of profiles for the price, but posting to X is a $29 a month add-on. Its pricing page doesn't spell out queue or recycling features, so use the 14-day free trial to check the exact setup you need.</p>'''},
-        {'id': 'contentstudio', 'shot': 'pricing', 'text': '''<p>ContentStudio has the full set of hands-off tools. Evergreen campaigns recycle your top posts, RSS autoposting shares new articles, and bulk scheduling loads months of posts from a single CSV file. Every plan has unlimited posting, smart scheduling and auto first comments.</p>
-<p>The catch is that recycling, RSS and CSV upload all start on Advanced, at $49 a month billed yearly for 10 accounts and 2 users. Standard is $19 a month billed yearly for 5 accounts and 1 user. There is no free plan, only a 7-day trial with no card.</p>'''},
-        {'id': 'postiz', 'shot': 'home', 'text': '''<p>Postiz calls itself an agentic scheduler: AI agents plan, write and schedule posts, and you review them in one calendar. Every plan includes repeated posts for evergreen content, RSS auto-posting, post delays and posting sets, plus an MCP server, CLI and API so Claude or ChatGPT can schedule for you.</p>
-<p>Standard is $29 a month for 5 channels with unlimited posts, but it has no team support. Team is $39 a month for 10 channels and unlimited members. There is a 7-day free trial, and an open-source version if you would rather host it yourself.</p>'''},
-        {'id': 'pallyy', 'shot': 'pricing', 'text': '''<p>Pallyy keeps scheduling simple, with queue scheduling and a content calendar on its plans. Each client is one social set, however many networks it posts to, so running several brands' queues side by side stays tidy. You can also schedule posts from ChatGPT and Claude.</p>
-<p>Pro is $25 a month for 1 social set with unlimited posts, plus $10 a month for each extra set, but it allows only 1 user. Agency is $99 a month, or $79 a month billed yearly, for 10 sets and 3 users. The free plan gives you 15 scheduled posts a month, image posts only.</p>'''},
+        {'id': 'capybaroar', 'shot': 'week', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media post schedulers for teams that want posts to go out with little hands-on work. Instead of only filling a queue, it adds an AI agent that plans and writes a week of posts from one message and saves them as drafts. Posting queues and bulk upload cover 14 networks, with one inbox and analytics on every plan. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/posting-queue">Posting queues</a> for 14 networks',
+                  '<a href="/bulk-scheduling">Bulk upload</a> for weeks of posts',
+                  '<a href="/ai-social-media-agent">AI agent</a> that fills the week from one message',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan',
+                  '<a href="/pricing">Free plan</a> with 30 scheduled posts a month'],
+         'cons': ['Not a social listening suite']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Unlimited posts on every plan',
+         'overview': '<p>Hootsuite is one of the most popular social media post schedulers for brand teams that post at high volume. Every plan includes unlimited scheduled posts, and bulk scheduling and best times to post help fill the calendar fast. Its Wisdom AI generates posts and images, and Professional adds automated inbox replies. This makes it a common choice for social media pros who run busy brand calendars.</p>',
+         'pros': ['Unlimited scheduled posts on every plan', 'Bulk scheduling to fill the calendar', 'Suggested times to post', 'Wisdom AI drafts posts and images', 'MCP connectors for AI tools'],
+         'cons': ['Per-user pricing can add up fast', 'Trial may limit daily posts and bulk tools', 'Custom reports may need the Professional plan']},
+        {'id': 'buffer', 'shot': 'home', 'best': 'Classic shuffle queue',
+         'overview': '<p>Buffer is one of the most established social media post schedulers for creators and small teams that add posts as they go. Posts drop into a queue that can be rearranged or shuffled, and one post can go to a group of channels at once. A browser extension adds posts from any web page, and a WordPress plugin sends blog posts to the queue. Essentials costs $5 a month per channel, billed yearly.</p>',
+         'pros': ['Queue that can be rearranged or shuffled', 'Channel groups for one-step posting', 'Browser extension and WordPress plugin', 'AI Assistant on every plan', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel added', 'Recycling and CSV upload may not be listed', 'Analytics history can be short on Free']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Automation on a budget',
+         'overview': '<p>Publer is a low-cost social media post scheduler for creators and small businesses that want a lot of automation. Posts added to the queue follow a posting schedule, and bulk scheduling works from a CSV file or a media uploader. It also runs unlimited RSS automations and can auto-delete posts after they go live. Recycling of evergreen posts comes with the Business plan, so the queue never runs dry.</p>',
+         'pros': ['Queue with a set posting schedule', 'CSV bulk scheduling', 'Unlimited RSS automations', 'Auto-share and auto-delete', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'MCP and analytics may need Business', 'Free plan may not connect X']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Smart Queues and RSS',
+         'overview': '<p>SocialPilot is a social media post scheduler for agencies and growing brands that run many accounts on autopilot. Every plan includes Smart Queues, repeat posts and RSS feeds that post on their own, plus first comments and LinkedIn document posts. Bulk scheduling from a CSV file starts on Premium and handles 500 or more posts at once. Essentials is $25.50 a month billed yearly for 7 accounts.</p>',
+         'pros': ['Smart Queues on every plan', 'Repeat posts and RSS feeds', 'CSV bulk scheduling on Premium', 'Client approvals on Premium', 'Good fit for budget agencies'],
+         'cons': ['Extra accounts can raise the bill', 'Inbox may start only on Standard', 'Lowest plan may lack analytics']},
+        {'id': 'socialbee', 'shot': 'home', 'best': 'Evergreen post recycling',
+         'overview': '<p>SocialBee is a recycling-first social media post scheduler for solo marketers with a library of evergreen posts. Posts sit in content categories, each with its own sharing cadence, and SocialBee can recycle evergreen posts or expire ones with a deadline. Its Copilot AI builds a posting schedule and writes ready-to-edit posts. A key strength is that a sale post will not come back after the sale ends.</p>',
+         'pros': ['Content categories with their own cadence', 'Recycles evergreen posts', 'Expires posts with a deadline', 'Unlimited AI content on every plan', '30-day money-back guarantee'],
+         'cons': ['No free plan, only a free trial', 'No MCP or API listed for AI tools', 'CSV uploads may need Accelerate']},
+        {'id': 'metricool', 'shot': 'home', 'best': 'Autolists and recurring posts',
+         'overview': '<p>Metricool is a social media post scheduler and analytics tool for managers who juggle several brands. Its Autolists build automated content lists, so a channel stays active without scheduling each post by hand. It also has recurring scheduling, unlimited RSS feeds and best times to post in a drag-and-drop calendar. Starter is from $20 a month billed yearly for up to 5 brands with unlimited posts.</p>',
+         'pros': ['Autolists keep channels active', 'Recurring scheduling and RSS feeds', 'Drag-and-drop calendar', 'Priced per brand with unlimited posts', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra as an add-on', 'Approvals may need the Advanced plan', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'Evergreen campaigns',
+         'overview': '<p>ContentStudio is a full-featured social media post scheduler for content teams that curate a lot of posts. Evergreen campaigns recycle top posts, RSS autoposting shares new articles, and bulk scheduling loads months of posts from one CSV file. Every plan includes unlimited posting and auto first comments, while recycling, RSS and CSV upload start on Advanced. It is a relevant option for users who mainly need deep automation for a content-heavy feed.</p>',
+         'pros': ['Evergreen campaigns recycle top posts', 'RSS autoposting for new articles', 'CSV bulk scheduling', 'Unlimited posting on every plan', 'MCP integration on every plan'],
+         'cons': ['No free plan, only a short trial', 'Inbox may need the Advanced plan', 'Automation tools may need Advanced']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'AI agents for recurring work',
+         'overview': '<p>Vista Social is a social media post scheduler and engagement platform for teams that want posting and DM automations in one place. Its pricing page lists 31 planning and scheduling features, and Ask Vista AI agents handle recurring social work. Professional is $80 a month for 15 social profiles and 2 users. The platform also offers apps for iOS, Android, Mac and Windows, making it suitable for teams that post from many devices.</p>',
+         'pros': ['31 planning and scheduling features', 'Ask Vista AI agents for recurring work', 'Posting and DM automations', '15 profiles on the first plan', 'Apps for iOS, Android, Mac and Windows'],
+         'cons': ['X publishing can cost extra each month', 'Post approvals may not be listed on plans', 'Queue and recycling details may be unclear']},
+        {'id': 'later', 'shot': 'home', 'best': 'Smart Scheduling with trends',
+         'overview': '<p>Later is a social media post scheduler for social media managers who post to many profiles each day. Each social set covers 8 profiles, one per network it supports, Snapchat included. It shows the best times to post for Instagram, Facebook and TikTok, and Growth adds Smart Scheduling with Future Trends. Starter is $18.75 a month billed yearly, with 30 posts per profile a month.</p>',
+         'pros': ['8 profiles in each social set', 'Suggested posting times', 'Smart Scheduling on Growth', 'Mobile app on every plan', 'Good fit for Instagram-first teams'],
+         'cons': ['Starter plan can cap posts per profile', 'Inbox and approvals may need Growth', 'Recycling and CSV upload may not be listed']},
+        {'id': 'pallyy', 'shot': 'pricing', 'best': 'Simple client queues',
+         'overview': '<p>Pallyy is a simple social media post scheduler for agencies that run several brands\' queues side by side. It offers queue scheduling and a content calendar, and each client is one social set however many networks it posts to. Posts can also be scheduled from ChatGPT and Claude. Pro is $25 a month for one social set with unlimited posts, which makes it useful for agencies starting small.</p>',
+         'pros': ['Queue scheduling and content calendar', 'One social set per client', 'Schedules posts from ChatGPT and Claude', 'Client approvals from a shared link', 'Free plan for image posts'],
+         'cons': ['Extra social sets can raise the bill', 'Custom reports may need the Agency plan', 'Free plan may post images only']},
+        {'id': 'postiz', 'shot': 'home', 'best': 'Agentic scheduling with MCP',
+         'overview': '<p>Postiz is an agentic social media post scheduler for developers and AI-first marketers. AI agents plan, write and schedule posts, and every plan adds repeated posts for evergreen content, RSS auto-posting and posting sets. Its MCP server, CLI and API let Claude or ChatGPT schedule posts directly. It suits builders who want an AI agent to run the queue from a terminal.</p>',
+         'pros': ['Repeated posts for evergreen content', 'RSS auto-posting on every plan', 'MCP server, CLI and API', 'Open-source version to self-host', 'Good fit for developer teams'],
+         'cons': ['No free plan, only a short trial', 'Inbox and approvals may be missing', 'Standard plan may lack team support']},
     ],
-    'how': '''<p>We judged each scheduler on how much posting it does for you once it is set up.</p>
-<ul><li><b>Queues:</b> can you set posting times once and let new posts fill the slots?</li>
-<li><b>Bulk upload:</b> can you load many posts at once from a CSV file, and on which plan?</li>
-<li><b>Recycling and RSS:</b> can old posts or new blog posts go out without you touching them?</li>
-<li><b>Price:</b> we read each tool's own pricing page in November 2026, noting post caps and yearly billing.</li></ul>
-<p>Capybaroar is our product. We checked it against the same list and noted what it lacks.</p>''',
-    'verdict': '''<p>If you want posts to keep going out with the least effort, look at recycling first. SocialBee and Publer are the strongest there, and ContentStudio matches them from its $49 Advanced plan. For loading a big batch at once, SocialPilot, ContentStudio and Publer all take CSV files. Buffer and Pallyy are the simplest queues to live with day to day.</p>
-<p>If you would rather not write the posts at all, start with Capybaroar. Its AI agent drafts a full week from one message, and nothing goes out until you approve the drafts. Try Pro free for 14 days, with no card needed.</p>''',
+    'conclusion': '''<p>A social media post scheduler does the posting so you can get on with your day. It keeps your feed moving even when your own calendar is full.</p>
+<p>But the best tool today does more than fill a queue. It should help write the posts, load them in bulk and bring every reply and result back to one place.</p>
+<p>That is why <a href="https://capybaroar.com/social-media-scheduler">Capybaroar</a> stands out. It combines an AI agent, bulk upload and posting queues with every social channel in one calendar. For teams that want posts to go out with the least effort, it is the strongest option.</p>''',
     'faqs': [
-        ('What is a social media post scheduler?', 'It is a tool that lets you write posts ahead of time and publish them later at the time you pick. Most also give you a calendar, a queue with set posting times and previews for each network.'),
-        ('Which social media scheduler can recycle posts?', 'SocialBee, Publer on Business, ContentStudio from Advanced and Postiz with repeated posts can all send evergreen posts out again. SocialPilot has repeat posts on every plan.'),
-        ('Can I bulk upload posts from a spreadsheet?', 'Yes, with most tools. Publer, SocialBee from Accelerate, SocialPilot from Premium and ContentStudio from Advanced take CSV files, and Capybaroar has bulk upload too.'),
-        ('What is the cheapest post scheduler?', 'Publer starts at $5 a month, or $4 billed yearly, and Buffer is $5 a month per channel billed yearly. Capybaroar, Buffer, Publer, Metricool and Pallyy also have free plans with post limits.'),
-        ('Can AI schedule my social media posts for me?', "Some tools now do this. Capybaroar's AI agent plans and writes posts from one message and saves them as drafts, and Postiz lets AI agents schedule posts through its MCP server, CLI and API."),
-        ('Do I still need to check scheduled posts?', "Yes. Look over your queue once a week so an old post doesn't go out after big news or a price change. Tools that save drafts for approval make this check part of the routine."),
+        ('What is a social media post scheduler?', 'A social media post scheduler is a tool that lets you write posts ahead of time and publish them later at the time you pick. Most give you a calendar, a queue with set posting times and previews for each network, so you do not need to be online when a post goes live.'),
+        ('How do social media post schedulers publish posts?', 'Social media post schedulers publish posts through each network\'s official API. You add a post to a queue or a calendar slot, and the tool sends it at that time. Many tools also load posts in bulk from a CSV file, recycle evergreen posts or post new blog articles through RSS.'),
+        ('Why use a social media post scheduler for your business?', 'A social media post scheduler keeps your business posting on a steady plan without daily effort. You set posting times once, load weeks of posts in one sitting and let evergreen posts go out again. That saves hours each week and keeps your feed from going quiet.'),
+        ('What features should modern social media post schedulers include?', 'Modern social media post schedulers should include posting queues, bulk upload from a spreadsheet, previews for each network and analytics on what went out. Recycling and RSS help the queue refill itself. The newest tools add an AI agent that plans and writes the week from one message, with drafts saved for your approval.'),
+        ('Which tool is recommended for teams that need more than post scheduling?', 'For teams that need more than post scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with posting queues and bulk upload, plus an AI agent on paid plans. Solo marketers who mostly recycle evergreen posts may prefer SocialBee, and creators on a tight budget may prefer Publer.'),
     ],
 }

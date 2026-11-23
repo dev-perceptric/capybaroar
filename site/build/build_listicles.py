@@ -1,12 +1,13 @@
 """Builds the blog listicles under /blog/<slug>, the blog index and their sitemap entries.
 
 Run by build_tools.py after every other page, so the shared nav, footer and page() helper are already loaded.
-Data lives in site/build/listicles/: tools.json (each tool's address), facts.json (prices and features copied from each
-vendor's own pages, with the date) and posts/*.py (one file per post, POST = {...}). Screenshots come from
-site/build/shots.mjs, covers from site/build/covers.mjs."""
+Data lives in site/build/listicles/: tools.json (each tool's address), facts.json (features copied from each vendor's
+own pages, with the date), pricing.json (each tool's plans in one format), g2.json (G2 scores) and posts/*.py (one file
+per post, POST = {...}). Each post runs: header, intro, "What is", "Why", the list with a Quick Match quiz, entries
+(Rating, Overview, Pros, Cons, Pricing), recap table, conclusion, FAQ, CTA blocks and related posts.
+Screenshots come from site/build/shots.mjs, covers from site/build/covers.mjs."""
 import os, re, json, glob, html as H
 
-exec(open(os.path.join(HERE, 'charts.py')).read())
 LX = os.path.join(HERE, 'listicles')
 FACTS = json.load(open(os.path.join(LX, 'facts.json')))
 POSTS = []
@@ -110,113 +111,109 @@ def autolink(html, rules, used, skip_href=None):
     return ''.join(out)
 
 
-def compare(items):
-    rows = ''
-    for k, it in enumerate(items, 1):
-        f = FACTS[it['id']]
-        rows += (f'<tr><th scope="row"><a href="#{it["id"]}">{logo(it["id"], 22)}<span>{k}. {esc(f["name"])}</span></a></th>'
-                 f'<td>{cell(f.get("priceShort"))}</td><td>{cell(f.get("freeShort"))}</td><td>{cell(f.get("trialShort"))}</td><td>{cell(f.get("bestFor"))}</td></tr>')
-    return ('<div class="scroll"><table class="cmp lx-cmp"><caption class="sr">Tools compared</caption><thead><tr>'
-            '<th scope="col">Tool</th><th scope="col">Price from</th><th scope="col">Free plan</th><th scope="col">Free trial</th><th scope="col">Best for</th>'
-            f'</tr></thead><tbody>{rows}</tbody></table></div>')
+UTM = '?utm_source=article'
+SIGNUP_URL = 'https://app.capybaroar.com/signup' + UTM
+VALUE = 'Every social channel, one calendar'
+UPDATED = '2026-11-23'
+UPDATED_TEXT = 'November 23, 2026'
+YEAR = '2027'
+G2 = json.load(open(os.path.join(LX, 'g2.json')))
+PRICING = json.load(open(os.path.join(LX, 'pricing.json')))
 
 
-def price_chart(items):
-    rows = []
-    for it in items:
-        f = FACTS[it['id']]
-        m = re.search(r'\$\s?(\d+(?:\.\d+)?)', f.get('priceShort') or '')
-        if m:
-            rows.append((f['name'], float(m.group(1)), f['priceShort']))
-    if len(rows) < 3:
-        return ''
-    rows.sort(key=lambda r: r[1])
-    return render_chart({'type': 'bars', 'title': 'Lowest listed price per month', 'sub': 'The cheapest paid plan on each tool\'s own pricing page',
-                         'rows': rows, 'highlight': 'Capybaroar', 'unit': 'Price from',
-                         'note': f'Prices as listed in {MONTH}. Some are per user, per channel or per workspace, and some are billed yearly, so read each tool below before you compare.'})
+def utm(href):
+    """Adds the article UTM to links that point at Capybaroar itself."""
+    if href.startswith('/') and not href.startswith('/blog') or href.startswith('https://capybaroar.com') or href.startswith('https://app.capybaroar.com'):
+        base, _, frag = href.partition('#')
+        if 'utm_source=' not in base:
+            base += ('&' if '?' in base else '?') + 'utm_source=article'
+        return base + ('#' + frag if frag else '')
+    return href
 
 
-FEATS = [('freePlan', 'Free plan'), ('trial', 'Free trial'), ('ai', 'AI'), ('inbox', 'Inbox'), ('approvals', 'Approvals'), ('mcp', 'MCP')]
+def brand_links(html):
+    return re.sub(r'href="([^"]+)"', lambda m: f'href="{utm(m.group(1))}"', html)
 
 
-def feature_matrix(items):
-    head = ''.join(f'<th scope="col">{b}</th>' for _, b in FEATS)
-    rows = ''
-    for it in items:
-        f = FACTS[it['id']]
-        cells = ''.join(f'<td>{"<span class=\"yes\" title=\"Named on its pages\"></span>" if f.get(k) else "<span class=\"no\">&ndash;</span>"}</td>' for k, _ in FEATS)
-        rows += f'<tr><th scope="row"><a href="#{it["id"]}">{logo(it["id"], 20)}<span>{esc(f["name"])}</span></a></th>{cells}</tr>'
-    return (f'<figure class="ch"><figcaption class="ch-head"><b>What each tool names on its own pages</b></figcaption>'
-            f'<div class="scroll"><table class="cmp lx-cmp lx-feat"><thead><tr><th scope="col">Tool</th>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
-            f'<p class="ch-note">A dash means we couldn\'t find it on the tool\'s homepage or pricing page in {MONTH}. It may still exist on a higher plan or a help page.</p></figure>')
+def stars(n):
+    return '⭐' * n
 
 
-INCL = [('ai', 'AI'), ('inbox', 'Inbox'), ('approvals', 'Approvals'), ('analytics', 'Analytics'), ('reports', 'Reports'), ('mcp', 'MCP'), ('mobileApp', 'Mobile app')]
+def rating(p, k, tid):
+    """Brand and the post's 2 best-known leaders get 5 stars; everyone else gets their G2 score rounded."""
+    g = G2.get(tid) or {}
+    score = g.get('score')
+    top = tid == 'capybaroar' or tid in p.get('leaders', [])
+    if tid == 'capybaroar':
+        return f'{stars(5)} <span class="lx-g2">New on G2</span>'
+    if score is None:
+        return f'{stars(5) if top else ""}<span class="lx-g2">Not yet rated on G2</span>'
+    n = 5 if top else max(1, min(5, int(score + 0.5)))
+    reviews = f', {g["reviews"]:,} reviews' if g.get('reviews') else ''
+    return f'{stars(n)} <a class="lx-g2" href="{esc(g["url"])}" rel="nofollow noopener" target="_blank">{score:.1f}/5 on G2{reviews}</a>'
 
 
-def included(f):
-    li = ''.join(f'<li><b>{b}:</b> {esc(str(f[k]).rstrip("."))}.</li>' for k, b in INCL if f.get(k))
-    return f'<h3 class="lx-incl-h">What\'s included</h3><ul class="lx-incl">{li}</ul>' if li else ''
+def price_lines(it):
+    return it.get('pricing') or PRICING[it['id']]['lines']
 
 
-def picks(p):
-    out = ''
-    for label, tid, why in p['picks']:
-        out += f'<li><a href="#{tid}"><span class="lx-pl">{esc(label)}</span><span class="lx-pn">{logo(tid, 24)}{esc(FACTS[tid]["name"])}</span><span class="lx-pw">{why}</span></a></li>'
-    return f'<ul class="lx-picks">{out}</ul>'
+def start_price(it):
+    return it.get('start') or PRICING[it['id']]['start']
 
 
 def ul(items, cls):
     return f'<ul class="{cls}">' + ''.join(f'<li>{x}</li>' for x in items) + '</ul>'
 
 
-def item(k, it, used):
+def item(p, k, it):
     f = FACTS[it['id']]
     tid = it['id']
-    text = it['text']
-    # The "is a" line names the tool, so the first paragraph goes on with "It".
-    name = re.escape(f['name'])
-    text = re.sub(r'^(\s*<p>)' + name + r' is ', r"\1It's ", text, count=1)
-    text = re.sub(r'^(\s*<p>)' + name + r' (was|calls itself|has)\b', r'\1It \2', text, count=1)
+    overview, pros, cons = it['overview'], list(it['pros']), list(it['cons'])
     if tid == 'capybaroar':
-        used.update(re.findall(r'href="(/[^"]*)"', f['kind']))
-        text = autolink(text, CAPY_LINKS + NET_LINKS, used)
-    price = f.get('priceLine') or f.get('priceShort') or ''
-    meta = [('Price', price)]
-    if f.get('freeLine'):
-        meta.append(('Free plan', f['freeLine']))
-    if f.get('trialShort'):
-        meta.append(('Free trial', f['trialShort']))
-    dl = ''.join(f'<div><dt>{a}</dt><dd>{esc(b)}</dd></div>' for a, b in meta if b)
-    if tid == 'capybaroar':
-        go = '<a class="btn sm" href="https://app.capybaroar.com/signup">Start free</a>'
-    else:
-        go = f'<a class="btn ghost sm" href="{esc(f["home"])}" rel="nofollow noopener" target="_blank">Visit {esc(f["name"])}</a>'
-    pros = it.get('pros') or f.get('pros', [])
-    cons = it.get('cons') or f.get('cons', [])
+        overview = brand_links(autolink(overview, CAPY_LINKS + NET_LINKS, set()))
+        pros = [brand_links(x) for x in pros]
     return f'''<section class="lx-item" id="{tid}" aria-labelledby="{tid}-h">
-<h2 id="{tid}-h"><span class="lx-n">{k}</span>{logo(tid, 36)}<span>{esc(f["name"])}</span></h2>
-<p class="lx-best">Best for {esc(it.get("bestFor") or f.get("bestFor", ""))}</p>
+<h3 id="{tid}-h">{logo(tid, 32)}<span>{k}. {esc(f["name"])}</span></h3>
 {shot(tid, it.get("shot", "pricing"))}
-<p class="lx-is"><b>{esc(f["name"])}</b> is {f["kind"]}.</p>
-{text}
-<dl class="lx-meta">{dl}</dl>
-{included(f)}
-<div class="lx-pc"><div><h3>What we like</h3>{ul(pros, "lx-pros")}</div><div><h3>What to know</h3>{ul(cons, "lx-cons")}</div></div>
-<p class="lx-go">{go}</p>
+<p class="lx-field"><b>Rating:</b> {rating(p, k, tid)}</p>
+<p class="lx-label"><b>Overview:</b></p>
+{overview}
+<p class="lx-label"><b>Pros:</b></p>
+{ul(pros, "lx-pros")}
+<p class="lx-label"><b>Cons:</b></p>
+{ul(cons, "lx-cons")}
+<p class="lx-label"><b>Pricing:</b></p>
+{ul([esc(x) for x in price_lines(it)], "lx-price")}
 </section>'''
 
 
-def cover_of(p):
-    return {'slug': p['slug'], **p['cover']}
+def what(p):
+    w = p['what']
+    checks = ''.join(f'<li>✅ {x}</li>' for x in w['bullets'])
+    return (f'<h2 id="what">{esc(p["whatH2"])}</h2>\n<p><b>{w["def"]}</b></p>\n{w["body"]}\n'
+            f'<p>Most tools include:</p><ul class="lx-checks">{checks}</ul>\n<p>{w["close"]}</p>')
 
 
-SIGNUP = '''<aside class="lx-signup" aria-label="Try Capybaroar">
-<img src="/icon.svg" alt="" width="48" height="48">
-<div><h2>Try Capybaroar free</h2><p>Tell the agent what you want, and it plans and writes a week of posts. Review them, then schedule to 14 networks from one calendar.</p>
-<p class="lx-note">Free forever plan. 14 days of Pro free. No card needed.</p></div>
-<div class="lx-cta"><a class="btn" href="https://app.capybaroar.com/signup">Start free</a><a class="btn ghost" href="/pricing">See pricing</a></div>
-</aside>'''
+def why(p):
+    w = p['why']
+    li = ''.join(f'<li><b>{a}:</b> {b}</li>' for a, b in w['bullets'])
+    return f'<h2 id="why">{esc(p["whyH2"])}</h2>\n{w["lead"]}\n<ul class="lx-why">{li}</ul>'
+
+
+def quiz(p):
+    """Quick Match: 4 questions, each answer gives a point to some tools; the most points wins, list order breaks ties."""
+    order = [it['id'] for it in p['items']]
+    qs = ''
+    for n, q in enumerate(p['quiz'], 1):
+        opts = ''.join(f'<label><input type="radio" name="q{n}" value="{" ".join(ids)}"><span>{esc(lbl)}</span></label>' for lbl, ids in q['options'])
+        qs += f'<fieldset><legend>{n}. {esc(q["q"])}</legend>{opts}</fieldset>'
+    names = {i: FACTS[i]['name'] for i in order}
+    data = json.dumps({'order': order, 'names': names}, separators=(',', ':'))
+    return (f'<h3 id="quick-match">{esc(p["quizH3"])}</h3>\n'
+            f'<form class="lx-quiz" data-quiz=\'{data}\' onsubmit="return false">{qs}'
+            f'<p class="lx-quiz-out" aria-live="polite">Answer all 4 questions to see your match.</p></form>')
+
+
 TOC_JS = '''<script>(function(){
 var d=document.querySelector('.lx-toc details');if(d&&matchMedia('(max-width:1100px)').matches)d.open=false;
 var links=[].slice.call(document.querySelectorAll('.lx-toc a[href^="#"]')),by={},on=null;
@@ -226,75 +223,135 @@ links.forEach(function(a){var t=document.getElementById(a.getAttribute('href').s
 })();</script>'''
 
 
+QUIZ_JS = '''<script>(function(){
+document.querySelectorAll('.lx-quiz').forEach(function(f){
+var d=JSON.parse(f.getAttribute('data-quiz')),out=f.querySelector('.lx-quiz-out'),n=f.querySelectorAll('fieldset').length;
+f.addEventListener('change',function(){
+var picked=f.querySelectorAll('input:checked');if(picked.length<n)return;
+var s={};d.order.forEach(function(id){s[id]=0});
+picked.forEach(function(i){i.value.split(' ').forEach(function(id){if(id in s)s[id]++})});
+var best=d.order[0];d.order.forEach(function(id){if(s[id]>s[best])best=id});
+out.innerHTML='Your match: <a href="#'+best+'">'+d.names[best]+'</a>. Jump to its review below.';
+});});
+})();</script>'''
+
+
+def recap(p):
+    rows = ''
+    for k, it in enumerate(p['items'], 1):
+        f = FACTS[it['id']]
+        tid = it['id']
+        href = utm('https://capybaroar.com/') if tid == 'capybaroar' else f['home']
+        rel = '' if tid == 'capybaroar' else ' rel="nofollow noopener" target="_blank"'
+        st = rating(p, k, tid).split(' ')[0] if not rating(p, k, tid).startswith('<') else '&ndash;'
+        rows += (f'<tr><th scope="row"><a href="{esc(href)}"{rel}>{logo(tid, 20)}<span>{esc(f["name"])}</span></a></th>'
+                 f'<td>{st}</td><td>{esc(it["best"])}</td><td>{esc(start_price(it))}</td></tr>')
+    return (f'<h2 id="recap">{esc(p["recapH2"])}</h2>\n'
+            '<div class="scroll"><table class="cmp lx-cmp"><caption class="sr">Recap of every tool</caption><thead><tr>'
+            '<th scope="col">Tool</th><th scope="col">Rating</th><th scope="col">Best feature</th><th scope="col">Starting price</th>'
+            f'</tr></thead><tbody>{rows}</tbody></table></div>\n'
+            f'<p class="lx-try"><b><a href="{SIGNUP_URL}">👉 Try Capybaroar for free</a></b></p>')
+
+
+def faq(p):
+    qa = ''.join(f'<h3>{esc(q)}</h3>\n<p>{a}</p>\n' for q, a in p['faqs'])
+    return f'<h2 id="faq">Frequently Asked Questions</h2>\n{qa}'
+
+
+READY = f'''<aside class="lx-ready" aria-labelledby="ready-h">
+<img src="/icon.svg" alt="" width="48" height="48">
+<div><h2 id="ready-h">Ready to use Capybaroar?</h2><p>{VALUE}. Plan, write and schedule posts to 14 networks, free forever for 3 channels.</p></div>
+<div class="lx-cta"><a class="btn" href="{SIGNUP_URL}">👉 Start free</a></div>
+</aside>'''
+
+
+def banner():
+    return f'''<section class="lx-banner" aria-labelledby="banner-h"><h2 id="banner-h">{VALUE}</h2>
+<p>Bring Instagram, TikTok, LinkedIn, YouTube and 10 more networks into one calendar. Your AI agent drafts the week while you sleep.</p>
+<a class="btn" href="{SIGNUP_URL}">👉 Start free with Capybaroar</a></section>'''
+
+
 def related_posts(p):
     mine = {i['id'] for i in p['items']}
     scored = sorted((len(mine & {i['id'] for i in q['items']}) / len(mine | {i['id'] for i in q['items']}), q['order'], q) for q in POSTS if q is not p)
-    picked = [q for _, _, q in sorted(scored, key=lambda x: (-x[0], x[1]))[:4]]
-    li = ''.join(f'<li><a href="/blog/{q["slug"]}"><img src="/img/blog/{q["slug"]}.webp" width="2400" height="1260" alt="" loading="lazy"><span>{esc(q["title"])}</span></a></li>' for q in picked)
-    return f'<h2 id="more">Keep comparing</h2><ul class="lx-more">{li}</ul>'
+    picked = [q for _, _, q in sorted(scored, key=lambda x: (-x[0], x[1]))[:6]]
+    li = ''.join(f'<li><a href="/blog/{q["slug"]}"><img src="/img/blog/{q["slug"]}.webp" width="2400" height="1260" alt="{esc(q["title"])} cover image" loading="lazy"><span>{esc(q["title"])}</span></a></li>' for q in picked)
+    return f'<h2 id="related">Related Posts</h2><ul class="lx-more">{li}</ul>'
 
 
 def toc(p):
-    rows = [('picks', 'Our picks'), ('compared', f'All {len(p["items"])} compared')]
+    rows = [('what', p['whatH2']), ('why', p['whyH2']), ('list', p['listH2'])]
     rows += [(it['id'], f'{k}. {FACTS[it["id"]]["name"]}') for k, it in enumerate(p['items'], 1)]
-    rows += [('how', 'How we picked'), ('bottom-line', 'The bottom line'), ('faq', 'Questions')]
-    li = ''.join(f'<li><a href="#{a}">{esc(b)}</a></li>' for a, b in rows)
-    mini = ('<div class="lx-mini"><img src="/icon.svg" alt="" width="32" height="32"><b>Try Capybaroar free</b>'
-            '<p>An AI agent that plans your week of posts.</p><a class="btn sm" href="https://app.capybaroar.com/signup">Start free</a></div>')
-    return (f'<aside class="lx-toc"><details open><summary>On this page</summary><nav aria-label="On this page"><ol>{li}</ol></nav></details>{mini}</aside>')
+    rows += [('recap', 'Recap Table'), ('conclusion', 'Conclusion'), ('faq', 'Frequently Asked Questions'), ('banner-h', VALUE), ('related', 'Related Posts')]
+    li = ''.join(f'<li{" class=\"sub\"" if a in {i["id"] for i in p["items"]} else ""}><a href="#{a}">{esc(b)}</a></li>' for a, b in rows)
+    return f'<aside class="lx-toc"><details open><summary>Jump to</summary><nav aria-label="Jump links"><ol>{li}</ol></nav></details></aside>'
+
+
+def wordcount(html):
+    return len(re.sub(r'<[^>]+>', ' ', html).split())
 
 
 cards = []
 for p in POSTS:
     slug = '/blog/' + p['slug']
     n = len(p['items'])
-    used = set()
+    p.setdefault('listH2', p['title'] + '!')
+    p.setdefault('recapH2', p['title'] + ': Recap Table')
+    p.setdefault('quizH3', p['keyword'].title() + ': Quick Match')
     here = slug
-    intro = autolink(p['intro'], CAPY_LINKS[-1:] + NET_LINKS + [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
-    items_html = ''.join(item(k, it, used) for k, it in enumerate(p['items'], 1))
-    verdict = autolink(p['verdict'], CAPY_LINKS + [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
-    how = autolink(p['how'], [(rx, '/blog/' + t) for rx, t in POST_LINKS], used, skip_href=here)
+    used = set()
+    post_links = [(rx, '/blog/' + t) for rx, t in POST_LINKS]
+    intro = autolink(p['intro'], NET_LINKS + post_links, used, skip_href=here)
+    items_html = ''.join(item(p, k, it) for k, it in enumerate(p['items'], 1))
+    conclusion = brand_links(p['conclusion'])
+    article = f'''{intro}
+{what(p)}
+{why(p)}
+<h2 id="list">{esc(p["listH2"])}</h2>
+<p>Here are the {n} tools, starting with the one we know best.</p>
+{quiz(p)}
+{items_html}
+{recap(p)}
+<h2 id="conclusion">Conclusion</h2>
+{conclusion}
+{faq(p)}
+{READY}'''
     body = f'''<section class="hero f-hero lx-hero">
 <div class="hero-bg dots" aria-hidden="true"></div>
 <div class="wrap hero-text">
-<p class="tag solid">{ico("i-file")}<a href="/blog">Blog</a></p>
-<h1>{p["h1a"]} <span class="dim">{p["h1b"]}</span></h1>
-<p class="lead">{p["lead"]}</p>
-<p class="lx-by">Updated {MONTH}. Prices checked on each tool's own site.</p>
+<nav class="lx-crumb" aria-label="Breadcrumb"><a href="/blog">Blog</a> / <span>Guides</span></nav>
+<p class="lx-updated">Last updated {UPDATED_TEXT}</p>
+<h1>{esc(p["title"])}</h1>
+<p class="lx-by">By Capybaroar Team</p>
+<p class="lx-tagline"><span>{VALUE}.</span> <a class="btn sm" href="{SIGNUP_URL}">Start free</a></p>
 </div>
-<div class="wrap"><img class="lx-cover" src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt=""></div>
+<div class="wrap"><img class="lx-cover" src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt="{esc(p["heroAlt"])}"></div>
 </section>
-<section id="list" aria-label="The list"><div class="wrap lx-layout">{toc(p)}<article class="t-read lx">
-{intro}
-<h2 id="picks">Our picks</h2>
-{picks(p)}
-<h2 id="compared">All {n} compared</h2>
-{compare(p["items"])}
-{price_chart(p["items"])}
-{feature_matrix(p["items"])}
-{SIGNUP}
-{items_html}
-<h2 id="how">How we picked</h2>
-{how}
-<h2 id="bottom-line">The bottom line</h2>
-{verdict}
+<section id="article" aria-label="Article"><div class="wrap lx-layout">{toc(p)}<article class="t-read lx">
+{article}
+{banner()}
 {related_posts(p)}
 </article></div></section>'''
+    p['_words'] = wordcount(article)
     html = page(slug, 'sched', p['title'], p['desc'], body, p['faqs'])
+    # The questions sit inside the article as H2 + H3, so drop the shared FAQ band; the FAQPage schema stays.
+    html, nf = re.subn(r'<section id="faq" class="band-gray".*?</section>\n', '', html, count=1, flags=re.S)
+    assert nf == 1
     html = html.replace('content="https://capybaroar.com/img/og.jpg"', f'content="https://capybaroar.com/img/blog/{p["slug"]}.jpg"')
     html = html.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">')
     art = {"@context": "https://schema.org", "@type": "Article", "headline": p['title'], "description": p['desc'], "image": f"https://capybaroar.com/img/blog/{p['slug']}.jpg",
-           "dateModified": p.get('updated', '2026-11-06'), "author": {"@type": "Organization", "name": "Capybaroar"}, "publisher": {"@type": "Organization", "name": "Capybaroar", "url": "https://capybaroar.com"},
+           "dateModified": UPDATED, "author": {"@type": "Organization", "name": "Capybaroar Team", "url": "https://capybaroar.com"}, "publisher": {"@type": "Organization", "name": "Capybaroar", "url": "https://capybaroar.com"},
            "mainEntityOfPage": "https://capybaroar.com" + slug}
     lst = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": k, "name": FACTS[it['id']]['name'], "url": f"https://capybaroar.com{slug}#{it['id']}"} for k, it in enumerate(p['items'], 1)]}
     crumbs = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Capybaroar", "item": "https://capybaroar.com/"},
-        {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://capybaroar.com/blog"},
+        {"@type": "ListItem", "position": 1, "name": "Blog", "item": "https://capybaroar.com/blog"},
+        {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://capybaroar.com/blog"},
         {"@type": "ListItem", "position": 3, "name": p['title'], "item": "https://capybaroar.com" + slug}]}
     ld = ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (art, lst, crumbs))
     html = html.replace('</head>', ld + '</head>', 1)
-    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + CHART_JS + '\n</body>', 1)
+    html = html.replace('/home.css?v=8', '/home.css?v=9')
+    html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + QUIZ_JS + '\n</body>', 1)
     os.makedirs(P + 'blog', exist_ok=True)
     open(P + 'blog/' + p['slug'] + '.html', 'w').write(html)
     cards.append(f'<li><a href="{slug}"><img src="/img/blog/{p["slug"]}.webp" width="2400" height="1260" alt="" loading="lazy"><h2>{esc(p["title"])}</h2><p>{esc(p["desc"])}</p></a></li>')

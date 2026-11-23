@@ -1,52 +1,115 @@
 POST = {
     'order': 24,
     'slug': 'bluesky-scheduling-tools',
-    'keyword': 'bluesky scheduler',
-    'title': '8 Best Bluesky Scheduling Tools (2027)',
-    'desc': 'The 8 best tools to schedule Bluesky posts in 2027, compared on Bluesky features, replies and price. Every tool here names Bluesky on its own site, with prices checked in November 2026.',
-    'h1a': '8 Bluesky schedulers',
-    'h1b': 'for the newest network on your list.',
-    'lead': 'Bluesky is growing fast, and it rewards people who show up often. These 8 tools let you plan Bluesky posts next to your other channels, with prices checked on each tool\'s own site.',
+    'keyword': 'bluesky scheduling tool',
+    'title': '12 Best Bluesky Scheduling Tools in 2027',
+    'desc': 'Compare the 12 best Bluesky scheduling tools in 2027 with G2 ratings, pros, cons and prices. See why Capybaroar leads for teams that post on many networks.',
+    'heroAlt': 'A calendar of short text posts, for the best Bluesky scheduling tools in 2027',
     'cover': {'type': 'list', 'network': 'bluesky', 'bg': 'yolk', 'tools': ['typefully.com', 'buffer.com', 'postiz.com', 'publer.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Bluesky posts with pictures, plus replies and mentions in one inbox.'),
-        ('Best for writers', 'typefully', 'Write once and cross-post to Bluesky, X, Threads, LinkedIn and Mastodon.'),
-        ('Best for AI agents', 'postiz', 'Post to Bluesky from Claude or a terminal with its MCP server and CLI.'),
+    'leaders': ['buffer', 'agorapulse'],
+    'intro': '''<p>Bluesky works a lot like early Twitter, with short posts, replies and reposts. It rewards people who show up often, but posting by hand on top of X and Threads gets old fast.</p>
+<p>A Bluesky scheduling tool fixes this. You write your posts once, pick the times, and the tool publishes them for you. Writers, creators, small brands and agencies use one to keep a steady voice on the network without checking it all day.</p>
+<p>The result is more posts out on time and fewer missed replies. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 🦋</p>''',
+    'whatH2': 'What Is a Bluesky Scheduling Tool?',
+    'what': {
+        'def': 'A Bluesky scheduling tool is an app that publishes your Bluesky posts at a set time by connecting to your account through Bluesky\'s API.',
+        'body': '<p>You connect your Bluesky account once, often with your handle and an app password, then write a post, add pictures and pick a date. The tool stores the post and sends it at that time, so you do not need to be online. Most tools run as a web app with a calendar, and many also post to X, Threads and Mastodon.</p>',
+        'bullets': ['A calendar for planned posts', 'Text and picture posts', 'Cross-posting to X and Threads', 'Replies and mentions inbox'],
+        'close': 'The result is a full week of Bluesky posts planned in one sitting.',
+    },
+    'whyH2': 'Why Do You Need a Bluesky Scheduling Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Posting to Bluesky by hand works when it is your only network. Most people also post to X, Threads or LinkedIn, and copying each post into every app eats up the day.</p>\n<p>A Bluesky scheduling tool solves this.</p>',
+        'bullets': [
+            ('Steady posting', 'Posts go out at set times, even when you are busy, traveling or asleep.'),
+            ('Hours saved', 'You write a week of posts in one sitting and adapt each one for other networks.'),
+            ('Faster replies', 'Replies and mentions land in one inbox, so you answer while the thread is still active.'),
+            ('One shared calendar', 'Bluesky sits next to every other network, and an AI agent can draft the week for you to approve.'),
+        ],
+    },
+    'quizH3': 'Bluesky Scheduling Tools: Quick Match',
+    'quiz': [
+        {'q': 'How do you like to work?', 'options': [
+            ('I write and cross-post text', ['typefully', 'buffer', 'capybaroar']),
+            ('I work from Claude or a terminal', ['postiz', 'capybaroar']),
+            ('I plan posts for many networks', ['capybaroar', 'metricool', 'zoho', 'contentstudio'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer', 'typefully', 'hypefury', 'zoho']),
+            ('$10 to $50', ['capybaroar', 'metricool', 'contentstudio', 'sendible', 'pallyy', 'postiz']),
+            ('More than $50', ['agorapulse', 'capybaroar'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('AI that drafts the week', ['capybaroar', 'postiz']),
+            ('Replies in one inbox', ['capybaroar', 'agorapulse', 'buffer']),
+            ('Finding people to reply to', ['hypefury']),
+            ('Client approvals', ['pallyy', 'sendible', 'capybaroar'])]},
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['typefully', 'hypefury', 'publer', 'buffer']),
+            ('A small team', ['capybaroar', 'metricool', 'contentstudio', 'zoho']),
+            ('An agency', ['sendible', 'pallyy', 'capybaroar']),
+            ('A larger business team', ['agorapulse', 'capybaroar'])]},
     ],
-    'intro': '''<p>Bluesky works a lot like early Twitter: short posts, replies and reposts. A good Bluesky scheduler gives you a place to write, a calendar to plan on and a way to answer the replies and mentions that come back.</p>
-<p>Not every tool supports Bluesky yet. We kept only tools whose own homepage or pricing page names it. Most of them also post to X, Threads and Mastodon, so you can plan all your text networks from one place.</p>
-<p>Prices and features come from each tool's own pages in November 2026. Schedule one real post in a trial before you plan a month of them.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'inbox', 'text': '''<p>Capybaroar schedules Bluesky posts of up to 300 characters with up to 4 pictures. You connect your account with your handle and an app password. Replies and mentions come back to the Capybaroar inbox, where you can reply or like them next to every other channel. Paid plans suggest a reply for each comment.</p>
-<p>One thing to know: Bluesky video isn't supported yet, so plan picture and text posts for now. Every Bluesky post gets its numbers in analytics, and you can send one idea to Bluesky, X, Threads and Mastodon at once, each with its own text. Free covers 3 channels and 30 scheduled posts a month. Creator is $29 a month for 8 channels.</p>''',
-         'cons': ['Bluesky video isn\'t supported yet; text and up to 4 pictures for now', 'AI features need a paid plan; Free covers scheduling only']},
-        {'id': 'typefully', 'shot': 'home', 'text': '''<p>Typefully is a writing tool made for text networks. You write in one place and cross-post to X, LinkedIn, Bluesky, Threads and Mastodon, and you can check each post before it goes live, including threads, mentions and media.</p>
-<p>Its AI writing assistant learns your voice and helps you rewrite and improve drafts. The free plan covers 1 social set, 1 user and 10 posts a month. Paid plans are billed yearly; Typefully's page didn't show their prices when we checked.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer schedules to Bluesky and can publish full threads to Bluesky, X, Threads and Mastodon. Its inbox lets you reply to comments on your Bluesky posts next to your other networks.</p>
-<p>You pay per channel: $5 a month per channel on Essentials, billed yearly. The free plan covers 3 channels with 10 scheduled posts per channel, which is plenty to try Bluesky.</p>'''},
-        {'id': 'hypefury', 'shot': 'pricing', 'text': '''<p>Hypefury posts to Bluesky along with Instagram, Facebook, Threads, LinkedIn and TikTok. Its Engagement Builder pulls posts from people and keywords in your niche into one feed, with a reply ready, and Hypefury calls it the only reply feed built for Threads and Bluesky. You can also bulk upload Bluesky posts from a CSV file.</p>
-<p>The Flexible plan is $6 a month per platform, so Bluesky alone costs $6. Creator is $19 a month for all 6 platforms. There's a 7-day free trial.</p>'''},
-        {'id': 'postiz', 'shot': 'pricing', 'text': '''<p>Postiz names Bluesky among its channels and is built for working with AI agents. Every plan includes an MCP server, a CLI and an API. Its homepage shows one CLI call sending a post to LinkedIn, Threads and Bluesky, which suits people who work in Claude Code or a terminal.</p>
-<p>Standard is $29 a month for 5 channels and unlimited posts. Team is $39 a month for 10 channels and unlimited team members. There's a 7-day free trial and an open-source option.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer works with Bluesky accounts and lists Bluesky posts among its post types. It also lets you share things you find online to Bluesky, X, Mastodon and the rest in a few clicks, without opening Publer in a new tab.</p>
-<p>Professional starts at $5 a month, or $4 a month billed yearly, depending on how many accounts you add. The free plan covers 3 accounts with 10 scheduled posts per account. Analytics and unlimited AI need Business, from $10 a month.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool's pricing table lists Bluesky among the networks you can connect. It's a good pick if you want Bluesky numbers in the same reports as Instagram, TikTok and your other channels, with full history on paid plans.</p>
-<p>Starter is from $20 a month billed yearly for up to 5 brands, or $25 monthly. The free plan covers 1 brand and 20 posts a month, with 30 days of analytics.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible lists Bluesky and Threads on its pricing page, next to the big networks. It's built for agencies, with unlimited users on every plan, so adding a client's Bluesky account never adds a seat.</p>
-<p>Core is $35 a month for 6 social profiles and 1 workspace. Plus is $99 a month for 18 profiles across 3 workspaces and adds approvals. There's a 14-day free trial and no free plan.</p>'''},
+        {'id': 'capybaroar', 'shot': 'inbox', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant Bluesky scheduling tools for teams that want to grow on Bluesky without dropping their other channels. Instead of only sending posts at set times, it adds an AI agent that plans and writes the week as drafts for review. Bluesky sits on one calendar with X, Threads, Mastodon and 10 more networks, and the MCP server works on every plan. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/bluesky-scheduler">Bluesky posts</a> next to X, Threads and Mastodon',
+                  '<a href="/bulk-scheduling">Bulk upload</a> and a <a href="/posting-queue">posting queue</a>',
+                  '<a href="/ai-social-media-agent">AI agent</a> that drafts a week of posts',
+                  '<a href="/social-media-inbox">One inbox</a> and <a href="/social-media-analytics">analytics</a> on every plan',
+                  '<a href="/mcp">MCP server</a> on the Free plan too'],
+         'cons': ['Not a dedicated thread-writing app']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Low cost per channel',
+         'overview': '<p>Buffer is one of the most widely used Bluesky scheduling tools for creators and small brands that post to a few networks. It can publish full threads to Bluesky, X, Threads and Mastodon, and its inbox answers comments on Bluesky posts. Each channel costs $5 a month on Essentials, billed yearly, and Free covers 3 channels. Its low entry cost makes it a popular first step for people testing Bluesky.</p>',
+         'pros': ['Publishes threads to Bluesky', 'Replies to Bluesky comments in one inbox', 'AI Assistant on every plan', 'iOS and Android apps', 'Free plan for 3 channels'],
+         'cons': ['Price can rise with each new channel', 'Analytics history can be short on Free', 'Branded reports may need the Team plan']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Inbox and ROI reports',
+         'overview': '<p>Agorapulse is one of the most established Bluesky scheduling tools for business teams that track what social media earns. It works with Bluesky, Threads, Reddit and eight more networks, though not every feature is available on every network. One inbox for messages and comments comes on every plan, with AI reply suggestions and translation. Advanced adds ROI analysis and competitor benchmarks, which makes it attractive for teams that report results to leaders.</p>',
+         'pros': ['Bluesky among eleven networks', 'One inbox on every plan', 'AI replies and translation', 'MCP for Claude and ChatGPT', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can add up for teams', 'Some features may not work on Bluesky', 'Free plan limits may be unclear']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Priced per brand',
+         'overview': '<p>Metricool is a Bluesky scheduling tool and analytics platform for social media managers who want every number in one report. Its pricing table lists Bluesky next to Instagram, Threads, TikTok and Twitch. Paid plans keep unlimited history, and the built-in MCP connects AI assistants like Claude and ChatGPT. A key strength is pricing by brand, so one Starter plan from $20 a month covers up to 5 brands.</p>',
+         'pros': ['Bluesky in the same calendar and reports', 'Priced per brand, not per network', 'Unlimited analytics history on paid plans', 'Built-in MCP for AI assistants', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra as an add-on', 'Approvals may need the Advanced plan', 'AI credits can run low for busy brands']},
+        {'id': 'zoho', 'shot': 'pricing', 'best': 'Long network list',
+         'overview': '<p>Zoho Social is a Bluesky scheduling tool for businesses and agencies that already use the Zoho suite. It posts to Bluesky, Mastodon, Telegram, WhatsApp and eleven more networks from one place. Its AI picks times to post and can turn comments into CRM leads. A forever free plan covers 1 brand with 6 channels, which makes it useful for small teams that want Bluesky on a budget.</p>',
+         'pros': ['Bluesky among 15 networks', 'AI turns comments into CRM leads', 'Works with the Zoho suite', 'Apps for Android and iOS', 'Free plan for 1 brand'],
+         'cons': ['Extra members can cost more each month', 'Inbox and approvals may need Premium', 'Free plan features can feel limited']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'AI Studio content',
+         'overview': '<p>ContentStudio is a Bluesky scheduling tool and content platform for teams that curate and share a lot of posts. Every plan includes unlimited posting, analytics and an MCP integration, with Bluesky next to Threads and X. In addition to scheduling, its AI Studio makes text, images and video in a brand voice. Its content tools make it a good pick for teams that post often and need fresh ideas.</p>',
+         'pros': ['Bluesky next to Threads and X', 'Unlimited posting on every plan', 'AI Studio for text, images and video', 'MCP integration on every plan', 'iOS and Android apps'],
+         'cons': ['No free plan, only a short trial', 'Inbox may need the Advanced plan', 'Standard plan may suit one user only']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a Bluesky scheduling tool for agencies that keep adding clients and staff. Its pricing page lists Bluesky and Threads next to the big networks. Every plan includes unlimited users, so adding a client\'s Bluesky account never adds a seat. It is especially useful for agencies that want one workspace per client and a bill that does not grow with headcount.</p>',
+         'pros': ['Bluesky on its network list', 'Unlimited users on every plan', 'Unlimited AI credits', 'Approvals from the Plus plan', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a pricier plan', 'No MCP server listed, unlike some tools', 'Inbox may not cover Instagram DMs']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Share from any page',
+         'overview': '<p>Publer is a practical Bluesky scheduling tool for creators and small businesses on a tight budget. It works with Bluesky accounts and lets users share things they find online to Bluesky, X and Mastodon in a few clicks. Professional starts at $4 a month per account billed yearly, or $5 billed monthly. It is a relevant option for users who mainly need cheap Bluesky posting next to many other networks.</p>',
+         'pros': ['Bluesky posts as a post type', 'Share to Bluesky from any web page', 'Low price per social account', '13 networks, Telegram included', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with each account added', 'MCP and analytics may need Business', 'Free plan may not connect X']},
+        {'id': 'pallyy', 'shot': 'home', 'best': 'Per-client pricing',
+         'overview': '<p>Pallyy is a Bluesky scheduling tool for agencies that bill per client. Each client gets one social set that covers Bluesky, Threads, Instagram and the rest, and clients approve posts from a shared link without an account. Pro is $25 a month for one social set with unlimited posts. It works well for small agencies that add Bluesky for a few clients.</p>',
+         'pros': ['Bluesky in every social set', 'Priced per client, not per channel', 'Client approvals from a shared link', 'Schedules posts from ChatGPT and Claude', 'Free plan for image posts'],
+         'cons': ['Extra social sets can raise the bill', 'Custom reports may need the Agency plan', 'Free plan may post images only']},
+        {'id': 'postiz', 'shot': 'pricing', 'best': 'CLI and MCP posting',
+         'overview': '<p>Postiz is an open-source Bluesky scheduling tool for developers and AI-first marketers. Every plan includes an MCP server, a CLI and an API, and its homepage shows one CLI call sending a post to LinkedIn, Threads and Bluesky. Standard is $29 a month for 5 channels with unlimited posts. Many teams use it as a specialized tool to automate Bluesky posts from Claude or a terminal.</p>',
+         'pros': ['MCP server, CLI and API on every plan', 'AI agents plan and write posts', 'Unlimited posts on every plan', 'Open-source version to self-host', 'Good fit for developer teams'],
+         'cons': ['No free plan, only a short trial', 'Inbox and approvals may be missing', 'Standard plan may lack team support']},
+        {'id': 'hypefury', 'shot': 'pricing', 'best': 'Reply feed for Bluesky',
+         'overview': '<p>Hypefury is a Bluesky scheduling tool for creators who build an audience and sell to it. Its Engagement Builder pulls posts from people and keywords in a niche into one feed with a reply ready. Hypefury calls it the only reply feed built for Threads and Bluesky. Bluesky posts can also be bulk uploaded from a CSV file, and the Flexible plan is $6 a month per platform.</p>',
+         'pros': ['Engagement Builder for Bluesky replies', 'Bulk upload from CSV for Bluesky', 'AI posts in the creator\'s voice', 'MCP on every plan', 'Good fit for creators who sell'],
+         'cons': ['No free plan, only a short trial', 'No shared inbox listed for replies', 'Analytics may not cover Bluesky yet']},
+        {'id': 'typefully', 'shot': 'home', 'best': 'Write once, cross-post',
+         'overview': '<p>Typefully is a Bluesky scheduling tool designed specifically for writers who live on text networks. One draft can cross-post to Bluesky, X, LinkedIn, Threads and Mastodon, with previews of threads, mentions and media. Its AI assistant learns a writer\'s voice and helps rewrite drafts. The free plan includes scheduling, API and MCP, which suits writers who want to test Bluesky at no cost.</p>',
+         'pros': ['Cross-posts to Bluesky, X and Threads', 'Previews threads, mentions and media', 'AI assistant that learns a voice', 'API and MCP on Free', 'Free plan for 10 posts a month'],
+         'cons': ['Creator plan may be billed yearly only', 'No inbox listed for Bluesky replies', 'Detailed analytics may cover X only']},
     ],
-    'how': '''<p>We only kept tools whose own homepage or pricing page names Bluesky. Then we compared them on what a text network needs.</p>
-<ul><li><b>Posting:</b> text, pictures, video and threads of connected posts, and cross-posting to X, Threads and Mastodon.</li>
-<li><b>Replies:</b> whether Bluesky replies and mentions come back to an inbox, and any tools for finding people to reply to.</li>
-<li><b>Price:</b> the lowest plan that posts to Bluesky, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and list its limits too.</p>''',
-    'verdict': '''<p>If Bluesky is one of several channels, Capybaroar schedules your posts with pictures and brings replies and mentions into one inbox. If you mostly write for text networks, Typefully is a calm place to write and cross-post. Postiz is the pick if you want to post from Claude or a terminal, and Hypefury helps you find people to reply to.</p>
-<p>Buffer and Publer are the cheapest ways to start. Try a free plan first and see how your Bluesky posts look.</p>''',
+    'conclusion': '''<p>A Bluesky scheduling tool helps you post on a steady rhythm without living in the app. It makes a busy text network easier to keep up with.</p>
+<p>But the best tool today does more than send posts on time. It should help write them, bring every reply into one inbox and plan Bluesky next to X, Threads and the rest.</p>
+<p>That is why <a href="https://capybaroar.com/bluesky-scheduler">Capybaroar</a> stands out. It combines an AI agent, one inbox and analytics with every social channel in one calendar. For teams that add Bluesky to a full social plan, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best Bluesky scheduling tool?', 'For most brands, Capybaroar. It schedules Bluesky posts with up to 4 pictures and brings replies and mentions into one inbox with your other channels. Typefully is a strong pick for writers.'),
-        ('Can you schedule Bluesky posts for free?', 'Yes. Capybaroar, Buffer, Typefully, Publer and Metricool have free plans with a small number of posts a month.'),
-        ('Why use a scheduler for Bluesky?', 'A scheduler lets you write a week of posts in one sitting, post at your best times and answer replies from every network in one inbox.'),
-        ('How do I connect Bluesky to a scheduler?', 'In Capybaroar you connect with your Bluesky handle and an app password, which you make in Bluesky\'s settings. You never share your main password.'),
-        ('Can I post video to Bluesky with a scheduler?', 'Capybaroar doesn\'t post Bluesky video yet; it posts text and up to 4 pictures. Check each tool\'s own page if video is a must.'),
+        ('What is a Bluesky scheduling tool?', 'A Bluesky scheduling tool is an app that publishes your Bluesky posts at a time you pick. You connect your account once, write each post with any pictures, and the tool sends it for you, so you do not need to be online when it goes live. Most also post to X and Threads.'),
+        ('How do Bluesky scheduling tools publish posts?', 'Bluesky scheduling tools publish posts through Bluesky\'s API. You usually connect with your handle and an app password made in Bluesky\'s settings, so you never share your main password. Then you write the post in a web app, pick a time, and the tool sends it for you.'),
+        ('Why use a Bluesky scheduling tool for your brand?', 'A Bluesky scheduling tool keeps your brand posting on a steady rhythm, even in busy weeks. You write a week of posts at once, adapt them for X and Threads and answer replies from one place. That saves time every day and keeps your account active as the network grows.'),
+        ('What features should modern Bluesky scheduling tools include?', 'Modern Bluesky scheduling tools should include a calendar, text and picture posts, cross-posting to X, Threads and Mastodon, and analytics for each post. An inbox for replies and mentions matters once people engage. The newest tools add an AI agent that plans and writes the week across every network for you to review.'),
+        ('Which tool is recommended for teams that need more than Bluesky scheduling?', 'For teams that need more than Bluesky scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with one inbox and analytics on every plan and an AI agent on paid plans. Writers who mainly cross-post text may prefer Typefully, and developers who post from a terminal may prefer Postiz.'),
     ],
 }

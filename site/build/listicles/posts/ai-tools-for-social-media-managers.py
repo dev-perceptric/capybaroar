@@ -1,51 +1,115 @@
 POST = {
     'order': 29,
     'slug': 'ai-tools-for-social-media-managers',
-    'keyword': 'ai tools for social media managers',
-    'title': '8 Best AI Tools for Social Media Managers in 2027',
-    'desc': 'The 8 best AI tools for social media managers in 2027: one for planning and posting, plus the best AI for writing, design, video, clipping, analytics and ads. Checked in November 2026.',
-    'h1a': '8 AI tools',
-    'h1b': 'every social media manager should know.',
-    'lead': 'No single AI does the whole job yet. Here is the stack we would build: one tool to plan and post, and the best AI for each task around it, with prices checked on each tool\'s own site.',
+    'keyword': 'AI tool for social media managers',
+    'kwVariants': ['AI tools for social media managers'],
+    'title': '12 Best AI Tools for Social Media Managers in 2027',
+    'desc': 'Pick an AI tool for social media managers in 2027: the 12 best for planning, writing, design, video, ads and reports, and why Capybaroar leads.',
+    'heroAlt': 'A social media manager\'s week of AI drafts, clips and reports, for picking an AI tool for social media managers in 2027',
     'cover': {'type': 'agent', 'ai': 'chatgpt', 'networks': ['instagram', 'tiktok', 'linkedin']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Plans, writes, designs and schedules posts, and works from Claude and ChatGPT.'),
-        ('Best AI for writing', 'claude', 'Long drafts and research, and it connects to your tools through MCP.'),
-        ('Best for short video', 'opusclip', 'Turns one long video into Shorts, Reels and TikToks.'),
+    'leaders': ['chatgpt', 'canva'],
+    'intro': '''<p>A social media manager\'s week has many parts: ideas, captions, graphics, clips, posting, replies and the report at the end. Each part has its own app, and the hours slip away between them.</p>
+<p>An AI tool for social media managers takes the slow parts off your plate. One drafts the week, one makes the graphics, one cuts long videos into clips and one explains the numbers. Freelancers, in-house managers and agency teams use a few of them together.</p>
+<p>The payoff is a week that runs on review, not on busywork. Below are 12 tools, each with the job it does best and its real prices, checked in November 2026. 🧰</p>''',
+    'whatH2': 'What Is an AI Tool for Social Media Managers?',
+    'what': {
+        'def': 'An AI tool for social media managers is an app that uses an AI model to plan, write, design, post or report on social content for a brand.',
+        'body': '<p>Some are general assistants that answer your questions in a chat window. Others are built right into a scheduler, a design editor or an analytics dashboard, so the AI works on your real posts, clips and numbers. The newest ones connect through MCP, a standard that lets an assistant like Claude read and act inside another app, such as your scheduler.</p>',
+        'bullets': ['Drafts posts and captions', 'Makes graphics and clips', 'Explains results in words', 'Connects to other apps'],
+        'close': 'The result is a manager who spends the whole week deciding, not typing.',
+    },
+    'whyH2': 'Why Do You Need an AI Tool for Social Media Managers on Your Team?',
+    'why': {
+        'lead': '<p>Doing every task by hand works for one brand and a light posting plan. Add clients, formats and monthly reports, and the job outgrows the hours in a week.</p>\n<p>An AI tool for social media managers solves this.</p>',
+        'bullets': [
+            ('Drafts on demand', 'The AI writes first versions of posts, captions and replies, so you edit instead of starting cold.'),
+            ('Visuals without waiting', 'Graphics and short clips come out of the same day, not next week.'),
+            ('Reports in plain words', 'AI explains why the numbers moved, so the monthly report takes minutes.'),
+            ('One shared calendar', 'The best setup puts planning, posting and replies on one calendar that your AI apps can reach.'),
+        ],
+    },
+    'quizH3': 'AI Tools for Social Media Managers: Quick Match',
+    'quiz': [
+        {'q': 'Which task takes most of your week?', 'options': [
+            ('Planning and posting', ['capybaroar', 'hootsuite', 'buffer']),
+            ('Writing drafts', ['chatgpt', 'claude', 'capybaroar']),
+            ('Graphics and video', ['canva', 'capcut', 'opusclip']),
+            ('Reports and replies', ['sprout', 'agorapulse', 'iconosquare'])]},
+        {'q': 'How big is your team?', 'options': [
+            ('Just me', ['capybaroar', 'chatgpt', 'canva', 'buffer', 'capcut']),
+            ('A small team', ['capybaroar', 'iconosquare', 'claude', 'opusclip']),
+            ('A large brand team', ['hootsuite', 'sprout', 'agorapulse'])]},
+        {'q': 'Do you run paid ads?', 'options': [
+            ('Yes, for an online store', ['predis', 'canva']),
+            ('Sometimes', ['capybaroar', 'hootsuite', 'sprout']),
+            ('No, organic only', ['capybaroar', 'buffer', 'iconosquare'])]},
+        {'q': 'Should AI apps act inside your tools?', 'options': [
+            ('Yes, through MCP', ['capybaroar', 'claude', 'hootsuite', 'iconosquare']),
+            ('A chat window is enough', ['chatgpt', 'claude']),
+            ('No, built-in AI is fine', ['sprout', 'agorapulse', 'buffer', 'canva'])]},
     ],
-    'intro': '''<p>A social media manager's week has a lot of parts: ideas, captions, graphics, video, posting, replies and a report at the end. AI can help with every one of them, but the tools are spread out. The trick is a small stack where each tool does one job well and they connect to each other.</p>
-<p>So this list is built a little differently. The first pick is the tool where the work comes together and gets posted. The rest are the best AI for each task around it: writing, design, video editing, clipping, analytics and ads. You don't need all 8; pick the ones that cover your slowest tasks.</p>
-<p>We read each tool's own pages in November 2026. Some prices were on sale or didn't show when we checked, and we say so below.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar is where the stack comes together. Its AI agent plans the week, writes the posts for each network and fills your calendar with drafts for you to approve. It makes AI images and short videos with sound, writes captions for a batch of photos and suggests a reply for every comment in its inbox.</p>
-<p>It also works with the other AI tools on this list. Its MCP server and REST API come on every plan, Free included, so you can plan and schedule posts from Claude, ChatGPT or Cursor. Free covers 3 channels and 30 posts a month. Creator is $29 a month with 8 channels and 1,000 AI credits.</p>'''},
-        {'id': 'claude', 'shot': 'pricing', 'text': '''<p>Claude is a strong AI for long writing and research, like a content plan, a blog post to turn into social posts or a review of what worked last month. It can search the web, create files and run code, and Pro adds scheduled tasks.</p>
-<p>The key for social media is connectors. Claude connects to the apps you already use, including MCP apps, so it can act inside them; connected to Capybaroar's MCP server, it can draft and schedule posts for you. The free plan includes connectors. Pro is $17 a month billed yearly, or $20 monthly.</p>'''},
-        {'id': 'chatgpt', 'shot': 'pricing', 'text': '''<p>ChatGPT is the AI most people already know. The free plan includes unlimited text chats, with limited uploads, image creation and deep research, which covers brainstorming and first drafts of captions. Plus adds projects, scheduled tasks and custom GPTs.</p>
-<p>The pricing page we captured didn't show prices for Go, Plus and Pro, so check it yourself. ChatGPT writes posts but doesn't publish them, so you'll copy them into a scheduler or connect one.</p>'''},
-        {'id': 'canva', 'shot': 'pricing', 'text': '''<p>Canva is the go-to tool for graphics. It makes AI-powered social posts and videos, and Pro adds AI tools to resize a design for each network, translate it and remove backgrounds. Brand Kits keep your colors and fonts the same in every design.</p>
-<p>The free plan includes the editor, 1.6M+ templates and limited AI. Pro is US$18 a month for one person, was 50% off for the first 3 months when we checked, and adds social content scheduling.</p>'''},
-        {'id': 'capcut', 'shot': 'home', 'text': '''<p>CapCut is an AI photo and video editor made for short social videos. It can build a video from a chat, turn text or images into video, add AI voices and remove backgrounds in one click.</p>
-<p>The free plan includes templates and basic editing. Pro is US$19.99 a month with 1,200 AI credits, and Teams is US$12.49 per seat a month with a brand kit. CapCut makes videos, so you'll still need a scheduler to post them.</p>'''},
-        {'id': 'opusclip', 'shot': 'pricing', 'text': '''<p>OpusClip turns one long video, like a podcast or webinar, into short clips. Its AI picks the best moments, scores each one for virality and adds animated captions in 20+ languages. From Starter, it can auto post to YouTube Shorts, TikTok and Instagram Reels.</p>
-<p>The free plan gives you 60 credits a month. Starter is $15 a month, and Pro is $29 a month, or $14.50 billed yearly, with a scheduler and 2 seats.</p>'''},
-        {'id': 'iconosquare', 'shot': 'home', 'text': '''<p>Iconosquare is an analytics-first tool with an AI helper called Uma AI Analyst on every paid plan. It tracks 100+ metrics, builds custom dashboards and, on Launch, sends automated reports, so the monthly report almost writes itself.</p>
-<p>Starter is from $10 a month billed yearly. Launch, with automated reports and an inbox, is from $39. The free plan covers 2 profiles with 1 month of history.</p>'''},
-        {'id': 'predis', 'shot': 'home', 'text': '''<p>Predis.ai makes ads. Give it a product link, a prompt or an image, and it makes video ads, UGC-style ads and image ads in your brand's style, then shows the ads your competitors are running.</p>
-<p>Core is $32 a month for 1 brand without auto posting, and Rise is $79 a month with auto posting and 4 brands. Yearly plans were 50% off when we checked. Every plan starts with a 3-day trial that needs a card.</p>'''},
+        {'id': 'capybaroar', 'shot': 'agent', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant AI tools for social media managers and teams that want to run planning, posting and replies from one place. Instead of only writing a draft in a chat window, it plans and writes a week of posts and schedules them to 14 networks. Its MCP server lets Claude, ChatGPT or Cursor work with the calendar on every plan, Free included. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/ai-social-media-agent">AI agent</a> plans and writes the week',
+                  '<a href="/social-media-inbox">Suggested replies</a> in one inbox',
+                  '<a href="/mcp">MCP server</a> for Claude, ChatGPT and Cursor',
+                  '<a href="/social-media-scheduler">One calendar for 14 networks</a>',
+                  '<a href="/client-reports">Reports by link, PDF or email</a> on Pro'],
+         'cons': ['Not a full design or video editor']},
+        {'id': 'chatgpt', 'shot': 'pricing', 'best': 'Drafts and ideas by chat',
+         'overview': '<p>ChatGPT is one of the most widely used AI tools for social media managers who brainstorm and draft by chat. The free plan includes unlimited text chats, with limited uploads, image creation and deep research. Plus adds projects, scheduled tasks and custom GPTs, which help with repeat formats like a weekly set of captions. This makes it a common choice for managers who want quick first drafts and fresh ideas.</p>',
+         'pros': ['Unlimited text chats on Free', 'Image creation in the same chat', 'Deep research for topic ideas', 'Custom GPTs and scheduled tasks on Plus', 'Free plan to start'],
+         'cons': ['Higher limits may need a paid plan', 'Go plan may include ads', 'Context limits can vary by plan']},
+        {'id': 'canva', 'shot': 'pricing', 'best': 'AI graphics on brand',
+         'overview': '<p>Canva is one of the most established AI tools for social media managers who make their own graphics. It makes AI-powered social posts, videos and presentations, and Magic Write helps with the text. Brand Kits keep every design on brand, from a quick story to a full campaign. Pro adds AI resize, translate and background removal, plus social content scheduling, which makes it attractive for managers who design every day.</p>',
+         'pros': ['AI social posts and videos', 'Magic Resize for each network', 'Brand Kits keep designs on brand', 'Social content scheduling on Pro', 'Free plan with 1.6M+ templates'],
+         'cons': ['Pro may be needed for scheduling', 'Free AI use can be limited', 'Shared AI allowance may run low']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Wisdom AI and monitoring',
+         'overview': '<p>Hootsuite is a widely used AI tool for social media managers who run busy brand accounts. Its Wisdom AI, on every plan, drafts posts, recommends next steps and analyzes results, and it can write posts from trending topics. MCP connectors bring Hootsuite into ChatGPT, Claude, Copilot and Gemini. Brand and competitor monitoring round it out for managers who also watch the market.</p>',
+         'pros': ['Wisdom AI drafts, recommends and analyzes', 'Posts from trending topics', 'MCP connectors for AI apps', 'Competitor tracking built in', 'Good fit for brand teams'],
+         'cons': ['Approvals may need the Advanced plan', 'Per-user pricing can grow with the team', 'Interface can feel complex for new users']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'AI answers from social data',
+         'overview': '<p>Sprout Social is a large AI tool for social media managers on marketing, care and agency teams. Its Trellis agent, on every plan, answers simple questions by querying billions of data points and returns executive-ready insights. AI Assist also enhances posts and replies before they go out. Sprout focuses heavily on reporting, making it suitable for managers who brief leaders on social results.</p>',
+         'pros': ['Trellis AI agent on every plan', 'Executive-ready answers from data', 'AI Assist for posts and replies', 'Mobile app on every plan', 'Good fit for large teams'],
+         'cons': ['Seat pricing can climb with each hire', 'Consolidated inbox may need Standard', 'Some analytics may cost extra']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'AI for replies and ROI',
+         'overview': '<p>Agorapulse is an AI tool for social media managers designed specifically for business teams that must prove results. Its AI suggests DM replies, tags the sentiment of comments, translates messages and explains reports in plain language. Archie turns a webinar or article into posts for each network. Every AI feature runs within team permissions, so the manager stays in control of what goes out.</p>',
+         'pros': ['AI reply suggestions and sentiment', 'Reports explained in plain language', 'Archie repurposes content into posts', 'One inbox on every plan', 'Free plan after the trial'],
+         'cons': ['X publishing may cost extra', 'Per-user pricing can grow with teams', 'Free plan limits may not be clear']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Simple AI for small brands',
+         'overview': '<p>Buffer is a simple AI tool for social media managers who handle a few channels for a small brand. Its AI Assistant brainstorms, rewrites and crafts posts for each platform with unlimited credits, and AI takeaways explain what is working in plain language. Managers can also ask Claude for their top posts, and the answer uses real numbers from Buffer. The free plan covers 3 channels, so the AI can be tested before paying.</p>',
+         'pros': ['AI Assistant with unlimited credits', 'AI takeaways on results', 'Top posts on request from Claude', 'Pay per channel', 'Free plan for 3 channels'],
+         'cons': ['Price can rise with each new channel', 'Approvals may need the Team plan', 'Analytics may feel light for big reports']},
+        {'id': 'claude', 'shot': 'pricing', 'best': 'Long drafts and MCP',
+         'overview': '<p>Claude is an AI tool for social media managers who write long drafts and want AI to act inside their apps. It can mine data, pull information together and make a first draft, and it connects to other apps through connectors and MCP. Linked to a scheduler with an MCP server, it can draft and schedule posts from a chat. Pro adds scheduled tasks for jobs that repeat each week.</p>',
+         'pros': ['Long drafts and research', 'Connects to apps through MCP', 'Works with files and Artifacts', 'Scheduled tasks on Pro', 'Free plan with connectors'],
+         'cons': ['Heavy use may need a Max plan', 'No posting to social networks on its own', 'Usage limits can reset weekly']},
+        {'id': 'iconosquare', 'shot': 'home', 'best': 'AI analyst for reports',
+         'overview': '<p>Iconosquare is an analytics-first AI tool for social media managers who own the monthly report. Uma, its AI analyst, answers why the numbers changed, and every paid plan includes AI Analyst credits. It tracks 100+ real-time metrics, and an MCP integration connects its data to the AI assistants teams already use. It is a relevant option for managers who mainly need AI help with reporting.</p>',
+         'pros': ['Uma AI Analyst on paid plans', '100+ real-time metrics', 'AI caption-writing assistant', 'MCP integration for AI assistants', 'Free plan for 2 profiles'],
+         'cons': ['Uma credits may need top-ups', 'Inbox may start only on Launch', 'Free plan may keep one month of data']},
+        {'id': 'predis', 'shot': 'home', 'best': 'AI ads for stores',
+         'overview': '<p>Predis.ai is a dedicated AI tool for social media managers who run ads for online stores. It makes video ads, UGC ads, image ads and carousels from a product link, a prompt or an image. Brand kits keep every ad on brand, workspaces keep clients apart, and approvals keep the work moving. Rise adds auto posting and API access, which makes it useful for managers who launch many ad tests.</p>',
+         'pros': ['Ads from a product link', 'Video, UGC and image ads', 'Brand kits and client workspaces', 'Competitor ad tracking', 'Good fit for ecommerce managers'],
+         'cons': ['Trial may need a card to start', 'Auto posting may need the Rise plan', 'Credit use can vary by model']},
+        {'id': 'opusclip', 'shot': 'pricing', 'best': 'Long videos into clips',
+         'overview': '<p>OpusClip is an AI tool for social media managers who turn long videos into short clips. Its AI finds the best moments, gives each one a Virality Score and adds animated captions in 20+ languages. Clips can auto post to YouTube Shorts, TikTok and Instagram Reels from Starter, and Pro adds a scheduler and a 2-seat team workspace. Many teams use it as a specialized tool to clip podcasts and webinars before they schedule them elsewhere.</p>',
+         'pros': ['AI finds the top moments', 'Virality Score for each clip', 'Captions in 20+ languages', 'Auto posts to Shorts, TikTok and Reels', 'Free plan with 60 credits'],
+         'cons': ['Monthly credits may limit long videos', 'Full scheduler may start on Pro', 'Free clips may carry a watermark']},
+        {'id': 'capcut', 'shot': 'home', 'best': 'AI video editing',
+         'overview': '<p>CapCut is an AI tool for social media managers who edit short videos for Reels, TikTok and Shorts. It brings AI video and image generation, text to speech and background removal into one editor. Pro includes 1,200 AI credits a month, and Teams adds a brand kit at US$12.49 per seat a month. Because the tool focuses on editing, it is often used for making videos rather than posting them.</p>',
+         'pros': ['AI video and image generation', 'Text to speech voices', 'Background removal', 'Teams plan with a brand kit', 'Free plan for basic edits'],
+         'cons': ['AI use may run out of credits', 'No scheduling across your channels', 'Shown prices may be for reference']},
     ],
-    'how': '''<p>We picked one tool for each part of a social media manager's week, then judged it on how well it does that one job.</p>
-<ul><li><b>The job:</b> planning and posting, writing, design, video, clipping, analytics or ads.</li>
-<li><b>How it connects:</b> whether it posts on its own, works with a scheduler or connects through MCP.</li>
-<li><b>Price:</b> free plans and the first paid plan, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and only list what it really does.</p>''',
-    'verdict': '''<p>Start with the place your posts go live. Capybaroar plans, writes and schedules in one place, and its MCP server lets Claude or ChatGPT work with your calendar directly. Then add the AI that covers your slowest task: Canva for graphics, CapCut or OpusClip for video, Iconosquare for reports and Predis.ai for ads.</p>
-<p>Most of these tools have a free plan. Build your stack one tool at a time, and keep a person checking every post before it goes out.</p>''',
+    'conclusion': '''<p>An AI tool for social media managers takes the slow parts of the week off the desk. It speeds up drafts, graphics, clips and reports, so the manager can focus on what to say.</p>
+<p>But the best tool today does more than one task in a chat. It should plan the week, publish to every network, help answer comments and let your other AI apps work with the same calendar.</p>
+<p>That is why <a href="https://capybaroar.com/ai-social-media-agent">Capybaroar</a> stands out. It joins an AI agent, one inbox and MCP on every plan with every social channel in one calendar. For managers who want the whole week in one place, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best AI tool for social media managers?', 'For most social media managers, Capybaroar, because it plans, writes, designs and schedules in one place. Pair it with Claude or ChatGPT for writing and Canva for graphics.'),
-        ('Can Claude or ChatGPT post to social media?', 'Not on their own. Claude connects to other apps through connectors and MCP, so with Capybaroar\'s MCP server it can draft and schedule posts. Capybaroar says its MCP server works with Claude, ChatGPT and Cursor.'),
-        ('Which AI tools are free for social media?', 'ChatGPT, Claude, Canva, CapCut and OpusClip all have free plans, and Capybaroar\'s free plan covers scheduling. Iconosquare has a free plan for 2 profiles.'),
-        ('Will AI replace social media managers?', 'AI takes over the slow parts, like first drafts, resizing and clipping. People still decide what to say, check every post and build relationships with the audience.'),
-        ('What is MCP?', 'MCP, the Model Context Protocol, lets an AI assistant use other apps. With an MCP server, an assistant like Claude can read your calendar and schedule posts for you.'),
+        ('What is an AI tool for social media managers?', 'An AI tool for social media managers is an app that uses AI to plan, write, design, post or report on social content. Some are chat assistants like ChatGPT, and others are built into a scheduler, design editor or analytics tool, so the AI works on your real posts and numbers.'),
+        ('How do AI tools for social media managers save time?', 'AI tools for social media managers save time by drafting the first version of each task. They write posts and replies, resize graphics, cut long videos into clips and explain reports in plain words. Many run in a web app, and some connect through MCP so an assistant can act inside your scheduler.'),
+        ('Why use an AI tool for social media managers on your team?', 'An AI tool for social media managers lets one person cover more brands, formats and reports without long nights. It removes the blank page, speeds up visuals and turns numbers into plain answers. The team then spends its time on ideas, review and talking with the audience.'),
+        ('What features should modern AI tools for social media managers include?', 'Modern AI tools for social media managers should include AI drafts for each network, AI graphics or clips, plain-language reports and a review step before anything goes live. MCP or API access lets your assistants join in. The newest tools add an agent that plans and writes the week on one shared calendar.'),
+        ('Which tool is recommended for teams that need more than an AI chat?', 'For teams that need more than an AI chat, we recommend Capybaroar. Its AI agent plans and writes the week, its inbox suggests replies, and it puts every social channel in one calendar that Claude or ChatGPT can reach. Managers who mostly design may prefer Canva, and video-heavy teams may prefer OpusClip.'),
     ],
 }

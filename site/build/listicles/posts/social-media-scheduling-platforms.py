@@ -2,55 +2,116 @@ POST = {
     'order': 13,
     'slug': 'social-media-scheduling-platforms',
     'keyword': 'social media scheduling platform',
-    'title': '10 Social Media Scheduling Platforms for Teams and Brands',
-    'desc': 'Compare 10 social media scheduling platforms for teams: approvals, roles, many brands and client review, with prices checked in November 2026.',
-    'h1a': '10 scheduling platforms',
-    'h1b': 'for teams and brands.',
-    'lead': 'Once more than one person touches your posts, you need more than a calendar. Here are 10 platforms compared on approvals, roles, brands and client review, with what a team really pays.',
+    'title': '12 Best Social Media Scheduling Platforms in 2027',
+    'desc': 'Compare the 12 best social media scheduling platforms in 2027 for teams, with approvals, roles and real prices. See why Capybaroar leads for shared work.',
+    'heroAlt': 'A shared approval board for the best social media scheduling platforms in 2027',
     'cover': {'type': 'inbox', 'networks': ['instagram', 'facebook', 'linkedin', 'tiktok']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Approvals, 5 members and 5 brands on Pro for $49 a month, and clients who only approve are free.'),
-        ('Best for review and feedback', 'planable', 'Unlimited users on every plan, with feedback and approvals on each post.'),
-        ('Best for agencies', 'sendible', 'Unlimited users and separate client workspaces, with approvals from Plus.'),
+    'leaders': ['hootsuite', 'sprout'],
+    'intro': '''<p>Once more than one person touches your posts, a plain calendar stops being enough. Someone writes, someone checks, and a client may need to sign off. Doing that over email and chat means lost drafts and posts that go out before anyone approves them.</p>
+<p>A social media scheduling platform gives the whole team one place to work. Writers draft, reviewers approve, and each brand or client keeps its own space. Agencies, marketing teams and multi-brand companies all use one to keep work moving.</p>
+<p>The result is fewer mistakes and a bill that fits your team size. Below are 12 platforms with real prices and G2 ratings, checked in November 2026. 🤝</p>''',
+    'whatH2': 'What Is a Social Media Scheduling Platform?',
+    'what': {
+        'def': 'A social media scheduling platform is a shared workspace that lets a team plan, approve and publish posts to social networks through each network\'s official API.',
+        'body': '<p>Each teammate gets a login and a role, such as writer, reviewer or admin. Posts move from draft to review to scheduled, and the platform publishes them at the set time. Most platforms run as a web app, and many split brands or clients into separate workspaces so nothing gets mixed up. Clients can often review posts from a link instead of a full seat.</p>',
+        'bullets': ['Roles for each teammate', 'Approval steps before publishing', 'Separate spaces per brand', 'One calendar for every network'],
+        'close': 'The result is a team that ships posts on time without stepping on each other.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Scheduling Platform for Your Team?',
+    'why': {
+        'lead': '<p>A shared spreadsheet and a group chat can run one brand. Once you add clients, reviewers and more networks, posts get lost between drafts and approvals.</p>\n<p>A social media scheduling platform solves this.</p>',
+        'bullets': [
+            ('Clear roles', 'Each person sees what they need, and only the right people can publish.'),
+            ('Safer approvals', 'Posts wait for a reviewer or client to sign off, which catches mistakes before they go live.'),
+            ('Brands kept apart', 'Each brand or client gets its own channels, calendar and reports, so nothing lands on the wrong account.'),
+            ('Fair team pricing', 'Some platforms charge per seat, while others let clients review for free and an AI agent draft the week for the team.'),
+        ],
+    },
+    'quizH3': 'Social Media Scheduling Platforms: Quick Match',
+    'quiz': [
+        {'q': 'How big is your team?', 'options': [
+            ('Two or three people', ['capybaroar', 'buffer', 'loomly', 'metricool']),
+            ('A marketing team', ['capybaroar', 'sprout', 'hootsuite', 'planable']),
+            ('An agency with clients', ['capybaroar', 'sendible', 'socialpilot', 'contentstudio', 'vistasocial']),
+            ('A large brand with a busy inbox', ['hootsuite', 'sprout', 'agorapulse'])]},
+        {'q': 'How should the price grow?', 'options': [
+            ('One flat price for the team', ['capybaroar', 'sendible', 'socialpilot', 'vistasocial']),
+            ('Per channel', ['buffer']),
+            ('Per brand or workspace', ['metricool', 'planable', 'capybaroar']),
+            ('Per user is fine', ['hootsuite', 'sprout', 'agorapulse'])]},
+        {'q': 'What does review look like?', 'options': [
+            ('One quick sign-off', ['capybaroar', 'loomly', 'buffer']),
+            ('Comments on each post', ['planable', 'capybaroar']),
+            ('Clients approve without a seat', ['capybaroar', 'agorapulse', 'socialpilot', 'contentstudio']),
+            ('Multi-step approvals', ['planable', 'agorapulse', 'hootsuite'])]},
+        {'q': 'What else do you need?', 'options': [
+            ('AI that drafts the week', ['capybaroar', 'vistasocial', 'contentstudio']),
+            ('A shared inbox', ['capybaroar', 'hootsuite', 'sprout', 'agorapulse', 'loomly']),
+            ('Reports for each brand', ['metricool', 'sendible', 'capybaroar', 'sprout']),
+            ('Nothing, just scheduling', ['buffer', 'planable'])]},
     ],
-    'intro': '''<p>A team platform has to answer 4 questions. Who can write a post? Who has to approve it before it goes out? How do you keep each brand or client apart? And can a client review posts without a full seat?</p>
-<p>The price model matters just as much. Some platforms charge per user, so every new teammate adds to the bill. Others charge per workspace, per channel or per plan. For a team of 5, that gap can be hundreds of dollars a month.</p>
-<p>We read each platform's own pricing page in November 2026 and noted where approvals, roles and client tools sit. Where a page didn't mention approvals, we say so.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'approvals', 'text': '''<p>Capybaroar keeps the whole team on one price. Pro is $49 a month for 5 members, 5 brands and 30 channels, with approvals and reports. Agency is $149 a month for 15 members, unlimited brands and 100 channels, plus white label reports with your logo and color. Clients who only approve posts don't count as members, so you can invite every client to review.</p>
-<p>The AI agent writes posts from one message and saves them as drafts for a teammate to review. On Agency, you can set a credit limit per client brand to keep AI use fair across accounts. Reports go out by link, PDF or email.</p>'''},
-        {'id': 'planable', 'shot': 'home', 'text': '''<p>Planable was built around review. Every plan has unlimited users, and teammates leave feedback and approve right on each post. Basic includes 2 types of approval, Pro has 3, and Enterprise adds multi-level approvals.</p>
-<p>It charges per workspace, with a post cap. Basic is $33 per workspace a month for 60 posts and 4 social pages, and Pro is $49 for 150 posts and 10 pages. A team running 3 brands on Basic pays $99 a month. The inbox and analytics are add-ons below Enterprise, at $7.5 and $12 per workspace a month.</p>'''},
-        {'id': 'loomly', 'shot': 'home', 'text': '''<p>Loomly puts approval workflows and roles on its lowest plan. Starter is $49 a month, billed yearly, for 12 social accounts, 3 users and unlimited calendars, so each brand can get its own calendar.</p>
-<p>For bigger teams, Beyond is $249 a month billed yearly for 60 social accounts and unlimited users, with custom roles and workflows. Loomly also has an inbox where you can assign conversations to a teammate, and AI helps write posts, captions and replies. Yearly plans can't be ended early, so start with the 7-day free trial.</p>'''},
-        {'id': 'sprout', 'shot': 'home', 'text': '''<p>Sprout Social is the big name for large social teams. Its Trellis AI agent comes on all plans, the consolidated inbox starts on Standard, and Advanced adds team and customer care reports. Its pricing page doesn't list approvals by plan, so ask Sprout before you rely on them.</p>
-<p>The cost is per seat. Essentials is $79 per seat a month billed yearly, Standard is $199 and Professional is $299. A team of 5 on Standard pays about $995 a month. Unlimited profiles start on Professional. Sprout gives a 30-day free trial with no card.</p>'''},
-        {'id': 'agorapulse', 'shot': 'home', 'text': '''<p>Agorapulse has simple approval workflows and bulk approve for posts. Its site says that on some plans, clients can approve posts without needing their own seat. The Custom plan adds custom roles, SSO and multi-step approvals.</p>
-<p>Every plan has one inbox for messages and comments, plus branded report export. Pricing is per user, at US $79, $119 and $149 per user a month, and each self-serve plan includes 10 social profiles. A team of 4 on Professional pays about $476 a month. There is a 30-day free trial with no card.</p>'''},
-        {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite keeps approvals for Advanced, its top self-serve plan. Advanced lets you review and approve content with your team and assign messages to the right person. It also measures team performance.</p>
-<p>Advanced is $399 per user a month, billed yearly, so a team of 3 that needs approvals pays about $1,197 a month. Standard at $99 per user covers up to 10 social accounts and one inbox, and you can buy as many seats as you need. Hootsuite also has MCP connectors for ChatGPT, Claude, Copilot and Gemini, and a 14-day free trial.</p>'''},
-        {'id': 'sendible', 'shot': 'home', 'text': '''<p>Sendible has unlimited users on every plan, and it splits client brands into workspaces with their own permissions. Assignment and approvals start on Plus at $99 a month, which includes 3 workspaces and 18 social profiles.</p>
-<p>Custom branded reports start on Premium at $199 a month for 7 workspaces, and a white label add-on comes with Elite and Enterprise. Core at $35 a month has 1 workspace and no approvals, so most teams start on Plus. AI Assist comes with unlimited AI credits on all plans. One gap: Sendible can't answer Instagram direct messages.</p>'''},
-        {'id': 'vistasocial', 'shot': 'home', 'text': '''<p>Vista Social is built for teams and agencies running many brands. Advanced at $160 a month adds advanced planning and workflows for 3 users and 30 profiles. Scale at $360 a month adds white label setup and client profile connect, for 4 users and 70 profiles.</p>
-<p>The pricing page lists collaboration features but doesn't name approvals by plan, so check with Vista Social if review steps matter to you. Users are the tight limit: Professional at $80 a month includes only 2. X costs $29 a month extra. You can try any plan free for 14 days with no card.</p>'''},
-        {'id': 'socialpilot', 'shot': 'home', 'text': '''<p>SocialPilot splits approvals into two steps. Standard, at $42.50 a month billed yearly, adds manager approval for 3 users and 15 accounts. Premium, at $85 a month billed yearly, adds client approval, white label reports and unlimited client seats for 6 users and 25 accounts.</p>
-<p>That makes Premium a low cost way to give clients a review seat. Ultimate at $170 a month, billed yearly, has unlimited users. The lowest plan has no inbox, analytics or approvals, so teams should skip it. Extra accounts cost $4 a month, and there's a 14-day free trial with no card.</p>'''},
-        {'id': 'buffer', 'shot': 'home', 'text': '''<p>Buffer keeps team tools on one plan. Team costs $10 a month per channel, billed yearly, with unlimited team members, approval workflows and branded reports. You can set who can draft and who can approve posts.</p>
-<p>On Team, the bill depends on channels alone. A team running 10 channels pays $100 a month on Team, however many people log in. Essentials at $5 per channel has 1 user and no approvals, so a team needs Team from day one. The community inbox for comments comes on all plans, and you can try Team free for 14 days.</p>'''},
+        {'id': 'capybaroar', 'shot': 'approvals', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media scheduling platforms for teams that want to plan, review and publish for many brands in one place. Instead of only putting posts on a shared calendar, it adds approvals on Pro and Agency, and clients who only approve never take a paid seat. Pro covers 5 members and 5 brands for $49 a month. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-scheduler">One calendar for 14 networks</a>',
+                  '<a href="/post-approval">Approvals</a> where client reviewers take no seat',
+                  '<a href="/ai-social-media-agent">AI agent</a> drafts the week for team review',
+                  '<a href="/brands-and-teams">Unlimited client brands</a> on the Agency plan',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan'],
+         'cons': ['Not a per-seat enterprise suite']},
+        {'id': 'hootsuite', 'shot': 'pricing', 'best': 'Approvals plus message routing',
+         'overview': '<p>Hootsuite is one of the most popular social media scheduling platforms for brand teams that manage many accounts and messages. Every plan includes one inbox and brand and competitor monitoring, and teams can buy as many user seats as they need. Team review and approval sit on the Advanced plan, along with routing each message to the right teammate. This makes it a common choice for large social teams with a busy inbox.</p>',
+         'pros': ['Unlimited scheduled posts on every plan', 'One inbox for messages and comments', 'Brand and competitor monitoring', 'Approvals and message routing on Advanced', 'Good fit for large brand teams'],
+         'cons': ['Per-user pricing can add up for teams', 'Interface can feel complex for new users', 'Trial accounts can have daily posting limits']},
+        {'id': 'sprout', 'shot': 'home', 'best': 'Team and care reports',
+         'overview': '<p>Sprout Social is one of the most established social media scheduling platforms for large marketing and customer care teams. It charges per seat, and every seat gets the Trellis AI agent, which drafts replies and post variations. Standard adds the consolidated inbox, and Advanced adds team and customer care reports. A key strength is its mobile app on every plan, so teammates can review and reply away from a desk.</p>',
+         'pros': ['Trellis AI agent on every plan', 'Consolidated inbox from Standard', 'Team and care reports on Advanced', 'Mobile app on every plan', 'Good fit for large care teams'],
+         'cons': ['Per-seat pricing can climb with each hire', 'Approval details may be unclear by plan', 'Premium Analytics can cost extra']},
+        {'id': 'agorapulse', 'shot': 'home', 'best': 'Free client approvals',
+         'overview': '<p>Agorapulse is a strong social media scheduling platform for business teams that answer messages together. It offers simple approval workflows and bulk approve, and on some plans clients can approve posts without their own seat. The Custom plan adds custom roles, SSO and multi-step approvals. It is a relevant option for teams that mainly need approvals and one shared inbox in the same tool.</p>',
+         'pros': ['One inbox on every plan', 'Simple approvals and bulk approve', 'Client approvals without a seat on some plans', 'Custom roles and SSO on Custom', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can grow with each teammate', 'Multi-step approvals may need the Custom plan', 'Publishing to X may cost extra']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a dedicated social media scheduling platform for agencies that add people and clients often. Every plan includes unlimited users, and each client brand gets its own workspace with its own permissions. Assignment and approvals start on Plus, which covers 3 workspaces and 18 social profiles. It is especially useful for agencies, franchise teams and consultants who run separate client accounts.</p>',
+         'pros': ['Unlimited users on every plan', 'One workspace per client brand', 'Approvals and assignment from Plus', 'Unlimited AI credits on every plan', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a higher plan', 'No MCP server listed for AI tools', 'Instagram direct messages may not be supported']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'Many profiles per plan',
+         'overview': '<p>Vista Social is a social media scheduling platform designed specifically for teams and agencies that run many brands. Advanced adds planning and workflow tools for 3 users and 30 profiles, and Scale adds white label setup and client profile connect. Ask Vista AI agents handle recurring social work on every plan. The platform suits teams that need room for many profiles more than many seats.</p>',
+         'pros': ['15 social profiles on the first plan', 'Workflow tools on Advanced', 'White label and client connect on Scale', 'Ask Vista AI agents on every plan', 'Good fit for multi-brand teams'],
+         'cons': ['X publishing can cost extra each month', 'White label may need the top self-serve plan', 'Lower plans may feel tight on user seats']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Low-cost client approval',
+         'overview': '<p>SocialPilot is a practical social media scheduling platform for agencies that want client review on a small budget. Standard adds manager approval for 3 users and 15 accounts. Premium adds client approval, white label reports and unlimited client seats for 6 users, and Ultimate opens up unlimited users. This setup helps agencies get client sign-off before posts go live without paying for many seats.</p>',
+         'pros': ['Manager approval on Standard', 'Client approval on Premium', 'Unlimited client seats on Premium', 'White label reports on Premium', 'Good fit for agencies on a budget'],
+         'cons': ['Extra accounts can raise the monthly bill', 'Lowest plan may lack inbox and approvals', 'Shown prices may assume yearly billing']},
+        {'id': 'loomly', 'shot': 'home', 'best': 'Approvals on every plan',
+         'overview': '<p>Loomly is a social media scheduling platform for marketing teams that need approvals from day one. Approval workflows and roles come on Starter, with 3 users, 12 social accounts and unlimited calendars, so each brand can get its own calendar. Beyond adds unlimited users and custom workflows. Teammates can also assign inbox conversations to each other, which makes it attractive for small teams with set review steps.</p>',
+         'pros': ['Approval workflows on the lowest plan', 'Unlimited calendars for each brand', 'Custom roles and workflows on Beyond', 'Assign conversations to teammates', 'Good fit for teams with set review steps'],
+         'cons': ['Yearly plans may not end early', 'MCP or API access may be missing', 'Listening searches can be limited each month']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'No-login client review',
+         'overview': '<p>ContentStudio is a social media scheduling platform and content tool for agencies that review posts with clients. Its approval workflow starts on Advanced, and clients can review posts without logging in. Agency Unlimited adds unlimited workspaces and users, plus client management and EasyConnect. In addition to scheduling, ContentStudio also provides AI Studio for text, images and video in a brand voice.</p>',
+         'pros': ['No-login client review from Advanced', 'Unlimited workspaces on Agency Unlimited', 'MCP integration on every plan', 'AI Studio for text, images and video', 'Good fit for content-heavy agencies'],
+         'cons': ['Agency tools may need a top plan', 'Inbox and approvals may need Advanced', 'Trial can feel short, with no free plan']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Priced per brand',
+         'overview': '<p>Metricool is a social media scheduling platform priced per brand for freelancers and small teams who manage several clients. Advanced covers 15 brands and adds team roles and a post approval system. Paid plans keep the full analytics history and export PDF and PPT reports for each brand. Metricool focuses heavily on analytics, which helps small teams show each client what worked.</p>',
+         'pros': ['Priced per brand, not per user', 'Team roles and approvals on Advanced', 'PDF and PPT report exports', 'MCP connection for AI assistants', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra as an add-on', 'Approvals may need the Advanced plan', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Unlimited members per channel',
+         'overview': '<p>Buffer is a widely used social media scheduling platform that helps small teams post to a few channels. Its Team plan adds unlimited team members, approval workflows and branded reports, so the bill depends on channels, not people. Each member can be set to draft only or to approve. The community inbox comes on every plan, making it suitable for teams that want simple team tools.</p>',
+         'pros': ['Unlimited team members on Team', 'Approval workflows on Team', 'Pay only for the channels you use', 'Community inbox on every plan', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel added', 'Approvals may need the Team plan', 'Analytics can feel light next to suites']},
+        {'id': 'planable', 'shot': 'home', 'best': 'Feedback on each post',
+         'overview': '<p>Planable is a social media scheduling platform built for review, where teammates comment and approve right on each post. Every plan has unlimited users and is priced per workspace with a monthly post cap. Basic includes 2 approval types, Pro has 3, and Enterprise adds multi-level approvals. Many teams use it as a specialized tool to run feedback rounds before posts go live.</p>',
+         'pros': ['Comments and approvals on each post', 'Unlimited users on every plan', 'Multi-level approvals on Enterprise', 'MCP connector on every plan', 'Free plan for the first 50 posts'],
+         'cons': ['Post caps can bite on lower plans', 'Inbox and analytics can cost extra', 'Basic may feel tight on social pages']},
     ],
-    'how': '''<p>We judged each platform on how a team really works, from first draft to published post.</p>
-<ul><li><b>Approvals:</b> which plan adds them, and whether clients can review without a paid seat. Where a pricing page didn't mention approvals, we said so.</li>
-<li><b>Roles and brands:</b> how each platform keeps people, brands and clients apart.</li>
-<li><b>Team price:</b> what a real team pays, worked out from each platform's own prices in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged its team tools by the same rules and list its limits too.</p>''',
-    'verdict': '''<p>If your bill grows every time you add a person, move to a platform that doesn't price per user. Capybaroar Pro covers 5 members and 5 brands for $49 a month, and Planable, Sendible and Buffer Team all have unlimited users. Planable is the pick if review and feedback are the heart of your work. Sendible suits agencies that want each client in a separate workspace.</p>
-<p>Sprout Social, Agorapulse and Hootsuite are strong for large teams, but a team of 5 pays from about $395 to $1,995 a month on them, by plan. Run one real approval round in a trial before you choose.</p>''',
+    'conclusion': '''<p>A social media scheduling platform gives a team one place to write, review and publish. It keeps roles clear, catches mistakes before they go live and keeps each brand apart.</p>
+<p>But the best platform today does more than add seats to a calendar. It should let clients approve for free, keep the price flat as the team grows and help draft the posts that need review.</p>
+<p>That is why <a href="https://capybaroar.com/post-approval">Capybaroar</a> stands out. It combines approvals, separate brands and an AI agent with every social channel in one calendar. For teams that want to plan, review and publish together, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media scheduling platform for teams?', 'For most teams, Capybaroar. Pro is $49 a month for 5 members, 5 brands and 30 channels, with approvals and reports. Planable is a strong choice if review and feedback come first.'),
-        ('Which platforms let clients approve posts for free?', 'In Capybaroar, clients who only approve posts don\'t count as members. Agorapulse says clients can approve without a seat on some plans, and SocialPilot Premium includes unlimited client seats.'),
-        ('Which scheduling platforms have unlimited users?', 'Planable and Sendible have unlimited users on every plan. Buffer\'s Team plan, Loomly Beyond and SocialPilot Ultimate do too.'),
-        ('How do I manage many brands in one platform?', 'Pick a platform that splits brands into their own space. Capybaroar Agency has unlimited brands, Sendible uses workspaces, and Loomly includes unlimited calendars.'),
-        ('Why are team plans so expensive?', 'Many platforms price per user. Hootsuite Advanced is $399 per user a month and Sprout Social Standard is $199 per seat, so the bill grows with each person you add.'),
-        ('Do I need approvals on a small team?', 'If more than one person writes posts or a client must sign off, yes. Approvals catch mistakes before they go live, and they are on the lowest plan in Loomly and on Pro in Capybaroar.'),
+        ('What is a social media scheduling platform?', 'A social media scheduling platform is a shared tool where a team plans, approves and publishes posts to social networks. Each teammate gets a role, posts move from draft to review, and the platform sends approved posts through each network\'s official API at the time you pick.'),
+        ('How do social media scheduling platforms handle team approvals?', 'Social media scheduling platforms handle team approvals with a review step between draft and publish. A writer submits a post, a teammate or client approves it or asks for changes, and only then does it go on the calendar. Some platforms let clients review from a link, and others need a paid seat for every reviewer.'),
+        ('Why use a social media scheduling platform for a team?', 'A social media scheduling platform keeps a team on one plan instead of scattered drafts. Roles stop the wrong person from publishing, approvals catch mistakes, and each brand stays in its own space. The team saves hours of back and forth every week, and clients see posts before they go live.'),
+        ('What features should modern social media scheduling platforms include?', 'Modern social media scheduling platforms should include roles, approval steps, separate spaces for each brand and one calendar for every network. Pricing matters too, since per-seat plans grow with each hire. The newest platforms add an AI agent that drafts the week as posts for the team to review.'),
+        ('Which tool is recommended for teams that need more than scheduling?', 'For teams that need more than scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with approvals on Pro, free seats for client reviewers and an AI agent that drafts posts for review. Teams built around detailed feedback on each post may prefer Planable, and agencies that want unlimited users may prefer Sendible.'),
     ],
 }

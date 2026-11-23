@@ -1,51 +1,117 @@
 POST = {
     'order': 5,
     'slug': 'linkedin-post-schedulers',
-    'keyword': 'linkedin post scheduler',
-    'title': '7 Best LinkedIn Post Schedulers for Founders and Teams',
-    'desc': '7 LinkedIn post schedulers for founders and teams, with the LinkedIn features and prices each tool lists on its own site, checked in November 2026.',
-    'h1a': '7 best LinkedIn post schedulers',
-    'h1b': 'for founders and teams.',
-    'lead': 'A founder posting from a personal profile needs something different from a team running a company page. Here are 7 schedulers that post to LinkedIn, with the LinkedIn features each one lists.',
+    'keyword': 'LinkedIn post scheduler',
+    'title': '12 Best LinkedIn Post Schedulers in 2027',
+    'desc': 'Compare the 12 best LinkedIn post schedulers in 2027 for founders, company pages and teams, with pros, cons and prices. See why Capybaroar leads.',
+    'heroAlt': 'A calendar of LinkedIn posts for a profile and a company page, for the best LinkedIn post schedulers in 2027',
     'cover': {'type': 'list', 'network': 'linkedin', 'bg': 'paper', 'tools': ['taplio.com', 'buffer.com', 'typefully.com', 'metricool.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Profiles and company pages, a first comment and an AI agent that drafts the week, from $29 a month.'),
-        ('Best for LinkedIn growth', 'taplio', 'Built only for LinkedIn, with AI writing in your voice and 5M+ viral posts to learn from.'),
-        ('Best for writers', 'typefully', 'A focused editor with LinkedIn first comments and PDF carousels, and a free plan.'),
+    'leaders': ['buffer', 'sprout'],
+    'intro': '''<p>LinkedIn rewards people who post every week, but writing and posting on time is hard to keep up. A founder's profile and a company page each need their own plan, and the drafts pile up.</p>
+<p>A LinkedIn post scheduler fixes this. You write posts in batches, pick the days and let the tool publish to profiles and pages. Founders, B2B marketers, recruiters and agencies all use one to stay visible.</p>
+<p>The payoff is a steady LinkedIn presence, with less time spent in the app each week. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 💼</p>''',
+    'whatH2': 'What Is a LinkedIn Post Scheduler?',
+    'what': {
+        'def': 'A LinkedIn post scheduler is an app that publishes posts to LinkedIn profiles and company pages at a set time through LinkedIn\'s official API.',
+        'body': '<p>You connect your profile or page once, then write the post, add images, video or a PDF and pick a date. The tool sends it at that time, so you do not need to be online. Many tools also add a first comment right after the post goes live. Most run as a web app with a calendar, and some add a browser extension so you can share a page you find while reading.</p>',
+        'bullets': ['Profiles and company pages', 'PDF carousel support', 'First comment scheduling', 'Analytics on each post'],
+        'close': 'The result is a month of LinkedIn posts planned in one sitting.',
+    },
+    'whyH2': 'Why Do You Need a LinkedIn Post Scheduler for Your Brand?',
+    'why': {
+        'lead': '<p>Posting to LinkedIn by hand works for a few posts a month. Once a founder, a company page and a few teammates all need to post, the plan breaks and weeks go quiet.</p>\n<p>A LinkedIn post scheduler solves this.</p>',
+        'bullets': [
+            ('Steady posting', 'Posts go out on a fixed rhythm, which helps you stay visible in the feed week after week.'),
+            ('Writing in batches', 'You draft a week of posts in one sitting, when you have the time to think.'),
+            ('Better timing', 'Analytics show which days and times your network reads, so posts land when people are online.'),
+            ('One shared calendar', 'Profiles and pages sit next to your other networks, and an AI agent can draft the week for you to approve.'),
+        ],
+    },
+    'quizH3': 'LinkedIn Post Schedulers: Quick Match',
+    'quiz': [
+        {'q': 'Who will post on LinkedIn?', 'options': [
+            ('A founder or creator', ['capybaroar', 'taplio', 'typefully', 'buffer']),
+            ('A marketing team', ['capybaroar', 'contentstudio', 'metricool', 'agorapulse']),
+            ('An agency', ['capybaroar', 'socialpilot', 'vistasocial']),
+            ('A large brand team', ['sprout', 'agorapulse'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer', 'typefully']),
+            ('$10 to $50', ['capybaroar', 'metricool', 'contentstudio', 'socialpilot', 'postiz', 'taplio']),
+            ('$50 to $150', ['capybaroar', 'vistasocial', 'agorapulse', 'sprout', 'taplio']),
+            ('More than $150', ['sprout', 'taplio'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('AI that drafts the week', ['capybaroar', 'postiz', 'taplio']),
+            ('Ideas from viral posts', ['taplio']),
+            ('Client approvals', ['capybaroar', 'socialpilot']),
+            ('Reports for leaders', ['metricool', 'agorapulse', 'sprout'])]},
+        {'q': 'What else should it do?', 'options': [
+            ('Help employees share posts', ['sprout', 'agorapulse', 'vistasocial']),
+            ('Post from Claude or scripts', ['postiz', 'capybaroar', 'typefully']),
+            ('Publish PDF carousels', ['publer', 'typefully', 'contentstudio']),
+            ('Post to other networks too', ['capybaroar', 'buffer'])]},
     ],
-    'intro': '''<p>Posting on LinkedIn every week is easier when you write in batches and let a tool publish for you. The right scheduler depends on who is posting. A founder building a personal brand wants help writing and a clean editor. A team running a company page wants approvals and its other networks in the same place.</p>
-<p>We only included tools whose own pages say they post to LinkedIn. For each one, we list the LinkedIn features the vendor names, like first comments, PDF carousels and company pages.</p>
-<p>Prices come from each tool's own pricing page in November 2026. Check the vendor's page before you buy, since prices change.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'composer', 'bestFor': 'founders and teams posting to profiles and company pages', 'text': '''<p>Capybaroar posts to LinkedIn profiles and company pages, so a founder and their company can share one calendar. You can add a first comment to LinkedIn posts and check a preview before anything goes out. Comments and mentions land in one inbox, and analytics show your best times to post.</p>
-<p>On paid plans, the AI agent plans and writes a week of posts from one message, then saves them as drafts for your review. You can also run it from Claude, ChatGPT or Cursor through the MCP server on every plan. Creator is $29 a month for 1 member and 8 channels. Pro is $49 a month for 5 members, with approvals, and the Free plan covers 3 channels and 30 posts a month.</p>'''},
-        {'id': 'taplio', 'shot': 'pricing', 'text': '''<p>Taplio is built only for LinkedIn. You can search 5M+ viral posts by topic and likes, then draft your own in your voice with its AI. Every plan schedules posts on a monthly or daily calendar. It also posts an automatic first comment and lets you reply to comments on your posts, and it works from Claude as an official connector.</p>
-<p>Starter is $39 a month, billed monthly, and covers scheduling and analytics. AI writing and team collaboration start on Growth at $69 a month. Pro at $199 a month adds 10x more AI usage and lead outreach. Yearly billing saves 25%. There's no free plan, but the 7-day trial gives you every Pro feature with limited AI.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer is a simple, low-cost way to schedule LinkedIn next to your other channels. Paid plans can add a first comment to LinkedIn posts, and every plan, Free included, lets you reply to LinkedIn comments from the community inbox. You can also connect Buffer to Claude or ChatGPT and manage your posts from a chat.</p>
-<p>You pay per channel: $5 a month on Essentials or $10 on Team, both billed yearly. Two channels on Essentials cost $10 a month. The free plan covers 3 channels with 10 scheduled posts each. Approvals need Team, which also gives you unlimited team members.</p>'''},
-        {'id': 'typefully', 'shot': 'pricing', 'text': '''<p>Typefully is a writing app first. Its focused editor helps you turn rough ideas into posts, and its AI learns how you write. For LinkedIn, it lists first comments and PDF carousels, and it can cross-post the same post to X, Bluesky, Threads and Mastodon.</p>
-<p>The free plan gives you 1 social set, 1 user and 10 posts a month, with agents, API and MCP included. Creator raises that to 1,000 posts a month and is billed yearly only. Business adds teams, roles and Slack notifications for up to 50 social sets. Its analytics cover X, and the pricing page doesn't list LinkedIn analytics. Paid prices weren't in the page text we captured, so check Typefully's site.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool is a good pick for teams that want LinkedIn numbers next to every other network. Paid plans keep your full analytics history and compare you with competitors. Reports export as PDF or PPT. It also has a built-in MCP plus Claude and ChatGPT connectors.</p>
-<p>LinkedIn needs a paid plan, since the free plan can't connect it. Starter is from $20 a month billed yearly, or $25 billed monthly, for up to 5 brands with unlimited posts. Advanced, from $53 a month billed yearly, adds approvals and team roles for a team that shares the work.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer works with LinkedIn profiles and pages, and it supports LinkedIn PDF carousels. You can schedule a comment to go out after your post, and the browser extension shares content you find online to LinkedIn in a few clicks. It also posts to 12 other networks, including Bluesky and Mastodon.</p>
-<p>Professional starts at $5 a month, or $4 billed yearly, and the price depends on how many accounts and members you pick. Business, from $10 a month or $8 billed yearly, adds analytics, best times to post, unlimited AI and MCP. The free plan covers 3 social accounts with 10 scheduled posts each.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot suits agencies posting LinkedIn content for several clients. It lists LinkedIn document publishing, along with first comments and a content library. You can also adjust each post for the network it goes to. Its AI Pilot writes posts, with 500 AI credits a month on the lowest plan.</p>
-<p>Essentials is $25.50 a month, billed yearly, for 7 social accounts and 1 user. Standard at $42.50 a month, billed yearly, adds 3 users, the inbox, analytics and manager approval. Client approvals and white label reports come with Premium at $85 a month, billed yearly. The 14-day trial needs no card.</p>'''},
+        {'id': 'capybaroar', 'shot': 'agent', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant LinkedIn post schedulers for teams that want to plan a founder\'s profile and a company page together. Instead of only queuing LinkedIn updates, it has an AI agent that plans and writes a week of posts as drafts for review. Profiles and pages share one calendar with Instagram, TikTok and 11 other networks. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/linkedin-post-scheduler">LinkedIn profiles and pages</a> on one calendar',
+                  '<a href="/posting-queue">Posting queues</a> for a steady weekly rhythm',
+                  '<a href="/ai-social-media-agent">AI agent</a> that drafts the week for review',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan',
+                  '<a href="/post-approval">Approvals</a> where clients take no seat'],
+         'cons': ['Not a LinkedIn lead outreach tool']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Simple LinkedIn posting',
+         'overview': '<p>Buffer is one of the most established LinkedIn post schedulers for founders and small teams that post to a few channels. Paid plans add a first comment to LinkedIn posts, and every plan lets users reply to LinkedIn comments from the community inbox. Buffer also connects to Claude or ChatGPT, so posts can be managed from a chat. Its very simple interface suits founders who want LinkedIn on a light budget.</p>',
+         'pros': ['LinkedIn first comments on paid plans', 'Replies to LinkedIn comments in the inbox', 'Claude and ChatGPT connection', 'Very simple interface', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel added', 'Analytics can feel light compared to suites', 'Editor may lack LinkedIn carousel tools']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Employee advocacy',
+         'overview': '<p>Sprout Social is one of the most widely used LinkedIn post schedulers for large brands that want employees to share company news. Its Employee Advocacy add-on, from the Standard plan, lets teams curate posts for staff to share with their own networks. Trellis, its AI agent, drafts replies and post variations on every plan. A key strength is its profile and post-level reporting, which helps teams show leaders how LinkedIn performs.</p>',
+         'pros': ['LinkedIn publishing with six other networks', 'Employee Advocacy add-on from Standard', 'Trellis AI drafts posts and replies', 'Profile and post-level reports', 'Good fit for large brand teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Advocacy may cost extra as an add-on', 'Interface can take time to learn']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'LinkedIn ROI tracking',
+         'overview': '<p>Agorapulse is a strong LinkedIn post scheduler for business teams who need to show what LinkedIn brings in. Its Google Analytics link tracks the traffic, leads and revenue that posts and conversations drive. In addition to publishing, Agorapulse also has an advocacy tool to curate and approve content for employees to share. Its focus on revenue makes it attractive for teams that report LinkedIn results to sales.</p>',
+         'pros': ['LinkedIn publishing with unlimited posts', 'One inbox on every plan', 'ROI tracking with Google Analytics', 'Employee advocacy tools', 'Free plan after the trial'],
+         'cons': ['Per-user pricing can add up for teams', 'ROI reports may need the Advanced plan', 'Free plan limits may be unclear']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'LinkedIn reports for clients',
+         'overview': '<p>Metricool is a LinkedIn post scheduler for social media managers who want LinkedIn numbers next to every other network. LinkedIn connects on the Starter and Advanced plans, and paid plans keep full analytics history with competitor analysis. Reports export as PDF or PPT, and a built-in MCP links it to Claude and ChatGPT. Those exports help managers who send monthly LinkedIn updates to clients.</p>',
+         'pros': ['LinkedIn scheduling on paid plans', 'Full analytics history', 'PDF and PPT report exports', 'Priced per brand with unlimited posts', 'Good fit for client reporting'],
+         'cons': ['Free plan may not connect LinkedIn', 'Approvals may need the Advanced plan', 'AI credits can run low for some brands']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'LinkedIn documents for agencies',
+         'overview': '<p>SocialPilot is a budget LinkedIn post scheduler for agencies that post LinkedIn content for several clients. It lists LinkedIn document publishing, first comments and multiple image and carousel posts. Its AI Pilot writes posts with AI credits on every plan, and manager approval starts on Standard. Client approvals and white label reports on Premium help agencies send LinkedIn work to clients for sign-off.</p>',
+         'pros': ['LinkedIn document publishing', 'First comments and carousel posts', 'AI Pilot credits on every plan', 'Client approvals on Premium', 'Good fit for budget agencies'],
+         'cons': ['Extra accounts can raise the bill', 'Inbox and analytics may need Standard', 'AI credits may run out on lower plans']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'LinkedIn carousels and AI',
+         'overview': '<p>ContentStudio is a LinkedIn post scheduler and content platform for content teams that curate a lot of posts. Its lowest plan lists LinkedIn carousels and X threads, plus an auto first comment. AI Studio writes text and makes images and video in the brand voice. The platform also offers an MCP integration on every plan, which suits teams that draft LinkedIn posts in AI tools.</p>',
+         'pros': ['LinkedIn carousels on the lowest plan', 'Auto first comment', 'AI Studio for text, images and video', 'MCP integration on every plan', 'iOS and Android apps'],
+         'cons': ['No free plan, only a short trial', 'Inbox and approvals may need Advanced', 'Standard may suit one user only']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'Many brand pages',
+         'overview': '<p>Vista Social is a LinkedIn post scheduler and engagement platform for agencies that manage LinkedIn pages for many brands. Professional includes 15 social profiles with engagement tools and reports. Ask Vista, its AI agents, can run recurring social work, and an Employee Advocacy add-on helps staff share brand posts. The profile count is generous, making it suitable for agencies that need room for many client pages.</p>',
+         'pros': ['LinkedIn publishing for many brands', '15 profiles on the first plan', 'Ask Vista AI agents', 'Employee Advocacy add-on', 'iOS and Android apps'],
+         'cons': ['Advocacy can cost extra each month', 'Approval steps may not be listed on plans', 'Lowest plan may feel tight on users']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Low-cost PDF carousels',
+         'overview': '<p>Publer is a practical LinkedIn post scheduler for creators and small businesses on a tight budget. It works with LinkedIn profiles and pages and supports LinkedIn PDF carousels. Scheduled comments go out after the post, and a browser extension shares pages found online to LinkedIn in a few clicks. It is a relevant option for founders who mainly need carousels and comments at a low price.</p>',
+         'pros': ['LinkedIn profiles and pages', 'LinkedIn PDF carousels', 'Scheduled comments after each post', 'Browser extension for quick shares', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'Analytics and MCP may need Business', 'Free plan may keep little post history']},
+        {'id': 'postiz', 'shot': 'pricing', 'best': 'Agents, CLI and API',
+         'overview': '<p>Postiz is an open-source LinkedIn post scheduler for developers and AI-first marketers. Every plan includes an MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule posts. Its AI agents plan, write and schedule posts to more than 30 networks, LinkedIn included. Many teams use it as a specialized tool to run LinkedIn posting from scripts and agents.</p>',
+         'pros': ['MCP server, CLI and API on every plan', 'AI agents plan and write posts', 'Unlimited posts on every plan', 'Open-source version to self-host', 'Good fit for developer teams'],
+         'cons': ['Standard plan may lack team support', 'Inbox and approvals may be missing', 'Trial can feel short for testing']},
+        {'id': 'typefully', 'shot': 'home', 'best': 'Focused LinkedIn writing',
+         'overview': '<p>Typefully is a writing-first LinkedIn post scheduler for writers and creators who post on LinkedIn and X. Its focused editor uses AI that learns how each writer actually writes. For LinkedIn, it lists first comments, PDF carousels and polls, and it cross-posts to X, Bluesky, Threads and Mastodon. The free plan includes agents, the API and MCP, which is especially useful for writers who want to test it first.</p>',
+         'pros': ['Focused editor for LinkedIn writing', 'First comments and PDF carousels', 'AI that learns the writer\'s voice', 'Cross-posts to X, Bluesky and Threads', 'Free plan with API and MCP'],
+         'cons': ['Creator plan may be billed yearly only', 'Inbox and reports may be missing', 'Analytics may cover X more than LinkedIn']},
+        {'id': 'taplio', 'shot': 'pricing', 'best': 'LinkedIn growth for founders',
+         'overview': '<p>Taplio is a dedicated LinkedIn post scheduler designed to help founders grow their brand on LinkedIn. Users can search 5M+ viral posts by topic and likes, then draft their own in their voice with AI from the Growth plan. Every plan schedules posts, adds an automatic first comment and lets users reply to comments. Taplio is also an official Claude connector, so founders can write and schedule posts by asking.</p>',
+         'pros': ['Built only for LinkedIn growth', '5M+ viral posts to learn from', 'Automatic first comment on every plan', 'Official Claude connector', 'Good fit for founders on LinkedIn'],
+         'cons': ['AI writing may need the Growth plan', 'Covers one network, so others may need more', 'Feature set can feel heavy for casual posters']},
     ],
-    'how': '''<p>We looked at what founders and teams need to post on LinkedIn every week, then checked each tool's own pages.</p>
-<ul><li><b>LinkedIn support:</b> we only kept tools whose own pages name LinkedIn as a network they post to.</li>
-<li><b>LinkedIn extras:</b> first comments, PDF carousels and company pages, where the vendor names them.</li>
-<li><b>Writing help:</b> AI that drafts posts, and the plan where it starts.</li>
-<li><b>Price:</b> each tool's own pricing page in November 2026, with yearly or monthly billing noted.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and list its limits too.</p>''',
-    'verdict': '''<p>Founders who only care about LinkedIn growth will get the most from Taplio, as long as $39 to $69 a month fits the budget. If you mainly want a good place to write and post to LinkedIn and X together, Typefully's free plan is a fine start. Teams that run a company page next to Instagram, Facebook and other networks should look at Capybaroar, which covers profiles and company pages and adds an AI agent from $29 a month.</p>
-<p>On a tight budget, Buffer and Publer post to LinkedIn for a few dollars a month. Try 2 tools on a real week of posts before you pay for a year.</p>''',
+    'conclusion': '''<p>A LinkedIn post scheduler keeps a profile and a company page posting every week without daily effort. It makes writing in batches easy and keeps the rhythm steady.</p>
+<p>But the best tool today does more than queue LinkedIn posts. It should help write the week, show what worked and put LinkedIn on the same calendar as every other network the team runs.</p>
+<p>That is why <a href="https://capybaroar.com/linkedin-post-scheduler">Capybaroar</a> stands out. It combines an AI agent, one inbox and analytics with every social channel in one calendar. For teams that post to LinkedIn and beyond, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best LinkedIn post scheduler?', 'For teams, Capybaroar. It posts to LinkedIn profiles and company pages, adds a first comment, and drafts posts with an AI agent on paid plans. For founders focused only on LinkedIn growth, Taplio is the specialist.'),
-        ('Can you schedule LinkedIn posts for free?', 'Capybaroar, Buffer, Typefully and Publer have free plans with small post limits, from 10 posts a month on Typefully to 30 on Capybaroar. Metricool\'s free plan can\'t connect LinkedIn.'),
-        ('Can I schedule posts to a LinkedIn company page?', 'Yes. Capybaroar posts to LinkedIn profiles and company pages, and Publer works with LinkedIn profiles and pages. If you need company pages on another tool, check its help pages first.'),
-        ('Can a scheduler post LinkedIn PDF carousels?', 'Publer and Typefully list LinkedIn PDF carousels, and SocialPilot lists LinkedIn document publishing. Taplio has a carousel generator to help you make them.'),
-        ('What is a LinkedIn first comment?', 'It is a comment posted under your post right after it goes live, often with a link or extra detail. Capybaroar, Taplio and Typefully list it, and Buffer offers it on paid plans.'),
-        ('How much does a LinkedIn scheduler cost?', 'Buffer costs $5 a month per channel billed yearly, and Publer starts at $5 a month. Capybaroar Creator is $29 a month, Taplio starts at $39 a month and Taplio Pro is $199 a month.'),
+        ('What is a LinkedIn post scheduler?', 'A LinkedIn post scheduler is an app that publishes posts to LinkedIn profiles and company pages at a time you pick. You connect your account once, write posts in batches and plan them on a calendar. The tool then sends each post through LinkedIn\'s official API, so you do not need to be online.'),
+        ('How do LinkedIn post schedulers publish posts?', 'LinkedIn post schedulers publish posts through LinkedIn\'s official API. You write the post in a web app or browser extension, add images, video or a PDF and pick a time. The tool sends it for you, and many can add a first comment right after the post goes live.'),
+        ('Why use a LinkedIn post scheduler for your brand?', 'A LinkedIn post scheduler keeps your profile and company page posting on a steady rhythm. You write a week of posts in one sitting, post when your network is online and keep a founder and a company page on one plan. That saves time and keeps you visible in the feed.'),
+        ('What features should modern LinkedIn post schedulers include?', 'Modern LinkedIn post schedulers should support profiles and company pages, PDF carousels, first comment scheduling and analytics on each post. Teams also need approvals once several people write. The newest tools add an AI agent that plans and writes the week, and they put LinkedIn on one calendar with every other network.'),
+        ('Which tool is recommended for teams that need more than LinkedIn scheduling?', 'For teams that need more than LinkedIn scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with one inbox and analytics on every plan and an AI agent on paid plans. Founders who only care about LinkedIn growth may prefer Taplio, and writers who post on LinkedIn and X may prefer Typefully.'),
     ],
 }

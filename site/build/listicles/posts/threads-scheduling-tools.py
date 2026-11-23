@@ -1,51 +1,115 @@
 POST = {
     'order': 23,
     'slug': 'threads-scheduling-tools',
-    'keyword': 'threads scheduler',
-    'title': '8 Best Threads Scheduling Tools in 2027',
-    'desc': 'The 8 best tools to schedule Threads posts in 2027, compared on Threads features, replies and price. Every tool here names Threads on its own site, with prices checked in November 2026.',
-    'h1a': '8 Threads schedulers',
-    'h1b': 'to keep the conversation going.',
-    'lead': 'Threads moves fast, and showing up every day is most of the work. These 8 tools let you plan Threads posts ahead and catch the replies, with prices checked on each tool\'s own site.',
+    'keyword': 'threads scheduling tool',
+    'title': '12 Best Threads Scheduling Tools in 2027',
+    'desc': 'Compare the 12 best Threads scheduling tools in 2027 with G2 ratings, pros, cons and prices. See why Capybaroar leads for teams on Threads and more.',
+    'heroAlt': 'A week of text posts on a calendar, for the best Threads scheduling tools in 2027',
     'cover': {'type': 'list', 'network': 'threads', 'bg': 'yolk', 'tools': ['typefully.com', 'buffer.com', 'hypefury.com', 'metricool.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Text posts and carousels, with replies in one inbox and numbers for every post.'),
-        ('Best for writers', 'typefully', 'A clean writing space that cross-posts to X, LinkedIn, Bluesky and Threads.'),
-        ('Best for creators', 'hypefury', 'Threads analytics, CSV upload and an engagement builder.'),
+    'leaders': ['buffer', 'sprout'],
+    'intro': '''<p>Threads moves fast, and showing up every day is most of the work. Posting by hand means opening the app at the right times, then doing it all again for X, Bluesky and LinkedIn.</p>
+<p>A Threads scheduling tool fixes this. You write your posts once, pick the times, and the tool publishes them for you. Creators, writers, small brands and agencies all use one to stay in the conversation without checking the app all day.</p>
+<p>The result is a steady feed and faster replies, with less effort every day. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 🧵</p>''',
+    'whatH2': 'What Is a Threads Scheduling Tool?',
+    'what': {
+        'def': 'A Threads scheduling tool is an app that publishes your Threads posts at a set time by connecting to the official Threads API.',
+        'body': '<p>You connect your Threads account once, then write a post, add photos or video and pick a date. The tool stores the post and sends it at that time, so you do not need to be online. Most tools run as a web app with a calendar view, and many of them also post the same idea to X, Bluesky and LinkedIn.</p>',
+        'bullets': ['A calendar for daily posts', 'Text, photo and video posts', 'Cross-posting to text networks', 'Replies in one inbox'],
+        'close': 'The result is a full week of Threads posts written and planned in one sitting.',
+    },
+    'whyH2': 'Why Do You Need a Threads Scheduling Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Posting to Threads by hand works when you post now and then. Once you aim for a post or two each day, plus replies, it takes real time out of every day.</p>\n<p>A Threads scheduling tool solves this.</p>',
+        'bullets': [
+            ('Daily presence', 'Posts go out at set times every day, even when you are busy or offline.'),
+            ('Hours saved', 'You write a week of posts in one sitting and adapt them for X and Bluesky.'),
+            ('Faster replies', 'Replies from Threads land in one inbox, so you answer people while the talk is still fresh.'),
+            ('One shared calendar', 'Threads sits next to every other network, and an AI agent can draft the week for you to approve.'),
+        ],
+    },
+    'quizH3': 'Threads Scheduling Tools: Quick Match',
+    'quiz': [
+        {'q': 'What do you post on Threads?', 'options': [
+            ('Short text posts every day', ['typefully', 'publer', 'hypefury', 'capybaroar']),
+            ('Posts with photos and video', ['capybaroar', 'later', 'vistasocial']),
+            ('The same idea on many networks', ['capybaroar', 'buffer', 'typefully'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer', 'typefully', 'hypefury', 'iconosquare']),
+            ('$10 to $50', ['capybaroar', 'later', 'metricool', 'sendible']),
+            ('More than $50', ['sprout', 'agorapulse', 'vistasocial'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('AI that drafts the week', ['capybaroar', 'hypefury']),
+            ('Replies in one inbox', ['capybaroar', 'agorapulse', 'sprout', 'buffer']),
+            ('Reports for clients', ['sendible', 'metricool', 'iconosquare']),
+            ('Finding people to reply to', ['hypefury'])]},
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['typefully', 'hypefury', 'publer', 'buffer']),
+            ('A small team', ['capybaroar', 'later', 'metricool']),
+            ('An agency', ['sendible', 'vistasocial', 'capybaroar']),
+            ('A large brand team', ['sprout', 'agorapulse'])]},
     ],
-    'intro': '''<p>Threads is a text-first network, so a good scheduler for it needs a strong writing space, a way to post carousels and a place to answer replies. Most brands also post the same idea to X, Bluesky or LinkedIn, so cross-posting matters too.</p>
-<p>We kept only tools whose own homepage or pricing page names Threads. Some are writing tools made for text networks, and some are full social media tools that add Threads to the rest of your channels.</p>
-<p>Prices and features come from each tool's own pages in November 2026. Schedule one real post in a trial and check how it looks in the Threads app.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'inbox', 'text': '''<p>Capybaroar schedules text posts of up to 500 characters and carousels of up to 20 pictures or videos to Threads. People's replies to your Threads posts land in the Capybaroar inbox next to every other channel, and you can answer or hide them there. Paid plans suggest a reply for each comment.</p>
-<p>Every Threads post gets its reach and engagement in analytics, along with your best times to post. You can write one idea and send it to Threads, X, Bluesky and LinkedIn at once, each with its own text. Free covers 3 channels and 30 scheduled posts a month. Creator is $29 a month for 8 channels and adds an AI agent that writes the week for you.</p>'''},
-        {'id': 'typefully', 'shot': 'home', 'text': '''<p>Typefully is a writing tool for text networks. It lets you schedule Threads posts and cross-post to X, LinkedIn, Bluesky and Mastodon from the same draft. You can check a post before it goes live, including threads, mentions and media.</p>
-<p>Its AI writing assistant learns your voice and helps you rewrite and improve drafts. The free plan covers 1 social set, 1 user and 10 posts a month. Paid plans are billed yearly; Typefully's page didn't show their prices when we checked.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer schedules to Threads and can publish full threads to X, Bluesky, Threads and Mastodon. Its inbox lets you reply to comments on your Threads posts, next to Instagram, LinkedIn and the rest.</p>
-<p>You pay per channel: $5 a month per channel on Essentials, billed yearly. The free plan covers 3 channels with 10 scheduled posts per channel, so you can try Threads alongside 2 other networks for free.</p>'''},
-        {'id': 'hypefury', 'shot': 'pricing', 'text': '''<p>Hypefury posts to Instagram, Facebook, Threads, LinkedIn, TikTok and Bluesky, and it has more Threads tools than most. You get analytics for Threads, bulk upload from a CSV file for Threads, Bluesky and LinkedIn, and an Engagement Builder for Threads and Bluesky.</p>
-<p>The Flexible plan is $6 a month per platform, so Threads alone costs $6. Creator is $19 a month for all 6 platforms. Its AI writes posts in your voice, and you approve each one before it goes out. There's a 7-day free trial.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer works with Threads accounts and lists Threads posts among its post types. It can also schedule first comments and threads, which helps when one idea needs a few connected posts.</p>
-<p>Professional starts at $5 a month, or $4 a month billed yearly, depending on how many accounts you add. The free plan covers 3 accounts with 10 scheduled posts per account. Analytics and unlimited AI need Business, from $10 a month.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool lists Threads among its networks, next to Instagram, Bluesky, TikTok and the rest. It's the pick for social media managers who want Threads numbers in the same reports as everything else, with full history on paid plans.</p>
-<p>Starter is from $20 a month billed yearly for up to 5 brands, or $25 monthly. The free plan covers 1 brand and 20 posts a month, with 30 days of analytics. Approvals and team roles start on Advanced.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible lists Threads among the networks on its pricing page and offers a Threads report. It's built for agencies, so every plan has unlimited users and client workspaces come with the plan.</p>
-<p>Core is $35 a month for 6 social profiles and 1 workspace. Plus is $99 a month for 18 profiles across 3 workspaces and adds approvals. There's a 14-day free trial and no free plan.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social lists Threads among its integrations and suits teams that run many brands. Engagement tools, reports and its Ask Vista AI come on every plan, with apps for iOS, Android, Mac and Windows.</p>
-<p>Professional is $80 a month for 15 social profiles and 2 users. Advanced is $160 a month for 30 profiles and 3 users. There's a 14-day free trial and no free plan.</p>'''},
+        {'id': 'capybaroar', 'shot': 'inbox', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant Threads scheduling tools for teams that want to run Threads next to X, Bluesky and LinkedIn. Instead of only posting text on a timer, it adds an AI agent that plans and writes a week of posts as drafts for review. Comments from Threads and every other network come back to one inbox, with analytics on every plan. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/threads-scheduler">Threads scheduling</a> next to X, Bluesky and LinkedIn',
+                  '<a href="/posting-queue">Posting queue</a> for daily Threads posts',
+                  '<a href="/ai-social-media-agent">AI agent</a> that writes the week for review',
+                  '<a href="/social-media-inbox">One inbox</a> for replies on every plan',
+                  '<a href="/mcp">MCP server and REST API</a>, Free included'],
+         'cons': ['Not a Threads-only writing app']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Threads replies in one inbox',
+         'overview': '<p>Buffer is one of the most established Threads scheduling tools for creators and small brands that post across text networks. It can publish full threads to X, Bluesky, Threads and Mastodon, and its inbox handles replies to comments on Threads posts. Pricing is $5 a month per channel on Essentials, billed yearly. Its simple per-channel model makes it a popular pick for solo creators trying Threads for the first time.</p>',
+         'pros': ['Publishes threads to Threads and X', 'Replies to Threads comments in one inbox', 'AI Assistant on every plan', 'Pay only for the channels in use', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel added', 'Analytics history can be short on Free', 'Branded reports may need the Team plan']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Deep brand reporting',
+         'overview': '<p>Sprout Social is one of the most widely used Threads scheduling tools for larger marketing teams with a big budget. Threads sits in its integrations next to Facebook, Instagram, LinkedIn, Pinterest and TikTok. The Trellis AI agent drafts replies and post variations on every plan, and every seat gets the mobile app. Its reporting depth suits teams that answer to leaders on social results.</p>',
+         'pros': ['Threads publishing in one suite', 'Trellis AI agent on every plan', 'Mobile app on every plan', 'Customer care reports on Advanced', 'Good fit for large brand teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Premium Analytics can cost extra', 'Competitor insights may need Professional']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Reply suggestions and sentiment',
+         'overview': '<p>Agorapulse is a Threads scheduling tool and social inbox for business teams that need to prove the value of social. It works with Threads, Bluesky, Reddit and eight more networks, and it can schedule posts that run as threads. Every plan has one inbox for messages and comments, plus AI reply suggestions and sentiment tags. This makes it a common choice for teams that answer a lot of replies each day.</p>',
+         'pros': ['Schedules posts and threads', 'One inbox on every plan', 'AI reply suggestions and sentiment tags', 'MCP for Claude and ChatGPT', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can add up for teams', 'ROI reports may need a higher plan', 'Free plan limits may be unclear']},
+        {'id': 'later', 'shot': 'pricing', 'best': 'Threads in every social set',
+         'overview': '<p>Later is a Threads scheduling tool for social media managers who plan visual and text posts together. Every social set includes one Threads profile next to Instagram, TikTok, Pinterest, YouTube and Snapchat. Link in Bio and the mobile app come on every plan, and Starter is $18.75 a month billed yearly. It works well for Instagram-first brands that are adding Threads to their plan.</p>',
+         'pros': ['Threads in every social set', 'Mobile app on every plan', 'Link in Bio on every plan', 'AI content tools with monthly credits', 'Good fit for Instagram-first brands'],
+         'cons': ['Starter plan can cap posts per profile', 'Inbox and approvals may need Growth', 'Analytics history can be short on Starter']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Threads in client reports',
+         'overview': '<p>Metricool is a Threads scheduling tool and analytics platform for social media managers who report on many brands. Its pricing table lists Threads next to Instagram, Bluesky and TikTok, and paid plans keep unlimited analytics history. Starter is from $20 a month billed yearly for up to 5 brands. Threads results go into PDF and PPT reports, which makes it useful for monthly client updates.</p>',
+         'pros': ['Threads in the same calendar and reports', 'Priced per brand with unlimited posts', 'Unlimited analytics history on paid plans', 'PDF and PPT report exports', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra as an add-on', 'Approvals may need the Advanced plan', 'Free plan analytics can cover only a month']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Threads report for agencies',
+         'overview': '<p>Sendible is a Threads scheduling tool for agencies that manage many client accounts. Its pricing page lists Threads and Bluesky next to the big networks, and it offers its own Threads report. Every plan includes unlimited users and unlimited AI credits, so new teammates never change the bill. It is especially useful for agencies that report Threads growth to their clients.</p>',
+         'pros': ['Threads report for client updates', 'Unlimited users on every plan', 'Unlimited AI credits', 'Approvals from the Plus plan', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a pricier plan', 'No MCP server listed, unlike some tools', 'Inbox may not cover Instagram DMs']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'Engagement tools on every plan',
+         'overview': '<p>Vista Social is a Threads scheduling tool and engagement platform for teams that run many brands. Professional includes 15 social profiles, with Threads next to Facebook, Instagram, LinkedIn and X. Engagement tools, reports and Ask Vista AI agents come on every plan. The platform also offers apps for iOS, Android, Mac and Windows, making it suitable for teams that reply to Threads on the go.</p>',
+         'pros': ['Threads among its integrations', '15 profiles on the first plan', 'Ask Vista AI and MCP on every plan', 'Engagement tools on every plan', 'Apps for iOS, Android, Mac and Windows'],
+         'cons': ['X publishing can cost extra each month', 'Post approvals may not be listed on plans', 'Lowest plan can feel tight on seats']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Scheduled comments and threads',
+         'overview': '<p>Publer is a low-cost Threads scheduling tool for creators and small businesses that post every day. It works with Threads accounts, lists Threads posts among its post types and can schedule comments that publish after a set time. Professional starts at $4 a month per account billed yearly, or $5 billed monthly. It is a relevant option for users who mainly need daily Threads posts at a small price.</p>',
+         'pros': ['Threads posts as a post type', 'Scheduled comments and threads', 'Low price per social account', 'Mobile app for scheduling on the go', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with each account added', 'Analytics may need the Business plan', 'Free plan may not connect X']},
+        {'id': 'iconosquare', 'shot': 'pricing', 'best': 'Custom analytics dashboards',
+         'overview': '<p>Iconosquare is an analytics-first Threads scheduling tool for teams that care about results. Its scheduler plans and auto-publishes posts to Threads, Instagram, Facebook, LinkedIn and four more networks from one content calendar. Custom dashboards and more than 100 real-time metrics show how each post performed. Many teams use it as a specialized tool to report on Threads before they plan the next month.</p>',
+         'pros': ['Auto-publishes Threads posts', '100+ real-time metrics', 'Custom dashboards', 'Suggested times to post', 'Free plan for 2 profiles'],
+         'cons': ['Starter can cap posts across profiles', 'Inbox may need the Launch plan', 'X may need the Launch plan']},
+        {'id': 'hypefury', 'shot': 'pricing', 'best': 'Engagement Builder for replies',
+         'overview': '<p>Hypefury is a creator-focused Threads scheduling tool for creators who sell to their audience. It writes posts in the creator\'s voice, and nothing goes out without approval. For Threads, it adds analytics, bulk upload from CSV and an Engagement Builder that finds posts in a niche with a reply ready. The Flexible plan is $6 a month per platform, so a Threads-only setup stays cheap.</p>',
+         'pros': ['Engagement Builder for Threads replies', 'Threads analytics and CSV upload', 'AI posts in the creator\'s voice', 'MCP on every plan', 'Good fit for creators who sell'],
+         'cons': ['No free plan, only a short trial', 'No shared inbox listed for replies', 'Team members may need the Pro plan']},
+        {'id': 'typefully', 'shot': 'home', 'best': 'Calm writing space',
+         'overview': '<p>Typefully is a Threads scheduling tool designed specifically for writers who post on text networks. One draft can cross-post to X, LinkedIn, Bluesky, Threads and Mastodon, with previews before anything goes live. Its AI writing assistant learns the writer\'s voice and helps rewrite drafts. The free plan includes scheduling, API and MCP access, which suits writers who want a calm place to draft.</p>',
+         'pros': ['Cross-posts to Threads, X and Bluesky', 'Previews threads, mentions and media', 'AI assistant that learns a voice', 'API and MCP on Free', 'Free plan for 10 posts a month'],
+         'cons': ['Creator plan may be billed yearly only', 'No inbox listed for Threads replies', 'Detailed analytics may cover X only']},
     ],
-    'how': '''<p>We only kept tools whose own homepage or pricing page names Threads. Then we compared them on what a text network needs.</p>
-<ul><li><b>Writing and posting:</b> text posts, carousels, threads of connected posts and cross-posting to X, Bluesky and LinkedIn.</li>
-<li><b>Replies and results:</b> whether Threads replies come back to an inbox and whether Threads gets its own analytics.</li>
-<li><b>Price:</b> the lowest plan that posts to Threads, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and only list what it really does.</p>''',
-    'verdict': '''<p>If Threads is one of several channels, Capybaroar schedules text posts and carousels, brings replies into one inbox and shows numbers for every post. If you mostly write for text networks, Typefully gives you a calm writing space and cross-posting. Hypefury has the deepest Threads tools for creators, and Buffer and Publer are the cheapest ways to start.</p>
-<p>Schedule a few real posts in a trial and see how the replies come back.</p>''',
+    'conclusion': '''<p>A Threads scheduling tool helps you show up every day without living in the app. It makes daily posting faster and easier to keep up.</p>
+<p>But the best tool today does more than post on time. It should help write the posts, bring every reply into one inbox and send each idea to your other networks too.</p>
+<p>That is why <a href="https://capybaroar.com/threads-scheduler">Capybaroar</a> stands out. It combines an AI agent, one inbox and analytics with every social channel in one calendar. For teams that post on Threads and beyond, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best Threads scheduling tool?', 'For most brands, Capybaroar. It schedules text posts and carousels to Threads, puts replies in one inbox and gives every post its numbers. Typefully is a great pick if you mostly write for text networks.'),
-        ('Can you schedule Threads posts for free?', 'Yes. Capybaroar, Buffer, Typefully, Publer and Metricool all have free plans with a small number of posts. Check the post limits before you plan a full month.'),
-        ('Why use a scheduler for Threads?', 'A scheduler lets you write a week of posts in one sitting, post at your best times and answer replies from every network in one inbox.'),
-        ('Can I post carousels to Threads with a scheduler?', 'Yes. Capybaroar posts carousels of up to 20 pictures or videos to Threads.'),
-        ('Should I post the same thing to Threads and X?', 'You can start from the same idea, but give each network its own text. In Capybaroar you write one post and edit the text for each network before it goes out.'),
+        ('What is a Threads scheduling tool?', 'A Threads scheduling tool is an app that publishes your Threads posts at a time you pick. You connect your account once, write each post with any photos or video, and the tool sends it through the official Threads API, so you do not need to be online when it goes live.'),
+        ('How do Threads scheduling tools publish posts?', 'Threads scheduling tools publish posts through the official Threads API. You write the post in a web app or phone app, choose a time and the tool posts it for you. Many tools also cross-post the same idea to X, Bluesky and LinkedIn, and some bring replies back into one inbox.'),
+        ('Why use a Threads scheduling tool for your brand?', 'A Threads scheduling tool keeps your brand posting every day, even in busy weeks. You write a week of posts at once, post at good times and answer replies from one place. That saves time each day and keeps your account active while the conversation is moving.'),
+        ('What features should modern Threads scheduling tools include?', 'Modern Threads scheduling tools should include a calendar, text, photo and video posts, cross-posting to other text networks and analytics for each post. An inbox for replies matters once people start talking back. The newest tools add an AI agent that plans and writes the whole week for you to review.'),
+        ('Which tool is recommended for teams that need more than Threads scheduling?', 'For teams that need more than Threads scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with one inbox and analytics on every plan and an AI agent on paid plans. Writers who only post text may prefer Typefully, and creators who sell to their audience may prefer Hypefury.'),
     ],
 }

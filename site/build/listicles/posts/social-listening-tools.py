@@ -1,56 +1,117 @@
 POST = {
     'order': 27,
     'slug': 'social-listening-tools',
-    'keyword': 'social listening tools',
-    'title': '9 Best Social Listening Tools in 2027',
-    'desc': 'The 9 best social listening tools for 2027, compared on sources, AI sentiment, keyword limits and price. Prices and features checked on each tool\'s own site in November 2026.',
-    'h1a': '9 social listening tools',
-    'h1b': 'to hear what people say about you.',
-    'lead': 'Most talk about your brand never tags you. These 9 tools find it across social media, news, blogs and reviews, with limits and prices checked on each tool\'s own site.',
+    'keyword': 'social listening tool',
+    'title': '12 Best Social Listening Tools in 2027',
+    'desc': 'Compare the 12 best social listening tools in 2027, with sources, AI sentiment and real prices. See why Capybaroar leads for teams that listen and reply.',
+    'heroAlt': 'A feed of brand mentions and replies for the best social listening tools in 2027',
     'cover': {'type': 'inbox', 'networks': ['x', 'instagram', 'facebook', 'linkedin']},
-    'picks': [
-        ('Best overall', 'brand24', 'AI sentiment on every plan and sources from social to podcasts and reviews.'),
-        ('Best on a budget', 'awario', 'Real listening from $29 a month, with unlimited keywords per topic.'),
-        ('Best for big brands', 'brandwatch', 'History back to 2010 and an AI assistant that reads the data for you.'),
+    'leaders': ['brandwatch', 'brand24'],
+    'intro': '''<p>Most talk about your brand never tags you. Customers name you in a review, a forum thread or a news story, and your own notifications never show it. By the time you hear about a complaint, it may have spread.</p>
+<p>A social listening tool finds those posts for you. It searches social networks, news, blogs and review sites for your keywords, then sorts each mention by sentiment and reach. PR teams, marketers, brand managers and agencies use one to stay ahead.</p>
+<p>The result is faster answers and a clearer view of what people think. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 👂</p>''',
+    'whatH2': 'What Is a Social Listening Tool?',
+    'what': {
+        'def': 'A social listening tool is an app that tracks what people say about a brand, a competitor or a topic across social media and the web, even when they do not tag anyone.',
+        'body': '<p>You set up keywords, such as your brand name, product names and competitors. The tool searches social networks, news sites, blogs, forums and review sites through APIs and web crawlers, then groups each mention by sentiment, reach and source. Most tools run as a web app and send alerts when mentions suddenly spike. Many also let you export reports for your team.</p>',
+        'bullets': ['Keyword and brand tracking', 'Sentiment on each mention', 'Alerts when mentions spike', 'Competitor share of voice'],
+        'close': 'The result is a clear view of the conversations that shape your brand.',
+    },
+    'whyH2': 'Why Do You Need a Social Listening Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Your own notifications show tags and comments on your posts. They miss the reviews, threads and news stories where people talk about you without a tag.</p>\n<p>A social listening tool solves this.</p>',
+        'bullets': [
+            ('Early warnings', 'Spike alerts flag a complaint or a viral post before it grows into a crisis.'),
+            ('Honest feedback', 'Unfiltered posts show what customers really like and dislike, in their own words.'),
+            ('Competitor insight', 'Share of voice shows how often people mention you next to your rivals.'),
+            ('Faster replies', 'When mentions land in the same inbox as your comments, the team can answer and post in one place.'),
+        ],
+    },
+    'quizH3': 'Social Listening Tools: Quick Match',
+    'quiz': [
+        {'q': 'What do you want to hear?', 'options': [
+            ('Comments and mentions on my channels', ['capybaroar', 'hootsuite', 'agorapulse', 'iconosquare']),
+            ('Every mention across the web', ['brand24', 'awario', 'mention', 'talkwalker']),
+            ('Deep consumer research', ['brandwatch', 'talkwalker']),
+            ('Trends for post ideas', ['loomly', 'contentstudio', 'capybaroar'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $50', ['capybaroar', 'awario', 'loomly']),
+            ('$50 to $200', ['capybaroar', 'awario', 'brand24', 'iconosquare', 'contentstudio']),
+            ('More than $200', ['brand24', 'hootsuite', 'sprout', 'agorapulse']),
+            ('A custom quote is fine', ['brandwatch', 'talkwalker', 'mention'])]},
+        {'q': 'Where do mentions matter most?', 'options': [
+            ('Social networks', ['capybaroar', 'hootsuite', 'sprout', 'iconosquare']),
+            ('News and blogs', ['brand24', 'agorapulse', 'awario', 'talkwalker']),
+            ('Review sites', ['mention', 'brand24', 'awario']),
+            ('AI assistants and global markets', ['talkwalker', 'brandwatch'])]},
+        {'q': 'What happens after you listen?', 'options': [
+            ('We reply and post in one place', ['capybaroar', 'hootsuite', 'agorapulse', 'sprout']),
+            ('We write research reports', ['brandwatch', 'talkwalker', 'brand24']),
+            ('We turn trends into content', ['loomly', 'contentstudio', 'capybaroar']),
+            ('We mostly track PR', ['mention', 'awario', 'brand24'])]},
     ],
-    'intro': '''<p>Social listening means tracking what people say about your brand, your competitors or your industry, even when they don't tag you. A listening tool searches social media, news, blogs, forums and review sites for your keywords, then sorts what it finds by sentiment, reach and source.</p>
-<p>This is a different job from scheduling. A scheduler shows you comments and tags on your own posts. A listening tool goes out and finds the rest. That's why this list ranks dedicated listening tools first, then social suites that sell listening as part of a bigger plan or as an add-on.</p>
-<p>We read each tool's own pages in November 2026. Two of the biggest names don't show prices at all, so plan on a demo call for those.</p>''',
     'items': [
-        {'id': 'brand24', 'shot': 'pricing', 'text': '''<p>Brand24 tracks mentions across social media, news, blogs, videos, forums, podcasts, newsletters and review sites. AI sentiment analysis comes on every plan and sorts each mention into positive, negative or neutral. From Pro, it adds AI insights, AI topics and an AI brand assistant.</p>
-<p>The limits are keywords and mentions. Individual is $199 a month, billed yearly, for 3 keywords and 2,000 mentions a month with 1 user. Team is $299 for 7 keywords and unlimited users. There's a free 14-day trial and no free plan.</p>'''},
-        {'id': 'awario', 'shot': 'pricing', 'text': '''<p>Awario is the cheapest real listening tool here. It tracks conversations across social media, news, blogs, videos, forums and reviews, and says it crawls over 13 billion web pages a day on top of network APIs. Every plan allows unlimited keywords per topic.</p>
-<p>Starter is $29 a month billed yearly, or $49 monthly, for 3 topics, 30,000 new mentions a month and 1 team member. Pro is $89 a month billed yearly for 15 topics and 10 members. Exports to CSV need Pro. The free trial needs no card.</p>'''},
-        {'id': 'mention', 'shot': 'home', 'text': '''<p>Mention monitors any topic across social media and the web, with data up to 2 years back. It is strong on reviews: it watches 75+ review sites, including Google, Trustpilot, Amazon and Glassdoor. Sentiment, share of voice and competitor benchmarks are part of its analytics.</p>
-<p>Two things to know. Its pricing page showed a Company plan sold through a demo, with no prices listed. And Mention is retiring its own publishing and reply tools, pointing users to Agorapulse instead, so you'll need a separate tool to post and answer.</p>'''},
-        {'id': 'brandwatch', 'shot': 'home', 'text': '''<p>Brandwatch is built for large brands doing deep consumer research. It holds 1.7 trillion conversations going back to 2010 and adds 501 million new ones a day. Its AI assistant, Iris, turns the data into plain insights, and image analysis finds logos, objects and scenes in pictures.</p>
-<p>It has 50+ live charts and exports to Excel, PPT and PDF. There are no public prices; you book a demo. It's more than a small brand needs, but few tools match its history.</p>'''},
-        {'id': 'talkwalker', 'shot': 'pricing', 'text': '''<p>Talkwalker, now called Lumen by Talkwalker, covers 150 million sources, 30+ social platforms and 187 languages. Its AI adds peak detection, forecasting and summaries, plus an AI agent you can ask questions. LLM Insights tracks how AI assistants talk about your brand.</p>
-<p>Every plan includes unlimited users and onboarding. Core, Analyze and Business are all sold by custom quote, so you'll need a demo to get a price.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse is a social media suite that sells Advanced Listening as an add-on. It tracks conversations about your brand across social accounts, news sites, blogs and forums, with filters for language, location, sentiment and source. Its AI tags sentiment and filters off-topic mentions out of your searches.</p>
-<p>The base plans are priced per user, at US $79, $119 and $149 a month, and the listening add-on is sold through a demo. It makes sense if you also want Agorapulse's inbox and publishing in the same place.</p>'''},
-        {'id': 'sprout', 'shot': 'pricing', 'text': '''<p>Sprout Social sells Listening as an add-on to its Standard plan and up. It uses AI to pull insights from large numbers of conversations and filters them with machine learning. Sprout also offers listening consultations to help you pick the right topics.</p>
-<p>The cost stacks up: Sprout starts at $79 per seat a month on yearly billing, and Listening is priced on top. It fits big teams that already use Sprout for publishing and reports.</p>'''},
-        {'id': 'iconosquare', 'shot': 'home', 'text': '''<p>Iconosquare includes listening tools on its Scale plan. You can monitor competitors, hashtags and industry trends and build listening reports next to your regular analytics.</p>
-<p>Scale is from $79 a month billed yearly for 20 profiles and 3 users. It's lighter than the dedicated tools above, but it's a fair price if you want listening and scheduling in one place.</p>'''},
-        {'id': 'capybaroar', 'shot': 'inbox', 'text': '''<p>Capybaroar is our product, and it is not a social listening tool. It doesn't search the web or news for your keywords. What it does is catch the comments and mentions on your own connected channels and put them in one inbox, with a suggested reply for each on paid plans.</p>
-<p>We list it here because listening is only half the job. Once a listening tool shows you what people are saying, you still need to reply and post. You can pair a listening tool like Brand24 or Awario with Capybaroar for the calendar, the inbox and reports. Free covers 3 channels and 30 posts a month.</p>''',
-         'bestFor': 'replying and posting after you listen',
-         'pros': ['Comments and mentions from your own channels in one inbox', 'Suggested replies on every paid plan', 'Plan your response posts on one calendar for 14 networks'],
-         'cons': ['No keyword listening across the web, news or other people\'s posts', 'No competitor or sentiment tracking']},
+        {'id': 'capybaroar', 'shot': 'inbox', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social listening tools for teams that want to hear and answer their audience in the same place they post. Instead of only flagging mentions, it gathers comments and mentions from every connected channel into one inbox on every plan, with suggested replies on paid plans. It does not search the open web for keywords. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-inbox">Comments and mentions</a> in one inbox',
+                  '<a href="/social-media-inbox">Suggested replies</a> on paid plans',
+                  '<a href="/social-media-scheduler">Response posts on one calendar</a> for 14 networks',
+                  '<a href="/ai-social-media-agent">AI agent</a> drafts the week for review',
+                  '<a href="/pricing">Free plan</a> with inbox and analytics'],
+         'cons': ['Not a full social listening suite']},
+        {'id': 'brandwatch', 'shot': 'home', 'best': 'History back to 2010',
+         'overview': '<p>Brandwatch is one of the most established social listening tools for large brands doing deep consumer research. It holds 1.7 trillion conversations going back to 2010 and adds 501 million new ones every day. Its AI assistant, Iris, turns that data into readable insights, and image analysis finds logos and scenes in pictures. A key strength is this archive, which suits research teams that study long trends.</p>',
+         'pros': ['History back to 2010', '501 million new conversations a day', 'Iris AI assistant for insights', 'Image analysis for logos and scenes', 'Good fit for consumer research teams'],
+         'cons': ['Custom pricing may need a sales demo', 'Setup can feel heavy for small brands', 'Data depth can be more than some need']},
+        {'id': 'brand24', 'shot': 'pricing', 'best': 'AI sentiment on every plan',
+         'overview': '<p>Brand24 is one of the most popular social listening tools for brands that want AI sentiment without a long setup. It tracks mentions across social media, news, blogs, videos, forums, podcasts, newsletters and review sites. AI sentiment analysis comes on every plan, and Pro adds AI insights, AI topics and a brand assistant. This makes it a common choice for marketing and PR teams that want quick answers.</p>',
+         'pros': ['Wide sources, podcasts and reviews included', 'AI sentiment on every plan', 'AI insights and topics from Pro', 'Unlimited users from Team', 'Good fit for marketing and PR teams'],
+         'cons': ['Higher starting price than some tools', 'Keyword limits can feel tight on Individual', 'Monthly mention caps may limit busy brands']},
+        {'id': 'talkwalker', 'shot': 'pricing', 'best': '187 languages',
+         'overview': '<p>Talkwalker is a large social listening tool used by global brands that watch many markets. Now called Lumen by Talkwalker, it covers 150 million sources, 30+ social platforms and 187 languages. Its AI adds peak detection, forecasting and an AI agent for questions, and LLM Insights tracks how AI assistants talk about a brand. Every plan includes unlimited users, which makes it useful for big teams that share one view.</p>',
+         'pros': ['150 million sources, 30+ social platforms', '187 languages and 196 countries', 'Peak detection and forecasting', 'LLM Insights on AI assistants', 'Good fit for global brands'],
+         'cons': ['Custom quotes can slow the buying process', 'Publishing may need a separate tool', 'Onboarding can take time for new teams']},
+        {'id': 'hootsuite', 'shot': 'pricing', 'best': 'Listening plus publishing',
+         'overview': '<p>Hootsuite is a widely used social listening tool and scheduler that helps brand teams watch their brand and competitors. Every plan includes brand and competitor monitoring next to one inbox for messages. Professional adds trend forecasts up to 90 days ahead, and Enterprise adds advanced listening across social, digital and AI. It is a relevant option for teams that want listening and publishing from one login.</p>',
+         'pros': ['Brand and competitor monitoring on every plan', 'One inbox for messages and comments', 'Trend forecasts on Professional', 'Advanced listening on Enterprise', 'Good fit for brand teams that publish'],
+         'cons': ['Per-user pricing can add up fast', 'Advanced listening may need Enterprise', 'Interface can feel complex for new users']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Spike alerts and sentiment',
+         'overview': '<p>Sprout Social is a social listening tool and management suite for large teams that already publish and report in one place. Listening is sold as an add-on to Standard and up, with Smart Categories, sentiment scoring and custom spike alerts. Sprout also runs listening consultations to help pick the right topics. Sprout focuses heavily on filtering, with machine learning that brings relevant posts to the front.</p>',
+         'pros': ['Sentiment tracking and scoring', 'Custom spike alerts', 'Smart Categories for topics', 'Listening consultations for topics', 'Good fit for large social teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Listening can cost extra as an add-on', 'Add-on pricing may be unclear upfront']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Listening beside the inbox',
+         'overview': '<p>Agorapulse is a social listening tool and social suite designed specifically for business teams who want listening next to their inbox. Its Advanced Listening add-on tracks conversations across social accounts, news sites, blogs and forums, with filters for language, location, sentiment and source. Its AI tags sentiment and filters off-topic mentions out of searches. This setup suits teams that reply to what they find in the same tool.</p>',
+         'pros': ['Listening across news, blogs and forums', 'AI sentiment tags on mentions', 'Filters out off-topic mentions', 'One inbox on every plan', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can grow with the team', 'Listening can cost extra as an add-on', 'Add-on prices may need a demo']},
+        {'id': 'iconosquare', 'shot': 'home', 'best': 'Competitor watching',
+         'overview': '<p>Iconosquare is a social listening tool built for brands that benchmark against competitors. Its Scale plan adds listening tools to monitor competitors, hashtags and industry trends, with custom feeds for the topics you follow. Mentions tracking sits in the same inbox as comments and DMs. It is lighter than dedicated listening tools, which makes it attractive for teams that want competitor watching next to analytics.</p>',
+         'pros': ['Competitor and hashtag monitoring', 'Custom feeds for topics', 'Mentions tracking in the inbox', 'Industry benchmarks', 'Free plan for 2 profiles'],
+         'cons': ['Listening may need the Scale plan', 'Web and news coverage may be limited', 'Profile limits can feel tight on lower plans']},
+        {'id': 'loomly', 'shot': 'pricing', 'best': 'Trends for post ideas',
+         'overview': '<p>Loomly is a social listening tool and publishing platform for marketing teams that want to turn trends into posts. It tracks sentiment, monitors brand mentions and spots trending topics worth a post. Starter includes 2 social listening searches a month and Beyond includes 5, next to approvals and an inbox. It is especially useful for small teams that use listening mainly to find post ideas.</p>',
+         'pros': ['Brand mention and sentiment tracking', 'Trending topics for post ideas', 'Approval workflows on every plan', 'Inbox with assigned conversations', 'Good fit for content-led teams'],
+         'cons': ['Yearly plans may not end early', 'Listening searches can be limited monthly', 'No MCP server listed for AI tools']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'Listening add-on for content',
+         'overview': '<p>ContentStudio is a social listening tool and content platform for agencies and content teams. Its Social Listening add-on tracks 3 topics and up to 5,000 mentions from one dashboard, and a larger tier monitors 5 topics and up to 10,000 mentions. In addition to listening, ContentStudio also provides AI Studio, scheduling and analytics. The platform suits teams that want to turn mentions into posts in the same place.</p>',
+         'pros': ['Listening dashboard for topics and mentions', 'Up to 10,000 mentions on the larger add-on', 'AI Studio for text, images and video', 'MCP integration on every plan', 'Good fit for content teams'],
+         'cons': ['Listening can cost extra as an add-on', 'Inbox may need the Advanced plan', 'Topic limits can feel tight for brands']},
+        {'id': 'mention', 'shot': 'home', 'best': 'Review site monitoring',
+         'overview': '<p>Mention is a social listening tool for PR teams that track press, social posts and reviews. It monitors any topic across social media and the web in real time, with data up to 2 years back. It watches 75+ review sites, including Google, Trustpilot, Amazon and Glassdoor. Because Mention is retiring its own publishing and reply tools, it is often used for monitoring rather than full social management.</p>',
+         'pros': ['Real-time monitoring of social and web', '75+ review sites tracked', 'Boolean search for exact alerts', 'Sentiment and share of voice', 'Good fit for PR and review tracking'],
+         'cons': ['Prices may need a sales demo', 'Publishing and replies may need another tool', 'Data history may feel short for research']},
+        {'id': 'awario', 'shot': 'pricing', 'best': 'Low-cost listening',
+         'overview': '<p>Awario is a dedicated social listening tool for small teams that want real listening at a low price. It tracks conversations across social media, news, blogs, videos, forums and reviews, and crawls over 13 billion web pages a day on top of network APIs. Every plan allows unlimited keywords per topic. Many teams use it as a specialized tool to test listening before they move to a larger platform.</p>',
+         'pros': ['Unlimited keywords per topic', 'Social, news, blogs, forums and reviews', '13 billion web pages crawled daily', 'Sentiment, reach and topic cloud', 'Good fit for small teams'],
+         'cons': ['Starter can limit topics and seats', 'No inbox or publishing for replies', 'Exports may need a higher plan']},
     ],
-    'how': '''<p>We ranked dedicated listening tools first, then social suites that offer listening, then a scheduler to pair with them.</p>
-<ul><li><b>Sources:</b> which places each tool searches, from social networks to news, podcasts and review sites.</li>
-<li><b>Limits:</b> how many keywords, topics and mentions each plan allows.</li>
-<li><b>AI and price:</b> sentiment and AI insights, and whether prices are public, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. It doesn't do social listening, so we placed it last and said so plainly.</p>''',
-    'verdict': '''<p>For most brands, Brand24 is the easiest strong pick: wide sources and AI sentiment on every plan. If budget is tight, Awario gives you real listening from $29 a month. Big brands with research teams should look at Brandwatch and Talkwalker, but expect a sales call. If you already use Sprout or Agorapulse, their listening add-ons keep everything in one tool.</p>
-<p>Listening tells you what people say. To answer them and post on time, pair it with a scheduler and inbox like Capybaroar.</p>''',
+    'conclusion': '''<p>A social listening tool shows what people say about your brand, even when they do not tag you. It turns scattered posts into early warnings, honest feedback and a view of your rivals.</p>
+<p>But listening is only half the job. The best setup also brings comments and mentions into one inbox, helps the team reply fast and turns what it hears into the next posts on the calendar.</p>
+<p>That is why <a href="https://capybaroar.com/social-media-inbox">Capybaroar</a> stands out. It combines one inbox, suggested replies and an AI agent with every social channel in one calendar. For teams that want to hear and answer in one place, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social listening tool?', 'For most brands, Brand24. It covers social media, news, blogs, podcasts and reviews, with AI sentiment on every plan. Awario is the best budget pick, and Brandwatch is best for large brands.'),
-        ('Is there a free social listening tool?', 'Not among the tools here. Brand24 has a 14-day free trial and Awario has a free trial with no card. Talkwalker, Brandwatch and Mention sell through demos.'),
-        ('What is the difference between social listening and monitoring?', 'Monitoring tracks mentions and tags, often on your own accounts. Listening searches for keywords across the web, including posts that don\'t tag you, and looks for patterns like sentiment and trends.'),
-        ('Does Capybaroar do social listening?', 'No. Capybaroar puts comments and mentions from your own channels in one inbox, but it doesn\'t search the web or news for keywords. Pair it with a listening tool for that.'),
-        ('How many keywords do I need to track?', 'Start with your brand name, your product names and 1 or 2 competitors. Brand24 Individual allows 3 keywords, and Awario Starter allows 3 topics with unlimited keywords in each.'),
+        ('What is a social listening tool?', 'A social listening tool is an app that tracks what people say about a brand, a competitor or a topic across social media and the web. It finds mentions even when no one tags the brand, then sorts them by sentiment, reach and source so teams can see what matters.'),
+        ('How do social listening tools find mentions?', 'Social listening tools find mentions by searching for the keywords you set. They pull public posts through network APIs and crawl news sites, blogs, forums and review sites. Each mention gets tagged with sentiment and source, and many tools send an alert when the number of mentions spikes.'),
+        ('Why use a social listening tool for your brand?', 'A social listening tool helps your brand catch problems early, hear honest feedback and compare itself with rivals. Spike alerts flag a complaint before it spreads, and share of voice shows how often people talk about you next to competitors. That makes each reply and campaign better informed.'),
+        ('What features should modern social listening tools include?', 'Modern social listening tools should include keyword tracking across social and the web, sentiment on each mention, spike alerts and competitor share of voice. AI summaries help teams read large volumes fast. The newest setups also bring mentions into the same inbox where the team replies, so answers and posts follow from what they hear.'),
+        ('Which tool is recommended for teams that need more than listening?', 'For teams that need more than listening, we recommend Capybaroar. It puts every social channel in one calendar, with comments and mentions in one inbox on every plan and an AI agent that drafts the next posts. Research teams that need a deep archive may prefer Brandwatch, and brands that want web-wide AI sentiment may prefer Brand24.'),
     ],
 }
