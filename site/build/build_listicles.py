@@ -391,7 +391,7 @@ for p in POSTS:
         {"@type": "ListItem", "position": 3, "name": p['title'], "item": "https://capybaroar.com" + slug}]}
     ld = ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (art, lst, crumbs))
     html = html.replace('</head>', ld + '</head>', 1)
-    html = MO.add_assets(html.replace('/home.css?v=8', '/home.css?v=10'))
+    html = MO.add_assets(html.replace('/home.css?v=8', '/home.css?v=11'))
     html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + QUIZ_JS + '\n</body>', 1)
     os.makedirs(P + 'blog', exist_ok=True)
     open(P + 'blog/' + p['slug'] + '.html', 'w').write(html)
