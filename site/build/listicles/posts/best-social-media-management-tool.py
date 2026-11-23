@@ -72,7 +72,7 @@ POST = {
          'pros': ['Team and care reports on Advanced', 'Trellis AI agent on every plan', 'Unlimited profiles on Professional', 'iOS and Android app on every plan', 'Good fit for large enterprises'],
          'cons': ['Per-seat pricing can strain smaller budgets', 'Inbox may start only on Standard', 'Premium Analytics may cost extra']},
         {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Teams that prove ROI',
-         'overview': '<p>Agorapulse is a strong social media management tool for business teams that must show what social earns. Every plan has one inbox for messages and organic comments, and Advanced adds ROI analysis and competitor benchmarks. Its AI suggests replies to direct messages and tags the sentiment of comments. It is a relevant option for marketing teams that answer to a sales or finance lead.</p>',
+         'overview': '<p>Agorapulse is a strong social media management tool for business teams that must show what social earns. Advanced links posts to ROI analysis and competitor benchmarks, so a marketing lead can show results in money terms. Every plan also has one inbox, where AI suggests DM replies and tags comment sentiment. It is a relevant option for teams that answer to a sales or finance lead.</p>',
          'pros': ['One inbox on every plan', 'ROI analysis on Advanced', 'AI reply suggestions for DMs', 'Works with Reddit and Google Business Profile', 'Free plan after the 30-day trial'],
          'cons': ['Per-user pricing can add up for teams', 'No AI agent that drafts a full week', 'Free plan details may be hard to find']},
         {'id': 'sendible', 'shot': 'pricing', 'best': 'Agencies that add staff',

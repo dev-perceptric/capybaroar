@@ -92,7 +92,7 @@ POST = {
          'pros': ['Instagram carousels and first comments', 'Image and location tagging', 'Story replies in the inbox', 'Client approvals on Premium', 'Good fit for small agencies'],
          'cons': ['Extra accounts can raise the bill', 'Inbox and analytics may need Standard', 'AI credits may run out on lower plans']},
         {'id': 'iconosquare', 'shot': 'pricing', 'best': 'Analytics-first Instagram tool',
-         'overview': '<p>Iconosquare is an analytics-first Instagram post scheduler for brands and agencies that judge every post by its numbers. It auto-publishes Instagram posts, schedules collab posts and tracks Reels and Stories in detail. Uma, its AI analyst, comes with paid plans, and custom dashboards show the times followers are most active. Iconosquare focuses heavily on reporting, so it suits teams that review Instagram results each week.</p>',
+         'overview': '<p>Iconosquare is an analytics-first Instagram post scheduler for brands and agencies that judge every post by its numbers. It auto-publishes Instagram posts, schedules collab posts and tracks Reels and Stories in detail. Uma, its AI analyst, comes with paid plans, next to custom dashboards and suggested times to post. Iconosquare focuses heavily on reporting, so it suits teams that review Instagram results each week.</p>',
          'pros': ['Auto-publishing for Instagram posts', 'Instagram collab post scheduling', 'Detailed Reels and Stories analytics', 'Custom dashboards and posting times', 'Free plan for 2 profiles'],
          'cons': ['Starter can cap monthly posts across profiles', 'Inbox may need the Launch plan', 'Dashboards can feel dense for new users']},
         {'id': 'pallyy', 'shot': 'pricing', 'best': 'Most Instagram post types',

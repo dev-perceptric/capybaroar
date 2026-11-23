@@ -51,7 +51,7 @@ POST = {
     ],
     'items': [
         {'id': 'capybaroar', 'shot': 'agent', 'best': 'Every social channel, one calendar',
-         'overview': '<p>Capybaroar is one of the most relevant social media tools for small business owners who want to run social in less time. Instead of only scheduling what you write, it gives you an AI agent that plans and drafts a week of posts for your review. Creator is $29 a month for 1 member, 8 channels and unlimited posts. That makes it a strong fit for small teams that want every social channel in one calendar.</p>',
+         'overview': '<p>Capybaroar is one of the most relevant social media tools for small business owners who want social media done in less time. Instead of only scheduling what you write, it lets an AI agent plan and draft a week of posts that you check and approve. Creator costs $29 a month for 1 member, 8 channels and unlimited posts. That makes it a strong fit for small teams that want every social channel in one calendar.</p>',
          'pros': ['<a href="/social-media-scheduler">Schedules to 14 networks</a> from one calendar',
                   '<a href="/posting-queue">Posting queue</a> and <a href="/bulk-scheduling">bulk upload</a>',
                   '<a href="/ai-social-media-agent">AI agent</a> drafts a week of posts',
