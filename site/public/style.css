@@ -2,17 +2,17 @@
    yellows as the one accent. White pages, raised white cards with a soft ring, pill buttons and chips, 12px cards, 16px big
    frames, a dark gray primary. Yellow is always a fill with ink on it. Homepage sections live in home.css. */
 :root{
-  --ink:#171717;--ink-2:#525252;--gray:#737373;--faint:#a3a3a3;--head-2:#8a8a8a;--line:#ebebeb;--frame:#e5e5e5;--canvas:#fafafa;--shell:#f5f5f5;--panel:#fff;
+  --ink:#171717;--ink-2:#525252;--gray:#737373;--faint:#a3a3a3;--head-2:#8a8a8a;--line:#dcdcdc;--frame:#d4d4d4;--canvas:#fafafa;--shell:#f5f5f5;--panel:#fff;
   --brand:#333;--brand-h:#1f1f1f;--code:#171717;--code-ink:#f5f5f0;--code-dim:#8f8f8a;
-  --y:#ffd202;--y-h:#e6bd00;--y-1:#fffced;--y-3:#fff6c7;--y-6:#fff2b1;--y-ink:#262209;
+  --y:#ffd202;--y-h:#e6bd00;--y-1:#fffced;--y-3:#fff6c7;--y-6:#fbe07a;--y-ink:#262209;
   --green-3:#e3f4ec;--green-11:#086444;--violet-3:#e9e3fd;--violet-11:#5429d6;
-  --sh-rest:0 4px 4px -12px rgba(0,0,0,.02),0 12px 12px -6px rgba(0,0,0,.02),0 6px 6px -3px rgba(0,0,0,.02),0 3px 3px -1.5px rgba(0,0,0,.02),0 1px 1px -.5px rgba(0,0,0,.04),0 0 0 1px rgba(0,0,0,.06);
-  --sh-lift:0 0 0 1px rgba(0,0,0,.06),0 1px 1px -.5px rgba(0,0,0,.04),0 6px 6px -3px rgba(0,0,0,.04),0 12px 12px -6px rgba(0,0,0,.03),0 32px 64px -24px rgba(0,0,0,.16);
-  --sh-chip:0 1px 2px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.06);
-  --sh-pill:0 1px 2px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.08);
-  --sh-outline:0 0 0 1px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.16);
+  --sh-rest:0 4px 4px -12px rgba(0,0,0,.02),0 12px 12px -6px rgba(0,0,0,.02),0 6px 6px -3px rgba(0,0,0,.02),0 3px 3px -1.5px rgba(0,0,0,.02),0 1px 1px -.5px rgba(0,0,0,.04),0 0 0 1px rgba(0,0,0,.11);
+  --sh-lift:0 0 0 1px rgba(0,0,0,.11),0 1px 1px -.5px rgba(0,0,0,.04),0 6px 6px -3px rgba(0,0,0,.04),0 12px 12px -6px rgba(0,0,0,.03),0 32px 64px -24px rgba(0,0,0,.16);
+  --sh-chip:0 1px 2px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.11);
+  --sh-pill:0 1px 2px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.13);
+  --sh-outline:0 0 0 1px rgba(0,0,0,.15),0 1px 3px rgba(0,0,0,.16);
   --sh-primary:0 0 0 1px rgba(0,0,0,.8),0 1px 3px rgba(0,0,0,.4),1px 4px 8px rgba(0,0,0,.12);
-  --sh-menu:0 12px 32px -6px rgba(0,0,0,.12),0 0 0 1px rgba(111,107,107,.1),0 1px 3px rgba(63,70,75,.1);
+  --sh-menu:0 12px 32px -6px rgba(0,0,0,.12),0 0 0 1px rgba(111,107,107,.18),0 1px 3px rgba(63,70,75,.1);
   --sh-focus:0 0 0 1px var(--y-h),0 0 0 4px rgba(255,210,2,.4);
   --ease-out:cubic-bezier(.22,1,.36,1);--fast:150ms;--normal:280ms;
   --font:Inter,"Inter Fallback",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;

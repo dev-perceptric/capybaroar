@@ -1309,8 +1309,8 @@ a.lx-g2{color:var(--ink-2)}
 .lx-item .lx-agent h3{display:block;margin:0!important;font-size:21px!important;line-height:1.3}
 .lx-agent .ai-copy p{margin:0!important;font-size:15px}
 .lx-agent .ai-copy .btn{margin-top:8px}
-.lx-agent ul,.lx-agent li{margin:0!important;padding-left:0!important}
-.lx-agent ul{list-style:none}
+.lx-agent ul{margin:0!important;padding-left:0!important;list-style:none}
+.lx-agent .ai-week li{margin:0!important}
 .lx-agent .ai-chat p{margin:0!important}
 .lx-related{padding:16px 0 72px}
 .lx-related h2{margin-bottom:20px}
