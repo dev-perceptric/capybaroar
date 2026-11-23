@@ -1,51 +1,116 @@
 POST = {
     'order': 28,
     'slug': 'ai-social-media-post-generators',
-    'keyword': 'ai social media post generator',
-    'title': '8 Best AI Social Media Post Generators (2027)',
-    'desc': 'The 8 best AI social media post generators for 2027, compared on what they make, how they post and what they cost. Checked on each tool\'s own site in November 2026.',
-    'h1a': '8 AI post generators',
-    'h1b': 'that turn ideas into finished posts.',
-    'lead': 'A blank caption box is the slowest part of social media. These 8 tools write the posts, make the images and some even plan the week, with features and prices checked on each tool\'s own site.',
+    'keyword': 'AI social media post generator',
+    'title': '12 Best AI Social Media Post Generators in 2027',
+    'desc': 'Compare the 12 best AI social media post generators in 2027, from text drafts to images and ads. See what each one makes and why Capybaroar leads.',
+    'heroAlt': 'AI drafts of posts for several networks, for the best AI social media post generators in 2027',
     'cover': {'type': 'agent', 'ai': 'claude', 'networks': ['instagram', 'linkedin', 'tiktok']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'An agent that plans and writes the week, plus AI images, video and captions.'),
-        ('Best for ads', 'predis', 'Turns a product link into image ads, video ads and posts.'),
-        ('Best free option', 'buffer', 'An AI Assistant on every plan, Free included.'),
+    'leaders': ['hootsuite', 'canva'],
+    'intro': '''<p>The slowest part of social media is not posting. It is staring at an empty box, trying to say the same news five ways for five networks, every single week.</p>
+<p>An AI social media post generator fills that box for you. You give it an idea, a link or a photo, and it writes the post, makes a visual and shapes a version for each network. Creators, marketers, store owners and agencies use one to keep up with a busy plan.</p>
+<p>The payoff is more posts with less typing, and more time to check what goes out. Below are 12 tools, with what each one makes and its real prices, checked in November 2026. ✍️</p>''',
+    'whatH2': 'What Is an AI Social Media Post Generator?',
+    'what': {
+        'def': 'An AI social media post generator is a tool that writes social posts, and often the images for them, from a short prompt by using a large AI model.',
+        'body': '<p>You type an idea, paste a link or upload a picture. The model returns a draft, and the tool adapts it to each network\'s length and style. Some generators stop there and leave you to copy the text into each app by hand. Others save the post on a calendar, wait for your approval and publish it for you at the best time.</p>',
+        'bullets': ['Drafts from a short prompt', 'Versions for each network', 'AI images and video', 'Scheduling built in'],
+        'close': 'The result is a stack of ready posts in minutes, not hours.',
+    },
+    'whyH2': 'Why Do You Need an AI Social Media Post Generator for Your Brand?',
+    'why': {
+        'lead': '<p>Writing every post yourself works when you post a few times a month. Once you post daily on several networks, the writing alone can fill your week.</p>\n<p>An AI social media post generator solves this.</p>',
+        'bullets': [
+            ('No blank page', 'The AI hands you a first draft, so you edit instead of starting from nothing.'),
+            ('One idea, many posts', 'A single message turns into a version for LinkedIn, Instagram, TikTok and the rest.'),
+            ('Visuals included', 'Many tools also make an image or short video, so a post is ready in one place.'),
+            ('Posts that ship', 'The best generators save drafts to a calendar, so each post goes live after one review.'),
+        ],
+    },
+    'quizH3': 'AI Social Media Post Generators: Quick Match',
+    'quiz': [
+        {'q': 'What do you want the AI to make?', 'options': [
+            ('A full week of posts', ['capybaroar', 'socialbee', 'loomly']),
+            ('Graphics and short videos', ['canva', 'capybaroar', 'contentstudio']),
+            ('Product ads', ['predis', 'canva']),
+            ('Quick text drafts', ['chatgpt', 'buffer', 'publer', 'taplio'])]},
+        {'q': 'Where do you post most?', 'options': [
+            ('LinkedIn', ['taplio', 'capybaroar', 'buffer']),
+            ('Instagram and TikTok', ['capybaroar', 'canva', 'publer']),
+            ('Many networks at once', ['capybaroar', 'hootsuite', 'publer', 'contentstudio']),
+            ('Paid social ads', ['predis'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Nothing yet', ['chatgpt', 'canva', 'buffer', 'publer']),
+            ('Under $50', ['capybaroar', 'contentstudio', 'socialbee', 'loomly', 'predis']),
+            ('$50 to $150', ['capybaroar', 'agorapulse', 'taplio']),
+            ('More than $150', ['hootsuite'])]},
+        {'q': 'Who checks posts before they go out?', 'options': [
+            ('Just me', ['capybaroar', 'buffer', 'chatgpt', 'socialbee']),
+            ('My team', ['capybaroar', 'loomly', 'agorapulse', 'hootsuite']),
+            ('My clients', ['capybaroar', 'contentstudio', 'loomly'])]},
     ],
-    'intro': '''<p>AI post generators come in 2 kinds. Some write one post at a time when you ask. Others plan a whole week, write every post, make the pictures and drop them on your calendar for you to check. The second kind saves far more time, as long as you still review what goes out.</p>
-<p>We also looked at what happens after the post is written. A generator that can't schedule leaves you copying and pasting into each network. The best ones write, design and post from the same place.</p>
-<p>We read each tool's own pages in November 2026 and noted the plan each AI feature needs. AI limits and credits change often, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar's AI agent works like a teammate. Tell it what's coming up, like a launch or a sale, and it writes the posts for each network and fills your calendar with drafts for you to approve. You can also make any post shorter, punchier or more casual in one click, add hashtags, or drop in a batch of photos and get a caption for each one.</p>
-<p>For visuals, it picks an image model for each idea, including Nano Banana Pro, FLUX.2 Pro and Ideogram V3, and turns an idea or photo into a short video with sound for Reels, TikTok and Shorts. Creator is $29 a month with 1,000 AI credits, which Capybaroar says covers about 125 images or 6 weeks of posts planned by the agent. Free covers scheduling only.</p>'''},
-        {'id': 'predis', 'shot': 'home', 'text': '''<p>Predis.ai is built for ads and product posts. Give it a product link, a text prompt or an image, and it makes video ads, UGC-style ads, image ads and carousels in your brand's style. It also shows the ads your competitors are running and reports on which ads earned the click.</p>
-<p>Core is $32 a month for 1 brand, but it has no auto posting. Rise, at $79 a month, adds auto posting, 4 brands and API access. Yearly plans were 50% off for Black Friday when we checked. Every plan starts with 3 days free, and Predis takes a card to start the trial.</p>'''},
-        {'id': 'contentstudio', 'shot': 'pricing', 'text': '''<p>ContentStudio's AI Studio makes text, images and video, and it can learn your brand voice so posts sound like you. It writes captions and hashtags and, from Advanced, suggests replies to comments. It also helps you find content to share, which suits teams that post a mix of their own and curated content.</p>
-<p>Plans start at $19 a month billed yearly, or $29 monthly. There's a 7-day free trial and no free plan.</p>'''},
-        {'id': 'socialbee', 'shot': 'pricing', 'text': '''<p>SocialBee's Copilot builds a content plan and writes the posts for it, and AI content generation is unlimited on every plan. Posts go into content categories, and SocialBee can recycle your evergreen posts so your best ideas keep working.</p>
-<p>Bootstrap is $24.20 a month billed yearly, or $29 monthly, for 5 social profiles and 1 user. There's a 14-day free trial and no free plan.</p>'''},
-        {'id': 'hootsuite', 'shot': 'pricing', 'text': '''<p>Hootsuite's AI teammate, Wisdom, comes on every plan and generates posts and images. It sits inside a full social media suite, with publishing, an inbox, analytics and listening, so the posts it writes go straight into your schedule.</p>
-<p>The catch is price. Plans start at $99 per user a month, billed yearly. That's a lot to pay for AI writing alone, so it fits teams that want the whole suite.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer's AI Assist writes posts, finishes your sentences, makes images and helps you reply to comments. Unlimited AI prompts come with the Business plan, along with analytics and its MCP connector.</p>
-<p>Business starts at $10 a month, or $8 a month billed yearly, and the price grows with your accounts and members. Professional, from $5 a month, covers scheduling. The free plan covers 3 accounts with 10 scheduled posts each.</p>'''},
-        {'id': 'canva', 'shot': 'pricing', 'text': '''<p>Canva makes AI-powered social posts and videos inside its design editor. Magic Write drafts your text, and Pro adds AI tools to resize a design for each network, translate it and remove backgrounds. Its 1.6M+ templates give the AI a strong starting point.</p>
-<p>Canva Pro, which also adds social content scheduling, is US$18 a month for one person, and was 50% off for the first 3 months when we checked. The free plan includes the editor and templates with limited AI. Canva has no inbox or deep analytics, so most teams pair it with a scheduler.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer's AI Assistant comes on every plan, Free included, with unlimited credits. It helps you write a post, then rewrite and repurpose it for each network. Paid plans add AI reply suggestions and AI takeaways on your results.</p>
-<p>It writes one post at a time when you ask, so it won't plan a week for you. Pricing is $5 a month per channel on Essentials, billed yearly, and the free plan covers 3 channels with 10 scheduled posts per channel.</p>'''},
+        {'id': 'capybaroar', 'shot': 'agent', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant AI social media post generators for teams that want one idea to become a scheduled week. Instead of only handing back text to copy and paste, it writes a week of posts from one message and saves them on the calendar as drafts. Paid plans add AI images and video from credits, so each post can go out with its visual. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/ai-social-media-agent">AI agent</a> writes a week of posts',
+                  '<a href="/ai-studio">AI images and video</a> on paid plans',
+                  '<a href="/social-media-calendar">Drafts land on one calendar</a> for review',
+                  '<a href="/mcp">MCP server</a> for Claude, ChatGPT and Cursor',
+                  '<a href="/social-media-scheduler">Publishes to 14 networks</a>'],
+         'cons': ['Not a standalone post generator']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Posts from trending topics',
+         'overview': '<p>Hootsuite is one of the most widely used AI social media post generators for brand teams that also need publishing and listening. Its Wisdom AI, included on every plan, generates posts and images inside the same calendar the team schedules from. Discovery streams show hot topics by industry, and the AI can draft posts from those trends right away. Every draft then sits next to the inbox and reports, so nothing has to move between apps.</p>',
+         'pros': ['Wisdom AI generates posts and images', 'Drafts posts from industry trends', 'AI caption generator', 'Unlimited scheduled posts', 'Good fit for brand teams'],
+         'cons': ['Per-user pricing can feel steep for writing', 'Interface can feel busy for quick drafts', 'Trial accounts may cap daily posts']},
+        {'id': 'canva', 'shot': 'home', 'best': 'AI design with templates',
+         'overview': '<p>Canva is one of the most established AI social media post generators for marketers, creators and small businesses who think in visuals. It makes AI-powered social posts and videos inside its design editor, and Magic Write drafts the text. Pro adds AI tools to resize, translate and remove backgrounds, plus social content scheduling. Its 1.6M+ templates give every AI design a head start, which makes it attractive for on-brand graphics.</p>',
+         'pros': ['AI-powered social posts and videos', 'Magic Write drafts the text', '1.6M+ templates', 'Brand Kits keep designs on brand', 'Free plan with limited AI'],
+         'cons': ['Scheduling may need the Pro plan', 'AI allowance can vary by plan', 'Editor can feel heavy for text-only posts']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'AI Studio plus curation',
+         'overview': '<p>ContentStudio is a strong AI social media post generator for content teams who share their own posts and curated ones. AI Studio turns a prompt into text, images or video, and the AI writes captions complete with emojis and hashtags. It also learns brand knowledge and voice, so drafts sound closer to the team. Its mix of curation and AI Studio helps teams that never want to run out of post ideas.</p>',
+         'pros': ['AI Studio for text, images and video', 'Captions with emojis and hashtags', 'AI brand knowledge and voice', 'MCP and API on every plan', 'Good fit for curation-heavy teams'],
+         'cons': ['No free plan, only a short trial', 'Inbox and approvals may need Advanced', 'AI credits can differ a lot by plan']},
+        {'id': 'socialbee', 'shot': 'pricing', 'best': 'AI strategy and posts',
+         'overview': '<p>SocialBee is a practical AI social media post generator for solo marketers who need a plan as much as the posts. Its Copilot builds a full strategy with a posting schedule, then generates captions, images and ready-to-edit posts. SocialBee also offers AI post generators for Facebook, Instagram, LinkedIn, TikTok and X, and AI generation is unlimited on every plan. This makes it a common choice for marketers who start from a blank page.</p>',
+         'pros': ['Copilot plans and writes posts', 'Unlimited AI content on every plan', 'Captions, images and hashtags', 'Content categories for evergreen posts', 'Good fit for solo marketers'],
+         'cons': ['Approvals may need a higher plan', 'No MCP or API listed for AI apps', 'Analytics history may be short on Bootstrap']},
+        {'id': 'loomly', 'shot': 'home', 'best': 'Variations per platform',
+         'overview': '<p>Loomly is an AI social media post generator built for marketing teams that want ideas, posts and approvals in one flow. Its AI learns the brand voice, then generates posts, images and captions with variations for each platform, ready to schedule. The AI Assistant chat also suggests topics and timing to fill the calendar. Approval workflows on the lowest plan keep a person in the loop before anything goes live.</p>',
+         'pros': ['Generates posts, images and captions', 'Variations for each platform', 'AI learns the brand voice', 'Approvals on the lowest plan', 'Good fit for marketing teams'],
+         'cons': ['Yearly plans may not end early', 'No MCP server listed, unlike some tools', 'AI use may hit a monthly cap']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Low-cost unlimited AI',
+         'overview': '<p>Publer is a low-cost AI social media post generator for content creators, real estate agents and small business owners. Its AI Assist generates posts, completes text instantly and creates photos to match. On the Business plan, AI prompts for text and images are unlimited at no extra cost. It is a relevant option for users who mainly need a cheap, steady stream of AI posts across 13 networks.</p>',
+         'pros': ['AI Post Generator built in', 'AI images from a prompt', 'Unlimited AI prompts on Business', 'Posts to 13 networks', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with each account', 'MCP and unlimited AI may need Business', 'Free plan may not connect X']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'AI Assistant on Free',
+         'overview': '<p>Buffer is a simple AI social media post generator for creators and small teams who post to a few channels. Its AI Assistant turns an idea into a post, rewrites it and crafts versions for each platform, with unlimited credits. Buffer can also turn a comment exchange into a new post, and its AI learns a writer\'s voice. A key strength is that the AI Assistant comes on the free plan.</p>',
+         'pros': ['AI Assistant with unlimited credits', 'Versions for each platform', 'Turns comments into new posts', 'Pay only for the channels you use', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel', 'Approvals may need the Team plan', 'Analytics can feel light next to suites']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Repurposes content into posts',
+         'overview': '<p>Agorapulse is an AI social media post generator and management platform for business teams that report on results. Its tool Archie turns a webinar, case study or article into network-specific posts to fill the calendar. The Writing Assistant drafts and polishes captions, and the team reviews each AI suggestion before it goes out. Agorapulse focuses heavily on control, since every AI feature runs within user permissions.</p>',
+         'pros': ['Archie turns content into posts', 'Writing Assistant for captions', 'Team reviews every AI suggestion', 'One inbox on every plan', 'Free plan after the trial'],
+         'cons': ['Publishing to X may cost extra', 'Per-user pricing can grow with the team', 'Free plan limits may be unclear']},
+        {'id': 'predis', 'shot': 'home', 'best': 'Ads from a product link',
+         'overview': '<p>Predis.ai is a dedicated AI social media post generator for ecommerce brands that need a steady stream of ads. It turns a product link, a prompt or an image into video ads, UGC ads, image ads and carousels in the brand\'s style. It also tracks the ads competitors run and reports which ads earned the click. Store owners can generate many ad variations at once to test hooks, copy and visuals.</p>',
+         'pros': ['Turns a product link into ads', 'Video, UGC and image ads', 'Carousels and captions too', 'Tracks competitor ads', 'Good fit for ecommerce brands'],
+         'cons': ['Trial may need a card up front', 'No inbox for replies, unlike full suites', 'Credit costs can vary by content type']},
+        {'id': 'chatgpt', 'shot': 'pricing', 'best': 'Free drafts by chat',
+         'overview': '<p>ChatGPT is a general AI assistant that also works as an AI social media post generator for writers, founders and marketers. The free plan includes unlimited text chats with limited image creation, which covers ideas and first drafts. Plus adds projects, scheduled tasks and custom GPTs for repeat formats. Because the tool focuses on chat, it is often used for drafting rather than scheduling posts.</p>',
+         'pros': ['Drafts posts and ideas by chat', 'Image creation in the same chat', 'Projects and custom GPTs on Plus', 'Scheduled tasks on Plus', 'Free plan with unlimited text chats'],
+         'cons': ['Stronger models may need a paid plan', 'No scheduling to social channels on its own', 'Go plan may include ads']},
+        {'id': 'taplio', 'shot': 'pricing', 'best': 'LinkedIn posts in your voice',
+         'overview': '<p>Taplio is an AI social media post generator for founders and creators growing on LinkedIn. Its AI, trained on 3 million+ posts, turns a rough idea into a post in the writer\'s voice, ready to schedule. It also writes hooks, rewrites, carousels and comment starters. It is especially useful for founders who want to stay consistent on LinkedIn in about 10 minutes a day.</p>',
+         'pros': ['AI trained on 3M+ LinkedIn posts', 'Hooks, rewrites and tone matching', 'Carousel generator', 'MCP and an official Claude connector', 'Good fit for LinkedIn founders'],
+         'cons': ['AI writing may need the Growth plan', 'No networks beyond LinkedIn', 'AI usage limits may vary by plan']},
     ],
-    'how': '''<p>We judged each tool on how much of the job it does, from the first idea to the post going live.</p>
-<ul><li><b>What it makes:</b> text, captions, images, video and ads, and whether it can plan a full week.</li>
-<li><b>From idea to post:</b> whether the tool also schedules what it writes, or you copy it somewhere else.</li>
-<li><b>AI limits and price:</b> credits, caps and the plan each AI feature needs, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and only list what it really does.</p>''',
-    'verdict': '''<p>If you want the AI to plan the week, write every post, make the visuals and put it all on your calendar for review, Capybaroar does that in one place. If your posts are mostly ads for products, Predis.ai is made for that. SocialBee and ContentStudio are good middle picks with unlimited or built-in AI writing.</p>
-<p>For a free start, Buffer's AI Assistant comes on every plan, and Canva is the pick for design-heavy posts. Whatever you use, read every AI post before it goes live.</p>''',
+    'conclusion': '''<p>An AI social media post generator turns one idea into posts for every network. It makes writing faster and keeps a busy plan full without long nights at the keyboard.</p>
+<p>But the best tool today does more than hand back text. It should plan the week, make the visuals and put every draft on a calendar, so each post goes live after one review.</p>
+<p>That is why <a href="https://capybaroar.com/ai-studio">Capybaroar</a> stands out. Its AI agent writes the week, makes images and video, and puts every social channel in one calendar. For teams that want posts that are written and scheduled, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best AI social media post generator?', 'For most teams, Capybaroar. Its AI agent plans and writes a week of posts, makes images and video, and saves everything as drafts on your calendar. Predis.ai is best if you mostly make product ads.'),
-        ('Is there a free AI social media post generator?', 'Buffer\'s AI Assistant comes on its free plan with unlimited credits, and Canva\'s free plan includes limited AI. Capybaroar\'s AI features need a paid plan, and its 14-day Pro trial includes 200 AI credits with no card.'),
-        ('Can AI write posts in my brand voice?', 'Some tools learn it. ContentStudio offers an AI brand voice, and Typefully and Hypefury say their AI writes in your voice. Give any tool a few of your best posts as examples.'),
-        ('Will AI post for me without my approval?', 'In Capybaroar, the agent saves posts as drafts and nothing goes out until you approve it. Check each tool\'s settings, and keep a person in the loop.'),
-        ('Can AI make images and videos for social posts?', 'Yes. Capybaroar makes AI images and short videos with sound from credits on paid plans. Predis.ai makes video and image ads, and Canva and Hootsuite make images.'),
+        ('What is an AI social media post generator?', 'An AI social media post generator is a tool that writes social posts from a short prompt, a link or a photo. It uses a large AI model to draft the text, and many tools also make an image or video and adapt the post to each network\'s length and style.'),
+        ('How do AI social media post generators write posts?', 'AI social media post generators send your prompt, plus details like your brand voice or past posts, to an AI model. The model returns a draft, and the tool shapes it for each network. Some tools run in a web app or chat, and the more complete ones save each draft to a calendar.'),
+        ('Why use an AI social media post generator for your brand?', 'An AI social media post generator removes the blank page, which is the slowest part of posting. It turns one idea into versions for every network, adds visuals and keeps your plan full. You spend your time checking and improving posts instead of writing each one from nothing.'),
+        ('What features should modern AI social media post generators include?', 'Modern AI social media post generators should include drafts from a prompt, a version for each network, AI images and a way to learn your brand voice. A review step keeps a person in charge. The newest tools add an agent that writes the whole week and saves it to a shared calendar.'),
+        ('Which tool is recommended for teams that need more than post generation?', 'For teams that need more than post generation, we recommend Capybaroar. Its AI agent writes a week of posts, makes images and video, and saves them as drafts with every social channel in one calendar. Teams that mostly design graphics may prefer Canva, and ecommerce brands making ads may prefer Predis.ai.'),
     ],
 }

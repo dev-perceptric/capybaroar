@@ -1,59 +1,117 @@
 POST = {
     'order': 9,
     'slug': 'hootsuite-alternatives',
-    'keyword': 'hootsuite alternative',
-    'title': '11 Best Hootsuite Alternatives (Cheaper and Simpler)',
-    'desc': 'Hootsuite costs $99 per user a month billed yearly. Here are 11 alternatives and what each costs for the same team of 3, checked November 2026.',
-    'h1a': '11 Hootsuite alternatives',
-    'h1b': 'that cost less for the same team.',
-    'lead': "Hootsuite's price is per person, so it grows with your team. We priced the same team of 3 on 11 other tools so you can see the real difference.",
+    'keyword': 'Hootsuite alternative',
+    'title': '12 Best Hootsuite Alternatives in 2027',
+    'desc': 'Compare the 12 best Hootsuite alternatives in 2027 by price model, inbox and approvals. See why Capybaroar leads for teams tired of per-seat bills.',
+    'heroAlt': 'A team calendar with post approvals, for the best Hootsuite alternatives in 2027',
     'cover': {'type': 'alternatives', 'subject': 'hootsuite.com', 'others': ['buffer.com', 'metricool.com', 'sendible.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', '$49 a month on Pro for up to 5 members, with approvals included.'),
-        ('Best for agencies', 'sendible', 'Unlimited users, and $99 a month for 18 profiles on Plus.'),
-        ('Low price for 3 people', 'zoho', 'US$40 a month billed yearly for 3 members with the inbox and approvals.'),
+    'leaders': ['sprout', 'buffer'],
+    'intro': '''<p>Hootsuite is a capable tool, but its price grows with every person you add. Standard costs $99 per user a month billed yearly, and team approvals only come on Advanced at $399 per user. For a team of 3, the bill climbs fast.</p>
+<p>A Hootsuite alternative gives you the calendar, inbox, approvals and reports you use now, with a price model that fits your team. Agencies, small businesses, brand teams and solo marketers switch to save money or to get a simpler tool.</p>
+<p>The result is the same daily work for a smaller bill. Below are 12 Hootsuite alternatives with real prices and G2 ratings, checked in November 2026. 💸</p>''',
+    'whatH2': 'What Is a Hootsuite Alternative?',
+    'what': {
+        'def': 'A Hootsuite alternative is a social media management tool that schedules posts, answers comments and reports results, usually with a different price model than per-user seats.',
+        'body': '<p>Most alternatives run as a web app with a shared calendar at the center, and many add a phone app for posting on the go. You connect your social accounts once, and the tool publishes through each network\'s official API. The big difference is how each one charges: per user, per channel, per brand or per workspace.</p>',
+        'bullets': ['A calendar for every channel', 'One inbox for comments', 'Approvals before posts go live', 'Reports you can share'],
+        'close': 'The result is the Hootsuite workflow at a price that matches the size of your team.',
+    },
+    'whyH2': 'Why Do You Need a Hootsuite Alternative for Your Team?',
+    'why': {
+        'lead': '<p>Hootsuite works well for large brand teams with a big budget. Once you add teammates or need approvals, the per-user price climbs with every seat.</p>\n<p>A Hootsuite alternative solves this.</p>',
+        'bullets': [
+            ('Lower team cost', 'Many tools charge per workspace, brand or channel, so a new hire does not add a full seat to the bill.'),
+            ('Approvals sooner', 'Several tools put review steps on mid-tier plans instead of keeping them for the most expensive one.'),
+            ('Simpler daily work', 'A lighter tool takes less training, so new teammates can plan and post in their first week.'),
+            ('AI that drafts', 'The newest tools add an AI agent that plans and writes the week for your team to approve.'),
+        ],
+    },
+    'quizH3': 'Hootsuite Alternatives: Quick Match',
+    'quiz': [
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['buffer', 'publer', 'metricool', 'capybaroar']),
+            ('A small team', ['capybaroar', 'loomly', 'zoho', 'socialpilot']),
+            ('An agency', ['sendible', 'socialpilot', 'vistasocial', 'capybaroar']),
+            ('A large brand team', ['sprout', 'agorapulse'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $20', ['capybaroar', 'buffer', 'publer', 'zoho']),
+            ('$20 to $60', ['capybaroar', 'socialpilot', 'metricool', 'later', 'loomly']),
+            ('$60 to $200', ['agorapulse', 'sendible', 'vistasocial', 'capybaroar']),
+            ('More than $200', ['sprout'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('Approvals', ['capybaroar', 'loomly', 'sendible']),
+            ('A shared inbox', ['capybaroar', 'agorapulse', 'sprout']),
+            ('Deep reports', ['sprout', 'metricool', 'agorapulse']),
+            ('AI that drafts posts', ['capybaroar', 'vistasocial', 'buffer'])]},
+        {'q': 'Where do you post most?', 'options': [
+            ('Instagram', ['later', 'capybaroar']),
+            ('LinkedIn and X', ['capybaroar', 'buffer', 'agorapulse']),
+            ('Many networks', ['capybaroar', 'publer', 'zoho']),
+            ('Client accounts', ['sendible', 'socialpilot', 'vistasocial'])]},
     ],
-    'intro': '''<p>Hootsuite's Standard plan costs $99 per user a month, billed yearly, for up to 10 social accounts. Professional is $199 per user and Advanced is $399 per user. There is no free plan, only a 14-day trial.</p>
-<p>Per-user pricing is what makes Hootsuite expensive for teams. To keep the math fair, we priced the same team on every tool: <b>3 people managing about 10 social accounts</b>. On Hootsuite Standard that team pays $297 a month, or $3,564 a year. If the team needs approvals, Hootsuite puts them on Advanced, and the bill becomes $1,197 a month.</p>
-<p>Below, each tool shows what that same team would pay. Prices come from each tool's own pricing page in November 2026.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'approvals', 'text': '''<p>Capybaroar charges per workspace, so the team of 3 fits on Pro at $49 a month, or $490 a year on yearly billing. That is $248 a month less than Hootsuite Standard. Pro includes 5 members, 5 brands and 30 channels, so you have room to grow before the price changes. Approvals and reports by link, PDF or email are part of Pro, where Hootsuite asks $399 per user for approvals.</p>
-<p>Every plan has one inbox for comments and mentions, analytics with best times to post and an MCP server for Claude, ChatGPT or Cursor. Paid plans add an AI agent that plans and writes posts and saves them as drafts for review. Capybaroar is newer than Hootsuite, with fewer integrations so far, and its AI features need a paid plan.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer charges per channel, and its Team plan has unlimited members. The team of 3 with 10 channels pays $100 a month on Team, billed yearly, which is $197 less than Hootsuite Standard. Team also includes approvals and branded reports. A solo user can pay $5 a month per channel on Essentials, billed yearly.</p>
-<p>Buffer is simpler than Hootsuite to learn and to run. Every plan has a community inbox for comments and the AI Assistant, and you can connect Buffer to Claude or ChatGPT. The trade off is that the bill grows with every channel you add, so a team with 25 channels would pay $250 a month on Team.</p>'''},
-        {'id': 'sprout', 'shot': 'pricing', 'text': '''<p>Sprout Social is the alternative to pick if you want more depth than Hootsuite and have the budget. It won't save you money. Sprout's two lowest plans stop at 5 social profiles, so the team of 3 with 10 accounts needs Professional at $299 per seat, or $897 a month. With 5 profiles or fewer, Essentials costs $237 a month for 3 seats, billed yearly.</p>
-<p>For that price you get Trellis, Sprout's AI agent, on every plan, an iOS and Android app, and a 30-day free trial with no card. The consolidated inbox starts on Standard at $199 per seat. Teams leaving Hootsuite to cut costs should look further down this list.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse is the closest switch in how it works. It is priced per user too, at US $79 a month on Standard, so the team of 3 pays US $237 a month. That is $60 less than Hootsuite Standard, and each self-serve plan includes 10 social profiles, the same as Hootsuite's limit on Standard.</p>
-<p>You get one inbox for messages and comments on every plan, unlimited post scheduling and an MCP connector for Claude, ChatGPT and Copilot Studio. Advanced, at US $149 per user, adds ROI and competitor reports. X publishing is sold as an add-on, and the 30-day free trial needs no card.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool prices by brand. Team roles and post approvals start on Advanced, from $53 a month billed yearly for 15 brands, which is the plan the team of 3 would pick. That is $244 a month less than Hootsuite Standard. A solo user can start on Starter from $20 a month billed yearly for up to 5 brands.</p>
-<p>Metricool is strongest on analytics, with full history on paid plans, competitor analysis and PDF and PPT reports. It has an inbox for messages and comments, and its own MCP plus Claude and ChatGPT connectors. X needs a $10 a month add-on per account, so add that to the math if you post to X from several accounts.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible has unlimited users on every plan, so the size of the team never changes the price. For 10 accounts, the team of 3 needs Plus at $99 a month for 18 profiles across 3 workspaces. That is $198 less than Hootsuite Standard, with assignment and approvals included. Core, at $35 a month, works if you have 6 profiles or fewer.</p>
-<p>Prices are billed monthly, with 15% off if you pay yearly. AI Assist comes with unlimited AI credits on all plans. Custom branded reports start on Premium at $199 a month, and Sendible can't answer Instagram direct messages, which matters if your team handles support there.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot's Standard plan fits the team of 3 almost exactly: 15 social accounts and 3 users for $42.50 a month billed yearly. That is $254.50 a month less than Hootsuite Standard, and it includes the social inbox, analytics and manager approval.</p>
-<p>Client approvals, white label reports and bulk scheduling from CSV start on Premium at $85 a month billed yearly, with 6 users. Each extra user is $5 a month and each extra account is $4. SocialPilot also lists an MCP server integration and a mobile app, and the 14-day free trial needs no credit card.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social's Professional plan includes only 2 users, so the team of 3 needs Advanced at $160 a month, or $1,910 a year. That buys 30 social profiles, 3 users and advanced reporting. On yearly billing it works out to about $159 a month, a little over half of what Hootsuite Standard costs the same team.</p>
-<p>Ask Vista, its AI agents for recurring social work, and MCP come with every plan, along with engagement tools and reports. There are apps for iOS, Android, Mac and Windows. Posting to X is a $29 a month add-on.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer has the lowest starting price here. Business, which adds analytics, unlimited AI, best times to post and the API and MCP, starts at $10 a month, or $8 billed yearly. The final price grows with each social account and member you add, and every 10th one is free, so use the picker on its pricing page to price the team of 3.</p>
-<p>Approval workflows for your team and outside clients are part of the plan, and Publer covers 13 networks, including Telegram, Bluesky and WordPress. It doesn't name a social inbox on its pricing page, so teams that work in Hootsuite's inbox all day may miss it.</p>'''},
-        {'id': 'zoho', 'shot': 'pricing', 'text': '''<p>Zoho Social's Premium plan is US$40 a month billed yearly and includes 3 team members, so it fits the team of 3 at one of the lowest prices on this list. That is US$257 a month less than Hootsuite Standard. Premium is also where the inbox, approvals and custom reports live.</p>
-<p>The limit is brands. Premium covers 1 brand with 16 channels, so agencies with many clients will outgrow it. A 4th team member costs US$10 a month. If your company already runs on Zoho CRM, Zoho Social can turn comments into CRM leads.</p>'''},
-        {'id': 'later', 'shot': 'pricing', 'text': '''<p>Later's Growth plan is $37.50 a month billed yearly with 2 users, and extra users cost $3.75 a month each. The team of 3 pays $41.25 a month for 16 profiles, with the social inbox and approvals included. That is about $256 a month less than Hootsuite Standard.</p>
-<p>Later is strongest on Instagram, with Link in Bio on every plan and an app for iOS and Android. Watch the post caps: Growth allows 180 posts per profile a month, and only Scale, at $82.50 a month billed yearly, is unlimited.</p>'''},
+        {'id': 'capybaroar', 'shot': 'approvals', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant Hootsuite alternatives for teams that want to plan, approve and publish without paying per seat. Instead of only scheduling posts, it gives up to 5 members approvals, one inbox and an AI agent on the $49 Pro plan. Clients who only approve posts take no seat, and every plan has analytics and an MCP server. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-scheduler">One calendar for 14 networks</a>',
+                  '<a href="/post-approval">Approvals</a> and <a href="/client-reports">client reports</a> on Pro',
+                  '<a href="/brands-and-teams">5 members and 5 brands</a> on one plan',
+                  '<a href="/ai-social-media-agent">AI agent</a> that drafts the week for review',
+                  '<a href="/pricing">Free plan</a> with <a href="/social-media-inbox">inbox</a> and <a href="/mcp">MCP</a>'],
+         'cons': ['Not a full brand monitoring suite']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Deep reports and care tools',
+         'overview': '<p>Sprout Social is one of the most established Hootsuite alternatives for large marketing and customer care teams. It pairs publishing with profile and post reports, and its Trellis AI agent drafts replies and post variations on every plan. The consolidated inbox starts on Standard, and unlimited profiles start on Professional. Sprout focuses heavily on reporting depth, so it suits teams that report to leaders and have the budget for it.</p>',
+         'pros': ['Deep profile and post reporting', 'Trellis AI agent on every plan', 'Mobile app on every plan', '30-day free trial with no card', 'Good fit for large brand teams'],
+         'cons': ['Per-seat pricing can grow fast with each hire', 'Profile caps on lower plans can feel tight', 'Many features can take time to learn']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Pay-per-channel pricing',
+         'overview': '<p>Buffer is one of the most popular Hootsuite alternatives for creators and small teams that want a lighter tool. It charges per channel rather than per person, and the Team plan adds unlimited team members and approval workflows. The AI Assistant writes and repurposes posts on every plan, and a community inbox handles comments. This makes it a common choice for small teams that want to switch fast and keep things simple.</p>',
+         'pros': ['Pay per channel, not per person', 'Unlimited team members on Team', 'AI Assistant on every plan', 'Community inbox for comments', 'Free plan for 3 channels'],
+         'cons': ['Price can climb with every channel added', 'Analytics can feel light next to bigger suites', 'Fewer listening tools than some larger suites']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'Inbox and ROI reports',
+         'overview': '<p>Agorapulse is a strong Hootsuite alternative for business teams that spend their day in the inbox. Like Hootsuite, it prices per user, but each self-serve plan includes 10 social profiles and unlimited post scheduling. Every plan has one inbox for messages and comments, and Advanced adds ROI reports and competitor benchmarks. A key strength is its MCP connector for Claude, ChatGPT and Copilot Studio, which helps teams work from their AI tools.</p>',
+         'pros': ['One inbox on every plan', 'Unlimited post scheduling', 'ROI and competitor reports on Advanced', 'MCP for Claude, ChatGPT and Copilot Studio', 'Free plan after the 30-day trial'],
+         'cons': ['X publishing can cost extra as an add-on', 'Per-user pricing can still grow with the team', 'Self-serve plans may cap social profiles']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a dedicated Hootsuite alternative for agencies that add people often. Every plan includes unlimited users, so the bill depends on workspaces and profiles instead of seats. The Plus plan, at $99 a month, gives 3 workspaces, 18 profiles, assignment and approvals, and AI Assist has unlimited credits. It is especially useful for agencies, franchise teams and consultants who run many client accounts.</p>',
+         'pros': ['Unlimited users on every plan', 'Unlimited AI credits with AI Assist', 'One workspace per client', 'Assignment and approvals from Plus', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a pricier plan', 'No MCP server listed, unlike some tools', 'Inbox may not answer Instagram messages']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Accounts per dollar',
+         'overview': '<p>SocialPilot is a low-cost Hootsuite alternative for agencies that manage many accounts on a small budget. Standard gives 15 social accounts, 3 users, the social inbox and manager approval for $42.50 a month billed yearly. Client approvals, white label reports and bulk scheduling from a CSV file start on Premium. It suits small agencies that want team tools without a heavy setup.</p>',
+         'pros': ['15 accounts and 3 users on Standard', 'Social inbox and manager approval', 'Bulk scheduling from a CSV file', 'MCP server integration listed', 'Good fit for budget agencies'],
+         'cons': ['Extra users and accounts can raise the bill', 'Lowest plan may lack the inbox and analytics', 'AI credits can run low on lower plans']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'AI agents for many brands',
+         'overview': '<p>Vista Social is an AI-powered Hootsuite alternative for teams and agencies that run many brands. Professional includes 15 social profiles, engagement tools, reports and Ask Vista, its AI agents for recurring social work. Ask Vista comes with MCP, and the apps cover iOS, Android, Mac and Windows. That spread of apps helps brand teams that post and reply from several devices.</p>',
+         'pros': ['15 profiles on Professional', 'Ask Vista AI agents and MCP', 'Engagement tools on every plan', 'Apps for iOS, Android, Mac and Windows', 'Good fit for multi-brand teams'],
+         'cons': ['X publishing can cost extra each month', 'Seat limits can push teams to pricier plans', 'White label may need the Scale plan']},
+        {'id': 'loomly', 'shot': 'pricing', 'best': 'Approvals on every plan',
+         'overview': '<p>Loomly is a Hootsuite alternative designed specifically for marketing teams that need approvals from day one. Starter costs $49 a month billed yearly and includes 12 social accounts, 3 users, approval workflows and roles. It also has an inbox where teams reply, save replies and assign conversations, plus an AI Assistant for posts and captions. It is a relevant option for users who mainly need review steps on a starter budget.</p>',
+         'pros': ['Approval workflows on the lowest plan', '12 accounts and 3 users on Starter', 'Assign conversations in the inbox', 'AI help for posts and captions', 'Good fit for review-heavy teams'],
+         'cons': ['Yearly plans may not be ended early', 'MCP and API access may be missing', 'Listening searches can feel limited on Starter']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Analytics per brand',
+         'overview': '<p>Metricool is a practical Hootsuite alternative for freelancers and small teams that care most about numbers. It prices by brand, not by user or network, and paid plans keep full analytics history with PDF and PPT reports. Team roles and post approvals start on Advanced, from $53 a month billed yearly. Its own MCP and AI connectors sit next to those reports, which makes it useful for monthly client reporting.</p>',
+         'pros': ['Priced by brand, not by user', 'Full analytics history on paid plans', 'PDF and PPT reports from Starter', 'Built-in MCP plus AI connectors', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra for each account', 'Approvals may need the Advanced plan', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'zoho', 'shot': 'pricing', 'best': 'CRM leads from comments',
+         'overview': '<p>Zoho Social is a Hootsuite alternative for small businesses that already run on Zoho apps. Premium costs US$40 a month billed yearly and includes 3 team members, the inbox, approvals and custom reports. Its AI can turn comments into CRM leads, and it posts to WhatsApp, Telegram and Bluesky as well as the big networks. That link to the CRM makes it a natural pick for sales-minded small businesses.</p>',
+         'pros': ['Inbox, approvals and reports on Premium', '3 team members on Premium', 'Turns comments into CRM leads', 'WhatsApp, Telegram and Bluesky support', 'Forever free plan for 1 brand'],
+         'cons': ['Extra members can add to the bill', 'Inbox and approvals may need the top plan', 'One brand per plan may limit agencies']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Low starting price',
+         'overview': '<p>Publer is an affordable Hootsuite alternative for creators and small teams who post to many networks. Professional starts at $5 a month, and the final price grows with each social account and member you add. It covers 13 networks, including Telegram, Bluesky and WordPress, with approval workflows for your team and outside clients. Business adds analytics, unlimited AI and MCP for teams that want more data.</p>',
+         'pros': ['Low entry price', '13 networks, Telegram included', 'Approvals for team and clients', 'MCP on the Business plan', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'No social inbox named on the pricing page', 'Free plan may not connect X']},
+        {'id': 'later', 'shot': 'pricing', 'best': 'Instagram visual planner',
+         'overview': '<p>Later is an Instagram-first Hootsuite alternative for creators and brands that plan their feed visually. Growth costs $37.50 a month billed yearly for 2 social sets, 16 profiles, 2 users, the social inbox and approvals. Link in Bio and the mobile app come with every plan, and each social set includes Snapchat. Many teams use it as a specialized tool to plan the Instagram grid before they add other networks.</p>',
+         'pros': ['Visual planner for Instagram', 'Link in Bio on every plan', 'Snapchat in each social set', 'Inbox and approvals on Growth', 'Good fit for Instagram-first brands'],
+         'cons': ['Extra users can raise the monthly bill', 'More Instagram-focused than all-network schedulers', 'Post caps on lower plans can feel tight']},
     ],
-    'how': '''<p>We priced one team on every tool: 3 people managing about 10 social accounts. Then we checked:</p>
-<ul><li><b>Team price:</b> the cheapest plan that fits that team, from each tool's own pricing page in November 2026.</li>
-<li><b>Billing:</b> whether the price is billed monthly or yearly, since Hootsuite's $99 is a yearly price.</li>
-<li><b>Hootsuite features:</b> where each tool puts the inbox, approvals and reports that Hootsuite users count on.</li>
-<li><b>Extras:</b> add-ons such as X access, and limits on users or profiles.</li></ul>
-<p>Capybaroar is our product. We priced and judged it the same way as the others.</p>''',
-    'verdict': '''<p>Almost every tool here costs less than Hootsuite for a team of 3. Zoho Social, Later, SocialPilot and Capybaroar all land between $40 and $50 a month, against $297 on Hootsuite Standard. Agorapulse is the closest in feel, and Sprout Social is the one alternative that costs more.</p>
-<p>If you need approvals, the gap gets even bigger, since Hootsuite puts them on its $399 Advanced plan. Capybaroar Pro includes approvals and an AI agent for $49 a month for up to 5 members. Try it free for 14 days, with no card needed.</p>''',
+    'conclusion': '''<p>A Hootsuite alternative gives your team the same calendar, inbox and reports without a per-seat bill. It keeps social work steady while the team grows.</p>
+<p>But the best alternative does more than cost less. It should put approvals on a plan you can afford, bring every comment into one inbox and help write the posts, so the week gets planned faster.</p>
+<p>That is why <a href="https://capybaroar.com/brands-and-teams">Capybaroar</a> stands out. It combines approvals, an AI agent and one inbox with every social channel in one calendar. For teams that want to grow without paying per seat, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best alternative to Hootsuite?', 'For most teams, Capybaroar. Pro is $49 a month for 5 members with approvals, one inbox and an AI agent. Agorapulse is the closest match in feel if you are fine paying per user.'),
-        ('Is there a cheaper alternative to Hootsuite?', 'Yes, most of them. For a team of 3, Zoho Social Premium is US$40 a month billed yearly, Later Growth is $41.25 with one extra user and SocialPilot Standard is $42.50, against $297 on Hootsuite Standard.'),
-        ('How much does Hootsuite cost?', 'Hootsuite Standard is $99 per user a month, billed yearly, for up to 10 social accounts. Professional is $199 per user, Advanced is $399 per user and Enterprise is custom.'),
-        ('Does Hootsuite have a free plan?', 'No. Hootsuite offers a 14-day free trial with a daily posting limit and no bulk scheduling. Capybaroar, Buffer, Metricool, Zoho Social and Publer all have free plans.'),
-        ('Which Hootsuite alternative has unlimited users?', "Sendible has unlimited users on every plan, and Buffer's Team plan has unlimited team members. SocialPilot's Ultimate plan, at $170 a month billed yearly, does too."),
-        ('Can I move from Hootsuite to another tool?', 'Yes. Connect your social accounts in the new tool first, then load your scheduled posts with its bulk upload or CSV import. Keep Hootsuite running until your first full week in the new tool goes well.'),
+        ('What is a Hootsuite alternative?', 'A Hootsuite alternative is a social media tool that does the same core jobs as Hootsuite: scheduling posts, answering comments and messages, and reporting results. Most alternatives charge in a different way, such as per channel, per brand or per workspace, which can cost a growing team much less each month.'),
+        ('How do Hootsuite alternatives schedule and publish posts?', 'Hootsuite alternatives schedule posts through each network\'s official API, just like Hootsuite does. You connect your accounts once, write a post in a web or phone app, and pick a date and time. The tool publishes it for you, and many add approvals so a teammate or client can check the post first.'),
+        ('Why use a Hootsuite alternative for team social media?', 'A Hootsuite alternative can cut your team\'s bill and give you key features on a lower plan. Hootsuite charges $99 per user a month on Standard and keeps team approvals on Advanced at $399 per user, both billed yearly. Many alternatives include approvals, an inbox and reports on mid-tier plans with several members.'),
+        ('What features should modern Hootsuite alternatives include?', 'Modern Hootsuite alternatives should include a calendar for every network, one inbox for comments and messages, approvals and reports you can share. A fair price model matters too, so the bill does not jump with each hire. The newest tools also add an AI agent that plans and drafts the week for your team to review.'),
+        ('Which tool is recommended for teams that need more than basic scheduling?', 'For teams that need more than basic scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with approvals, one inbox and an AI agent on the $49 Pro plan for up to 5 members. Large brand teams that need deep reports may prefer Sprout Social, and agencies that add people often may prefer Sendible.'),
     ],
 }

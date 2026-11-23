@@ -1,53 +1,115 @@
 POST = {
     'order': 17,
     'slug': 'sprout-social-alternatives',
-    'keyword': 'sprout social alternative',
-    'title': '9 Sprout Social Alternatives That Cost Far Less (2026)',
-    'desc': 'Sprout Social starts at $79 per seat a month. These 9 alternatives give you scheduling, an inbox and reports for a fraction of that, with prices checked in November 2026.',
-    'h1a': '9 Sprout Social alternatives',
-    'h1b': 'that cost far less.',
-    'lead': 'Sprout Social is a strong tool with a steep price. Here are 9 tools that do the daily work of social media for less, with real prices and screenshots from each one.',
+    'keyword': 'Sprout Social alternative',
+    'title': '12 Best Sprout Social Alternatives in 2027',
+    'desc': 'Compare the 12 best Sprout Social alternatives in 2027 by price, inbox and reports. See why Capybaroar leads for teams that want to stop paying per seat.',
+    'heroAlt': 'One social inbox with comments from many networks, for the best Sprout Social alternatives in 2027',
     'cover': {'type': 'alternatives', 'subject': 'sproutsocial.com', 'others': ['buffer.com', 'hootsuite.com', 'metricool.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'An AI agent, one inbox and reports for the whole team on one flat price.'),
-        ('Best for big teams', 'agorapulse', 'The closest match to Sprout for inbox work and ROI reports, for less per user.'),
-        ('Best for agencies', 'sendible', 'Unlimited users on every plan, so adding a teammate never adds a seat.'),
+    'leaders': ['hootsuite', 'buffer'],
+    'intro': '''<p>Sprout Social is built for big social teams, and its price shows it. Plans start at $79 per seat a month billed yearly, and the consolidated inbox starts on Standard at $199 per seat. A team of 3 on Standard pays $597 a month.</p>
+<p>A Sprout Social alternative gives you the calendar, inbox and reports you use every day for a smaller bill. Agencies, small businesses, care teams and in-house marketers switch when the seat count grows faster than the budget.</p>
+<p>The result is the same daily work without paying for every seat. Below are 12 Sprout Social alternatives with real prices and G2 ratings, checked in November 2026. 💡</p>''',
+    'whatH2': 'What Is a Sprout Social Alternative?',
+    'what': {
+        'def': 'A Sprout Social alternative is a social media management tool that schedules posts, handles comments and messages and reports results, often for less than a per-seat plan.',
+        'body': '<p>Most of these tools run as a web app with a shared calendar, and many add a phone app for replies on the go. You connect your accounts once, and the tool publishes posts and pulls in comments through each network\'s official API. The main differences are the price model, how deep the reports go and which plan holds the inbox.</p>',
+        'bullets': ['A calendar for every channel', 'One inbox for messages', 'Reports you can export', 'Approvals for the team'],
+        'close': 'The result is a full social workflow that does not need a big-team budget.',
+    },
+    'whyH2': 'Why Do You Need a Sprout Social Alternative for Your Team?',
+    'why': {
+        'lead': '<p>Sprout Social is a polished tool for large teams with a large budget. For smaller teams, paying a full seat for each person makes the bill grow faster than the work.</p>\n<p>A Sprout Social alternative solves this.</p>',
+        'bullets': [
+            ('Fewer seat fees', 'Many tools price per workspace, brand or channel, so adding a teammate does not add a full seat.'),
+            ('Inbox on lower plans', 'Several alternatives include one inbox for comments and messages on their first or second plan.'),
+            ('Reports you can send', 'Most tools export PDF reports or share them by link, so clients and bosses see the results.'),
+            ('AI that drafts', 'The newest tools add an AI agent that plans and writes posts for your team to approve.'),
+        ],
+    },
+    'quizH3': 'Sprout Social Alternatives: Quick Match',
+    'quiz': [
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['buffer', 'publer', 'metricool', 'capybaroar']),
+            ('A small team', ['capybaroar', 'loomly', 'zoho', 'buffer']),
+            ('An agency', ['sendible', 'socialpilot', 'vistasocial', 'capybaroar']),
+            ('A large brand team', ['hootsuite', 'agorapulse'])]},
+        {'q': 'Which Sprout feature do you use most?', 'options': [
+            ('The inbox', ['capybaroar', 'agorapulse', 'hootsuite', 'sendible']),
+            ('Reports', ['metricool', 'iconosquare', 'agorapulse']),
+            ('Approvals', ['capybaroar', 'loomly', 'socialpilot']),
+            ('Publishing', ['capybaroar', 'buffer', 'publer'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $20', ['capybaroar', 'buffer', 'publer', 'zoho', 'iconosquare']),
+            ('$20 to $60', ['capybaroar', 'metricool', 'socialpilot', 'loomly', 'sendible']),
+            ('$60 to $200', ['agorapulse', 'vistasocial', 'hootsuite', 'capybaroar'])]},
+        {'q': 'How many brands do you run?', 'options': [
+            ('One brand', ['zoho', 'buffer', 'iconosquare', 'capybaroar']),
+            ('A few brands', ['capybaroar', 'metricool', 'vistasocial']),
+            ('Many client brands', ['sendible', 'socialpilot', 'vistasocial', 'capybaroar'])]},
     ],
-    'intro': '''<p>Sprout Social is built for big social teams, and its price shows it. Plans start at $79 per seat a month on yearly billing, or $99 if you pay monthly. The Standard plan lists at $199 per seat, and unlimited profiles start on Professional at $299 per seat. A team of 3 people on Standard pays about $597 a month before any add-ons.</p>
-<p>Most teams that leave Sprout want 2 things: a bill that doesn't grow with every person they add, and the same daily tools they use now. Those tools are a calendar, an inbox for comments and messages, and reports they can send to a boss or a client.</p>
-<p>We looked at each tool's own pricing page this month and took the screenshots below from each tool's own site. Prices change often, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'agent', 'text': '''<p>Capybaroar is a social media workspace with an AI agent built in. You tell the agent what you want, like "plan next week's launch posts for LinkedIn and Instagram," and it writes the posts, picks the times and saves them as drafts for your review. You can also run it from Claude, ChatGPT or Cursor through its MCP server, which comes with every plan, Free included.</p>
-<p>The big change from Sprout is the price model. Capybaroar charges per workspace. Pro is $49 a month for 5 members, 5 brands and 30 channels, so a team of 3 pays $49 where Sprout's Essentials would cost $237 on yearly billing. Every plan includes the calendar, one inbox for comments and mentions, analytics and a link in bio page. Pro and Agency add approvals and reports you can share by link, PDF or email.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse is the closest match to Sprout for teams that spend their day in the inbox. Every plan has one inbox for messages and comments, plus unlimited post scheduling. The Advanced plan adds ROI reports and competitor benchmarks.</p>
-<p>It is still priced per user, at US $79, $119 and $149 per user a month, so it doesn't fix the seat problem. Where it saves money is profiles: each paid self-serve plan includes 10 social profiles, where Sprout's two lowest plans stop at 5. X publishing is sold as an add-on.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible fixes the seat problem head on. Every plan has unlimited users, so a growing team never pays more because someone joined. Core starts at $35 a month for 6 social profiles, and Plus is $99 a month for 18 profiles across 3 workspaces.</p>
-<p>It was built for agencies, so client workspaces and approvals (from Plus) are part of the plan. Custom branded reports start on Premium at $199 a month. One gap to know: Sendible can't answer Instagram direct messages, so teams that run support through Instagram DMs will miss that from Sprout.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social covers a lot of ground for the price. The Professional plan is $80 a month and includes 15 social profiles, which is 3 times what Sprout's Essentials gives you. Engagement tools, reports and its Ask Vista AI come on every plan, and it has apps for iOS, Android, Mac and Windows.</p>
-<p>Users are the limit here. Professional includes only 2 users and Advanced includes 3, so larger teams will need Scale at $360 a month or Enterprise. X is a $29 a month add-on.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot is one of the cheapest ways to run many accounts. Essentials is $25.50 a month on yearly billing for 7 social accounts, and Standard is $42.50 a month for 15 accounts and 3 users. From Premium, bulk scheduling lets you load posts from a CSV file.</p>
-<p>The lowest plan has no inbox or analytics, so most Sprout users should start on Standard. Client approvals and white label reports come with Premium at $85 a month, which is still far below one Sprout seat on Standard.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer is the simplest tool on this list. You pay per channel, at $5 a month per channel on Essentials or $10 on Team, both billed yearly. A brand with 5 channels pays $25 or $50 a month. The free plan covers 3 channels with 10 scheduled posts each.</p>
-<p>The trade off is depth. Buffer's community inbox handles comments on every plan, but approvals and branded reports are only on Team, and its analytics are lighter than Sprout's. Teams that mostly schedule and post will feel at home. Teams that live in reports may miss Sprout.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool is a good pick if analytics are the part of Sprout you use most. It keeps your full history on paid plans, compares you with competitors and exports PDF and PPT reports from Starter. Pricing is per brand, from $20 a month on yearly billing for up to 5 brands.</p>
-<p>Approvals and team roles start on Advanced, from $53 a month on yearly billing. X needs a $10 a month add-on per account, and the free plan can't connect LinkedIn or X.</p>'''},
-        {'id': 'zoho', 'shot': 'pricing', 'text': '''<p>Zoho Social is the cheapest way to get Sprout style features if you already use Zoho CRM. Plans start at US$10 a month on yearly billing, and it turns comments into CRM leads. There's also a forever free plan for 1 brand with 6 channels.</p>
-<p>The catch is that most team features sit on the top plan. The inbox, approvals and custom reports are only on Premium at US$40 a month, which includes 3 team members. Extra members cost US$10 each a month.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer is the budget pick. Its Professional plan starts at $5 a month, and the final price depends on how many social accounts and members you choose. It supports a long list of networks, including Telegram, Bluesky and WordPress, and has approval workflows for your team and outside clients.</p>
-<p>Analytics, unlimited AI and its MCP connector need the Business plan, from $10 a month. Publer doesn't name a social inbox on its pricing page, so it fits teams that mostly plan and publish.</p>'''},
+        {'id': 'capybaroar', 'shot': 'inbox', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant Sprout Social alternatives for teams that want to schedule, reply and report without a per-seat price. Instead of only publishing posts, it brings comments and mentions into one inbox and tracks reach, engagement and best times to post on every plan. Pro adds approvals and reports by link, PDF or email for 5 members at $49 a month. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-scheduler">Scheduling for 14 networks</a>',
+                  '<a href="/social-media-inbox">One inbox</a> for comments and mentions',
+                  '<a href="/client-reports">Reports by link, PDF or email</a>',
+                  '<a href="/ai-social-media-agent">AI agent</a> that drafts posts for review',
+                  '<a href="/pricing">Free plan</a> with <a href="/social-media-analytics">analytics</a> and <a href="/mcp">MCP</a>'],
+         'cons': ['Not a full customer care suite']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Inbox plus brand monitoring',
+         'overview': '<p>Hootsuite is one of the most popular Sprout Social alternatives for brand teams that want monitoring and an inbox on every plan. Standard costs $99 per user a month billed yearly for up to 10 social accounts, where Sprout\'s lower plans stop at 5 profiles. Wisdom AI drafts posts and images, and MCP connectors link it to ChatGPT, Claude, Copilot and Gemini. This makes it a common choice for social media pros who want the inbox on the first plan.</p>',
+         'pros': ['One inbox on every plan', 'Brand and competitor monitoring', 'Up to 10 accounts on Standard', 'MCP for ChatGPT, Claude and Gemini', 'Good fit for big brand teams'],
+         'cons': ['Per-user pricing can still add up', 'Trend forecasts may need Professional', 'Interface can feel busy for new users']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Pay-per-channel pricing',
+         'overview': '<p>Buffer is one of the most established Sprout Social alternatives for small teams that mostly schedule and reply to comments. It charges per channel instead of per seat, and the Team plan includes unlimited team members, approvals and branded reports. A community inbox handles comments on every plan, and the AI Assistant helps write posts. It suits teams that want the basics for a fraction of one Sprout seat.</p>',
+         'pros': ['Per-channel pricing, no seat fees', 'Unlimited team members on Team', 'Community inbox on every plan', 'Branded reports on Team', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with each channel added', 'Analytics can feel light next to bigger suites', 'Reporting depth may feel limited for care teams']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'ROI reporting',
+         'overview': '<p>Agorapulse is a strong Sprout Social alternative for business teams that live in the inbox and report on ROI. Every plan has one inbox for messages and comments, and each self-serve plan includes 10 social profiles, twice what Sprout\'s lower plans allow. Advanced adds ROI reports and competitor benchmarks at US $149 per user. A key strength is its ROI tracking, which makes it attractive for teams that answer to sales or finance.</p>',
+         'pros': ['One inbox on every plan', '10 social profiles per plan', 'ROI and competitor reports on Advanced', 'MCP for Claude, ChatGPT and Copilot Studio', 'Free plan after the 30-day trial'],
+         'cons': ['X publishing can cost extra as an add-on', 'Per-user pricing can still grow with hires', 'Self-serve plans may cap social profiles']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a dedicated Sprout Social alternative for agencies that are tired of paying per seat. Every plan includes unlimited users, starting with Core at $35 a month for 6 social profiles. Plus adds approvals and 3 client workspaces, and AI Assist comes with unlimited AI credits on all plans. It is especially useful for agencies and multi-location teams that add people often.</p>',
+         'pros': ['Unlimited users on every plan', 'Unlimited AI credits', 'Client workspaces with approvals', 'Google Analytics in reports', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a pricier plan', 'No MCP server listed, unlike some tools', 'Inbox may not answer Instagram messages']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': '15 profiles to start',
+         'overview': '<p>Vista Social is an AI-powered Sprout Social alternative for teams and agencies that run many brands. Professional costs $80 a month for 15 social profiles, three times what Sprout\'s Essentials covers. Engagement tools, reports and Ask Vista, its AI agents for recurring social work, come on every plan. The platform also offers apps for iOS, Android, Mac and Windows, making it suitable for teams that reply on the go.</p>',
+         'pros': ['15 profiles on Professional', 'Ask Vista AI agents', 'Engagement tools on every plan', 'Reports on every plan', 'Good fit for multi-brand teams'],
+         'cons': ['X publishing can cost extra each month', 'Seat limits can push teams to pricier plans', 'White label may need the Scale plan']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Accounts per dollar',
+         'overview': '<p>SocialPilot is a budget Sprout Social alternative for agencies that need many accounts and a shared inbox. Standard costs $42.50 a month billed yearly for 15 social accounts, 3 users, the social inbox, analytics and manager approval. Premium adds client approvals, white label reports and bulk scheduling from a CSV file. It works for small agencies that want daily team tools without a heavy setup.</p>',
+         'pros': ['15 accounts on Standard', 'Social inbox from Standard', 'Manager approval on Standard', 'White label reports on Premium', 'Good fit for budget agencies'],
+         'cons': ['Extra users and accounts can raise the bill', 'Lowest plan may lack the inbox and analytics', 'AI credits can run low on lower plans']},
+        {'id': 'loomly', 'shot': 'pricing', 'best': 'Approvals on every plan',
+         'overview': '<p>Loomly is a Sprout Social alternative designed specifically for marketing teams that need approvals on the first plan. Starter costs $49 a month billed yearly for 12 social accounts and 3 users, with approval workflows and roles. Its inbox lets teams reply, save replies and assign conversations, and reports can be exported or scheduled. It is a relevant option for users who mainly need review steps and reports on a smaller budget.</p>',
+         'pros': ['Approval workflows on Starter', '12 accounts and 3 users', 'Assign conversations in the inbox', 'Scheduled report exports', 'Good fit for review-heavy teams'],
+         'cons': ['Yearly plans may not be ended early', 'MCP and API access may be missing', 'Listening searches can feel limited on Starter']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Analytics per brand',
+         'overview': '<p>Metricool is a practical Sprout Social alternative for social media managers who mostly use Sprout for reports. Paid plans keep your full analytics history, compare you with competitors and export PDF and PPT reports. Pricing is per brand, from $20 a month billed yearly for up to 5 brands, which makes it useful for freelancers who send monthly client updates.</p>',
+         'pros': ['Full analytics history on paid plans', 'Competitor analysis built in', 'PDF and PPT report exports', 'Priced by brand, not by user', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra for each account', 'Approvals may need the Advanced plan', 'AI credits can run low for busy brands']},
+        {'id': 'iconosquare', 'shot': 'pricing', 'best': 'Custom analytics dashboards',
+         'overview': '<p>Iconosquare is an analytics-first Sprout Social alternative for teams that report on results. It tracks more than 100 real-time metrics with custom dashboards and best times to post. The inbox for comments, DMs and mentions starts on Launch, from $39 a month billed yearly, along with automated reports. Scale adds competitor, hashtag and industry tracking for teams that want benchmarks next to their own numbers.</p>',
+         'pros': ['100+ real-time metrics', 'Custom dashboards', 'Inbox for comments, DMs and mentions', 'Automated reports from Launch', 'Free plan for 2 profiles'],
+         'cons': ['Prices can rise with each profile added', 'Inbox may need the Launch plan', 'Free plan may keep little analytics history']},
+        {'id': 'zoho', 'shot': 'pricing', 'best': 'CRM leads from comments',
+         'overview': '<p>Zoho Social is a Sprout Social alternative for small businesses that already use Zoho apps. Premium costs US$40 a month billed yearly for 3 team members, with the inbox, approvals and custom reports. Its AI can turn comments into CRM leads, and it posts to WhatsApp and Telegram as well as the big networks. That CRM link makes it a natural pick for sales-minded teams on a small budget.</p>',
+         'pros': ['Inbox and approvals on Premium', 'Custom and shared reports', 'Turns comments into CRM leads', 'Apps for Android and iOS', 'Forever free plan for 1 brand'],
+         'cons': ['Extra members can add to the bill', 'Inbox and approvals may need the top plan', 'One brand per plan may limit agencies']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Low starting price',
+         'overview': '<p>Publer is an affordable Sprout Social alternative for creators and small teams that mostly plan and publish. Professional starts at $5 a month, and the price grows with each social account and member. Business adds analytics, competitor analysis, unlimited AI and MCP, while approval workflows cover your team and outside clients. It suits small brands that want to plan 13 networks for a few dollars.</p>',
+         'pros': ['Low entry price', '13 networks, Bluesky included', 'Approvals for team and clients', 'Competitor analysis on Business', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'No social inbox named on the pricing page', 'Free plan may not connect X']},
     ],
-    'how': '''<p>We started from what Sprout Social customers use every day: a shared calendar, an inbox for comments and messages, approvals and reports. Then we kept tools that cover most of that for less than one Sprout seat.</p>
-<ul><li><b>Price:</b> we read each tool's own pricing page in November 2026 and noted whether the price is billed monthly or yearly.</li>
-<li><b>Team cost:</b> we checked whether each tool charges per user, per channel, per brand or per workspace, since that decides what a team really pays.</li>
-<li><b>Daily tools:</b> we looked for the inbox, approvals and reports on each plan, and noted where they are locked to higher plans.</li></ul>
-<p>Capybaroar is our product. We list its limits the same way we list everyone else's.</p>''',
-    'verdict': '''<p>If your Sprout bill grows every time you hire, move to a tool that doesn't charge per seat. Capybaroar and Sendible both let the whole team in on one price, and Capybaroar adds an AI agent that drafts the week for you. If you want the closest feel to Sprout and don't mind paying per user, Agorapulse is the safest switch. For one person or a small brand, Buffer, Publer and Zoho Social cover the basics for a few dollars a month.</p>
-<p>Most of these tools have a free plan or a free trial. Run your real week through 2 of them before you cancel Sprout.</p>''',
+    'conclusion': '''<p>A Sprout Social alternative gives your team the calendar, inbox and reports it uses every day for less. It keeps social work organized without a big-team budget.</p>
+<p>But the best alternative does more than cut the bill. It should keep every comment in one inbox, send reports by link or PDF and help write the posts, so the team spends less time on busywork.</p>
+<p>That is why <a href="https://capybaroar.com/social-media-inbox">Capybaroar</a> stands out. It combines one inbox, reports and an AI agent with every social channel in one calendar. For teams that want this work done without seat fees, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best alternative to Sprout Social?', 'For most teams, Capybaroar. It covers scheduling, one inbox, analytics and reports, adds an AI agent that plans posts, and Pro costs $49 a month for 5 members. Agorapulse is the closest match in feel if you are fine paying per user.'),
-        ('Is there a free alternative to Sprout Social?', 'Yes. Capybaroar, Buffer, Metricool, Zoho Social and Publer all have free plans. They cover a few channels and a limited number of posts, which is enough for one brand to start.'),
-        ('Why is Sprout Social so expensive?', 'Sprout prices each plan per seat, from $79 a seat a month on yearly billing up to $399 a seat on Advanced. Every person on the team adds a full seat, so the bill grows fast as a team grows.'),
-        ('Which Sprout Social alternative has unlimited users?', 'Sendible includes unlimited users on every plan. Buffer\'s Team plan has unlimited team members, and SocialPilot\'s Ultimate plan does too. Capybaroar Agency includes 15 members, and clients who only approve posts don\'t count as members.'),
-        ('Can I move my posts from Sprout Social to another tool?', 'Most tools let you import scheduled posts from a CSV file. Export your queue from Sprout, then use the bulk upload in the new tool. Connect your social accounts first, so the posts land on the right channels.'),
+        ('What is a Sprout Social alternative?', 'A Sprout Social alternative is a social media management tool that covers the same daily work as Sprout Social: scheduling, an inbox for comments and messages, and reports. Most alternatives price per workspace, brand, channel or user at a lower rate, so a growing team can pay much less each month.'),
+        ('How do Sprout Social alternatives manage posts and messages?', 'Sprout Social alternatives connect to each network through its official API. They publish the posts you schedule and pull comments and messages into one inbox, so your team can reply from one screen. Most run as a web app, and many add a phone app for replies on the go.'),
+        ('Why use a Sprout Social alternative for a growing team?', 'A Sprout Social alternative keeps costs steady as your team grows. Sprout charges per seat, from $79 a month on Essentials to $399 on Advanced, billed yearly, and its inbox starts on Standard at $199 per seat. Many alternatives include the inbox, approvals and reports for several members on one plan.'),
+        ('What features should modern Sprout Social alternatives include?', 'Modern Sprout Social alternatives should include a calendar for every network, one inbox for comments and messages, approvals and reports you can export or share. Fair pricing matters as the team grows. The newest tools also add an AI agent that plans and writes posts for your team to review before they go live.'),
+        ('Which tool is recommended for teams that need more than scheduling and reports?', 'For teams that need more than scheduling and reports, we recommend Capybaroar. It puts every social channel in one calendar, with one inbox, reports by link or PDF and an AI agent, and Pro covers 5 members for $49 a month. Teams that need ROI reports may prefer Agorapulse, and agencies that add people often may prefer Sendible.'),
     ],
 }
