@@ -174,7 +174,7 @@ def item(p, k, it):
         pros = [brand_links(x) for x in pros]
     return f'''<section class="lx-item" id="{tid}" aria-labelledby="{tid}-h">
 <h3 id="{tid}-h">{logo(tid, 32)}<span>{k}. {esc(f["name"])}</span></h3>
-{shot(tid, it.get("shot", "pricing"))}
+{shot(tid, it.get("shot", "home"))}
 <p class="lx-field"><b>Rating:</b> {rating(p, k, tid)}</p>
 {overview}
 <p class="lx-label"><b>Pros:</b></p>
