@@ -12,7 +12,7 @@ build_home_v2.py runs this at the end. To run it on its own: python3 site/build/
 import os, re, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(HERE, '..', 'public') + os.sep
-VER = '2'  # bump when motion.css or motion.js change, so browsers fetch the new files
+VER = '3'  # bump when motion.css or motion.js change, so browsers fetch the new files
 MARK = '<link rel="stylesheet" href="/motion.css?v=' + VER + '">'
 LANDING = """ai-social-media-agent ai-studio bluesky-scheduler brands-and-teams bulk-scheduling chatgpt claude-code
 claude-cowork claude client-reports codex cursor discord-message-scheduler facebook-post-scheduler gemini-cli

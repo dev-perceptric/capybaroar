@@ -178,7 +178,7 @@
     hbg.style.setProperty('--hy', (e.clientY - r.top) + 'px');
   });
 
-  var SPOT = '.points2 li,.every li,.menu li,.tgrid>li,.steps4 li,.ag-step,.related a,.lx-link a,.ont,.v2-plan,.g-step,.ai-card';
+  var SPOT = '.menu li,.ag-step,.lx-link a,.v2-plan';
   document.addEventListener('pointermove', function(e){
     var c = e.target.closest && e.target.closest(SPOT);
     if (!c) return;
