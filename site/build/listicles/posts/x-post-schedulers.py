@@ -53,7 +53,7 @@ POST = {
     ],
     'items': [
         {'id': 'capybaroar', 'shot': 'composer', 'best': 'Every social channel, one calendar',
-         'overview': '<p>Capybaroar is one of the most relevant X post schedulers for teams that want X on the same plan as every other network. Instead of only queuing posts for X, it has an AI agent that plans and writes a week of posts as drafts for review. X shares one calendar with Threads, Bluesky, LinkedIn and 10 more networks, and the MCP server lets teams schedule from Claude or ChatGPT. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'overview': '<p>Capybaroar is one of the most relevant X post schedulers for teams that want X on the same plan as every other network. Instead of only queuing X posts, it has an AI agent that plans and writes a week of posts as drafts for review. X shares one calendar with Threads, Bluesky, LinkedIn and 10 more networks, and the MCP server lets teams schedule from Claude or ChatGPT. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
          'pros': ['<a href="/x-post-scheduler">X posts</a> on one calendar',
                   '<a href="/posting-queue">Posting queues</a> for a steady daily flow',
                   '<a href="/ai-social-media-agent">AI agent</a> that drafts the week for review',
@@ -84,7 +84,7 @@ POST = {
          'overview': '<p>Sendible is an X post scheduler for agencies and multi-location teams that add people often. Each X profile can post, pull reports and stream comments and feeds. Every plan includes unlimited users and unlimited AI credits, and each client gets its own workspace. Those workspaces are especially useful for agencies that run X accounts for many clients.</p>',
          'pros': ['X posting with reports per profile', 'Unlimited users on every plan', 'Unlimited AI credits', 'One workspace per client', 'Good fit for growing agencies'],
          'cons': ['Branded reports may need a higher plan', 'No MCP server listed, unlike some tools', 'Daily send limits can cap busy accounts']},
-        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'X threads on the first plan',
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'X threads on Standard',
          'overview': '<p>ContentStudio is an X post scheduler and content platform for content teams that curate and share a lot of posts. Its lowest plan lists X threads and LinkedIn carousels, with unlimited posting and an auto first comment. AI Studio writes text and makes images and video in the brand voice. In addition to scheduling, it includes an MCP integration on every plan, so drafts can start in AI tools.</p>',
          'pros': ['X threads on the lowest plan', 'Unlimited posting on every plan', 'AI Studio for text, images and video', 'MCP integration on every plan', 'iOS and Android apps'],
          'cons': ['No free plan, only a short trial', 'Inbox and approvals may need Advanced', 'Standard may suit one user only']},
