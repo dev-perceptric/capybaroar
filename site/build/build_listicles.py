@@ -176,7 +176,6 @@ def item(p, k, it):
 <h3 id="{tid}-h">{logo(tid, 32)}<span>{k}. {esc(f["name"])}</span></h3>
 {shot(tid, it.get("shot", "pricing"))}
 <p class="lx-field"><b>Rating:</b> {rating(p, k, tid)}</p>
-<p class="lx-label"><b>Overview:</b></p>
 {overview}
 <p class="lx-label"><b>Pros:</b></p>
 {ul(pros, "lx-pros")}
@@ -184,6 +183,7 @@ def item(p, k, it):
 {ul(cons, "lx-cons")}
 <p class="lx-label"><b>Pricing:</b></p>
 {ul([esc(x) for x in price_lines(it)], "lx-price")}
+{agent_card(p) if tid == "capybaroar" else ""}
 </section>'''
 
 
@@ -258,17 +258,58 @@ def faq(p):
     return f'<h2 id="faq">Frequently Asked Questions</h2>\n{qa}'
 
 
-READY = f'''<aside class="lx-ready" aria-labelledby="ready-h">
-<img src="/icon.svg" alt="" width="48" height="48">
-<div><h2 id="ready-h">Ready to use Capybaroar?</h2><p>{VALUE}. Plan, write and schedule posts to 14 networks, free forever for 3 channels.</p></div>
-<div class="lx-cta"><a class="btn" href="{SIGNUP_URL}">👉 Start free</a></div>
+# The site's motion layer (build_motion.py): the animated calendar closing card and the AI chat cards.
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location('build_motion', os.path.join(HERE, 'build_motion.py'))
+MO = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(MO)
+SPRITE_NETS = ['instagram', 'tiktok', 'linkedin', 'youtube', 'facebook', 'x', 'threads', 'pinterest', 'bluesky', 'mastodon', 'discord']
+NET_NAMES = {'instagram': 'Instagram', 'tiktok': 'TikTok', 'linkedin': 'LinkedIn', 'youtube': 'YouTube', 'facebook': 'Facebook', 'x': 'X',
+             'threads': 'Threads', 'pinterest': 'Pinterest', 'bluesky': 'Bluesky', 'mastodon': 'Mastodon', 'discord': 'Discord'}
+
+
+def post_nets(p):
+    """The networks a post is about, from its cover; mixed networks when it covers them all."""
+    c = p.get('cover', {})
+    nets = [n for n in (c.get('networks') or [c.get('network')]) if n in SPRITE_NETS]
+    return nets or MO.MIXED
+
+
+def agent_card(p):
+    """Animated card in Capybaroar's entry: Claude drafts a week of posts in Capybaroar (plays when it scrolls into view)."""
+    nets = post_nets(p)
+    names = [NET_NAMES[n] for n in dict.fromkeys(nets)][:3]
+    where = names[0] if len(names) == 1 else ', '.join(names[:-1]) + ' and ' + names[-1]
+    titles = ['Launch day is here', 'How we feed the starter', 'Meet our bakers', 'Behind the oven', 'Weekend bake list']
+    week = ''.join(f'<li data-s><small>{d}</small><svg class="v2-net" aria-hidden="true"><use href="#n-{nets[i % len(nets)]}"/></svg><span>{t}</span><em class="v2-state s-mute">Draft</em></li>'
+                   for i, (d, t) in enumerate(zip(['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], titles)))
+    html = MO.card(utm('/ai-social-media-agent'), 'i-spark', 'AI agent', 'Ask once. Get a week of posts.',
+                   'Tell the agent, Claude or ChatGPT what you want. Capybaroar drafts the week and puts every post on your calendar for you to review.', 'cl',
+                   f'<p class="ai-me" data-s>Plan next week\'s {where} posts about our sourdough launch and save them as drafts.</p>{MO.USED}'
+                   f'<p class="ai-say" data-s>Done. 5 drafts are on your Capybaroar calendar for next week. Nothing goes live until you approve it.</p><ul class="ai-week">{week}</ul>')
+    html = html.replace('</p></div>', f'</p><a class="btn sm lx-shine" href="{SIGNUP_URL}">Try it free for 14 days<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>', 1)
+    return f'<div class="lx-agent">{html}</div>'
+
+
+def ready(p):
+    nets = SPRITE_NETS
+    chips = ''.join(f'<span class="lx-r-chip"><svg aria-hidden="true"><use href="#n-{n}"/></svg>{NET_NAMES[n]}</span>' for n in nets)
+    return f'''<aside class="lx-ready" aria-labelledby="ready-h">
+<div class="lx-r-fx" aria-hidden="true"><span class="cx-blob b1"></span><span class="cx-blob b2"></span></div>
+<div class="lx-r-main">
+<span class="lx-r-logo"><img src="/icon.svg" alt="" width="56" height="56"><i aria-hidden="true"></i></span>
+<div class="lx-r-text"><h2 id="ready-h">Ready to use Capybaroar?</h2><p>{VALUE}. Plan, write and schedule posts to 14 networks, free forever for 3 channels.</p></div>
+<a class="btn lx-shine" href="{SIGNUP_URL}">👉 Start free<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+</div>
+<div class="lx-r-tick" aria-hidden="true"><div class="lx-r-track">{chips}{chips}</div></div>
 </aside>'''
 
 
-def banner():
-    return f'''<section class="lx-banner" aria-labelledby="banner-h"><h2 id="banner-h">{VALUE}</h2>
-<p>Bring Instagram, TikTok, LinkedIn, YouTube and 10 more networks into one calendar. Your AI agent drafts the week while you sleep.</p>
-<a class="btn" href="{SIGNUP_URL}">👉 Start free with Capybaroar</a></section>'''
+def closing_card(p):
+    cta = f'<a class="btn" href="{SIGNUP_URL}">Start free</a><a class="btn ghost" href="{utm("/pricing")}">See pricing</a>'
+    return MO.closing('Every social channel, <span>one calendar.</span>',
+                      'Bring Instagram, TikTok, LinkedIn, YouTube and 10 more networks into one calendar. Your AI agent drafts the week, and you approve it.',
+                      cta, post_nets(p))
 
 
 def related_posts(p):
@@ -276,13 +317,13 @@ def related_posts(p):
     scored = sorted((len(mine & {i['id'] for i in q['items']}) / len(mine | {i['id'] for i in q['items']}), q['order'], q) for q in POSTS if q is not p)
     picked = [q for _, _, q in sorted(scored, key=lambda x: (-x[0], x[1]))[:6]]
     li = ''.join(f'<li><a href="/blog/{q["slug"]}"><img src="/img/blog/{q["slug"]}.webp" width="2400" height="1260" alt="{esc(q["title"])} cover image" loading="lazy"><span>{esc(q["title"])}</span></a></li>' for q in picked)
-    return f'<h2 id="related">Related Posts</h2><ul class="lx-more">{li}</ul>'
+    return f'<section class="lx-related" aria-labelledby="related"><div class="wrap"><h2 id="related">Related Posts</h2><ul class="lx-more">{li}</ul></div></section>'
 
 
 def toc(p):
     rows = [('what', p['whatH2']), ('why', p['whyH2']), ('list', p['listH2'])]
     rows += [(it['id'], f'{k}. {FACTS[it["id"]]["name"]}') for k, it in enumerate(p['items'], 1)]
-    rows += [('recap', 'Recap Table'), ('conclusion', 'Conclusion'), ('faq', 'Frequently Asked Questions'), ('banner-h', VALUE), ('related', 'Related Posts')]
+    rows += [('recap', 'Recap Table'), ('conclusion', 'Conclusion'), ('faq', 'Frequently Asked Questions'), ('closing-title', VALUE), ('related', 'Related Posts')]
     li = ''.join(f'<li{" class=\"sub\"" if a in {i["id"] for i in p["items"]} else ""}><a href="#{a}">{esc(b)}</a></li>' for a, b in rows)
     return f'<aside class="lx-toc"><details open><summary>Jump to</summary><nav aria-label="Jump links"><ol>{li}</ol></nav></details></aside>'
 
@@ -315,7 +356,7 @@ for p in POSTS:
 <h2 id="conclusion">Conclusion</h2>
 {conclusion}
 {faq(p)}
-{READY}'''
+{ready(p)}'''
     body = f'''<section class="hero f-hero lx-hero">
 <div class="hero-bg dots" aria-hidden="true"></div>
 <div class="wrap hero-text">
@@ -329,9 +370,9 @@ for p in POSTS:
 </section>
 <section id="article" aria-label="Article"><div class="wrap lx-layout">{toc(p)}<article class="t-read lx">
 {article}
-{banner()}
-{related_posts(p)}
-</article></div></section>'''
+</article></div></section>
+{closing_card(p)}
+{related_posts(p)}'''
     p['_words'] = wordcount(article)
     html = page(slug, 'sched', p['title'], p['desc'], body, p['faqs'])
     # The questions sit inside the article as H2 + H3, so drop the shared FAQ band; the FAQPage schema stays.
@@ -350,7 +391,7 @@ for p in POSTS:
         {"@type": "ListItem", "position": 3, "name": p['title'], "item": "https://capybaroar.com" + slug}]}
     ld = ''.join('<script type="application/ld+json">' + json.dumps(x, separators=(',', ':')) + '</script>\n' for x in (art, lst, crumbs))
     html = html.replace('</head>', ld + '</head>', 1)
-    html = html.replace('/home.css?v=8', '/home.css?v=9')
+    html = MO.add_assets(html.replace('/home.css?v=8', '/home.css?v=10'))
     html = with_promo(html, 'index').replace('<body>', '<body class="lx-page">', 1).replace('</body>', TOC_JS + QUIZ_JS + '\n</body>', 1)
     os.makedirs(P + 'blog', exist_ok=True)
     open(P + 'blog/' + p['slug'] + '.html', 'w').write(html)
