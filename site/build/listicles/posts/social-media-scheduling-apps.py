@@ -2,54 +2,116 @@ POST = {
     'order': 12,
     'slug': 'social-media-scheduling-apps',
     'keyword': 'social media scheduling app',
-    'title': '10 Best Social Media Scheduling Apps for 2026',
-    'desc': 'The 10 best social media scheduling apps for 2026, for planning at your desk and posting on the go. Prices and phone apps checked on each vendor\'s site.',
-    'h1a': '10 social media scheduling apps',
-    'h1b': 'for your desk and your phone.',
-    'lead': 'Most of your planning happens at a desk, but posts and comments don\'t wait until you get back. Here are 10 scheduling apps, with what each one offers on a laptop and on a phone.',
+    'title': '12 Best Social Media Scheduling Apps in 2027',
+    'desc': 'Compare the 12 best social media scheduling apps in 2027 for your desk and your phone, with pros, cons and prices. See why Capybaroar leads the list.',
+    'heroAlt': 'A phone and a laptop showing the same post calendar, for the best social media scheduling apps in 2027',
     'cover': {'type': 'channel', 'network': 'instagram', 'photo': 'coffee', 'face': 'ana'},
-    'picks': [
-        ('Best overall', 'capybaroar', 'A full workspace in the browser, plus an agent you can also run from Claude or ChatGPT.'),
-        ('Best phone app on a budget', 'later', 'iPhone and Android app on every plan, from $18.75 a month billed yearly.'),
-        ('Most places to work', 'vistasocial', 'Apps for iOS, Android, Mac and Windows on a 15 profile plan.'),
+    'leaders': ['hootsuite', 'buffer'],
+    'intro': '''<p>Most planning happens at a desk, but social media does not wait for you to get back. A comment needs an answer, a typo needs a fix, and a client wants to approve tomorrow\'s post from the train.</p>
+<p>A social media scheduling app covers both sides. You plan the week on a big calendar, then check, fix and reply from a browser, a desktop app or your phone. Creators, small businesses, marketing teams and agencies all use one.</p>
+<p>The result is posts that go out on time wherever you are. Below are 12 apps, with where each one runs and its real prices, checked in November 2026. 📱</p>''',
+    'whatH2': 'What Is a Social Media Scheduling App?',
+    'what': {
+        'def': 'A social media scheduling app is software that saves your posts and publishes them to social networks at a set time through each network\'s official API.',
+        'body': '<p>You connect your accounts once, write a post, add a picture or video and pick a time. The app stores it and sends it for you at that minute, even when your laptop is closed. Most run in a web browser on any computer, and many add iPhone and Android apps or a browser extension for posting on the go.</p>',
+        'bullets': ['A calendar for every channel', 'Phone or browser access', 'Previews before posting', 'Bulk upload and queues'],
+        'close': 'The result is a plan that keeps running while you are away from the desk.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Scheduling App for Your Brand?',
+    'why': {
+        'lead': '<p>Posting from each network\'s own app works for one account. Once you run several networks or clients, switching apps all day wastes hours and leads to missed posts.</p>\n<p>A social media scheduling app solves this.</p>',
+        'bullets': [
+            ('Post from anywhere', 'Fix a caption or move a post from a phone or any browser, not only your work laptop.'),
+            ('A steady plan', 'Posts go out on schedule on weekends and holidays, so your reach does not dip.'),
+            ('Fewer app switches', 'One calendar replaces a stack of network apps, which saves time every single day.'),
+            ('Help with the writing', 'The best apps add an AI agent that drafts the week, so you only review and approve.'),
+        ],
+    },
+    'quizH3': 'Social Media Scheduling Apps: Quick Match',
+    'quiz': [
+        {'q': 'Where do you do most of your work?', 'options': [
+            ('At a desk in the browser', ['capybaroar', 'hootsuite', 'contentstudio', 'socialpilot']),
+            ('On my phone', ['later', 'buffer', 'sprout', 'publer']),
+            ('On a Mac or Windows desktop', ['vistasocial', 'buffer']),
+            ('A mix of all three', ['capybaroar', 'vistasocial', 'agorapulse', 'zoho'])]},
+        {'q': 'Who will use the app?', 'options': [
+            ('Just me', ['capybaroar', 'buffer', 'later', 'publer']),
+            ('A small team', ['capybaroar', 'loomly', 'contentstudio', 'zoho']),
+            ('An agency', ['capybaroar', 'socialpilot', 'vistasocial']),
+            ('A large brand team', ['hootsuite', 'sprout', 'agorapulse'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer', 'zoho']),
+            ('$10 to $50', ['capybaroar', 'later', 'contentstudio', 'socialpilot', 'loomly']),
+            ('$50 to $150', ['capybaroar', 'vistasocial', 'agorapulse']),
+            ('More than $150', ['hootsuite', 'sprout'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('AI that drafts the week', ['capybaroar']),
+            ('Replies on the go', ['agorapulse', 'sprout', 'hootsuite', 'capybaroar']),
+            ('Approvals before posting', ['loomly', 'socialpilot', 'publer', 'capybaroar']),
+            ('Instagram link in bio', ['later', 'capybaroar'])]},
     ],
-    'intro': '''<p>A scheduling app does two jobs. At your desk, you plan the week on a big calendar, write posts and check results. Away from it, you need to answer a comment, fix a typo in tomorrow's post or approve a draft from your phone.</p>
-<p>Not every tool handles both. Some have full iPhone and Android apps on every plan. Some have one mobile app with no platform named on the vendor's page. Others work only in a web browser. We note which is which for each tool below, and we only say a tool has a phone app when its own site says so.</p>
-<p>Prices come from each vendor's own pricing page in November 2026. Check the page before you buy, since plans change often.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'composer', 'text': '''<p>Capybaroar runs in your web browser. There is no Capybaroar phone app, so it fits people who do most of their planning at a desk. From one screen you write a post once, see a preview for each network, and schedule it to any of 14 networks, from Instagram and TikTok to Bluesky and Mastodon.</p>
-<p>What makes it different is the agent. On paid plans, you tell it what you want and it writes a week of posts and saves them as drafts for your review. You can also reach Capybaroar from Claude, ChatGPT or Cursor through its MCP server, which comes with every plan. Free covers 3 channels and 30 posts a month. Creator is $29 a month.</p>'''},
-        {'id': 'buffer', 'shot': 'home', 'text': '''<p>Buffer has iOS and Android apps, and its pricing page lists reminder notifications on every plan. For Instagram, TikTok and YouTube, you can get a phone alert when it's time to post, then finish the post in the network's own app.</p>
-<p>At your desk, Buffer keeps things simple: a queue, a calendar and a community inbox for comments. You pay per channel, at $5 a month per channel on Essentials, billed yearly. The free plan covers 3 channels with 10 scheduled posts per channel, which makes it easy to try Buffer before you pay.</p>'''},
-        {'id': 'later', 'shot': 'home', 'text': '''<p>Later includes its iOS and Android app on all plans. It suits Instagram-first brands, and each social set covers 8 networks, Snapchat included. Every plan includes Link in Bio, and Starter already shows best times to post for Instagram, Facebook and TikTok.</p>
-<p>Starter is $18.75 a month, billed yearly, for 1 social set of 8 profiles and 1 user. The limit is posts: Starter allows 30 posts per profile a month. Growth at $37.50 a month raises that to 180 and adds a second user, the social inbox and approvals. Later has no free plan, but it offers a 14-day free trial.</p>'''},
-        {'id': 'sprout', 'shot': 'home', 'text': '''<p>Sprout Social includes its iOS and Android app on every plan, so each person on the team gets it at no extra cost. Its Trellis AI agent comes on all plans too, with 100 credits per seat a month.</p>
-<p>The price is the hurdle. Sprout charges per seat, from $79 a month billed yearly or $99 billed monthly, and the consolidated inbox starts on Standard at $199 per seat. A team of 2 on Standard pays about $398 a month. If your team lives on its phones and has the budget, Sprout's 30-day free trial with no card is a fair way to test it.</p>'''},
-        {'id': 'loomly', 'shot': 'home', 'text': '''<p>Loomly lists iOS and Android apps with its plans. At the desk, approval workflows and roles start on the lowest plan, so even a small team can check posts before they go out.</p>
-<p>Starter is $49 a month, billed yearly ($588 a year), for 12 social accounts and 3 users. AI helps write posts, captions and replies within a monthly limit, and reports can be exported or scheduled. Two things to know before you buy: Loomly has no free plan, only a 7-day free trial, and yearly plans can't be ended early.</p>'''},
-        {'id': 'vistasocial', 'shot': 'home', 'text': '''<p>Vista Social offers the widest choice of places to work on this list. Its site lists apps for iOS, Android, Mac and Windows, along with extensions for Chrome and Firefox. If you like a desktop app on your computer and a phone app in your pocket, this is the one that covers both.</p>
-<p>Professional is $80 a month, or $950 a year, for 15 social profiles and 2 users. Engagement tools, reports and its Ask Vista AI come on every plan. Two costs to plan for: X is a $29 a month add-on, and you need Advanced at $160 a month for a third user.</p>'''},
-        {'id': 'zoho', 'shot': 'home', 'text': '''<p>Zoho Social has apps for Android and iOS, plus the zShare browser extension on all plans. Its AI picks the best times to post, and it can turn comments into leads in Zoho CRM.</p>
-<p>Standard is US$10 a month, billed yearly, for 1 brand with 14 channels. There is also a forever free plan for 1 brand with 6 channels and 5 AI credits, after a 15-day free trial with no card. The catch is that the inbox and approvals are only on Premium at US$40 a month, which includes 3 team members.</p>'''},
-        {'id': 'contentstudio', 'shot': 'home', 'text': '''<p>ContentStudio lists iOS and Android mobile apps, plus a Chrome extension. Its pricing page also lists inbox access in the iOS app, so you can answer comments from your phone once you have an inbox plan.</p>
-<p>Standard is $19 a month billed yearly, or $29 month to month, for 5 social accounts, 1 user and unlimited posts. The inbox and approvals start on Advanced at $49 a month billed yearly. ContentStudio has no free plan, but you can try it for 7 days with no card. MCP and API access start on Standard.</p>'''},
-        {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite is one of the best known tools at the desk, with one inbox for messages and comments on all plans and unlimited scheduled posts. Its Wisdom AI teammate comes with every plan and can create posts and images.</p>
-<p>We couldn't confirm a phone app on the Hootsuite pages we read, so check the app store before you count on one. Pricing is per user: Standard is $99 a month per user, billed yearly, for up to 10 social accounts. Approvals need Advanced at $399 per user a month. There is a 14-day free trial and no free plan.</p>'''},
-        {'id': 'publer', 'shot': 'home', 'text': '''<p>Publer has a mobile app to schedule posts from your phone. Its site doesn't name which phones it runs on, so check your app store first. At your desk, Publer's calendar lets you drag posts to new days, and its feed preview shows how your Instagram and TikTok grid will look.</p>
-<p>Prices are low. Professional starts at $5 a month, or $4 a month billed yearly, and the final price depends on how many accounts and members you pick. The free plan covers 3 accounts with 10 scheduled posts each, but it can't connect X.</p>'''},
+        {'id': 'capybaroar', 'shot': 'week', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media scheduling apps for teams that want to plan the whole week at a desk. Instead of only queueing posts one by one, it gives a full browser workspace where an AI agent drafts the week for review. It publishes to 14 networks, and its MCP server lets Claude or ChatGPT schedule from a chat on every plan. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-scheduler">Schedules to 14 networks</a> from one calendar',
+                  '<a href="/posting-queue">Posting queues</a> and <a href="/bulk-scheduling">bulk upload</a>',
+                  '<a href="/ai-social-media-agent">AI agent</a> drafts the week for review',
+                  '<a href="/mcp">MCP server</a> on every plan',
+                  '<a href="/pricing">Free plan</a> with <a href="/social-media-inbox">inbox</a> and <a href="/social-media-analytics">analytics</a>'],
+         'cons': ['Not a phone-first scheduling app']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Unlimited posts, one inbox',
+         'overview': '<p>Hootsuite is one of the most popular social media scheduling apps for brand teams that manage many accounts. Hootsuite says it was the first, and that over 25 million users have used it in 18 years. Every plan includes unlimited scheduled posts, best times to post and one inbox for messages and comments. Its Wisdom AI drafts posts, and MCP connectors link it to ChatGPT, Claude, Copilot and Gemini.</p>',
+         'pros': ['Unlimited scheduled posts on every plan', 'Posting-time suggestions', 'One inbox on every plan', 'Wisdom AI drafts posts', 'Good fit for large brand teams'],
+         'cons': ['Per-user pricing can add up fast', 'No phone app listed on its plan pages', 'Interface can feel complex for new users']},
+        {'id': 'buffer', 'shot': 'home', 'best': 'Apps on every screen',
+         'overview': '<p>Buffer is one of the most established social media scheduling apps for creators and small teams who want an app on every screen. It lists iOS and Android apps, a browser extension and a Mac menu bar app for creating posts. For Instagram, TikTok and YouTube, it can send a phone alert to finish a post in the network\'s own app. Its free plan covers 3 channels with 10 scheduled posts each.</p>',
+         'pros': ['iOS and Android apps', 'Mac menu bar posting', 'Phone alerts to finish posts', 'Pay only for the channels you use', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel', 'Some formats may need a phone finish', 'Analytics can feel light next to suites']},
+        {'id': 'sprout', 'shot': 'home', 'best': 'Mobile app for every seat',
+         'overview': '<p>Sprout Social is a large social media scheduling app used by marketing teams, care teams and agencies. Its iOS and Android app comes on every plan, so each seat can post and reply from a phone. The Trellis AI agent and profile and post-level reporting are included on all plans too. It is especially useful for larger teams with a big budget that work from their phones.</p>',
+         'pros': ['iOS and Android app on every plan', 'Profile and post-level reporting', 'Trellis AI agent on every plan', '30-day free trial, no card', 'Good fit for large teams'],
+         'cons': ['Seat-based pricing can strain small budgets', 'Inbox may start on the Standard plan', 'Premium Analytics may cost extra']},
+        {'id': 'vistasocial', 'shot': 'home', 'best': 'Desktop and phone apps',
+         'overview': '<p>Vista Social is a social media scheduling app with the widest set of places to work on this list. It lists apps for iOS, Android, Mac and Windows, plus extensions for Chrome and Firefox. Professional includes 15 social profiles, engagement tools, reports and Ask Vista AI. This makes it a common choice for agencies that plan on a desktop and reply from a phone.</p>',
+         'pros': ['Apps for iOS, Android, Mac and Windows', 'Chrome and Firefox extensions', '15 profiles on the first plan', 'Ask Vista AI and MCP', 'Good fit for multi-device teams'],
+         'cons': ['X publishing can cost extra', 'More users may need a higher plan', 'White label may need the Scale plan']},
+        {'id': 'agorapulse', 'shot': 'home', 'best': 'Inbox in your pocket',
+         'overview': '<p>Agorapulse is a social media scheduling app for business teams that answer messages on the go. It lists a mobile app for iOS and Android, and one inbox for messages and comments comes on every plan. Paid plans include unlimited post scheduling and an MCP connector for Claude, ChatGPT and Copilot Studio. ROI reports on Advanced tie posts to results, which makes it attractive for teams that report to sales.</p>',
+         'pros': ['Mobile app for iOS and Android', 'One inbox on every plan', 'Unlimited scheduling on paid plans', 'MCP connector for AI apps', 'Free plan after the trial'],
+         'cons': ['X may need a paid add-on', 'Per-user pricing can add up', 'Free plan limits may be unclear']},
+        {'id': 'loomly', 'shot': 'home', 'best': 'Approvals from day one',
+         'overview': '<p>Loomly is a social media scheduling app built for marketing teams that approve posts before they go live. It lists iOS and Android apps, and approval workflows and roles start on the lowest plan. Starter covers 12 social accounts and 3 users with unlimited scheduling. AI also helps write posts, captions and replies within a monthly limit.</p>',
+         'pros': ['iOS and Android apps', 'Approvals on the lowest plan', 'Unlimited scheduling on Starter', '12 accounts on Starter', 'Good fit for marketing teams'],
+         'cons': ['Yearly plans may not end early', 'No MCP server listed, unlike some tools', 'Starter may cap users and listening']},
+        {'id': 'contentstudio', 'shot': 'home', 'best': 'Unlimited posting with apps',
+         'overview': '<p>ContentStudio is a social media scheduling app for content teams that curate and post across 9 networks. It offers iOS and Android apps and a Chrome extension, and every plan includes unlimited posting. MCP and API access start on Standard, the lowest plan. It is a relevant option for users who mainly need unlimited posting with a phone app at a low price.</p>',
+         'pros': ['iOS and Android apps', 'Unlimited posting on every plan', 'MCP and API on Standard', 'Chrome extension', 'Good fit for content teams'],
+         'cons': ['No free plan, only a short trial', 'Inbox may need the Advanced plan', 'Standard may suit one user only']},
+        {'id': 'socialpilot', 'shot': 'home', 'best': 'Bulk posts for agencies',
+         'overview': '<p>SocialPilot is a social media scheduling app for agencies on a budget that run many accounts. Its plans list a mobile app and a browser extension, and Essentials covers 7 social accounts. From Premium, bulk scheduling from a CSV file loads 500+ posts at once. Client approvals and white label reports on Premium add to that, which makes it useful for agencies that grow fast.</p>',
+         'pros': ['Mobile app and browser extension', '7 accounts on the lowest plan', 'Bulk scheduling from a CSV file', 'Client approvals on Premium', 'Good fit for budget agencies'],
+         'cons': ['Extra accounts can raise the bill', 'Inbox may start only on Standard', 'Lowest plan may lack analytics']},
+        {'id': 'zoho', 'shot': 'home', 'best': 'Free plan with phone apps',
+         'overview': '<p>Zoho Social is a social media scheduling app for businesses that already use the Zoho suite. It has apps for Android and iOS and posts to 15 networks, from WhatsApp and Telegram to Bluesky and Snapchat. Its AI predicts the best time to post and can turn comments into CRM leads. A forever free plan for 1 brand follows the 15-day trial.</p>',
+         'pros': ['Apps for Android and iOS', '15 networks, WhatsApp included', 'AI predicts when to post', 'Turns comments into CRM leads', 'Free plan for 1 brand'],
+         'cons': ['Extra members can cost more each month', 'Inbox and approvals may need Premium', 'Free plan features can feel limited']},
+        {'id': 'publer', 'shot': 'home', 'best': 'Low price, mobile app',
+         'overview': '<p>Publer is a low-cost social media scheduling app for creators, small businesses and agencies. Its mobile app schedules posts from a phone, and the web calendar covers 13 networks, Telegram and WordPress included. Professional starts at $5 a month with unlimited scheduling and workspaces. The low entry price suits creators who want a phone app without a big monthly bill.</p>',
+         'pros': ['Mobile app for phone scheduling', '13 networks, WordPress included', 'Unlimited scheduling on Professional', 'Approval workflows for clients', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'Analytics may need the Business plan', 'Free plan may not connect X']},
+        {'id': 'later', 'shot': 'home', 'best': 'Instagram app on all plans',
+         'overview': '<p>Later is a social media scheduling app designed specifically for Instagram-first brands and creators. Its iOS and Android app comes on all plans, and Link in Bio is included too. Each social set covers 8 profiles, one each on Instagram, Facebook, TikTok, Pinterest, LinkedIn, YouTube, Threads and Snapchat. Many teams use it as a specialized tool to plan Instagram on the go before they need a larger suite.</p>',
+         'pros': ['iOS and Android app on all plans', 'Link in Bio on every plan', 'Snapchat in each social set', 'Posting times for Instagram', 'Good fit for Instagram-first creators'],
+         'cons': ['Starter can cap monthly posts per profile', 'Inbox and approvals may need Growth', 'Each set may hold one profile per network']},
     ],
-    'how': '''<p>We judged each tool by how well it works in both places you use it.</p>
-<ul><li><b>At your desk:</b> the calendar, the composer, previews and the inbox.</li>
-<li><b>On the go:</b> whether the vendor's own site lists an iPhone or Android app, and what it says the app can do. If the site didn't say, we didn't claim it.</li>
-<li><b>Price:</b> the lowest plan and what it limits, from each tool's pricing page in November 2026.</li></ul>
-<p>Capybaroar is our product, and we held it to the same test. It runs in the browser and has no phone app, and we say so above.</p>''',
-    'verdict': '''<p>If you plan at a desk and want help writing, start with Capybaroar. Its agent drafts the week for you, and its free plan costs $0. If you need a phone app on every plan, Later and Buffer are the cheapest picks, and Sprout Social is the premium choice for teams with budget. Vista Social is the one to pick if you want desktop apps for Mac or Windows too.</p>
-<p>Try the phone app on a real day before you commit. Reply to a comment and fix a post from it, and you will know fast if it works for you.</p>''',
+    'conclusion': '''<p>A social media scheduling app keeps your posts going out on time, at the desk or on the move. It saves hours of app switching and keeps the plan steady.</p>
+<p>But the best app today does more than hold a queue. It should help write the week, bring every comment into one inbox and let your AI apps reach the calendar too.</p>
+<p>That is why <a href="https://capybaroar.com/social-media-scheduler">Capybaroar</a> stands out. It combines an AI agent, one inbox and MCP on every plan with every social channel in one calendar. For teams that plan at a desk and want help writing, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media scheduling app?', 'For most people, Capybaroar. It runs in the browser, covers 14 networks and has an AI agent on paid plans, from $29 a month. If you need a phone app, Later and Buffer are good low cost picks.'),
-        ('Which scheduling apps have an iPhone and Android app?', 'Buffer, Later, Sprout Social, Loomly, Vista Social, Zoho Social and ContentStudio all list iOS and Android apps on their own sites. Publer lists a mobile app without naming the platforms.'),
-        ('Does Capybaroar have a mobile app?', 'No. Capybaroar runs in your web browser. You can also use it from Claude, ChatGPT or Cursor through its MCP server, which comes with every plan.'),
-        ('Is there a free social media scheduling app?', 'Yes. Capybaroar, Buffer, Zoho Social and Publer all have free plans. Of those, Buffer and Zoho Social also list iOS and Android apps.'),
-        ('Can I post to Instagram and TikTok from my phone?', 'Buffer can send you a phone alert when it is time to post to Instagram, TikTok or YouTube, so you finish the post in that network\'s own app. Later includes its iOS and Android app on all plans.'),
+        ('What is a social media scheduling app?', 'A social media scheduling app is software that saves your social posts and publishes them at a time you pick. You connect your accounts once, write each post in a browser, desktop app or phone app, and the app sends it through each network\'s official API while you are away.'),
+        ('How do social media scheduling apps publish posts?', 'Social media scheduling apps publish posts through each network\'s official API. You write the post, add media and pick a time in the web app or phone app, and the app sends it at that time. For some Instagram, TikTok or YouTube formats, an app may send a phone alert so you finish the post yourself.'),
+        ('Why use a social media scheduling app for your brand?', 'A social media scheduling app keeps your brand posting on a steady plan without being glued to each network\'s app. You batch posts in one sitting, fix them from your phone or browser and give your team one shared calendar. That saves hours every week and keeps posts from slipping.'),
+        ('What features should modern social media scheduling apps include?', 'Modern social media scheduling apps should include a calendar for every network, previews, a phone app or browser access and analytics on what you posted. Teams also need approvals and a shared inbox. The newest apps add an AI agent that drafts the week and an MCP server so your AI apps can schedule too.'),
+        ('Which tool is recommended for teams that need more than a phone scheduler?', 'For teams that need more than a phone scheduler, we recommend Capybaroar. It puts every social channel in one calendar, with an AI agent, one inbox and an MCP server on every plan. Teams that want a phone app on every plan may prefer Later or Buffer, and large teams may prefer Sprout Social.'),
     ],
 }

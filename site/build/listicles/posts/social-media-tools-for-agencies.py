@@ -1,57 +1,117 @@
 POST = {
     'order': 20,
     'slug': 'social-media-tools-for-agencies',
-    'keyword': 'social media management tool for agencies',
-    'title': '10 Best Social Media Tools for Agencies (Clients, Approvals, Reports)',
-    'desc': '10 social media tools for agencies, compared on client workspaces, client approvals, white label reports and the real cost per client. November 2026.',
-    'h1a': '10 social media tools for agencies',
-    'h1b': 'priced by the client.',
-    'lead': 'An agency tool has to keep clients apart, get their sign off and send them reports with your name on top. Here are 10 tools that do it, with what each client really costs you.',
+    'keyword': 'social media tool for agencies',
+    'kwVariants': ['social media tools for agencies'],
+    'title': '12 Best Social Media Tools for Agencies in 2027',
+    'desc': 'Find the best social media tool for agencies in 2027: 12 picks compared on client approvals, reports and cost per client, and why Capybaroar leads.',
+    'heroAlt': 'Client workspaces and an approval queue, the core of a social media tool for agencies in 2027',
     'cover': {'type': 'analytics', 'networks': ['instagram', 'linkedin', 'facebook']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Unlimited client brands, client approvals and reports with your logo for $149 a month.'),
-        ('Best price per client', 'pallyy', '10 clients for $99 a month, then $10 for each extra client.'),
-        ('Best for big teams', 'sendible', 'Unlimited users on every plan, with a workspace for each client.'),
+    'leaders': ['sendible', 'socialpilot'],
+    'intro': '''<p>An agency needs more from a social tool than a freelancer or a brand does. Each client needs its own space, so posts and accounts never mix. Clients need an easy way to approve posts, and every month you owe them a report with your name on top.</p>
+<p>A social media tool for agencies handles all of that in one login. You switch between client workspaces, send posts for sign-off and export branded reports. Agencies, freelancers and in-house teams with many brands use one to keep work apart.</p>
+<p>The price model matters most, since per-user plans grow with every hire. Prices and G2 ratings below were checked in November 2026. 📁</p>''',
+    'whatH2': 'What Is a Social Media Tool for Agencies?',
+    'what': {
+        'def': 'A social media tool for agencies is an app that lets an agency plan, approve, publish and report on posts for many clients from one account, with each client kept in its own space.',
+        'body': '<p>Each client gets a workspace, brand or social set with its own accounts, calendar and reports. Clients review posts through a link or a light login, and the agency exports reports with its own logo. Most tools run in a web browser, and many price by client, workspace or profile instead of by user.</p>',
+        'bullets': ['A workspace for each client', 'Client approvals by link', 'Branded or white label reports', 'Roles for staff and freelancers'],
+        'close': 'The result is more clients handled by the same team, with fewer mistakes.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Tool for Your Agency?',
+    'why': {
+        'lead': '<p>Native apps and shared passwords work for one or two clients. With ten, posts land on the wrong page, approvals live in email threads and reports take a full day each month.</p>\n<p>A social media tool for agencies solves this.</p>',
+        'bullets': [
+            ('Clients kept apart', 'Each client has its own space, so nothing goes out on the wrong account.'),
+            ('Faster sign-off', 'Clients approve posts from a link instead of a long email chain.'),
+            ('Reports in minutes', 'Branded reports go out on a schedule instead of being built by hand.'),
+            ('Flat team costs', 'Clients who only approve take no seat, and an AI agent drafts each brand\'s week.'),
+        ],
+    },
+    'quizH3': 'Social Media Tools for Agencies: Quick Match',
+    'quiz': [
+        {'q': 'How many clients do you manage?', 'options': [
+            ('1 to 5', ['capybaroar', 'pallyy', 'planable', 'metricool']),
+            ('6 to 15', ['capybaroar', 'sendible', 'socialpilot', 'metricool']),
+            ('More than 15', ['capybaroar', 'vistasocial', 'sendible', 'contentstudio'])]},
+        {'q': 'How do you want to pay?', 'options': [
+            ('A flat price for the agency', ['capybaroar', 'contentstudio', 'socialpilot', 'loomly']),
+            ('Per client or workspace', ['pallyy', 'planable', 'sendible']),
+            ('Per brand', ['metricool', 'capybaroar']),
+            ('Per user', ['agorapulse', 'hootsuite'])]},
+        {'q': 'What do clients ask for most?', 'options': [
+            ('Approving posts', ['capybaroar', 'planable', 'pallyy', 'loomly']),
+            ('Reports with your logo', ['capybaroar', 'socialpilot', 'agorapulse', 'iconosquare']),
+            ('Fast replies to customers', ['hootsuite', 'agorapulse', 'capybaroar']),
+            ('More content each week', ['capybaroar', 'contentstudio', 'vistasocial'])]},
+        {'q': 'How big is your team?', 'options': [
+            ('Just me', ['capybaroar', 'pallyy', 'metricool']),
+            ('2 to 6 people', ['capybaroar', 'socialpilot', 'vistasocial', 'iconosquare']),
+            ('A large team that changes often', ['sendible', 'loomly', 'capybaroar']),
+            ('A team serving big brands', ['hootsuite', 'agorapulse'])]},
     ],
-    'intro': '''<p>An agency needs more from a social media tool than a freelancer or a brand does. Each client needs its own space, so posts and accounts never mix. Clients need an easy way to approve posts, ideally without a login or a paid seat. And at the end of the month, you need reports that carry your logo instead of the tool's.</p>
-<p>The price model matters more than the sticker price. Some tools charge per user, which hurts as your team grows. Others charge per client, per workspace or per social profile. To compare them, we worked out a rough cost per client where the pricing page made it possible. For example, a $99 plan that holds 10 clients costs $9.90 per client.</p>
-<p>All prices below come from each tool's own pricing page, checked in November 2026. Check them again before you sign up, since agency plans change often.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'approvals', 'text': '''<p>Capybaroar's Agency plan is $149 a month, or $1,490 a year, for unlimited client brands, 15 members and 100 channels. With 10 clients that's $14.90 per client, and with 20 it drops to $7.45. Clients who only approve posts don't count as members, so they never take a seat. Reports go out by link, PDF or email, with your logo and color on them.</p>
-<p>You can also set a limit on AI credits for each client brand, so one busy account can't use up the 8,000 credits for everyone. The AI agent plans and writes posts from one message and saves them as drafts for review. Pro at $49 a month covers 5 brands if you're just starting out.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible puts each client in its own workspace and has unlimited users on every plan. Plus is $99 a month for 3 workspaces, or $33 per client. Premium is $199 a month for 7 workspaces, about $28 per client, and Elite is $299 a month for 15, about $20 per client. Approvals start on Plus.</p>
-<p>Custom branded reports start on Premium. A full white label setup is an extra fee on Elite and Enterprise, with pricing from $349 a month for Elite. One gap to know: Sendible can't answer Instagram direct messages, which matters if your clients get support requests there.</p>'''},
-        {'id': 'pallyy', 'shot': 'pricing', 'text': '''<p>Pallyy prices by client, which makes agency math simple. Each client is one social set, with up to 11 accounts, and adding a client costs a flat $10 a month. Agency is $99 a month for 10 clients and 3 users, or $9.90 per client. Scale is $199 a month for 30 clients and 10 users, about $6.63 per client.</p>
-<p>Clients preview, comment and approve posts from a shared link, with no account needed. Agency and Scale add custom per client reports you can export as PDFs at month end. The pricing page doesn't mention white label. Paying yearly saves up to 25%.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social's agency features sit on the Scale plan. Scale is $360 a month, or $4,310 a year, for 70 social profiles and 4 users. It adds a white label setup and client profile connect. If each client has 5 profiles, that's room for 14 clients at about $25.70 each.</p>
-<p>Lower plans are cheaper but small for an agency. Professional is $80 a month for 15 profiles and 2 users. Reports and Ask Vista AI with MCP come on every plan. X is an extra $29 a month add-on, so count it if your clients post there.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot's agency tools start on Premium at $85 a month billed yearly, or $100 monthly. That gets you 25 social accounts, 6 users, unlimited client seats, client approvals and white label reports. With 5 clients of 5 accounts each, that's $17 per client on yearly billing.</p>
-<p>Ultimate at $170 a month billed yearly raises you to 50 accounts, unlimited users and advanced white label. Extra accounts cost $4 a month on any plan, which helps when one client adds a channel. Standard at $42.50 has manager approval only, so it won't cover client sign off.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse is strong on reports. Its plans list branded report exports from Standard, and white label reporting and scheduled report emails also appear on the pricing page. Advanced adds ROI reports and competitor benchmarks, which help when a client asks what social is worth.</p>
-<p>The cost model is per user, at US $79, $119 or $149 per user a month, and each self serve plan holds 10 social profiles. That limits how many clients one plan can cover. Agorapulse says that on some plans clients can approve posts without their own seat. There's a 30 day free trial with no card.</p>'''},
-        {'id': 'planable', 'shot': 'home', 'text': '''<p>Planable is built around approvals. You get 2 approval types on Basic, 3 on Pro and multi level approvals on Enterprise, with suggestions and annotations on each post. Basic and Pro have unlimited users, so clients can join without adding cost.</p>
-<p>It charges per workspace, and a workspace is one brand or client. Basic is $33 per workspace a month with 4 social pages and 60 posts, and Pro is $49 per workspace with 10 pages and 150 posts. That makes your cost per client $33 or $49. Analytics and the inbox are paid add-ons below Enterprise. Your first 50 posts are free.</p>'''},
-        {'id': 'contentstudio', 'shot': 'pricing', 'text': '''<p>ContentStudio's Agency Unlimited plan is $99 a month billed yearly, or $139 month to month. It starts at 25 social accounts and includes unlimited workspaces and users, so every client gets a separate dashboard at no extra cost. EasyConnect lets clients link their accounts through a simple link.</p>
-<p>Approvals start on Advanced, and clients can review posts without logging in. White label is an add-on at $50 a month or $500 a year. It puts your logo, domain and email on the platform and the client dashboard. There's a 7 day free trial and no free plan.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool is a cheap way to cover many clients if they mostly need reports. Advanced starts at $53 a month billed yearly for 15 brands, about $3.53 per client, and goes up to 50 brands for $159 a month. It adds the post approval system, team and client management and custom report templates.</p>
-<p>Collaborators let you give a client access to their own brand without showing them anyone else's data. PDF and PPT reports start on Starter. Full white label is on the Custom plan, so you'll need to talk to sales for it. X costs $10 a month per connected account.</p>'''},
-        {'id': 'hootsuite', 'shot': 'pricing', 'text': '''<p>Hootsuite is built for big brand teams, and that shows in the agency math. Every plan has one inbox for messages and comments, brand and competitor monitoring, and the Wisdom AI teammate. Professional at $199 per user a month adds unlimited social accounts and custom performance reports.</p>
-<p>For agencies, the per user price is the problem. Team approvals only come on Advanced at $399 per user a month, billed yearly, so a team of 4 pays $1,596 a month before any client can sign off. There's no free plan and no client pricing on its plans page. It suits large in house teams better than agencies.</p>'''},
+        {'id': 'capybaroar', 'shot': 'approvals', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media tools for agencies that want to run many clients without paying per seat. Instead of only scheduling client posts, it adds client approvals that take no seat, an AI agent that drafts each brand\'s week and reports with your logo. Agency is $149 a month for unlimited client brands, 15 members and 100 channels. That makes it a strong fit for agencies that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/brands-and-teams">Unlimited client brands</a> on Agency',
+                  '<a href="/social-media-calendar">One calendar</a> across 100 channels',
+                  '<a href="/post-approval">Client approvals</a> that take no seat',
+                  '<a href="/client-reports">Reports with your logo</a> by link, PDF or email',
+                  '<a href="/ai-social-media-agent">AI agent</a> with credit limits per brand'],
+         'cons': ['Not a listening tool for PR teams']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users, client workspaces',
+         'overview': '<p>Sendible is one of the most established social media tools for agencies and multi-location teams. Every plan has unlimited users, and each client gets its own workspace with a calendar, inbox and reports. Plus is $99 a month for 3 workspaces and adds approvals, while Premium brings custom branded reports. This makes it a common choice for agencies whose staff and freelancers change often.</p>',
+         'pros': ['A workspace for each client', 'Unlimited users on every plan', 'Approvals from the Plus plan', 'White label add-on on Elite', 'Good fit for agencies with big teams'],
+         'cons': ['Workspace caps can push agencies up a plan', 'Branded reports may need a pricier plan', 'Inbox may not answer Instagram DMs']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Budget white label',
+         'overview': '<p>SocialPilot is one of the most widely used social media tools for agencies on a budget. Its agency tools start on Premium, with 25 social accounts, 6 users, client approvals and white label reports. Ultimate raises that to 50 accounts and unlimited users, and extra accounts cost $4 a month on any plan. The platform also offers bulk scheduling from a CSV file, which helps when a new client needs a month loaded at once.</p>',
+         'pros': ['Client approvals on Premium', 'White label reports on Premium', 'Bulk scheduling from a CSV file', 'Unlimited users on Ultimate', 'Good fit for budget agencies'],
+         'cons': ['Extra accounts can raise the bill', 'Client approval may need Premium or higher', 'Lower plans can feel tight for agencies']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'AI agents for many brands',
+         'overview': '<p>Vista Social is an AI-powered social media tool for agencies that run many brands at once. Its agency features sit on Scale, with 70 social profiles, 4 users, a white label setup and client profile connect. Ask Vista AI agents and MCP come on every plan and take on recurring social work. That helps agencies that want to add clients without adding staff.</p>',
+         'pros': ['70 profiles on the Scale plan', 'White label setup on Scale', 'Ask Vista AI agents and MCP', 'Reports on every plan', 'iOS and Android apps'],
+         'cons': ['X can cost extra each month', 'Seats may feel tight for a large team', 'Agency tools may need the Scale plan']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'ROI proof for clients',
+         'overview': '<p>Agorapulse is a strong social media tool for agencies whose clients ask what social is worth. Branded report exports start on Standard, and white label reporting and scheduled report emails also appear on the pricing page. Advanced adds ROI analysis and competitor benchmarks. Agorapulse focuses heavily on proof, which makes it attractive for agencies that keep clients with clear numbers.</p>',
+         'pros': ['One inbox on every plan', 'Branded report exports on Standard', 'ROI analysis and competitor benchmarks', 'White label reporting listed', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can add up for teams', 'No AI agent that drafts each client week', 'Profile caps may limit client count']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Cheap reports per brand',
+         'overview': '<p>Metricool is a social media tool for agencies whose clients mainly want reports. Advanced starts at $53 a month billed yearly for 15 brands and adds post approvals, team and client management and custom report templates. Collaborators can see their own brand without seeing anyone else\'s data. It is a relevant option for agencies that need low-cost reporting across many small brands.</p>',
+         'pros': ['15 brands on Advanced', 'Post approvals on Advanced', 'Custom report templates', 'Client access to one brand only', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra per account', 'Lower plans may lack team roles', 'White label may need a custom plan']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'Unlimited client workspaces',
+         'overview': '<p>ContentStudio is a social media tool for agencies that want a dashboard for every client at one price. Agency Unlimited includes unlimited workspaces and users, and EasyConnect lets clients link their accounts through a simple link. Clients can review posts without logging in, and white label is a paid add-on. That setup helps content agencies that bring on new clients every month.</p>',
+         'pros': ['Unlimited workspaces on Agency Unlimited', 'EasyConnect for client accounts', 'No-login client review', 'AI Studio for text, images and video', 'MCP integration on every plan'],
+         'cons': ['White label can cost extra as an add-on', 'Inbox and approvals may need Advanced', 'Trial can feel short, with no free plan']},
+        {'id': 'iconosquare', 'shot': 'home', 'best': 'Automated client reports',
+         'overview': '<p>Iconosquare is an analytics-first social media tool for agencies that lose hours to manual reporting. Launch adds automated reports and one inbox for comments, DMs and mentions, and Scale adds post approval workflows and competitor tracking. Clients and stakeholders can view shared calendars and dashboards. The Custom plan brings white-label reports and a dedicated success manager for larger agencies.</p>',
+         'pros': ['Automated reports from Launch', 'Post approvals on Scale', 'Shared calendars for clients', 'Competitor and hashtag tracking', 'Free plan for 2 profiles'],
+         'cons': ['Prices can climb with each profile', 'Approvals may need the Scale plan', 'White-label reports may need a custom plan']},
+        {'id': 'loomly', 'shot': 'home', 'best': 'Approvals on every plan',
+         'overview': '<p>Loomly is a social media tool for agencies that need sign-off on every post. Approval workflows and roles start on Starter, which covers 12 social accounts and 3 users. Beyond raises that to 60 accounts and unlimited users, with custom roles and workflows. Its inbox lets teams assign conversations, so account managers can split client replies cleanly.</p>',
+         'pros': ['Approval workflows on every plan', 'Unlimited users and 60 accounts on Beyond', 'Custom roles and workflows', 'Assign conversations to teammates', 'Good fit for approval-heavy agencies'],
+         'cons': ['Yearly plans may not end early', 'No MCP server listed for AI assistants', 'Starter may feel tight on users']},
+        {'id': 'hootsuite', 'shot': 'pricing', 'best': 'Big-brand inboxes',
+         'overview': '<p>Hootsuite is a large social media tool for agencies that serve big brands with heavy message volume. Every plan has one inbox, brand and competitor monitoring and the Wisdom AI teammate, and Professional adds unlimited social accounts. Team approvals and message routing arrive on Advanced. It suits agencies that run inboxes for big clients rather than many small accounts.</p>',
+         'pros': ['One inbox on every plan', 'Unlimited accounts on Professional', 'Message routing on Advanced', 'Over 100 integrations', 'Good fit for big-brand agencies'],
+         'cons': ['Per-user pricing can strain agency margins', 'Approvals may need the Advanced plan', 'No client pricing listed on its plans']},
+        {'id': 'planable', 'shot': 'home', 'best': 'Client feedback on posts',
+         'overview': '<p>Planable is a collaboration-first social media tool for agencies that live on client feedback. Each workspace is one brand or client, and clients leave suggestions and annotations right on the post. Approvals run from simple on Basic to multi-level on Enterprise, and every plan has unlimited users. Many teams use it as a specialized tool to get sign-off before posts go live.</p>',
+         'pros': ['Feedback right on each post', 'One workspace per client', 'Multi-level approvals on Enterprise', 'Unlimited users on every plan', 'First 50 posts free'],
+         'cons': ['Per-workspace pricing can add up per client', 'Inbox and analytics may cost extra', 'Post caps can limit busy clients']},
+        {'id': 'pallyy', 'shot': 'pricing', 'best': 'Flat price per client',
+         'overview': '<p>Pallyy is a simple social media tool for agencies that bill per client. Each client is one social set, with up to 11 accounts, and adding a client costs a flat $10 a month. Clients preview, comment and approve posts from a shared link with no account, and Agency and Scale add custom per-client PDF reports. Its flat client math makes new work simple to quote.</p>',
+         'pros': ['Flat price per client', 'Clients approve from a shared link', 'Per-client PDF reports on Agency', 'Social inbox for DMs and reviews', 'Free plan for 1 social set'],
+         'cons': ['Extra users can cost more each month', 'No AI agent that plans client weeks', 'Analytics may cover only some networks']},
     ],
-    'how': '''<p>We judged each tool on 4 things that decide whether it works for an agency: client workspaces, client approvals, white label reports and the price per client.</p>
-<ul><li><b>Client setup:</b> we checked whether each client gets its own workspace or social set, and how many fit on each plan.</li>
-<li><b>Approvals:</b> we noted which plan includes client approvals, and whether clients need an account or a paid seat to approve.</li>
-<li><b>Reports:</b> we looked for branded and white label reports and noted the plan or add-on they need.</li>
-<li><b>Price per client:</b> we divided each plan's price by the clients it holds, using prices from each tool's own page in November 2026.</li></ul>
-<p>Capybaroar is our product. We scored it on the same 4 points and listed its limits too.</p>''',
-    'verdict': '''<p>If you want everything on one flat price, Capybaroar Agency covers unlimited client brands, client approvals and reports with your logo for $149 a month. If you'd rather pay per client, Pallyy is the simplest at $10 a client after the first 10. Sendible fits agencies with large teams, since users are unlimited on every plan. For deep reports on a lot of brands, Metricool Advanced costs only a few dollars per client.</p>
-<p>Pick the 2 that match how you bill your clients, and run one real client through each trial before you move everyone.</p>''',
+    'conclusion': '''<p>A social media tool for agencies keeps each client in its own space. It gathers every approval in one place and turns monthly reporting from a full day into a quick export.</p>
+<p>But the best agency tool does more than hold client calendars. It should let clients approve without a paid seat, send reports with your logo and help draft each brand's week.</p>
+<p>That is why <a href="https://capybaroar.com/client-reports">Capybaroar</a> stands out. Agency covers unlimited client brands for $149 a month, with every social channel in one calendar. For agencies that want to add clients without adding seats, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media tool for agencies?', 'For most agencies, Capybaroar. Agency costs $149 a month for unlimited client brands, 15 members and 100 channels, with client approvals and reports that carry your logo. Pallyy and Sendible are strong picks if you prefer to pay per client or need unlimited users.'),
-        ('Which social media tool has white label reports?', 'Capybaroar Agency puts your logo and color on reports. SocialPilot has white label reports from Premium, Vista Social has a white label setup on Scale, and ContentStudio sells white label as a $50 a month add-on.'),
-        ('Can clients approve posts without an account?', 'Yes, on several tools. Pallyy clients approve from a shared link with no account, ContentStudio clients can review without logging in, and Capybaroar clients who only approve posts don\'t count as members.'),
-        ('Which agency tool is cheapest per client?', 'Metricool Advanced costs about $3.53 per brand for 15 brands, billed yearly. Pallyy Agency works out to $9.90 per client for 10 clients, and Capybaroar Agency drops below $10 per client once you reach 15 client brands.'),
-        ('Do I need a separate workspace for each client?', 'It helps. A separate workspace or social set keeps each client\'s accounts, posts and reports apart, so nothing goes to the wrong page. Most tools on this list give each client its own space.'),
-        ('Which agency tool has unlimited users?', 'Sendible has unlimited users on every plan, and Planable has them on Basic and Pro. ContentStudio Agency Unlimited and SocialPilot Ultimate also include unlimited users.'),
+        ('What is a social media tool for agencies?', 'A social media tool for agencies is an app that lets an agency plan, approve, publish and report on posts for many clients from one account. Each client gets its own workspace or brand, so accounts never mix, and clients approve posts and get reports without needing full access.'),
+        ('How do social media tools for agencies keep clients separate?', 'Social media tools for agencies keep clients separate with workspaces, brands or social sets. Each one holds that client\'s accounts, calendar, inbox and reports, and staff only see the clients they work on. Some tools also let a client open just their own brand, so no one sees another client\'s data.'),
+        ('Why use a social media tool for agency client work?', 'A social media tool for agency client work saves hours every week. Clients approve posts from a link instead of email threads, reports go out with your logo on a schedule, and staff move between clients in one login. That lets the same team take on more clients with fewer mistakes.'),
+        ('What features should modern social media tools for agencies include?', 'Modern social media tools for agencies should include client workspaces, client approvals, branded reports and roles for staff and freelancers. Pricing should not grow with every reviewer you add. The newest tools let clients approve without a paid seat and use an AI agent to draft each brand\'s week for review.'),
+        ('Which tool is recommended for agencies that need more than client scheduling?', 'For agencies that need more than client scheduling, we recommend Capybaroar. Agency covers unlimited client brands, with every social channel in one calendar, client approvals that take no seat and reports with your logo. Agencies that bill strictly per client may prefer Pallyy, and agencies with large, changing teams may prefer Sendible.'),
     ],
 }
