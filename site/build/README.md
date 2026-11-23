@@ -16,6 +16,7 @@ That runs `build_tools.py`, which runs the others in order. The output goes stra
 | `build_channels.py` | The 11 network pages (`/facebook-post-scheduler` and the rest), `/blog` and `/tools` |
 | `build_tools.py` | The free tools under `/tools/` and the `/tools` index |
 | `tools_text.py`, `tools_plan.py`, `tools_media.py`, `tools_more.py` | The content of each tool page: the tool, the guide and the FAQ |
+| `build_motion.py` | Runs last, from `build_home_v2.py`. Adds `/motion.css` and `/motion.js` to every landing page, the animated calendar closing card, three AI chat cards on each network page, and the six-card AI section (`ai-section.html`) on the homepage, `/mcp` and `/ai-social-media-agent` |
 | `emoji/` | Emoji data from emojibase-data 18.0.0 (MIT, see `emoji/LICENSE`) |
 
 `site/build/home-base.html` is the source for the parts other pages copy (the sprite of icons and logos, the header, the footer and the live scenes). `build_home_v2.py` turns it into the live homepage, `site/public/index.html`, so run it last and edit the homepage's sections there. The tools' behavior lives in `site/public/tools/tools.js` and the site's shared behavior in `site/public/site.js` and `site/public/nav.js`.

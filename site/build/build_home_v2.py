@@ -183,3 +183,9 @@ tabs.forEach(function(t,i){t.addEventListener('click',function(){pick(t)});t.add
 html = html.replace("</body>", tabjs + "\n</body>", 1)
 open(P + "index.html", "w").write(html)
 print("built", len(html), "bytes; faq kept", len(keep))
+
+# The motion layer, animated closing cards and AI chat cards go on last (build_motion.py).
+import os
+_m = {'__name__': 'build_motion', '__file__': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_motion.py')}
+exec(open(_m['__file__']).read(), _m)
+_m['run']()
