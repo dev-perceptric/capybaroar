@@ -6,13 +6,14 @@
 - The homepage, /mcp and /ai-social-media-agent get the six-card AI section (build/ai-section.html) after the hero.
   On the homepage it replaces the "One tool. However you post." and "Plan, post, reply." sections.
 
-Safe to run more than once: a page that already has the motion layer is left alone.
+Safe to run more than once: a page that already has the motion layer only gets its version number updated.
 build_home_v2.py runs this at the end. To run it on its own: python3 site/build/build_motion.py
 """
 import os, re, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(HERE, '..', 'public') + os.sep
-MARK = '<link rel="stylesheet" href="/motion.css?v=1">'
+VER = '2'  # bump when motion.css or motion.js change, so browsers fetch the new files
+MARK = '<link rel="stylesheet" href="/motion.css?v=' + VER + '">'
 LANDING = """ai-social-media-agent ai-studio bluesky-scheduler brands-and-teams bulk-scheduling chatgpt claude-code
 claude-cowork claude client-reports codex cursor discord-message-scheduler facebook-post-scheduler gemini-cli
 github-copilot grok instagram-post-scheduler link-in-bio linkedin-post-scheduler manus mastodon-scheduler mcp
@@ -105,16 +106,19 @@ AI_SECTION = open(os.path.join(HERE, 'ai-section.html'), encoding='utf-8').read(
 
 def add_assets(doc):
     doc = doc.replace('</head>', MARK + '\n</head>', 1)
-    return doc.replace('</body>', '<script src="/motion.js?v=1" defer></script>\n</body>', 1)
+    return doc.replace('</body>', '<script src="/motion.js?v=' + VER + '" defer></script>\n</body>', 1)
 
 def after_hero(doc):
     h = doc.index('<section class="hero')
     n = doc.index('<section', h + 10)
     return doc[:n] + AI_SECTION + '\n' + doc[n:]
 
+def bump(doc):
+    return re.sub(r'/motion\.(css|js)\?v=\d+', lambda m: '/motion.' + m.group(1) + '?v=' + VER, doc)
+
 def page(slug, doc):
-    if MARK in doc:
-        return doc
+    if '/motion.css' in doc:
+        return bump(doc)
     nets = MIXED
     if slug in PLATFORMS:
         name, nid, kind = PLATFORMS[slug]
@@ -128,8 +132,8 @@ def page(slug, doc):
     return add_assets(swap_closing(doc, nets))
 
 def home(doc):
-    if MARK in doc:
-        return doc
+    if '/motion.css' in doc:
+        return bump(doc)
     a, b = '<!-- Zigzag tour -->', '<!-- Networks -->'
     if a in doc and b in doc:
         doc = doc[:doc.index(a)] + AI_SECTION + '\n' + doc[doc.index(b):]

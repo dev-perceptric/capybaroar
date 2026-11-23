@@ -247,3 +247,61 @@
 .ai-card .s-ok{background:#e6f6ec;color:#16653a}
 .ai-card .s-wait{background:#fff3db;color:#8a5300}
 .ai-card .s-mute{background:var(--shell);color:var(--ink-2)}
+
+/* ===== Pass 2: landing page details ===== */
+/* Scroll progress bar */
+.mo-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:100;pointer-events:none;background:var(--y);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+
+/* Headings: the gray half lands a beat after the black half */
+h2.mo-rv span{opacity:0}
+h2.mo-rv.mo-in span{opacity:1;transition:opacity .8s var(--ease-out) calc(var(--rd,0ms) + 280ms)}
+
+/* Hero: yellow glow and dots follow the pointer, the gray line shimmers once */
+.hero-bg{overflow:hidden}
+.hero-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(520px circle at var(--hx,50%) var(--hy,30%),rgba(255,210,2,.22),transparent 65%);transition:background-position .2s}
+.hero h1 .dim{background:linear-gradient(100deg,var(--head-2) 40%,var(--ink-2) 50%,var(--head-2) 60%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mo-dim 2.6s var(--ease-out) .5s 1 both}
+@keyframes mo-dim{from{background-position:100% 0}to{background-position:0 0}}
+.hero .tag.solid .ico{animation:cx-twinkle 2.4s ease-in-out infinite}
+
+/* Cards: lift, pointer spotlight, icon tile lights up */
+.points2 li,.every li,.menu li,.tgrid>li,.steps4 li,.ag-step,.related a,.lx-link a,.ont{position:relative;transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background-color .3s}
+.points2 li:hover,.every li:hover,.menu li:hover,.tgrid>li:hover,.steps4 li:hover,.ag-step:hover{transform:translateY(-4px);box-shadow:var(--sh-lift)}
+.mo-spot{background-image:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(255,210,2,.13),transparent 65%)}
+.points2 li>.ico,.ev-ic,.related .ic,.tgrid .ic,.steps4 .g-n,.ag-num{transition:transform .45s cubic-bezier(.34,1.56,.64,1),background-color .3s,color .3s}
+.points2 li:hover>.ico{transform:rotate(-10deg) scale(1.2)}
+.every li:hover .ev-ic,.menu li:hover .ev-ic{background:var(--y);transform:rotate(-8deg) scale(1.08)}
+.related a:hover .ic,.tgrid>li:hover .ic{background:var(--y);color:var(--y-ink);transform:rotate(-8deg) scale(1.08)}
+.related .more .ico{transition:transform .25s var(--ease-out)}
+.related a:hover .more .ico{transform:translateX(4px)}
+.ont .nl{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.ont:hover .nl{transform:rotate(-10deg) scale(1.2)}
+.lx-link img{transition:transform .6s var(--ease-out)}
+.lx-link a{overflow:hidden}
+.lx-link a:hover img{transform:scale(1.04) rotate(-.5deg)}
+
+/* Step numbers light up one after another */
+.steps4 .g-n,.ag-num{position:relative}
+.mo-steps .g-n,.mo-steps .ag-num{animation:mo-step 1.2s var(--ease-out) both;animation-delay:calc(var(--si,0) * 350ms + 200ms)}
+@keyframes mo-step{0%{transform:scale(1)}25%{transform:scale(1.3);background:var(--y);color:var(--y-ink);box-shadow:0 0 0 6px rgba(255,210,2,.25)}100%{transform:scale(1)}}
+.steps4 li:hover .g-n{background:var(--y);color:var(--y-ink);transform:scale(1.12)}
+
+/* MCP tool names light up in order on hover */
+.tgrid .tools li{transition:background-color .25s,color .25s,transform .25s var(--ease-out)}
+.tgrid>li:hover .tools li{background:var(--y-3);color:var(--y-ink);transform:translateY(-1px)}
+.tgrid>li:hover .tools li:nth-child(2){transition-delay:40ms}
+.tgrid>li:hover .tools li:nth-child(3){transition-delay:80ms}
+.tgrid>li:hover .tools li:nth-child(4){transition-delay:120ms}
+.tgrid>li:hover .tools li:nth-child(5){transition-delay:160ms}
+.tgrid>li:hover .tools li:nth-child(6){transition-delay:200ms}
+.tgrid>li:hover .tools li:nth-child(7){transition-delay:240ms}
+
+/* Comparison table: row highlight */
+.cmp tbody tr{transition:background-color .2s}
+.cmp tbody tr:hover{background:var(--y-1)}
+.cmp tbody tr td:first-child .nl,.cmp tbody tr th .nl{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.cmp tbody tr:hover .nl{transform:scale(1.25)}
+
+/* Prices count up */
+.menu .mc,.v2-price,.price{font-variant-numeric:tabular-nums}
+
+@media (prefers-reduced-motion:reduce){h2.mo-rv span{opacity:1!important}.hero h1 .dim{animation:none;color:var(--head-2);background:none}.mo-bar{display:none}}
