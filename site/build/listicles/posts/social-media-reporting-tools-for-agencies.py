@@ -1,53 +1,117 @@
 POST = {
     'order': 26,
     'slug': 'social-media-reporting-tools-for-agencies',
-    'keyword': 'social media reporting tools for agencies',
-    'title': '8 Best Social Media Reporting Tools for Agencies (2027)',
-    'desc': 'The 8 best social media reporting tools for agencies in 2027, compared on branded reports, scheduled emails, client access and price. Checked on each tool\'s own site in November 2026.',
-    'h1a': '8 reporting tools for agencies',
-    'h1b': 'that clients will actually read.',
-    'lead': 'Monthly reports eat a day per client when you build them by hand. These 8 tools make them for you, with branding, email schedules and prices checked on each tool\'s own site.',
+    'keyword': 'social media reporting tool',
+    'title': '12 Best Social Media Reporting Tools for Agencies in 2027',
+    'desc': 'Compare the 12 best social media reporting tools for agencies in 2027, with branded reports, scheduled emails and prices. See why Capybaroar leads.',
+    'heroAlt': 'A branded client report for the best social media reporting tools for agencies in 2027',
     'cover': {'type': 'analytics', 'networks': ['instagram', 'linkedin', 'facebook']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Reports with your logo, sent on a schedule, for every client on one flat price.'),
-        ('Best for unlimited users', 'sendible', 'Every plan has unlimited users; branded reports from Premium.'),
-        ('Best per-client price', 'pallyy', 'Per-client reports with PDF export on its Agency plan.'),
+    'leaders': ['sprout', 'hootsuite'],
+    'intro': '''<p>For an agency, the report is the part of the work a client actually sees. Building it by hand means screenshots from every network, a slide deck and a late night each month. Multiply that by 10 or 20 clients and reporting eats a full week.</p>
+<p>A social media reporting tool for agencies builds those reports for you. It pulls the numbers from each client's channels, adds your logo and sends the report on a schedule. Agencies, freelancers and in-house teams with many brands all use one.</p>
+<p>The result is reports that land on time and look like your agency. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 📈</p>''',
+    'whatH2': 'What Is a Social Media Reporting Tool for Agencies?',
+    'what': {
+        'def': 'A social media reporting tool is an app that turns data from each client\'s social accounts into branded reports and sends them on a schedule.',
+        'body': '<p>You connect each client\'s channels once, and the tool pulls reach, engagement, follower growth and top posts through each network\'s official API. You pick a template, add your logo and choose who gets the report and how often. Most tools run as a web app and share reports as a PDF, a live link or an email. Many also keep each client in a separate workspace.</p>',
+        'bullets': ['Reports with your logo', 'Scheduled report emails', 'One workspace per client', 'PDF and link sharing'],
+        'close': 'The result is a full month of client reports sent without a single late night.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Reporting Tool for Your Agency?',
+    'why': {
+        'lead': '<p>Screenshots and spreadsheets work for one client. Once you report on many clients across many networks, building each report by hand takes days and errors slip in.</p>\n<p>A social media reporting tool solves this.</p>',
+        'bullets': [
+            ('Hours saved', 'Reports build themselves from live data, so the team spends time on strategy instead of slides.'),
+            ('Your brand on top', 'White-label reports carry your logo and colors, which makes a small agency look polished.'),
+            ('Reports on time', 'Scheduled emails reach each client every week or month, so no one has to ask for results.'),
+            ('Reports beside the work', 'When reports sit next to each client\'s calendar and approvals, the team can plan next month right after sending.'),
+        ],
+    },
+    'quizH3': 'Social Media Reporting Tools for Agencies: Quick Match',
+    'quiz': [
+        {'q': 'How many clients do you report on?', 'options': [
+            ('One to five', ['capybaroar', 'buffer', 'metricool', 'pallyy']),
+            ('Five to twenty', ['capybaroar', 'sendible', 'socialpilot', 'iconosquare', 'pallyy']),
+            ('More than twenty', ['capybaroar', 'vistasocial', 'contentstudio', 'sendible']),
+            ('A few very large brands', ['sprout', 'hootsuite', 'agorapulse'])]},
+        {'q': 'What must the report show?', 'options': [
+            ('Reach, engagement and growth', ['capybaroar', 'buffer', 'metricool', 'vistasocial']),
+            ('ROI and revenue', ['agorapulse', 'sprout']),
+            ('Competitors and hashtags', ['iconosquare', 'hootsuite', 'socialpilot']),
+            ('A full year of history', ['metricool', 'pallyy'])]},
+        {'q': 'How should reports look?', 'options': [
+            ('My agency logo', ['capybaroar', 'socialpilot', 'sendible', 'contentstudio', 'buffer']),
+            ('Polished slides for executives', ['sprout', 'hootsuite']),
+            ('Custom dashboards', ['iconosquare', 'metricool']),
+            ('A simple PDF per client', ['pallyy', 'buffer', 'capybaroar'])]},
+        {'q': 'How do you want to pay?', 'options': [
+            ('One flat price for all clients', ['capybaroar', 'sendible', 'vistasocial', 'contentstudio']),
+            ('Per client or brand', ['pallyy', 'metricool']),
+            ('Per channel', ['buffer']),
+            ('Per user is fine', ['sprout', 'hootsuite', 'agorapulse'])]},
     ],
-    'intro': '''<p>For an agency, the report is the product the client sees. It has to look like your agency, land in the client's inbox without a reminder and show results in a way a busy owner can read in 2 minutes.</p>
-<p>So we looked past charts and asked agency questions. Can the report carry your logo? Can it go out on a schedule? Can a client see results or approve posts without a paid seat? And what does it cost when you have 10 or 20 clients?</p>
-<p>We read each tool's own pages in November 2026 and noted the plan each feature needs. Prices change, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'analytics', 'text': '''<p>Capybaroar's Agency plan is built around clients. Each client brand gets its own channels, calendar, inbox, review link and reports. Reports go out as a link, a PDF or an automatic weekly or monthly email, and on Agency they carry your logo and color, with report emails sent under your agency's name.</p>
-<p>Clients who only approve posts never take a paid seat, and you can see how many AI credits each client used this month, ready for your invoices. Agency is $149 a month for unlimited client brands, 100 channels and 15 team seats. If you have a few clients, Pro at $49 a month includes unlimited reports without your own branding.</p>''',
-         'pros': ['Branded reports by link, PDF or scheduled email on Agency', 'Unlimited client brands on one flat price', 'Clients approve posts without taking a seat'],
-         'cons': ['Your logo on reports needs the Agency plan', 'Newer than the big names, with fewer integrations so far']},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible was built for agencies. Every plan has unlimited users, and client workspaces come with the plan. Standard reports come on every plan, its quick reports can include Google Analytics, and custom branded reports start on Premium.</p>
-<p>Core is $35 a month for 6 profiles, and Plus is $99 a month for 18 profiles across 3 workspaces. Branded reports need Premium at $199 a month for 7 workspaces and 42 profiles. There's a 14-day free trial.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse lets you export branded reports from Standard, and its pages list white-label reports and scheduled report emails. Advanced adds ROI reports and competitor benchmarks, which help when a client asks what social media earned them. On some plans, clients can approve posts without their own seat.</p>
-<p>It is priced per user, at US $79, $119 and $149 per user a month, so it costs more as your team grows. There's a 30-day free trial.</p>'''},
-        {'id': 'iconosquare', 'shot': 'pricing', 'text': '''<p>Iconosquare is analytics-first, so its reports go deep. Automated reports start on Launch, from $39 a month billed yearly, and custom dashboards come from Starter. Scale adds approvals and competitor tracking for 20 profiles and 3 users.</p>
-<p>For full agency branding, customizable white-label reporting is on the Custom plan, from $139 a month billed yearly. The free plan covers 2 profiles, which is enough to test a report before you pay.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool exports PDF and PPT reports from Starter, and Advanced adds custom report templates you can reuse for every client. Pricing is per brand, which suits agencies: Starter covers up to 5 brands from $20 a month billed yearly.</p>
-<p>Advanced, from $53 a month billed yearly for 15 brands, adds team roles and approvals. White label is on its Custom plan. Paid plans keep full history, so you can show a client a year of growth.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot makes PDF reports, and white-label reports start on Premium. Premium also adds client approval, so clients can sign off on posts before they go out. Standard includes analytics and manager approval.</p>
-<p>Essentials is $25.50 a month on yearly billing, but it has no analytics, so agencies should start on Standard at $42.50 a month. Premium is $85 a month, which is still low for white-label reports.</p>'''},
-        {'id': 'pallyy', 'shot': 'pricing', 'text': '''<p>Pallyy prices by client, which makes costs easy to pass on. Its Agency and Scale plans include custom reports for each client with PDF export. Clients can approve posts from a shared link without making an account.</p>
-<p>Agency is $99 a month, or $79 a month billed yearly, for 10 social sets and 3 users. Scale is $199 a month for 30 social sets. Pallyy's analytics cover Instagram, Facebook and LinkedIn and are kept for 5 years on paid plans.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social includes reports on every plan, with advanced reporting on Advanced. White-label setup starts on Scale. With 15 profiles on its first plan, it covers several small clients for one price.</p>
-<p>Professional is $80 a month for 15 profiles and 2 users. Scale, where white label begins, is $360 a month for 70 profiles and 4 users. There's a 14-day free trial.</p>'''},
+        {'id': 'capybaroar', 'shot': 'analytics', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media reporting tools for agencies that want to plan, publish and report for every client in one place. Instead of only exporting charts, its Agency plan sends reports by link, PDF or scheduled email with your logo and color. Each client brand gets its own channels, calendar, inbox and review link. That makes it a strong fit for agencies that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/client-reports">Branded reports</a> by link, PDF or email',
+                  '<a href="/social-media-analytics">Analytics and best times</a> on every plan',
+                  '<a href="/brands-and-teams">Unlimited client brands</a> on one flat price',
+                  '<a href="/post-approval">Client approvals</a> that never take a seat',
+                  '<a href="/ai-social-media-agent">AI credit use per client</a>, ready for invoices'],
+         'cons': ['Not a standalone dashboard builder']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Presentation-ready reports',
+         'overview': '<p>Sprout Social is one of the most established social media reporting tools for agencies and brand teams that report to busy stakeholders. Its Trellis AI agent writes report summaries with takeaways and competitor comparisons on every plan. The Premium Analytics add-on shares presentation-ready reports through links, and Advanced adds team and customer care reports. A key strength is how polished its reports look, which suits agencies with large clients.</p>',
+         'pros': ['Presentation-ready reports with share links', 'Trellis report summaries on every plan', 'Competitor insights on Professional', 'Team reports on Advanced', 'Good fit for large client accounts'],
+         'cons': ['Per-seat pricing can add up for agencies', 'Premium Analytics can cost extra', 'Branding options may be unclear by plan']},
+        {'id': 'hootsuite', 'shot': 'pricing', 'best': 'Custom performance reports',
+         'overview': '<p>Hootsuite is one of the most popular social media reporting tools for agencies that manage many brand accounts. Professional adds custom performance reports, unlimited social accounts and trend forecasts up to 90 days ahead. Every plan includes competitor tracking, and Enterprise adds advanced analytics to prove the impact of social. This makes it a common choice for agencies that report on large brand programs.</p>',
+         'pros': ['Custom performance reports on Professional', 'Unlimited social accounts on Professional', 'Competitor tracking on every plan', 'Trend forecasts up to 90 days', 'Good fit for large brand programs'],
+         'cons': ['Per-user pricing can climb with each seat', 'Custom reports may need Professional', 'Interface can feel complex for new users']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'ROI reports for clients',
+         'overview': '<p>Agorapulse is a strong social media reporting tool for agencies whose clients ask what social earned them. Standard includes branded report export, and its pages list white-label reports and scheduled report emails. On some plans, clients can approve posts without their own seat. Advanced adds ROI reports and competitor benchmarks, which makes it attractive for clients who want revenue numbers.</p>',
+         'pros': ['Branded report export on Standard', 'ROI reports on Advanced', 'Scheduled report emails', 'Client approvals without a seat on some plans', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can grow with the agency', 'ROI reports may need the Advanced plan', 'Profile caps can feel tight for agencies']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a dedicated social media reporting tool and scheduler for agencies that add staff often. Every plan has unlimited users, standard reports and client workspaces, and quick reports can pull in Google Analytics. Custom branded reports start on Premium, which covers 7 workspaces and 42 profiles. It is especially useful for agencies that want to grow headcount without paying for more seats.</p>',
+         'pros': ['Unlimited users on every plan', 'Quick reports with Google Analytics', 'Custom branded reports on Premium', 'One workspace per client', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need a higher plan', 'No MCP server listed for AI tools', 'Instagram direct messages may not be supported']},
+        {'id': 'iconosquare', 'shot': 'pricing', 'best': 'Deep automated reports',
+         'overview': '<p>Iconosquare is a social media reporting tool built for agencies that want deep numbers in every report. Automated reports start on Launch, and custom dashboards come from Starter. Scale adds competitor and hashtag reports for 3 users, and the Custom plan adds customizable white-label reporting. Its free plan for 2 profiles lets an agency test a client report before paying.</p>',
+         'pros': ['Automated reports from Launch', 'Custom dashboard reports', 'Competitor and hashtag reports on Scale', 'White-label reporting on Custom', 'Free plan for 2 profiles'],
+         'cons': ['White-label reports may need a top plan', 'Inbox may start only on Launch', 'Starter can feel tight on posts']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Reusable report templates',
+         'overview': '<p>Metricool is a social media reporting tool priced per brand, which suits agencies with many small clients. PDF and PPT reports export from Starter, and Advanced adds custom report templates to reuse for every client. Advanced also adds team roles and approvals for 15 brands. Paid plans keep the full history, making it suitable for agencies that show a client a full year of growth.</p>',
+         'pros': ['PDF and PPT reports from Starter', 'Reusable report templates on Advanced', 'Priced per brand, not per user', 'Full history on paid plans', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra for each account', 'White label may need the Custom plan', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'White label on a budget',
+         'overview': '<p>SocialPilot is a practical social media reporting tool for agencies that want white label reports on a budget. Standard adds PDF reports and scheduled report emails, and Premium adds custom, competitor and white label reports. Premium also brings client approval and unlimited client seats. It is a relevant option for agencies that mainly need branded client reports without a heavy setup.</p>',
+         'pros': ['Scheduled PDF reports from Standard', 'White label reports on Premium', 'Competitor reports on Premium', 'Unlimited client seats on Premium', 'Good fit for agencies on a budget'],
+         'cons': ['Extra accounts can raise the bill', 'Lowest plan may lack analytics and inbox', 'Shown prices may assume yearly billing']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'Many client profiles',
+         'overview': '<p>Vista Social is a social media reporting tool and publishing platform designed specifically for agencies that run many brands. Reports come on every plan, advanced reporting starts on Advanced, and white label setup starts on Scale with 70 profiles. Scale also adds client profile connect for 4 users. The platform suits agencies that want one plan to cover many client profiles.</p>',
+         'pros': ['Reports on every plan', 'Advanced reporting on Advanced', 'White label setup on Scale', '15 profiles on the first plan', 'Good fit for multi-brand agencies'],
+         'cons': ['X publishing can cost extra each month', 'White label may need the Scale plan', 'Lower plans may feel tight on seats']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'One dashboard per client',
+         'overview': '<p>ContentStudio is a social media reporting tool and content platform for agencies that report on many workspaces. Exports and scheduled reports start on Advanced, with PDF export and report emails on a set schedule. Agency Unlimited adds unlimited workspaces, one dashboard per client and white-label options. In addition to reports, ContentStudio also provides AI Studio for client content in each brand voice.</p>',
+         'pros': ['PDF exports and scheduled report emails', 'One workspace dashboard per client', 'White-label options for agencies', 'Competitor analytics on Advanced', 'Good fit for content-heavy agencies'],
+         'cons': ['White label can cost extra as an add-on', 'Scheduled reports may need Advanced', 'Trial can feel short, with no free plan']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Simple branded reports',
+         'overview': '<p>Buffer is a widely used social media reporting tool and scheduler for small agencies and freelancers. Paid plans export reports as CSV, PDF or markdown for a client report or a doc. The Team plan adds branded reports with your logo and a cover page, plus unlimited team members. AI Takeaways explain results in plain language, which helps freelancers write a summary for each client.</p>',
+         'pros': ['CSV, PDF or markdown exports', 'Branded reports on Team', 'Unlimited team members on Team', 'AI Takeaways in plain language', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every client channel', 'Branded reports may need the Team plan', 'Analytics can feel light next to suites']},
+        {'id': 'pallyy', 'shot': 'pricing', 'best': 'Per-client pricing',
+         'overview': '<p>Pallyy is a social media reporting tool and scheduler for agencies that bill per client. Its Agency and Scale plans include custom reports for each client with PDF export. Clients can approve posts from a shared link without making an account, and paid plans keep analytics for 5 years. Many teams use it as a specialized tool to report on each client before they grow into a larger suite.</p>',
+         'pros': ['Custom per-client reports on Agency', 'PDF export for each client', 'Approvals from a link, no account', 'Analytics kept 5 years on paid plans', 'Free plan to start'],
+         'cons': ['Per-client pricing can grow with each client', 'Custom reports may need the Agency plan', 'Analytics may cover fewer networks than some']},
     ],
-    'how': '''<p>We judged each tool on what an agency needs from reports, not on how many charts it has.</p>
-<ul><li><b>Branding:</b> whether reports can carry your logo, and which plan that needs.</li>
-<li><b>Delivery:</b> PDF, link and scheduled email reports, so clients get results without asking.</li>
-<li><b>Client cost:</b> how pricing grows with clients and users, and whether clients can approve posts for free, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and list its limits too.</p>''',
-    'verdict': '''<p>If you want every client's calendar, inbox, approvals and branded reports under one flat price, Capybaroar's Agency plan covers it, with reports that go out on their own each week or month. If unlimited users matter most, Sendible never charges per seat, though branded reports need Premium. Pallyy is a good pick if you want to price each client separately.</p>
-<p>For the deepest numbers, Iconosquare and Metricool go furthest, and Agorapulse adds ROI reports for clients who ask what social earned them.</p>''',
+    'conclusion': '''<p>A social media reporting tool turns client data into reports that look like your agency. It saves hours each month and keeps every client up to date.</p>
+<p>But the best tool today does more than export charts. It should send branded reports on a schedule, let clients approve posts for free and keep each client's calendar next to its results.</p>
+<p>That is why <a href="https://capybaroar.com/client-reports">Capybaroar</a> stands out. It combines branded reports, client approvals and an AI agent with every social channel in one calendar. For agencies that want to plan, publish and report in one place, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media reporting tool for agencies?', 'For most agencies, Capybaroar. Its Agency plan sends reports with your logo by link, PDF or scheduled email, for unlimited client brands at $149 a month. Sendible is a strong pick if you want unlimited users.'),
-        ('Which tools offer white-label reports?', 'Capybaroar puts your logo and color on reports on Agency. Sendible has custom branded reports from Premium, SocialPilot from Premium, Vista Social from Scale, Iconosquare on Custom and Metricool on Custom. Agorapulse lists white-label reports too.'),
-        ('Can reports be emailed to clients automatically?', 'Yes. Capybaroar sends weekly or monthly report emails on Pro and Agency, Iconosquare has automated reports from Launch and Agorapulse lists scheduled report emails.'),
-        ('Do clients need a paid seat to approve posts?', 'Not always. In Capybaroar, clients who only approve posts don\'t count as members. Pallyy clients approve from a shared link with no account, and Agorapulse lets clients approve on some plans.'),
-        ('How often should an agency send social media reports?', 'Monthly is the most common, with a short weekly note for busy accounts. Set it on a schedule so reports go out on time without anyone building them.'),
+        ('What is a social media reporting tool for agencies?', 'A social media reporting tool for agencies is an app that turns each client\'s social data into reports. It pulls reach, engagement and growth from every network, adds the agency\'s logo and sends the report as a PDF, a link or a scheduled email, so clients see results without asking.'),
+        ('How do social media reporting tools build client reports?', 'Social media reporting tools build client reports from live data pulled through each network\'s official API. You pick a template once, choose the metrics and add your branding. The tool then fills in the numbers each week or month and sends the report to the client by email or shares it as a link.'),
+        ('Why use a social media reporting tool for client work?', 'A social media reporting tool saves an agency hours on every client each month. Reports go out on time without anyone building slides, they carry your brand instead of the tool\'s, and clients see clear results that make each renewal talk easier.'),
+        ('What features should modern social media reporting tools include?', 'Modern social media reporting tools should include white-label branding, scheduled report emails, one workspace per client and PDF or link sharing. Long data history helps show growth over a year. The newest tools keep reports next to each client\'s calendar and approvals, so planning next month starts right after the report goes out.'),
+        ('Which tool is recommended for agencies that need more than reporting?', 'For agencies that need more than reporting, we recommend Capybaroar. It puts every social channel in one calendar, with branded reports on Agency, client approvals that never take a seat and unlimited client brands. Agencies that want the most polished executive reports may prefer Sprout Social, and those that price each client separately may prefer Pallyy.'),
     ],
 }

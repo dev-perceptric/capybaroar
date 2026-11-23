@@ -1,51 +1,117 @@
 POST = {
     'order': 25,
     'slug': 'social-media-analytics-tools',
-    'keyword': 'social media analytics tools',
-    'title': '8 Best Social Media Analytics Tools in 2027',
-    'desc': 'The 8 best social media analytics tools for 2027, compared on history, competitor tracking, reports and price. Prices and features checked on each tool\'s own site in November 2026.',
-    'h1a': '8 social media analytics tools',
-    'h1b': 'that show what is working.',
-    'lead': 'Native insights stop at one network and a few weeks of data. These 8 tools put every channel in one place, with history, competitors and reports checked on each tool\'s own site.',
+    'keyword': 'social media analytics tool',
+    'title': '12 Best Social Media Analytics Tools in 2027',
+    'desc': 'Compare the 12 best social media analytics tools in 2027, with history, competitor tracking, reports and real prices. See why Capybaroar leads for teams.',
+    'heroAlt': 'A dashboard of reach and engagement charts for the best social media analytics tools in 2027',
     'cover': {'type': 'list', 'network': 'instagram', 'bg': 'yolk', 'tools': ['metricool.com', 'iconosquare.com', 'sproutsocial.com', 'agorapulse.com']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'Analytics and best times on every plan, with reports by link, PDF or email.'),
-        ('Best for deep history', 'metricool', 'Unlimited history on paid plans and PDF or PPT reports from Starter.'),
-        ('Best analytics-first tool', 'iconosquare', '100+ metrics, custom dashboards and competitor tracking.'),
+    'leaders': ['sprout', 'hootsuite'],
+    'intro': '''<p>Every network shows its own numbers, but each one counts differently and keeps a short history. Comparing Instagram, LinkedIn and TikTok means three apps, three exports and a spreadsheet. Native insights also say little about competitors or what to post next.</p>
+<p>A social media analytics tool pulls every channel into one view. It tracks reach, engagement and growth, then turns the numbers into reports. Social media managers, small businesses, brand teams and agencies use one to see what works.</p>
+<p>The result is a clear picture of which posts, times and networks earn your effort. Below are 12 tools with real prices and G2 ratings, checked in November 2026. 📊</p>''',
+    'whatH2': 'What Is a Social Media Analytics Tool?',
+    'what': {
+        'def': 'A social media analytics tool is an app that collects performance data from your social accounts through each network\'s official API and shows it in one dashboard.',
+        'body': '<p>You connect your accounts once, and the tool pulls reach, engagement, follower growth and post results on a schedule. It keeps that history so you can compare weeks, months and networks side by side. Most tools run as a web app, and many add competitor tracking and reports you can send as a PDF or a link. Some also suggest the hours when your audience is most active.</p>',
+        'bullets': ['Reach and engagement per post', 'Best times to post', 'Competitor benchmarks', 'Scheduled PDF reports'],
+        'close': 'The result is a monthly review that takes minutes instead of a whole day.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Analytics Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Native insights work when you run one account on one network. Once you post across several networks, the numbers live in different places and no one can compare them.</p>\n<p>A social media analytics tool solves this.</p>',
+        'bullets': [
+            ('One clear view', 'Every channel sits in one dashboard, counted the same way, so you can compare networks fairly.'),
+            ('Longer history', 'Paid plans keep months or years of data, which shows real trends instead of one good week.'),
+            ('Reports that send themselves', 'Scheduled reports reach your boss or client without anyone building slides by hand.'),
+            ('Numbers beside the plan', 'When analytics sit next to the calendar, an AI agent can plan more of what worked.'),
+        ],
+    },
+    'quizH3': 'Social Media Analytics Tools: Quick Match',
+    'quiz': [
+        {'q': 'What do you want to learn?', 'options': [
+            ('Which posts work best', ['capybaroar', 'buffer', 'later', 'zoho']),
+            ('How we compare to rivals', ['metricool', 'iconosquare', 'hootsuite', 'sprout', 'contentstudio']),
+            ('What social earns in revenue', ['agorapulse', 'sprout']),
+            ('What to post next', ['capybaroar', 'hootsuite', 'buffer'])]},
+        {'q': 'How far back should your data go?', 'options': [
+            ('A few months is fine', ['capybaroar', 'later', 'zoho']),
+            ('About a year', ['iconosquare', 'later']),
+            ('Full history, no cutoff', ['metricool', 'buffer']),
+            ('Years, for big trend reports', ['sprout', 'iconosquare', 'later'])]},
+        {'q': 'Who reads your reports?', 'options': [
+            ('Only me', ['capybaroar', 'buffer', 'zoho', 'later']),
+            ('My boss or leadership', ['sprout', 'agorapulse', 'hootsuite', 'capybaroar']),
+            ('Clients, with my logo', ['capybaroar', 'socialpilot', 'vistasocial', 'contentstudio']),
+            ('A big team with many dashboards', ['sprout', 'iconosquare', 'vistasocial'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $20', ['capybaroar', 'metricool', 'iconosquare', 'zoho', 'buffer']),
+            ('$20 to $100', ['capybaroar', 'metricool', 'iconosquare', 'contentstudio', 'socialpilot', 'later', 'vistasocial']),
+            ('$100 to $200', ['agorapulse', 'hootsuite', 'vistasocial']),
+            ('More than $200', ['sprout', 'hootsuite'])]},
     ],
-    'intro': '''<p>Every network shows you its own numbers, but each one counts differently and keeps a short history. A social media analytics tool pulls all your channels into one view, so you can see which posts, times and networks are worth your effort.</p>
-<p>The tools here differ on 3 things: how far back your data goes, whether you can track competitors, and how easy it is to turn the numbers into a report someone else will read. Some put analytics on every plan, and some lock the good parts behind a higher plan or an add-on.</p>
-<p>We read each tool's own pages in November 2026 and noted where each feature starts. Prices change, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'analytics', 'text': '''<p>Capybaroar shows reach, engagement, new followers and your best times to post on every plan, Free included. Each post gets its numbers for 7, 30 and 90 days, next to your other channels, so you can spot your best posts and your best times in one place.</p>
-<p>Pro and Agency add reports you can send as a link, a PDF or an automatic weekly or monthly email. On Agency, every report carries your own logo and color. Because analytics sit next to the calendar, you can act on what you see right away, or ask the AI agent on paid plans to plan more of what worked. Pro is $49 a month for 5 members and 30 channels.</p>'''},
-        {'id': 'metricool', 'shot': 'home', 'text': '''<p>Metricool is built for people who live in their numbers. Paid plans keep your full history with no cutoff, and it compares you with competitors. From Starter, you can export reports as PDF or PPT files, and Advanced adds custom report templates.</p>
-<p>Pricing is per brand. Starter is from $20 a month billed yearly for up to 5 brands, or $25 monthly. The free plan covers 1 brand and 20 posts a month but keeps only 30 days of analytics and can't connect LinkedIn or X.</p>'''},
-        {'id': 'iconosquare', 'shot': 'home', 'text': '''<p>Iconosquare calls itself analytics-first. It tracks 100+ real-time metrics across every account and post, shows your best times to post and builds custom dashboards from the Starter plan. Its Uma AI Analyst comes on every paid plan to help you read the data.</p>
-<p>Starter is from $10 a month billed yearly and keeps 1 year of history. Automated reports start on Launch, from $39 a month. Scale, from $79 a month, adds competitor, hashtag and industry tracking and 2 years of history. The free plan covers 2 profiles with 1 month of history.</p>'''},
-        {'id': 'sprout', 'shot': 'pricing', 'text': '''<p>Sprout Social has some of the deepest reporting around, made for big teams. It includes profile and post-level reporting. Competitor, tag and paid insights start on Professional, and team and customer care reports come with Advanced.</p>
-<p>The cost adds up. Plans start at $79 per seat a month on yearly billing, or $99 monthly, and Premium Analytics is a separate add-on on Standard and up. Sprout fits large teams that need every chart and have the budget.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse is known for its ROI reports. Standard includes basic reports and branded report export. Advanced adds ROI reports and competitor benchmarks.</p>
-<p>It is priced per user, at US $79, $119 and $149 per user a month, so costs grow with your team. Its AI can explain your reports in plain language. There's a 30-day free trial.</p>'''},
-        {'id': 'hootsuite', 'shot': 'pricing', 'text': '''<p>Hootsuite tracks competitors and shows your best times to post. From Professional, it adds trend forecasts and custom performance reports. Its AI teammate, Wisdom, comes on every plan.</p>
-<p>Plans start at $99 per user a month, billed yearly, which makes it one of the pricier ways to get analytics. It suits social media pros and brand teams who also want Hootsuite's listening tools.</p>'''},
-        {'id': 'zoho', 'shot': 'pricing', 'text': '''<p>Zoho Social shows audience and engagement analytics with pre-built or custom reports. Post insights start on Professional, Standard includes summary reports, and custom and shared reports are on Premium. Its AI picks good times to post and spots spikes in engagement.</p>
-<p>It's the cheapest paid option here, from US$10 a month billed yearly, and it has a forever free plan for 1 brand with 6 channels. It fits best if your team already uses Zoho CRM.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social includes reports on every plan. Advanced adds advanced reporting, and Enterprise adds premium analytics. With 15 social profiles on its first plan, it covers a lot of accounts for the price.</p>
-<p>Professional is $80 a month for 15 profiles and 2 users. Advanced is $160 a month for 30 profiles and 3 users. There's a 14-day free trial and no free plan.</p>'''},
+        {'id': 'capybaroar', 'shot': 'analytics', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media analytics tools for teams that want to see results and act on them in the same place. Instead of only charting past posts, it shows reach, engagement, followers and best times to post on every plan, right next to the calendar. Each post gets its numbers for 7, 30 and 90 days. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-analytics">Reach, engagement and best times</a> on every plan',
+                  '<a href="/client-reports">Reports</a> by link, PDF or email on Pro',
+                  '<a href="/ai-social-media-agent">AI agent</a> plans more of what worked',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan',
+                  '<a href="/social-media-inbox">One inbox</a> and calendar beside the numbers'],
+         'cons': ['Not a full competitor benchmarking suite']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Deep, polished reports',
+         'overview': '<p>Sprout Social is one of the most established social media analytics tools for large teams that report on social to their leaders. It includes profile and post-level reporting, and competitor, tag and paid insights start on Professional. Advanced adds team and customer care reports, and Premium Analytics is sold as an add-on. A key strength is the depth of its reporting, which suits teams that need every chart.</p>',
+         'pros': ['Profile and post-level reporting', 'Competitor and tag insights on Professional', 'Team and care reports on Advanced', 'Trellis AI agent on every plan', 'Good fit for large reporting teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Premium Analytics can cost extra', 'Competitor insights may need a higher plan']},
+        {'id': 'hootsuite', 'shot': 'pricing', 'best': 'Trend forecasts',
+         'overview': '<p>Hootsuite is one of the most popular social media analytics tools for social media pros who also manage busy inboxes. Every plan tracks competitors and shows the best times to post, and Professional adds trend forecasts up to 90 days ahead. Custom performance reports also start on Professional. This makes it a common choice for brand teams that want listening and analytics next to publishing.</p>',
+         'pros': ['Competitor tracking on every plan', 'Suggested times to post', 'Trend forecasts up to 90 days ahead', 'Custom reports on Professional', 'Good fit for busy brand teams'],
+         'cons': ['Per-user pricing can make analytics costly', 'Custom reports may need Professional', 'Interface can feel busy for new users']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'ROI reporting',
+         'overview': '<p>Agorapulse is a social media analytics tool designed specifically for business teams who need to prove what social earns. It links to Google Analytics to track the traffic, leads and revenue that posts and conversations drive. Advanced adds ROI reports and competitor benchmarks, and its AI explains reports in plain language. This ROI focus suits teams that answer to a sales or finance lead.</p>',
+         'pros': ['ROI tracking with Google Analytics', 'Competitor benchmarks on Advanced', 'AI explains reports in plain language', 'Branded report export on Standard', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can grow with the team', 'ROI reports may need the Advanced plan', 'Profile caps can feel tight on self-serve plans']},
+        {'id': 'metricool', 'shot': 'home', 'best': 'Full history on paid plans',
+         'overview': '<p>Metricool is a strong social media analytics tool for social media managers who live in their numbers. Paid plans keep the full history with no cutoff, and it compares each brand with its competitors. Reports export as PDF or PPT from Starter, and Advanced adds custom report templates. Because pricing is per brand, it is a relevant option for freelancers who report on many small accounts.</p>',
+         'pros': ['Unlimited history on paid plans', 'Competitor analysis built in', 'PDF and PPT reports from Starter', 'Custom report templates on Advanced', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra for each account', 'Approvals and API may need Advanced', 'Free plan may keep only a short history']},
+        {'id': 'iconosquare', 'shot': 'home', 'best': 'Custom dashboards',
+         'overview': '<p>Iconosquare is a social media analytics tool built for teams that report on results across many profiles. It tracks 100+ real-time metrics, builds custom dashboards and shows the best times to post. Its Uma AI Analyst helps read the data on paid plans. Scale adds competitor, hashtag and industry tracking with 2 years of history, which makes it useful for brands that benchmark against rivals.</p>',
+         'pros': ['100+ real-time metrics', 'Custom dashboards and posting times', 'Uma AI Analyst on paid plans', 'Competitor and hashtag tracking on Scale', 'Free plan for 2 profiles'],
+         'cons': ['Automated reports may need a higher plan', 'Inbox may start only on Launch', 'Starter history can feel short for trends']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'Reports on every plan',
+         'overview': '<p>Vista Social is a social media analytics tool and publishing platform for teams that run many brands. Reports come on every plan, Advanced adds advanced reporting, and Enterprise adds premium analytics. Professional covers 15 profiles, so one plan can report on several small brands. It is especially useful for teams that want one report view across many profiles.</p>',
+         'pros': ['Reports on every plan', 'Advanced reporting on Advanced', '15 profiles on the first plan', 'Ask Vista AI agents', 'Good fit for multi-brand teams'],
+         'cons': ['X can cost extra each month', 'Premium analytics may need Enterprise', 'Lower plans may feel tight on seats']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'Ads and campaign analytics',
+         'overview': '<p>ContentStudio is a social media analytics tool and content platform for teams that curate and post a lot. Analytics come on every plan, and Advanced adds competitor analytics, campaign and label analytics, and Meta and Google Ads analytics. Exports and scheduled reports also start on Advanced. In addition to analytics, ContentStudio also provides AI Studio for making text, images and video.</p>',
+         'pros': ['Analytics on every plan', 'Competitor analytics on Advanced', 'Meta and Google Ads analytics', 'Scheduled reports on Advanced', 'Good fit for content-heavy teams'],
+         'cons': ['Agency features may need a top plan', 'Scheduled reports may need Advanced', 'Trial can feel short, with no free plan']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Scheduled PDF reports',
+         'overview': '<p>SocialPilot is a practical social media analytics tool for agencies that send results to many clients. Standard adds detailed analytics, PDF reports and scheduled report emails. Premium adds custom reports, competitor reports and white label reports, with 25 accounts for 6 users. This mix gives agencies an affordable way to send client reports without a heavy setup.</p>',
+         'pros': ['Detailed analytics from Standard', 'Scheduled PDF reports by email', 'Competitor reports on Premium', 'White label reports on Premium', 'Good fit for client reporting'],
+         'cons': ['Extra accounts can raise the bill', 'Lowest plan may have no analytics', 'Shown prices may assume yearly billing']},
+        {'id': 'zoho', 'shot': 'pricing', 'best': 'Low-cost analytics',
+         'overview': '<p>Zoho Social is a social media analytics tool for businesses that already run on Zoho. It shows audience and engagement analytics with pre-built or custom reports, and post insights start on Professional. Its AI picks good times to post and spots spikes in engagement. With a forever free plan and paid plans from $10 a month billed yearly, it suits teams on a small budget.</p>',
+         'pros': ['Audience and engagement analytics', 'Pre-built or custom reports', 'AI spots engagement spikes', 'Long network list, WhatsApp included', 'Free plan for 1 brand'],
+         'cons': ['Extra members can cost more each month', 'Inbox may need the top Premium plan', 'Custom reports may need Premium']},
+        {'id': 'later', 'shot': 'pricing', 'best': 'Instagram history',
+         'overview': '<p>Later is a social media analytics tool and visual planner for brands and creators that lead with Instagram. Platform analytics keep 3 months of data on Starter, 1 year on Growth and 2 years on Scale. Scale also adds custom analytics, competitive benchmarking and Brand Mentions. It is a good pick for Instagram-first brands that want their history to grow with the plan.</p>',
+         'pros': ['Platform analytics up to 2 years', 'Competitive benchmarking on Scale', 'Brand Mentions on Scale', 'Link in Bio on every plan', 'Good fit for Instagram-first brands'],
+         'cons': ['Starter can cap posts per profile', 'Inbox and approvals may need Growth', 'Starter history can feel short']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Plain-language takeaways',
+         'overview': '<p>Buffer is a widely used social media analytics tool and scheduler for creators and small teams. Its Insights track follower growth, engagement, impressions and post performance next to the posts they measure. AI Takeaways explain what works and what to try next in plain language. Paid plans export reports as CSV, PDF or markdown, making it suitable for small teams that want simple numbers.</p>',
+         'pros': ['Insights next to each post', 'AI Takeaways in plain language', 'CSV, PDF or markdown exports', 'Unlimited history on paid plans', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel', 'Branded reports may need the Team plan', 'Analytics can feel light next to suites']},
     ],
-    'how': '''<p>We compared each tool on what people use analytics for: knowing what worked, proving it to someone else and planning what to post next.</p>
-<ul><li><b>History:</b> how far back your data goes on each plan.</li>
-<li><b>Competitors and trends:</b> whether you can benchmark against other accounts, and which plan it starts on.</li>
-<li><b>Reports:</b> PDF, link and email reports, branding, and the plan each one needs, from each tool's page in November 2026.</li></ul>
-<p>Capybaroar is our product. We judged it the same way and only list what it really does.</p>''',
-    'verdict': '''<p>If you want analytics next to the calendar where you plan your posts, Capybaroar puts numbers and best times on every plan and sends reports by link, PDF or email on Pro. If history and exports matter most, Metricool keeps everything on paid plans. Iconosquare is the pick for custom dashboards and competitor tracking at a fair price.</p>
-<p>Sprout, Agorapulse and Hootsuite go deepest for big teams, but each charges per user. Zoho Social is the cheapest way in if you already use Zoho.</p>''',
+    'conclusion': '''<p>A social media analytics tool shows which posts, times and networks are worth your effort. It turns scattered numbers into one view and reports people will read.</p>
+<p>But the best tool today does more than chart last month. It should sit next to the calendar, suggest the best times to post and help plan more of what worked, so the numbers shape next week.</p>
+<p>That is why <a href="https://capybaroar.com/social-media-analytics">Capybaroar</a> stands out. It combines analytics, reports and an AI agent with every social channel in one calendar. For teams that want to measure and act in one place, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media analytics tool?', 'For most teams, Capybaroar. It shows reach, engagement and best times on every plan and sends reports by link, PDF or email on Pro. Metricool and Iconosquare are strong picks if analytics are your main job.'),
-        ('Is there a free social media analytics tool?', 'Yes. Capybaroar, Metricool, Iconosquare and Zoho Social have free plans with analytics. Free plans keep a short history, so check how far back your data goes.'),
-        ('Which tool tracks competitors?', 'Metricool includes competitor analysis, Iconosquare tracks competitors on Scale, Hootsuite tracks competitors on its plans, Sprout adds competitor insights from Professional and Agorapulse adds benchmarks on Advanced.'),
-        ('How long do social media tools keep my data?', 'It depends on the plan. Metricool keeps unlimited history on paid plans, Iconosquare keeps 1 year on Starter and 2 years on Scale, and most free plans keep about a month.'),
-        ('What should a social media report include?', 'Reach, engagement, follower growth, your best posts and what you\'ll change next month. Keep it short, and send it on a schedule so nobody has to ask.'),
+        ('What is a social media analytics tool?', 'A social media analytics tool is an app that gathers performance data from all your social accounts in one dashboard. It tracks reach, engagement, follower growth and post results through each network\'s official API, keeps the history and turns it into charts and reports you can share.'),
+        ('How do social media analytics tools collect data?', 'Social media analytics tools collect data through each network\'s official API. You connect your accounts once in a web app, and the tool pulls new numbers on a schedule. Some tools also track public competitor accounts and hashtags, and most keep a longer history on paid plans than on free ones.'),
+        ('Why use a social media analytics tool for your brand?', 'A social media analytics tool shows your brand what works across every network, counted the same way. You stop guessing about times and formats, you can prove results to a boss or client, and you spend less time building reports by hand each month.'),
+        ('What features should modern social media analytics tools include?', 'Modern social media analytics tools should include reach and engagement per post, follower growth, best times to post, competitor benchmarks and scheduled reports. A long data history matters for real trends. The newest tools put analytics next to the calendar, so an AI agent can plan more of what worked.'),
+        ('Which tool is recommended for teams that need more than analytics?', 'For teams that need more than analytics, we recommend Capybaroar. It puts every social channel in one calendar, with analytics and best times on every plan, reports on Pro and an AI agent that plans more of what worked. Large teams that need very deep reports may prefer Sprout Social, and analysts who want full history may prefer Metricool.'),
     ],
 }
