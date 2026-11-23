@@ -1,72 +1,129 @@
 POST = {
     'order': 4,
     'slug': 'social-media-scheduling-tools',
-    'keyword': 'social media scheduling tools',
-    'title': '15 Best Social Media Scheduling Tools, Compared (2026)',
-    'desc': '15 social media scheduling tools compared and sorted by who each one fits, from solo creators to agencies, with prices checked in November 2026.',
-    'h1a': '15 best social media scheduling tools',
-    'h1b': 'sorted by who each one fits.',
-    'lead': 'There is no single best scheduler for everyone. A solo creator, a small business and a 20-client agency need different things. Here are 15 tools with real prices, and the kind of team each one fits.',
+    'keyword': 'social media scheduling tool',
+    'title': '15 Best Social Media Scheduling Tools in 2027',
+    'desc': 'Compare the 15 best social media scheduling tools in 2027 with G2 ratings, pros, cons and prices. See why Capybaroar leads for teams that post everywhere.',
+    'heroAlt': 'A calendar of posts across social networks, for the best social media scheduling tools in 2027',
     'cover': {'type': 'calendar', 'networks': ['instagram', 'linkedin', 'tiktok', 'youtube', 'facebook']},
-    'picks': [
-        ('Best overall', 'capybaroar', 'One calendar for 14 networks, an AI agent that drafts the week and a free plan to start.'),
-        ('Best for solo creators', 'buffer', 'Free for 3 channels, then $5 a month per channel, billed yearly.'),
-        ('Best for agencies', 'sendible', 'Unlimited users on every plan and a workspace for each client.'),
+    'leaders': ['hootsuite', 'buffer'],
+    'intro': '''<p>Every social network has its own way to schedule, but each one only shows its own posts. Planning a week across Instagram, TikTok, LinkedIn and YouTube means jumping between apps and copying the same caption four times. Posting by hand also ties you to your phone at the best times to post.</p>
+<p>A social media scheduling tool fixes this. You write each post once, pick the networks and the time, and the tool publishes it for you. Creators, small businesses, marketing teams and agencies all use one to keep a steady plan.</p>
+<p>The result is more posts out on time, with less work every week. Below are 15 tools with real prices and G2 ratings, checked in November 2026. 📅</p>''',
+    'whatH2': 'What Is a Social Media Scheduling Tool?',
+    'what': {
+        'def': 'A social media scheduling tool is an app that publishes your posts to social networks at a set time by connecting to each network\'s official API.',
+        'body': '<p>You connect your accounts once, then write a post, add images or video, and pick a date. The tool stores the post and sends it to the network at that time, so you do not need to be online. Most tools run as a web app with a calendar view, and many add a phone app for posting on the go.</p>',
+        'bullets': ['A calendar for every channel', 'Bulk upload and posting queues', 'Previews for each network', 'Analytics on what you posted'],
+        'close': 'The result is a full month of posts planned in one sitting.',
+    },
+    'whyH2': 'Why Do You Need a Social Media Scheduling Tool for Your Brand?',
+    'why': {
+        'lead': '<p>Posting by hand works when you run one account. Once you add more networks, clients or teammates, it takes hours every week and posts start to slip.</p>\n<p>A social media scheduling tool solves this.</p>',
+        'bullets': [
+            ('Steady posting', 'Posts go out on a fixed plan, even on weekends and holidays, which keeps your reach from dropping.'),
+            ('Hours saved', 'You batch a week or a month of posts in one sitting and reuse them across networks.'),
+            ('Better timing', 'Most tools suggest the best times to post from your own results, so each post lands when people are online.'),
+            ('One shared calendar', 'Writers, reviewers and clients see the same plan, and an AI agent can draft the week for you to approve.'),
+        ],
+    },
+    'quizH3': 'Social Media Scheduling Tools: Quick Match',
+    'quiz': [
+        {'q': 'Who will use the tool?', 'options': [
+            ('Just me', ['buffer', 'publer', 'later', 'socialbee', 'capybaroar']),
+            ('A small team', ['capybaroar', 'metricool', 'planable', 'contentstudio']),
+            ('An agency', ['sendible', 'socialpilot', 'vistasocial', 'capybaroar']),
+            ('A large brand team', ['hootsuite', 'sprout', 'agorapulse'])]},
+        {'q': 'What can you spend each month?', 'options': [
+            ('Free or under $10', ['capybaroar', 'buffer', 'publer']),
+            ('$10 to $50', ['capybaroar', 'metricool', 'contentstudio', 'socialpilot', 'socialbee', 'later', 'postiz', 'planable']),
+            ('$50 to $150', ['capybaroar', 'sendible', 'vistasocial', 'agorapulse']),
+            ('More than $150', ['hootsuite', 'sprout'])]},
+        {'q': 'What do you need most?', 'options': [
+            ('AI that drafts posts', ['capybaroar', 'postiz', 'socialbee', 'contentstudio']),
+            ('A shared inbox', ['capybaroar', 'agorapulse', 'hootsuite', 'sprout', 'sendible']),
+            ('Client approvals', ['planable', 'sendible', 'socialpilot', 'capybaroar']),
+            ('Deep reports', ['sprout', 'agorapulse', 'metricool', 'vistasocial'])]},
+        {'q': 'Where do you post most?', 'options': [
+            ('Instagram', ['later', 'capybaroar', 'buffer']),
+            ('LinkedIn', ['capybaroar', 'buffer', 'hootsuite']),
+            ('TikTok or YouTube', ['capybaroar', 'metricool', 'publer']),
+            ('Many networks at once', ['capybaroar', 'publer', 'buffer', 'postiz'])]},
     ],
-    'intro': '''<p>Every tool on this list can put a post on a calendar and publish it later. What differs is who each one is built for. Some charge per channel, which suits one person with a few accounts. Others charge per user or per workspace, and that changes the bill once a team or a client list grows.</p>
-<p>So we sorted the 15 tools by the team each one fits best:</p>
-<ul><li><b>Solo creators:</b> Buffer, Publer, Later and SocialBee.</li>
-<li><b>Small teams:</b> Capybaroar, Metricool, Planable and ContentStudio.</li>
-<li><b>Agencies:</b> Sendible, SocialPilot and Vista Social.</li>
-<li><b>Large brand teams:</b> Hootsuite, Sprout Social and Agorapulse.</li>
-<li><b>Developers and AI-first teams:</b> Postiz and Capybaroar.</li></ul>
-<p>We read every price on each tool's own pricing page in November 2026. Prices change, so check the vendor's page before you buy.</p>''',
     'items': [
-        {'id': 'capybaroar', 'shot': 'calendar', 'bestFor': 'small teams that want an AI agent to draft the week', 'text': '''<p>Capybaroar fits small teams that want one calendar for every network and help writing the posts. It schedules to 14 networks, including Instagram Reels and Stories, LinkedIn company pages, TikTok, YouTube, Bluesky and Discord. Bulk upload and queue times help you fill the calendar fast, and you see a preview for each network.</p>
-<p>On paid plans, the AI agent plans and writes posts from one message and saves them as drafts for your review. Every plan, Free included, has one inbox, analytics, a link in bio page, and an MCP server and REST API. Free covers 3 channels and 30 posts a month. Creator is $29 a month, Pro is $49 for 5 members and Agency is $149 for 15 members and unlimited brands.</p>'''},
-        {'id': 'buffer', 'shot': 'pricing', 'text': '''<p>Buffer fits solo creators and small brands that post to a few channels. You only pay for the channels you use: $5 a month per channel on Essentials or $10 on Team, both billed yearly. It posts to 14 networks, from Instagram and TikTok to Substack and Mastodon.</p>
-<p>The free plan covers 3 channels with 10 scheduled posts per channel. Every plan includes the AI Assistant and a community inbox for comments. When you grow into a team, Team adds unlimited team members, approvals and branded reports. Bigger setups get pricey, since each new channel adds to the bill.</p>'''},
-        {'id': 'hootsuite', 'shot': 'home', 'text': '''<p>Hootsuite fits brand teams with a budget and a lot of messages to answer. Standard covers up to 10 social accounts, unlimited scheduled posts, one inbox, and brand and competitor monitoring. Wisdom AI drafts posts and images on every plan, and MCP connectors let you work from ChatGPT, Claude, Copilot or Gemini.</p>
-<p>It's priced per user: $99 a month on Standard, $199 on Professional and $399 on Advanced, all billed yearly. Unlimited accounts start on Professional, and team approvals need Advanced. Bulk scheduling isn't available during the 14-day trial, and there's no free plan.</p>'''},
-        {'id': 'later', 'shot': 'pricing', 'text': '''<p>Later fits creators and brands that lead with Instagram. Each social set covers 8 profiles, one each of Instagram, Facebook, TikTok, Pinterest, LinkedIn, YouTube, Threads and Snapchat. Link in Bio and the mobile app come with every plan.</p>
-<p>Starter is $18.75 a month, billed yearly, but it allows only 30 posts per profile a month. Growth is $37.50 a month, billed yearly, with 180 posts per profile, 2 users, approvals and a social inbox. Scale at $82.50 a month, billed yearly, removes the post limit and adds competitive benchmarking. You get a 14-day trial and no free plan.</p>'''},
-        {'id': 'metricool', 'shot': 'pricing', 'text': '''<p>Metricool fits small teams and freelancers who manage several brands and care about results. You pay per brand, with unlimited posts, so a freelancer with 5 small clients pays one Starter price. Paid plans keep your full analytics history and export PDF and PPT reports.</p>
-<p>Starter is from $20 a month billed yearly for up to 5 brands, or $36 for 10 brands. Advanced, from $53 a month billed yearly, adds approvals and team roles. The free plan covers 1 brand and 20 posts a month but can't connect LinkedIn or X, and X needs an add-on on paid plans.</p>'''},
-        {'id': 'publer', 'shot': 'pricing', 'text': '''<p>Publer fits solo creators and small businesses on a tight budget. Professional starts at $5 a month, or $4 billed yearly, with unlimited scheduling and workspaces. It posts to 13 networks, including Telegram, WordPress and Google Business Profile, and supports post types like Instagram Reels, YouTube Shorts and LinkedIn PDF carousels.</p>
-<p>The final price depends on how many accounts and members you choose. Business, from $10 a month or $8 billed yearly, adds analytics, best times to post, unlimited AI and the MCP connector. The free plan covers 3 social accounts with 10 scheduled posts each, but it can't connect X.</p>'''},
-        {'id': 'socialpilot', 'shot': 'pricing', 'text': '''<p>SocialPilot fits agencies that need many accounts on a small budget. Essentials is $25.50 a month, billed yearly, for 7 social accounts. Standard at $42.50 a month, billed yearly, gives you 15 accounts, 3 users, the social inbox and analytics. Extra accounts cost $4 a month each.</p>
-<p>Agency tools start on Premium at $85 a month, billed yearly: client approvals, white label reports, 6 users and bulk scheduling from a CSV file. Ultimate at $170 a month, billed yearly, adds unlimited users. Every plan comes with AI credits for AI Pilot, from 500 a month. The 14-day trial needs no card.</p>'''},
-        {'id': 'sendible', 'shot': 'pricing', 'text': '''<p>Sendible fits agencies and multi-location teams that add people often. Every plan has unlimited users and unlimited AI credits, so a new hire never changes the bill. Each workspace holds one client's calendar, inbox and reports.</p>
-<p>Core is $35 a month for 6 social profiles and 1 workspace. Plus is $99 a month for 18 profiles and 3 workspaces, with approvals. Both are billed monthly, and yearly billing takes 15% off. Branded reports start on Premium at $199 a month. Sendible can't answer Instagram DMs, and Core caps sends at 100 a day.</p>'''},
-        {'id': 'socialbee', 'shot': 'pricing', 'text': '''<p>SocialBee fits solo marketers who post a lot of evergreen content. You sort posts into content categories, and SocialBee can recycle them to keep a steady posting schedule. Its Copilot AI builds a content plan and posts for you, and AI content generation is unlimited on every plan.</p>
-<p>Bootstrap is $24.20 a month billed yearly, or $29 monthly, for 5 social profiles and 1 user. Accelerate, at $40.80 a month billed yearly, adds approvals and 10 profiles but still has 1 user. Pro at $82.50 a month billed yearly adds 3 users per workspace and branded report exports. There's a 14-day trial and a 30-day money-back guarantee.</p>'''},
-        {'id': 'vistasocial', 'shot': 'pricing', 'text': '''<p>Vista Social fits agencies and teams that run many brands. Professional includes 15 social profiles, engagement tools, reports and Ask Vista, its AI agents for recurring social work. There are apps for iOS and Android, and white label setup comes on Scale.</p>
-<p>Professional is $80 a month or $950 a year with 2 users. Advanced is $160 a month for 30 profiles and 3 users, and Scale is $360 a month for 70 profiles and 4 users. X is a $29 a month add-on. The 14-day trial needs no card.</p>'''},
-        {'id': 'agorapulse', 'shot': 'pricing', 'text': '''<p>Agorapulse fits business teams that need to prove what social media earns. It connects to Google Analytics to track the traffic and revenue your posts drive, and every plan has one inbox for messages and comments. Its MCP connector works with Claude, ChatGPT and Copilot Studio.</p>
-<p>Plans are US $79, $119 and $149 per user a month, each with 10 social profiles and unlimited posts. ROI analysis and competitor benchmarks are on Advanced. X publishing is an add-on. You get 30 days free with no card, and Agorapulse says you can keep a free plan after that, though it doesn't list that plan's limits.</p>'''},
-        {'id': 'sprout', 'shot': 'pricing', 'text': '''<p>Sprout Social fits larger teams with a big budget that want deep reports. Its Trellis AI agent comes on every plan with 100 credits per seat a month, and it drafts replies and post variations. The mobile app is on every plan too.</p>
-<p>Essentials is $79 per seat a month billed yearly, or $99 billed monthly, with 5 social profiles. The inbox starts on Standard at $199 per seat, and unlimited profiles start on Professional at $299 per seat. A team of 4 on Standard pays $796 a month. The 30-day trial needs no card.</p>'''},
-        {'id': 'planable', 'shot': 'home', 'text': '''<p>Planable fits marketing teams where several people review every post. Its feed view shows posts the way they'll look on each network, and teammates leave comments, suggestions and annotations right next to the post. Approvals can be optional, required or multi-level, and clients approve in one click.</p>
-<p>Every plan has unlimited users. Basic is $33 per workspace a month with 60 posts and 4 social pages per workspace. Pro is $49 per workspace with 150 posts and 10 pages. The inbox and analytics are paid add-ons below Enterprise. Your first 50 posts are free with no time limit.</p>'''},
-        {'id': 'contentstudio', 'shot': 'pricing', 'text': '''<p>ContentStudio fits content teams that curate and share a lot of posts. Every plan has unlimited posting, analytics and an MCP integration, and AI Studio makes text, images and video in your brand voice.</p>
-<p>Standard is $19 a month billed yearly, or $29 monthly, for 5 social accounts and 1 user. Advanced at $49 billed yearly, or $69 monthly, adds the social inbox, approvals and 2 users. Agency Unlimited at $99 a month billed yearly has unlimited users and workspaces and starts at 25 social accounts. There's a 7-day trial and no free plan.</p>'''},
-        {'id': 'postiz', 'shot': 'pricing', 'text': '''<p>Postiz fits developers and AI-first marketers. Every plan includes an MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule for you. Its AI agents plan, write and schedule posts to the 30+ networks it supports, and there's an open-source version as well as the hosted cloud.</p>
-<p>Standard is $29 a month for 5 channels with unlimited posts, but it has no team support. Team is $39 a month for 10 channels and unlimited members, Pro is $49 for 30 channels and Ultimate is $99 for 100 channels. Postiz doesn't list an inbox or approvals on its pages. The 7-day trial lets you test it first.</p>'''},
+        {'id': 'capybaroar', 'shot': 'calendar', 'best': 'Every social channel, one calendar',
+         'overview': '<p>Capybaroar is one of the most relevant social media scheduling tools for teams that want to plan, write and publish from one place. Instead of only putting posts on a calendar, it gives you an AI agent that plans and writes a week of posts as drafts for your review. It schedules to 14 networks, from Instagram Reels to LinkedIn pages and Discord. That makes it a strong fit for teams that want every social channel in one calendar.</p>',
+         'pros': ['<a href="/social-media-scheduler">One calendar for 14 networks</a>',
+                  '<a href="/bulk-scheduling">Bulk upload</a> and <a href="/posting-queue">posting queues</a>',
+                  '<a href="/ai-social-media-agent">AI agent</a> that drafts the week for review',
+                  '<a href="/mcp">MCP server and REST API</a> on every plan',
+                  '<a href="/pricing">Free plan</a> with <a href="/social-media-inbox">inbox</a> and <a href="/social-media-analytics">analytics</a>'],
+         'cons': ['Not a full social listening suite']},
+        {'id': 'hootsuite', 'shot': 'home', 'best': 'Inbox plus brand monitoring',
+         'overview': '<p>Hootsuite is one of the most popular social media scheduling tools for brand teams with a lot of messages to answer. The platform combines scheduling with one inbox and brand and competitor monitoring. Its Wisdom AI drafts posts and images on every plan, and MCP connectors let teams work from ChatGPT, Claude or Gemini. This makes it a common choice for social media pros who manage busy brand accounts.</p>',
+         'pros': ['Unlimited scheduled posts on every plan', 'One inbox for messages and comments', 'Brand and competitor monitoring built in', 'Wisdom AI drafts posts and images', 'Good fit for busy brand teams'],
+         'cons': ['Per-user pricing can add up fast', 'Team approvals may need the Advanced plan', 'Interface can feel complex for new users']},
+        {'id': 'buffer', 'shot': 'pricing', 'best': 'Pay-per-channel pricing',
+         'overview': '<p>Buffer is one of the most established social media scheduling tools for creators and small brands that post to a few channels. You pay only for the channels you use, and the AI Assistant helps write and repurpose posts on every plan. Buffer also includes a community inbox for replying to comments. Its simple pricing makes it a popular pick for solo creators who want to start small.</p>',
+         'pros': ['Pay only for the channels you use', 'Wide network list, Substack included', 'AI Assistant on every plan', 'Very simple interface', 'Free plan for 3 channels'],
+         'cons': ['Price can grow with every channel you add', 'Approvals may need the Team plan', 'Analytics can feel light next to full suites']},
+        {'id': 'sprout', 'shot': 'pricing', 'best': 'Deep reports',
+         'overview': '<p>Sprout Social is a large social media scheduling tool and reporting platform used by marketing teams, care teams and agencies. It pairs publishing with polished reports, and its Trellis AI agent drafts replies and post variations on every plan. A key strength is the depth of its reporting, which makes it attractive for larger teams that report on social to their leaders.</p>',
+         'pros': ['Deep, polished reporting', 'Trellis AI agent on every plan', 'Mobile app on every plan', 'Customer care reports on Advanced', 'Good fit for large marketing teams'],
+         'cons': ['Per-seat pricing can add up quickly', 'Inbox may need the Standard plan', 'Premium Analytics can cost extra']},
+        {'id': 'later', 'shot': 'pricing', 'best': 'Instagram visual planner',
+         'overview': '<p>Later is a social media scheduling tool built for creators and brands that lead with Instagram. Each social set covers 8 profiles, one each on networks like Instagram, TikTok, Pinterest and Snapchat. Link in Bio and the mobile app come with every plan. It is a relevant option for users who mainly need a visual Instagram planner without paying for a much larger suite.</p>',
+         'pros': ['Visual planner for Instagram', 'Link in Bio on every plan', 'Snapchat in the social set', 'Mobile app on every plan', 'Good fit for Instagram-first creators'],
+         'cons': ['Starter plan can cap monthly posts per profile', 'Inbox and approvals may need Growth', 'Each set may hold one profile per network']},
+        {'id': 'metricool', 'shot': 'pricing', 'best': 'Analytics per brand',
+         'overview': '<p>Metricool is a social media scheduling tool designed specifically for freelancers and small teams who manage several brands and care about results. You pay per brand with unlimited posts, so 5 small clients can share one Starter plan. Paid plans keep your full analytics history and export PDF and PPT reports, which makes it useful for sending monthly results to clients.</p>',
+         'pros': ['Priced per brand with unlimited posts', 'Full analytics history on paid plans', 'PDF and PPT report exports', 'MCP connection for AI assistants', 'Free plan for 1 brand'],
+         'cons': ['X can cost extra as an add-on', 'AI credits can run low for some brands', 'Free plan may not connect LinkedIn or X']},
+        {'id': 'agorapulse', 'shot': 'pricing', 'best': 'ROI reporting',
+         'overview': '<p>Agorapulse is a strong social media scheduling tool for business teams who need to prove what social media earns. It connects to Google Analytics to track the traffic and revenue your posts drive, and every plan has one inbox for messages and comments. Its ROI reports suit teams that answer to a sales or finance lead.</p>',
+         'pros': ['One inbox on every plan', 'ROI tracking with Google Analytics', 'Competitor benchmarks on Advanced', 'MCP for Claude and ChatGPT', 'Free plan after the 30-day trial'],
+         'cons': ['Per-user pricing can add up for teams', 'Publishing to X may cost extra', 'Free plan limits may be unclear']},
+        {'id': 'sendible', 'shot': 'pricing', 'best': 'Unlimited users',
+         'overview': '<p>Sendible is a dedicated social media scheduling tool made for agencies and multi-location teams that add people often. Every plan includes unlimited users and unlimited AI credits, so a new hire never changes the bill. Each workspace holds one client\'s calendar, inbox and reports. It is especially useful for agencies, franchise teams and consultants who run many client accounts.</p>',
+         'pros': ['Unlimited users on every plan', 'Unlimited AI credits', 'One workspace per client', 'Approvals from the Plus plan', 'Good fit for growing agencies'],
+         'cons': ['Branded reports may need Premium', 'No MCP server listed, unlike some tools', 'Core plan can cap daily sends']},
+        {'id': 'socialpilot', 'shot': 'pricing', 'best': 'Accounts per dollar',
+         'overview': '<p>SocialPilot is a widely used social media scheduling tool that helps agencies manage many accounts on a small budget. Standard gives you 15 social accounts and 3 users, and extra accounts cost $4 a month each. Client approvals, white label reports and bulk scheduling from a CSV file start on Premium. It suits agencies that want room to grow without a heavy setup.</p>',
+         'pros': ['Many accounts for the price', 'Bulk scheduling from a CSV file', 'Client approvals on Premium', 'White label reports on Premium', 'AI Pilot credits on every plan'],
+         'cons': ['Agency tools may need Premium', 'Social inbox can start only on Standard', 'Extra accounts can raise the bill']},
+        {'id': 'vistasocial', 'shot': 'pricing', 'best': 'AI agents for many brands',
+         'overview': '<p>Vista Social is a social media scheduling tool and engagement platform for teams and agencies that run many brands. Professional includes 15 social profiles, engagement tools, reports and Ask Vista, its AI agents for recurring social work. The platform also offers apps for iOS and Android, which makes it suitable for teams that need to post and reply on the go.</p>',
+         'pros': ['15 profiles on the first plan', 'Ask Vista AI agents', 'Engagement tools on every plan', 'Reports on every plan', 'iOS and Android apps'],
+         'cons': ['X publishing can cost extra each month', 'Professional plan can feel tight on seats', 'White label may need the Scale plan']},
+        {'id': 'publer', 'shot': 'pricing', 'best': 'Low starting price',
+         'overview': '<p>Publer is a practical social media scheduling tool for creators and small businesses on a tight budget. Professional starts at $5 a month with unlimited scheduling, and the tool posts to 13 networks, including Telegram, WordPress and Google Business Profile. It supports formats like Instagram Reels, YouTube Shorts and LinkedIn PDF carousels, so creators who post in many formats can plan them in one place.</p>',
+         'pros': ['Starts at $5 a month', '13 networks, Telegram included', 'Reels, Shorts and PDF carousels', 'MCP on the Business plan', 'Free plan for 3 accounts'],
+         'cons': ['Price can grow with accounts and members', 'Analytics may need the Business plan', 'Free plan may not connect X']},
+        {'id': 'contentstudio', 'shot': 'pricing', 'best': 'AI Studio content',
+         'overview': '<p>ContentStudio is a full-featured social media scheduling tool for content teams that curate and share a lot of posts. Every plan includes unlimited posting, analytics and an MCP integration. In addition to scheduling, ContentStudio also provides AI Studio, which makes text, images and video in your brand voice. Its content tools make it a good choice for teams that want help finding and making posts.</p>',
+         'pros': ['Unlimited posting on every plan', 'AI Studio for text, images and video', 'MCP integration on every plan', 'Analytics on every plan', 'iOS and Android apps'],
+         'cons': ['Standard plan may suit one user only', 'Inbox may need the Advanced plan', 'Trial can feel short, with no free plan']},
+        {'id': 'socialbee', 'shot': 'pricing', 'best': 'Evergreen post recycling',
+         'overview': '<p>SocialBee is a simple social media scheduling tool for solo marketers who post a lot of evergreen content. You sort posts into content categories, and SocialBee can recycle them to keep a steady schedule. Its Copilot AI builds a content plan and writes posts, with unlimited AI content on every plan. This makes it a handy pick for one-person teams that want a calendar that refills itself.</p>',
+         'pros': ['Content categories for evergreen posts', 'Recycles posts on a schedule', 'Copilot AI builds a content plan', 'Unlimited AI content on every plan', '30-day money-back guarantee'],
+         'cons': ['Single user can limit small teams', 'API access may be missing for AI tools', 'Branded reports may need Pro']},
+        {'id': 'planable', 'shot': 'home', 'best': 'Team review and approvals',
+         'overview': '<p>Planable is a social media scheduling tool focused on teamwork for marketing teams where several people review every post. Its feed view shows posts the way they will look on each network, and teammates leave comments and suggestions right next to the post. Approvals can be optional, required or multi-level, so it works well for teams with strict review steps.</p>',
+         'pros': ['Feed view shows each post as it will look', 'Comments and suggestions on each post', 'Multi-level approvals', 'Unlimited users on every plan', 'First 50 posts free'],
+         'cons': ['Post caps can bite on Basic and Pro', 'Inbox and analytics can cost extra', 'Basic may feel tight on social pages']},
+        {'id': 'postiz', 'shot': 'pricing', 'best': 'Open source with MCP',
+         'overview': '<p>Postiz is an open-source social media scheduling tool for developers and AI-first marketers. Every plan includes an MCP server, CLI and API, so Claude, ChatGPT or any agent can schedule for you. Its AI agents plan, write and schedule posts to more than 30 networks. Many teams use it as a specialized tool to automate posting before they add a full management suite.</p>',
+         'pros': ['MCP server, CLI and API on every plan', 'AI agents plan and write posts', 'Supports 30+ networks', 'Open-source version you can host', 'Good fit for developer teams'],
+         'cons': ['Standard plan may lack team support', 'Inbox and approvals may be missing', 'Trial can feel short for testing']},
     ],
-    'how': '''<p>We sorted these tools by who they fit, then checked each one on the same points.</p>
-<ul><li><b>Price model:</b> per channel, per user, per brand or per workspace, since that decides what your team really pays.</li>
-<li><b>Scheduling:</b> networks, post limits per plan, bulk upload and queues.</li>
-<li><b>Team tools:</b> users per plan, approvals and the plan where an inbox starts.</li>
-<li><b>Price:</b> each tool's own pricing page in November 2026, with yearly or monthly billing noted.</li></ul>
-<p>Capybaroar is our product. We held it to the same checks and list its limits next to everyone else's.</p>''',
-    'verdict': '''<p>Pick by your team. On your own with a few channels, Buffer or Publer will cost you a few dollars a month. A small team that wants help writing posts should try Capybaroar, since Pro covers 5 members and 30 channels for $49 a month. Agencies get the most room from Sendible's unlimited users or SocialPilot's account limits. Large brand teams with a budget should compare Hootsuite, Sprout Social and Agorapulse side by side.</p>
-<p>Most of these tools have a free plan or a free trial. Load one real week of posts into 2 of them before you decide.</p>''',
+    'conclusion': '''<p>A social media scheduling tool helps you post on time without being online at the right minute. It makes planning faster, steadier and easier to share with a team.</p>
+<p>But the best tool today does more than hold a calendar. It should help write the posts, bring every comment into one inbox and show what worked, so the plan gets better each week.</p>
+<p>That is why <a href="https://capybaroar.com/">Capybaroar</a> stands out. It combines an AI agent, one inbox and analytics with every social channel in one calendar. For teams that want to plan, write and publish in one place, it is the strongest option.</p>''',
     'faqs': [
-        ('What is the best social media scheduling tool?', 'It depends on your team. Capybaroar fits most small teams, Buffer and Publer fit solo creators on a budget, and Sendible fits agencies that need unlimited users.'),
-        ('What is the cheapest social media scheduler?', 'Publer starts at $5 a month, or $4 billed yearly, and Buffer charges $5 a month per channel billed yearly. Capybaroar, Buffer, Metricool and Publer also have free plans, and Planable gives you your first 50 posts free.'),
-        ('Which scheduler is best for agencies?', 'Sendible, for unlimited users on every plan. SocialPilot gives you 15 accounts for $42.50 a month billed yearly, and Capybaroar Agency covers 15 members, unlimited brands and white label reports for $149 a month.'),
-        ('Can I schedule posts from ChatGPT or Claude?', 'Yes, with several tools. Capybaroar has an MCP server on every plan, Free included. Postiz, Hootsuite, Buffer, Metricool, Planable and ContentStudio also list MCP or a connection to Claude and ChatGPT.'),
-        ('Do social media schedulers post automatically?', 'Most publish straight to the network at the time you pick. For some posts a tool may send a phone reminder so you finish the post in the app, which Buffer offers for Instagram, TikTok and YouTube.'),
-        ('How many posts can I schedule?', 'Many paid plans have no post limit, including Capybaroar Creator and up, Hootsuite, Metricool and Postiz. Later Starter allows 30 posts per profile a month, and Planable Basic allows 60 posts per workspace a month.'),
+        ('What is a social media scheduling tool?', 'A social media scheduling tool is an app that publishes your posts to social networks at a time you pick. You connect your accounts once, write each post, and the tool sends it through each network\'s official API, so you do not need to be online when it goes live.'),
+        ('How do social media scheduling tools publish posts?', 'Social media scheduling tools publish posts through each network\'s official API. You write the post in a web app or phone app, pick a date and time, and the tool sends it for you. For some formats, like certain Instagram or TikTok posts, a tool may send a phone reminder so you finish the post in the app.'),
+        ('Why use a social media scheduling tool for your brand?', 'A social media scheduling tool keeps your brand posting on a steady plan, even on busy weeks. You batch a month of posts in one sitting, post at the best times for your audience and give your team one shared calendar. That saves hours every week and keeps your reach from slipping.'),
+        ('What features should modern social media scheduling tools include?', 'Modern social media scheduling tools should include a calendar for every network, bulk upload, previews for each network and analytics on what you posted. Team features like approvals and a shared inbox matter once more people join. The newest tools add an AI agent that plans and writes the week for you to review.'),
+        ('Which tool is recommended for teams that need more than scheduling?', 'For teams that need more than scheduling, we recommend Capybaroar. It puts every social channel in one calendar, with an AI agent, one inbox and analytics on every plan. Large brand teams that need very deep reports may prefer Sprout Social, and solo creators on a tight budget may prefer Buffer.'),
     ],
 }
