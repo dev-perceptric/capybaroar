@@ -247,3 +247,166 @@
 .ai-card .s-ok{background:#e6f6ec;color:#16653a}
 .ai-card .s-wait{background:#fff3db;color:#8a5300}
 .ai-card .s-mute{background:var(--shell);color:var(--ink-2)}
+
+/* ===== Pass 2: landing page details ===== */
+/* Scroll progress bar */
+.mo-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:100;pointer-events:none;background:var(--y);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+
+/* Headings: the gray half lands a beat after the black half */
+h2.mo-rv span{opacity:0}
+h2.mo-rv.mo-in span{opacity:1;transition:opacity .8s var(--ease-out) calc(var(--rd,0ms) + 280ms)}
+
+/* Hero: yellow glow and dots follow the pointer, the gray line shimmers once */
+.hero-bg{overflow:hidden}
+.hero-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(520px circle at var(--hx,50%) var(--hy,30%),rgba(255,210,2,.22),transparent 65%);transition:background-position .2s}
+.hero h1 .dim{background:linear-gradient(100deg,var(--head-2) 40%,var(--ink-2) 50%,var(--head-2) 60%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:mo-dim 2.6s var(--ease-out) .5s 1 both}
+@keyframes mo-dim{from{background-position:100% 0}to{background-position:0 0}}
+.hero .tag.solid .ico{animation:cx-twinkle 2.4s ease-in-out infinite}
+
+/* Cards: lift, pointer spotlight, icon tile lights up */
+.points2 li,.every li,.menu li,.tgrid>li,.steps4 li,.ag-step,.related a,.lx-link a,.ont{position:relative;transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background-color .3s}
+.points2 li:hover,.every li:hover,.menu li:hover,.tgrid>li:hover,.steps4 li:hover,.ag-step:hover{transform:translateY(-4px);box-shadow:var(--sh-lift)}
+.mo-spot{background-image:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(255,210,2,.13),transparent 65%)}
+.points2 li>.ico,.ev-ic,.related .ic,.tgrid .ic,.steps4 .g-n,.ag-num{transition:transform .45s cubic-bezier(.34,1.56,.64,1),background-color .3s,color .3s}
+.points2 li:hover>.ico{transform:rotate(-10deg) scale(1.2)}
+.every li:hover .ev-ic,.menu li:hover .ev-ic{background:var(--y);transform:rotate(-8deg) scale(1.08)}
+.related a:hover .ic,.tgrid>li:hover .ic{background:var(--y);color:var(--y-ink);transform:rotate(-8deg) scale(1.08)}
+.related .more .ico{transition:transform .25s var(--ease-out)}
+.related a:hover .more .ico{transform:translateX(4px)}
+.ont .nl{transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.ont:hover .nl{transform:rotate(-10deg) scale(1.2)}
+.lx-link img{transition:transform .6s var(--ease-out)}
+.lx-link a{overflow:hidden}
+.lx-link a:hover img{transform:scale(1.04) rotate(-.5deg)}
+
+/* Step numbers light up one after another */
+.steps4 .g-n,.ag-num{position:relative}
+.mo-steps .g-n,.mo-steps .ag-num{animation:mo-step 1.2s var(--ease-out) both;animation-delay:calc(var(--si,0) * 350ms + 200ms)}
+@keyframes mo-step{0%{transform:scale(1)}25%{transform:scale(1.3);background:var(--y);color:var(--y-ink);box-shadow:0 0 0 6px rgba(255,210,2,.25)}100%{transform:scale(1)}}
+.steps4 li:hover .g-n{background:var(--y);color:var(--y-ink);transform:scale(1.12)}
+
+/* MCP tool names light up in order on hover */
+.tgrid .tools li{transition:background-color .25s,color .25s,transform .25s var(--ease-out)}
+.tgrid>li:hover .tools li{background:var(--y-3);color:var(--y-ink);transform:translateY(-1px)}
+.tgrid>li:hover .tools li:nth-child(2){transition-delay:40ms}
+.tgrid>li:hover .tools li:nth-child(3){transition-delay:80ms}
+.tgrid>li:hover .tools li:nth-child(4){transition-delay:120ms}
+.tgrid>li:hover .tools li:nth-child(5){transition-delay:160ms}
+.tgrid>li:hover .tools li:nth-child(6){transition-delay:200ms}
+.tgrid>li:hover .tools li:nth-child(7){transition-delay:240ms}
+
+/* Comparison table: row highlight */
+.cmp tbody tr{transition:background-color .2s}
+.cmp tbody tr:hover{background:var(--y-1)}
+.cmp tbody tr td:first-child .nl,.cmp tbody tr th .nl{transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.cmp tbody tr:hover .nl{transform:scale(1.25)}
+
+/* Prices count up */
+.menu .mc,.v2-price,.price{font-variant-numeric:tabular-nums}
+
+@media (prefers-reduced-motion:reduce){h2.mo-rv span{opacity:1!important}.hero h1 .dim{animation:none;color:var(--head-2);background:none}.mo-bar{display:none}}
+
+/* ===== Pass 3: fewer panels, more variety ===== */
+
+/* AI section: no outer card, the chat stage is the picture */
+.ai-grid{gap:64px 48px}
+.ai-card{background:none;box-shadow:none;padding:0;border-radius:0;gap:22px}
+.ai-card:hover{transform:none;box-shadow:none}
+.ai-copy{padding:0}
+.ai-stage{border-radius:20px;box-shadow:inset 0 0 0 1px var(--y-6);transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out)}
+.ai-card:hover .ai-stage{transform:translateY(-4px);box-shadow:inset 0 0 0 1px var(--y-h),0 24px 48px -24px rgba(38,34,9,.25)}
+.ai-grid.three{gap:48px 28px}
+.ai-grid.three .ai-card{padding:0}
+
+/* Feature points: an open list with hairlines and big yellow dots */
+.points2{gap:0 56px}
+.points2 li{background:none;box-shadow:none;border-radius:0;padding:28px 0;border-top:1px solid var(--frame);gap:18px;align-items:flex-start}
+.points2 li:hover{transform:none;box-shadow:none}
+.points2 li>.ico{width:44px;height:44px;padding:12px;margin:0;border-radius:50%;background:var(--y);color:var(--y-ink);box-sizing:border-box}
+.points2 h3{font-size:19px;letter-spacing:-.01em;margin-bottom:6px}
+
+/* How it works: a timeline that fills yellow */
+.steps4{position:relative;gap:32px}
+.steps4::before,.steps4::after{content:"";position:absolute;left:18px;right:18px;top:17px;height:2px;border-radius:2px;background:var(--frame)}
+.steps4::after{background:var(--y);transform:scaleX(0);transform-origin:0 50%;transition:transform 1.6s var(--ease-out) .2s}
+.steps4.mo-steps::after{transform:scaleX(1)}
+.steps4 li{position:relative;z-index:1;background:none;box-shadow:none;border-radius:0;padding:0;gap:12px}
+.steps4 li:hover{transform:none;box-shadow:none}
+.steps4 .g-n{width:36px;height:36px;background:var(--panel);color:var(--ink);box-shadow:0 0 0 1px var(--frame),0 0 0 8px var(--canvas);transition:background-color .4s,color .4s,transform .45s cubic-bezier(.34,1.56,.64,1)}
+.steps4.mo-steps .g-n{background:var(--y);color:var(--y-ink);box-shadow:0 0 0 8px var(--canvas);transition-delay:calc(var(--si,0) * 350ms + 300ms)}
+.steps4 h3{font-size:17px}
+@media (max-width:860px){
+  .steps4{grid-template-columns:minmax(0,1fr);gap:28px}
+  .steps4::before,.steps4::after{left:17px;right:auto;top:18px;bottom:18px;width:2px;height:auto}
+  .steps4::after{transform:scaleY(0);transform-origin:50% 0}
+  .steps4.mo-steps::after{transform:scaleY(1)}
+  .steps4 li{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:18px;row-gap:4px}
+  .steps4 .g-n{grid-row:span 2}
+}
+
+/* Pricing, every plan: open icon list */
+.every{gap:36px 32px}
+.every li{background:none;box-shadow:none;border-radius:0;padding:0}
+.every li:hover{transform:none;box-shadow:none}
+.every .ev-ic{width:44px;height:44px;border-radius:50%}
+.every h3{font-size:16px}
+
+/* Pricing, credits: one dark price strip */
+.menu{gap:0;padding:8px;border-radius:20px;background:var(--code)}
+.menu li{background:none;box-shadow:none;border-radius:12px;color:var(--code-ink);padding:20px}
+.menu li+li{box-shadow:-1px 0 0 rgba(255,255,255,.08)}
+.menu li:hover{transform:none;box-shadow:none;background-color:rgba(255,255,255,.05)}
+.menu .mn{color:var(--code-dim)}
+.menu .mc{min-height:0;padding:0;border:0;color:#fff}
+.menu .mc small{color:var(--code-dim)}
+.menu .ev-ic{background:var(--y);color:var(--y-ink)}
+.menu .mo-spot,.menu li.mo-spot{background-image:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),rgba(255,210,2,.16),transparent 65%)}
+
+/* MCP tools: magazine columns with a heavy top rule */
+.tgrid{gap:40px 32px}
+.tgrid>li{background:none;box-shadow:none;border-radius:0;padding:20px 0 0;border-top:2px solid var(--ink)}
+.tgrid>li:hover{transform:none;box-shadow:none}
+.tgrid .tools li{box-shadow:none;background:var(--shell)}
+
+/* More in Capybaroar: big link rows with a yellow sweep */
+.related{grid-template-columns:minmax(0,1fr)!important;gap:0;max-width:960px;margin:0 auto;border-top:1px solid var(--frame)}
+.related a{position:relative;isolation:isolate;overflow:hidden;flex-direction:row;align-items:center;flex-wrap:wrap;gap:8px 24px;padding:24px 12px;background:none;box-shadow:none;border-radius:0;border-bottom:1px solid var(--frame)}
+.related a::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--y);transform:scaleX(0);transform-origin:0 50%;transition:transform .45s var(--ease-out)}
+.related a:hover{transform:none;box-shadow:none}
+.related a:hover::before{transform:scaleX(1)}
+.related a:hover p,.related a:hover .more{color:var(--y-ink)}
+.related .ic{background:var(--shell)}
+.related h3{font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;min-width:200px}
+.related p{flex:1 1 240px}
+.related .more{margin-left:auto}
+.related a.mo-spot{background-image:none}
+
+/* Other networks: a pill cloud */
+.onets{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.ont{height:46px;padding:0 20px 0 12px;border-radius:999px;background:transparent;box-shadow:inset 0 0 0 1px var(--frame)}
+.ont:hover{transform:translateY(-2px);background:var(--y);color:var(--y-ink);box-shadow:none}
+.ont.mo-spot{background-image:none}
+
+/* FAQ: open, hairlines, a yellow plus */
+.faq{background:none;box-shadow:none;border-radius:0;border-top:2px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--frame)}
+.faq details:last-child{border-bottom:1px solid var(--frame)}
+.faq summary{padding:22px 0;font-size:18px;border-radius:0}
+.faq summary:hover{background:none;color:var(--ink-2)}
+.faq summary::after{width:30px;height:30px;border-radius:50%;background-color:var(--y-3);background-size:16px;background-position:center;background-repeat:no-repeat}
+.faq details[open] summary::after{background-color:var(--y)}
+.faq details p{padding:0 48px 24px 0}
+
+/* Homepage MCP guide: a vertical timeline */
+.g-steps{position:relative;gap:0}
+.g-steps::before{content:"";position:absolute;left:15px;top:20px;bottom:20px;width:2px;background:var(--frame)}
+.g-step{background:none;box-shadow:none;border-radius:0;padding:0 0 32px}
+.g-step:hover{transform:none;box-shadow:none}
+.g-step .g-n{position:relative;z-index:1;box-shadow:0 0 0 6px var(--panel)}
+.g-step.mo-spot{background-image:none}
+
+/* Homepage networks: a logo wall, a panel only on hover */
+.nt{background:transparent;box-shadow:none}
+.nt:hover{background:var(--panel);box-shadow:var(--sh-lift)}
+.nt.lit{background:var(--y-1);box-shadow:0 0 0 2px var(--y)}
+.related a:hover .ic{background:var(--panel);color:var(--ink)}
